@@ -2,6 +2,11 @@
 
 GuGuBoo is a Slovak-language static web application for pregnancy, early childcare, family coordination, travel information, and memories. This repository contains the Netlify-ready site with no build step or server-side component.
 
+## Project documentation
+
+- [Product context](docs/PRODUCT_CONTEXT.md) — confirmed facts, prototype signals, constraints, risks, and open owner decisions
+- [Agent workflow](docs/AGENT_WORKFLOW.md) — authority, durable decision records, change rules, guardrails, and review requirements
+
 ## Project structure
 
 - `index.html` — public landing page
