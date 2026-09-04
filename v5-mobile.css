@@ -2429,9 +2429,16 @@ body.welcome-mode #v5AudioDock {
 }
 
 #welcomeCard:not([data-step="1"]) .step-dot.active {
-  background: linear-gradient(90deg, #8b78d6, #e991a0);
+  background: var(--welcome-step-color, #8b78d6);
   box-shadow: none;
 }
+
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(1) { --welcome-step-color: #8b78d6; }
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(2) { --welcome-step-color: #9f7bd0; }
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(3) { --welcome-step-color: #b47fc6; }
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(4) { --welcome-step-color: #c984ba; }
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(5) { --welcome-step-color: #dc8aaa; }
+#welcomeCard:not([data-step="1"]) .step-dot:nth-child(6) { --welcome-step-color: #e991a0; }
 
 .welcome-story-step.active {
   animation: welcome-story-in .36s ease both;

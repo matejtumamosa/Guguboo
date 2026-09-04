@@ -2838,7 +2838,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <link rel="stylesheet" href="v5-mobile.css?v=6.18">
+  <link rel="stylesheet" href="v5-mobile.css?v=6.19">
 </head>
 <body>
   <div class="app" id="app">
@@ -2902,8 +2902,8 @@
             <img class="welcome-logo" data-brand-voice src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo">
             <span class="pill">Vitaj v aplikácii</span>
             <div class="stepper" id="welcomeStepper" aria-label="Priebeh nastavenia">
-              <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span>
-              <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+              <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+              <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
             </div>
 
             <div class="welcome-step active welcome-first-step" data-welcome-step="1">
@@ -2981,9 +2981,8 @@
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="4">
-              <span class="welcome-story-kicker"><span aria-hidden="true">02</span> Naladíme Guguboo</span>
-              <h2><span data-welcome-personal-name>Ahoj</span>, čo teraz prežívate?</h2>
-              <p class="welcome-story-lead">Vyber len to, čo je pravda práve teraz.</p>
+              <span class="welcome-story-kicker">Naladíme Guguboo</span>
+              <h2><span data-welcome-personal-name>Ahoj</span>, vyber jednu z možností.</h2>
               <div class="welcome-options welcome-story-choices">
                 <button class="choice-card" type="button" data-welcome-status="expecting">
                   <span class="welcome-choice-icon" aria-hidden="true">☾</span>
@@ -2996,12 +2995,11 @@
                   <span>Prispôsobíme domov jeho veku a vášmu rytmu.</span>
                 </button>
               </div>
-              <p class="welcome-copy" id="welcomeCopy">Nič tým nezamykáš. Toto nastavenie môžeš neskôr zmeniť.</p>
               <div class="actions welcome-story-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" data-welcome-next>Pokračovať</button></div>
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="5">
-              <span class="welcome-story-kicker"><span aria-hidden="true">03</span> Jedno malé miesto</span>
+              <span class="welcome-story-kicker">Jedno malé miesto</span>
               <h2>Koho spolu privítame?</h2>
               <p class="welcome-story-lead">Teraz stačia dve drobnosti. Zvyšok počká v profile.</p>
               <div class="welcome-baby-card">
@@ -3029,7 +3027,7 @@
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="6">
-              <span class="welcome-story-kicker"><span aria-hidden="true">04</span> Kruh podpory</span>
+              <span class="welcome-story-kicker">Kruh podpory</span>
               <h2>Chceš tu mať blízku osobu?</h2>
               <p class="welcome-story-lead">Partnera, druhého rodiča alebo niekoho, komu dôveruješ. Je to úplne na tebe.</p>
               <div class="welcome-options welcome-story-choices">
@@ -7422,11 +7420,6 @@ Otázky:
       if ($("babyDue")) $("babyDue").min = today;
       if ($("babyBirth")) $("babyBirth").max = today;
       if ($("babyStatus")) $("babyStatus").value = status;
-      if ($("welcomeCopy")) {
-        $("welcomeCopy").textContent = expecting
-          ? "Začneme pokojnou prípravou. Toto nastavenie môžeš kedykoľvek zmeniť."
-          : "Začneme tým, čo sa hodí k veku bábätka. Toto nastavenie môžeš kedykoľvek zmeniť.";
-      }
       updateWelcomeStory();
     }
 
@@ -7655,8 +7648,9 @@ Otázky:
       state.welcomeStep = Math.max(1, Math.min(WELCOME_STEP_COUNT, step));
       if ($("welcomeCard")) $("welcomeCard").dataset.step = String(state.welcomeStep);
       document.querySelectorAll("[data-welcome-step]").forEach(el => el.classList.toggle("active", Number(el.dataset.welcomeStep) === state.welcomeStep));
-      document.querySelectorAll("#welcomeStepper .step-dot").forEach((dot, index) => dot.classList.toggle("active", index < state.welcomeStep));
-      if ($("welcomeProgressLabel")) $("welcomeProgressLabel").textContent = `Krok ${state.welcomeStep} zo ${WELCOME_STEP_COUNT}`;
+      const onboardingStep = Math.max(0, state.welcomeStep - 1);
+      document.querySelectorAll("#welcomeStepper .step-dot").forEach((dot, index) => dot.classList.toggle("active", index < onboardingStep));
+      if ($("welcomeStepper")) $("welcomeStepper").setAttribute("aria-label", `Priebeh nastavenia: krok ${onboardingStep} zo ${WELCOME_STEP_COUNT - 1}`);
       updateWelcomeStory();
       appStorage.setItem(storeKey, JSON.stringify(state));
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
