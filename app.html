@@ -2838,7 +2838,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <link rel="stylesheet" href="v5-mobile.css?v=6.17">
+  <link rel="stylesheet" href="v5-mobile.css?v=6.18">
 </head>
 <body>
   <div class="app" id="app">
@@ -2951,10 +2951,9 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="3">
               <div class="welcome-location-step">
-                <h2><span data-welcome-personal-name>Ahoj</span>. A teraz miesto.</h2>
-                <p class="welcome-story-lead">Pre miestne počasie a lekárne v okolí.</p>
+                <h2><span data-welcome-personal-name>Ahoj</span>. Pokračujeme miestom.</h2>
+                <p class="welcome-story-lead">Pre všetko dôležité v Tvojom okolí a cestovanie.</p>
                 <aside class="welcome-location-card" aria-label="Nastavenie polohy alebo krajiny">
-                  <span class="welcome-location-icon" aria-hidden="true">⌖</span>
                   <button class="secondary" type="button" id="welcomeLocateBtn">Povoliť polohu</button>
                   <p class="welcome-location-benefit">Použijeme ju iba na určenie krajiny. Súradnice neukladáme.</p>
                   <button class="welcome-text-button" type="button" id="welcomeManualCountryBtn" aria-expanded="false" aria-controls="welcomeManualCountry">Vybrať krajinu ručne</button>
@@ -2973,7 +2972,7 @@
                       </select>
                     </label>
                   </div>
-                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"><b>Slovensko</b> je zatiaľ nastavené.</p>
+                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"><span aria-hidden="true">✓</span><span><b>Slovensko.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span></p>
                   <p class="welcome-location-source hidden" id="welcomeLocationSource">Určenie krajiny: © OpenStreetMap contributors</p>
                   <p class="hidden" id="countryCopy"></p>
                 </aside>
@@ -7509,8 +7508,8 @@ Otázky:
       if ($("countrySetupSummary")) {
         const ready = country === "SK" || country === "CZ";
         $("countrySetupSummary").innerHTML = ready
-          ? `<b>${countryName}</b> je nastavené. Kedykoľvek to môžeš zmeniť.`
-          : `<b>${countryName}</b> používa európsky základ; miestny obsah budeme postupne dopĺňať.`;
+          ? `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span>`
+          : `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Použijeme európsky základ; miestny obsah budeme postupne dopĺňať.</span>`;
       }
       if ($("countryCopy")) {
         $("countryCopy").textContent = `Vyberiem štát → Guguboo sa nastaví podľa miesta, kde žijem. Zvolená krajina: ${countryName}.`;
@@ -7589,7 +7588,7 @@ Otázky:
           }
           updateCountryUI(code);
           state.travelCountry = code;
-          if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<b>${euCountries[code]}</b> nastavené podľa polohy. Súradnice sme neuložili.`;
+          if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<span aria-hidden="true">✓</span><span><b>${euCountries[code]}.</b> Krajinu sme určili podľa polohy; súradnice sme neuložili.</span>`;
           if ($("welcomeLocationSource")) $("welcomeLocationSource").classList.remove("hidden");
           updateWelcomeStory();
         } catch (error) {
@@ -8513,7 +8512,7 @@ Otázky:
     $("welcomeCountry").addEventListener("change", () => {
       state.travelCountry = $("welcomeCountry").value;
       updateCountryUI($("welcomeCountry").value);
-      if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<b>${euCountries[$("welcomeCountry").value]}</b> nastavené ručne. Polohu nepotrebujeme.`;
+      if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<span aria-hidden="true">✓</span><span><b>${euCountries[$("welcomeCountry").value]}.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span>`;
       if ($("welcomeLocationSource")) $("welcomeLocationSource").classList.add("hidden");
       setWelcomeInsurance("");
       setWelcomeStatus(state.welcomeStatus || "expecting");
