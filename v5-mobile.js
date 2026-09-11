@@ -45,6 +45,7 @@
     moon: "<path d='M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z'/>",
     feeding: "<path d='M9 3h6'/><path d='M10 3v4l-3 4v8a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-8l-3-4V3'/><path d='M8 13h8'/>",
     diaper: "<path d='M5 7c2 1 4 1.5 7 1.5S17 8 19 7v9c-2 3-4.3 4.5-7 4.5S7 19 5 16Z'/><path d='M5 11h4l3 3 3-3h4'/>",
+    bath: "<path d='M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Z'/><path d='M7 12V7a3 3 0 0 1 6 0'/><path d='M13 7h3M7 20v1M17 20v1'/>",
     temperature: "<path d='M14 14.8V5a3 3 0 0 0-6 0v9.8a5 5 0 1 0 6 0Z'/><path d='M11 8v9'/>",
     weather: "<path d='M8 17h9a4 4 0 1 0-1.2-7.8A6 6 0 0 0 4 11a3 3 0 0 0 4 6Z'/><path d='M8 3V1M3.5 5.5 2 4M18 4l-1.5 1.5'/>",
     calendar: "<rect x='3' y='5' width='18' height='16' rx='2'/><path d='M16 3v4M8 3v4M3 10h18'/>",
@@ -63,14 +64,22 @@
     alert: "<path d='M12 3 2.5 20h19Z'/><path d='M12 9v4M12 17h.01'/>",
     products: "<path d='M8 3h8M9 3v4l-3 5v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7l-3-5V3'/><path d='M7 14h10'/>",
     profile: "<circle cx='12' cy='7.5' r='3.5'/><path d='M5 21v-2a7 7 0 0 1 14 0v2'/>",
-    cards: "<rect x='5' y='3' width='14' height='18' rx='2'/><path d='M9 8h6M9 12h6M9 16h3'/>"
+    cards: "<rect x='5' y='3' width='14' height='18' rx='2'/><path d='M9 8h6M9 12h6M9 16h3'/>",
+    lock: "<rect x='5' y='10' width='14' height='11' rx='2'/><path d='M8 10V7a4 4 0 0 1 8 0v3M12 14v3'/>",
+    tooth: "<path d='M7 3c-3 1-4 5-2 9l2 7c.4 1.4 2.3 1.3 2.6-.1L11 13h2l1.4 5.9c.3 1.4 2.2 1.5 2.6.1l2-7c2-4 1-8-2-9-2-.7-3 .5-5 .5S9 2.3 7 3Z'/>",
+    activity: "<circle cx='8' cy='8' r='3'/><circle cx='16' cy='8' r='3'/><path d='M5 20v-2a4 4 0 0 1 6-3.5M19 20v-2a4 4 0 0 0-6-3.5M12 4v7'/>",
+    plus: "<path d='M12 5v14M5 12h14'/>",
+    pin: "<path d='m14.5 3.5 6 6-3.2 1.1-3.7 3.7-.2 4.1-1.7 1.7-3.3-5.5-5.5-3.3 1.7-1.7 4.1-.2 3.7-3.7Z'/><path d='m8.4 15.6-5 5'/>",
+    more: "<circle cx='5' cy='5' r='1.5'/><circle cx='12' cy='5' r='1.5'/><circle cx='19' cy='5' r='1.5'/><circle cx='5' cy='12' r='1.5'/><circle cx='12' cy='12' r='1.5'/><circle cx='19' cy='12' r='1.5'/><circle cx='5' cy='19' r='1.5'/><circle cx='12' cy='19' r='1.5'/><circle cx='19' cy='19' r='1.5'/>"
   };
   const icon = name => "<svg viewBox='0 0 24 24' aria-hidden='true'>" + (iconPaths[name] || iconPaths.sparkle) + "</svg>";
 
   const features = {
     sleep: { label: "Spánok", description: "Spustiť alebo doplniť spánok", icon: "moon", tier: "premium", flow: "sleep" },
     feeding: { label: "Kŕmenie", description: "Dojčenie, fľaša alebo iné", icon: "feeding", tier: "free", flow: "feeding" },
-    diaper: { label: "Plienky", description: "Rýchly záznam prebalenia", icon: "diaper", tier: "free", flow: "diaper" },
+    diaper: { label: "Prebaľovanie", description: "Kedy dieťa cikalo alebo kakalo", icon: "diaper", tier: "free", flow: "diaper" },
+    bath: { label: "Kúpanie", description: "Čas kúpeľa a krátka poznámka", icon: "bath", tier: "free", flow: "bath" },
+    tracker: { label: "Denné záznamy", description: "Starostlivosť na jednom mieste", icon: "sparkle", tier: "free", view: "tracker" },
     temperature: { label: "Teplota", description: "Uložiť meranie bez ďalších polí", icon: "temperature", tier: "free", flow: "temperature" },
     weather: { label: "Počasie", description: "Oblečenie podľa situácie", icon: "weather", tier: "free", flow: "weather" },
     calendar: { label: "Kalendár", description: "Termíny a rodinné udalosti", icon: "calendar", tier: "premium", view: "calendar" },
@@ -81,12 +90,15 @@
     night: { label: "Nočná pomoc", description: "Pokojná orientácia v noci", icon: "moon", tier: "premium", view: "night" },
     guide: { label: "Sprievodca", description: "Krátka pomoc krok po kroku", icon: "sparkle", tier: "premium", view: "guide" },
     health: { label: "Zdravie", description: "Záznamy, alergie a report", icon: "health", tier: "premium", view: "health" },
-    growth: { label: "Rast", description: "Hmotnosť, výška a obvod hlavy", icon: "growth", tier: "premium", view: "growth" },
+    teeth: { label: "Zúbky", description: "Mapa, starostlivosť a zubár", icon: "tooth", tier: "free", view: "teeth" },
+    growth: { label: "Rast a váha", description: "Hmotnosť, výška a obvod hlavy", icon: "growth", tier: "premium", view: "growth" },
     urgent: { label: "Urgentná pomoc", description: "Varovné signály a kontakty", icon: "alert", tier: "free", view: "urgent" },
     checklists: { label: "Checklisty", description: "Zoznamy podľa situácie", icon: "checklist", tier: "free", view: "v5Checklists" },
-    memories: { label: "Spomienky", description: "Jeden okamih a fotografia", icon: "memory", tier: "premium", view: "diary" },
+    memories: { label: "Momenty", description: "Dnešná fotka alebo krátka veta", icon: "memory", tier: "premium", view: "diary" },
     first100: { label: "Prvých 100 dní", description: "Jemná každodenná cesta", icon: "baby", tier: "premium", view: "v5First100" },
+    activities: { label: "Aktivity", description: "Krátke spoločné chvíle podľa veku", icon: "activity", tier: "free", view: "activities" },
     diary: { label: "Rodinný denník", description: "Chronologický príbeh rodiny", icon: "book", tier: "premium", view: "diary" },
+    privateSpace: { label: "Môj priestor", description: "Súkromné zápisy chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
     chronicle: { label: "Albumy a kronika", description: "Výstupy z uložených chvíľ", icon: "memory", tier: "addon", view: "memoryOutput" },
     cards: { label: "Kartičky", description: "Narodenie, míľniky a znamenia", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Veľkosť bábätka", description: "Obdobie tehotenstva", icon: "baby", tier: "free", view: "pregnancyGrowth" },
@@ -95,28 +107,62 @@
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "products" },
     family: { label: "Rodina", description: "Spoločné úlohy a zastúpenie", icon: "family", tier: "premium", view: "family" },
     profiles: { label: "Profily rodiny", description: "Mama, dieťa a blízke osoby", icon: "profile", tier: "free", view: "v5Profiles" },
-    ai: { label: "AI pomoc", description: "Otázka vlastnými slovami", icon: "sparkle", tier: "premium", view: "assistant" }
+    ai: { label: "Otázka a odporúčanie", description: "Orientačný ďalší krok", icon: "sparkle", tier: "premium", view: "assistant" },
+    care: { label: "Pomoc a starostlivosť", description: "Rady, choroba, noc a zdravotné záznamy", icon: "health", tier: "free", view: "v5Care" }
   };
 
   const featureGroups = [
-    ["Každý deň", ["sleep", "feeding", "diaper", "temperature", "weather", "calendar", "shopping", "contacts", "travel"]],
-    ["Pokoj a zaspávanie", ["sounds", "night", "guide"]],
-    ["Zdravie a vývoj", ["growth", "health", "urgent", "checklists", "ai"]],
-    ["Spomienky", ["memories", "first100", "diary", "chronicle", "cards"]],
-    ["Pred narodením", ["pregnancy", "beforeBirth", "administration", "products"]],
-    ["Rodina", ["family", "profiles"]]
+    ["Pomoc a podpora", ["care"]],
+    ["Zdravie a vývoj", ["teeth", "checklists", "activities"]],
+    ["Rodina a plánovanie", ["family", "profiles", "calendar", "shopping", "contacts", "travel", "products", "weather"]],
+    ["Spomienky a súkromie", ["memories", "cards", "privateSpace"]]
   ];
 
-  const favoriteOptions = ["sleep", "feeding", "diaper", "temperature", "weather", "sounds", "memories", "calendar", "shopping", "contacts", "travel", "growth", "health", "checklists", "beforeBirth"];
+  const postpartumDrawerFeatures = [
+    "privateSpace", "care", "activities", "teeth", "family", "calendar", "shopping",
+    "contacts", "checklists", "administration", "travel", "products", "weather"
+  ];
+
+  const favoriteOptions = phase => phase === "expecting"
+    ? ["beforeBirth", "checklists", "contacts", "travel", "weather", "care", "shopping"]
+    : ["privateSpace", "care", "activities", "family", "calendar", "shopping", "contacts", "checklists", "administration", "travel", "products", "weather", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
     ? ["beforeBirth", "checklists", "contacts", "travel"]
-    : ["sleep", "feeding", "sounds", "memories"];
+    : ["privateSpace", "shopping", "activities", "family"];
+  const legacyCareFeatures = new Set(["health", "urgent", "guide", "night", "ai"]);
+  const normalizeFavorites = (favorites, phase) => {
+    const allowed = favoriteOptions(phase);
+    const allowedSet = new Set(allowed);
+    const normalized = [...new Set((favorites || []).map(key => {
+      if (legacyCareFeatures.has(key) || key === "temperature") return "care";
+      if (key === "sounds") return "sleep";
+      return key;
+    }))].filter(key => allowedSet.has(key));
+    for (const key of [...defaultFavorites(phase), ...allowed]) {
+      if (normalized.length >= 4) break;
+      if (!normalized.includes(key)) normalized.push(key);
+    }
+    return normalized.slice(0, 4);
+  };
 
   state.v5 ||= {};
   state.v5.version = 5;
-  state.v5.phase ||= state.profile.status || "expecting";
-  state.v5.favorites ||= defaultFavorites(state.v5.phase);
   state.v5.favoritesCustomized ||= false;
+  const savedFavoritePhase = state.v5.phase;
+  const activeFavoritePhase = state.profile.status || savedFavoritePhase || "expecting";
+  if (savedFavoritePhase && savedFavoritePhase !== activeFavoritePhase && !state.v5.favoritesCustomized) {
+    state.v5.favorites = defaultFavorites(activeFavoritePhase);
+  }
+  state.v5.phase = activeFavoritePhase;
+  state.v5.favorites ||= defaultFavorites(activeFavoritePhase);
+  state.v5.favorites = normalizeFavorites(state.v5.favorites, activeFavoritePhase);
+  if (activeFavoritePhase !== "expecting" && Number(state.v5.bottomMenuVersion || 0) < 2) {
+    if (state.v5.favorites.join("|") === "privateSpace|care|activities|family") {
+      state.v5.favorites = defaultFavorites(activeFavoritePhase);
+    }
+    state.v5.bottomMenuVersion = 2;
+    persist();
+  }
   state.v5.drawerHintDismissed ||= false;
   state.v5.flow ||= { type: "", step: 0, data: {} };
   state.v5.feedingTimer ||= { active: false, start: "", method: "", side: "" };
@@ -145,6 +191,8 @@
   state.v5.prenatalSection ||= "home";
   state.v5.audio ||= { active: false, type: "", title: "", volume: 18, stopAt: "" };
   state.v5.soundSection ||= "home";
+  state.v5.memoryRhythm ||= "daily100";
+  state.v5.lastDiaperSize ||= "";
   persist();
 
   const main = document.querySelector(".main");
@@ -172,17 +220,25 @@
     "<section class='view' id='v5Cards'><div class='v5-flow' id='v5CardsContent'></div></section>",
     "<section class='view' id='v5Checklists'><div class='v5-flow' id='v5ChecklistsContent'></div></section>",
     "<section class='view' id='v5Prenatal'><div class='v5-flow' id='v5PrenatalContent'></div></section>",
-    "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>"
+    "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
+    "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>"
   ].join(""));
 
   document.body.insertAdjacentHTML("beforeend", [
     "<div id='v5PersistentTimers' aria-live='polite'></div>",
     "<div id='v5AudioDock' aria-live='polite'></div>",
     "<nav id='v5BottomBar' aria-label='Štyri obľúbené funkcie'></nav>",
+    "<div id='v5QuickRecordOverlay' aria-hidden='true'>",
+    "<aside id='v5QuickRecord' role='dialog' aria-modal='true' aria-labelledby='v5QuickRecordTitle'>",
+    "<div class='v5-drawer-head'><div><h2 id='v5QuickRecordTitle'>Čo chcete zaznamenať?</h2><p>Vyberte jednu zo šiestich každodenných udalostí.</p></div>",
+    "<button class='v5-icon-button' type='button' data-v5-close-record aria-label='Zatvoriť'>×</button></div>",
+    "<div class='v5-quick-record-grid'>",
+    ["sleep", "feeding", "diaper", "temperature"].map(key => quickFeatureButton(key)).join("") + quickFeatureButton("growth", "Výška a váha") + quickFeatureButton("bath"),
+    "</div></aside></div>",
     "<div id='v5DrawerOverlay' aria-hidden='true'>",
     "<aside id='v5Drawer' role='dialog' aria-modal='true' aria-labelledby='v5DrawerTitle'>",
-    "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť všetky funkcie'></button>",
-    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Všetky funkcie</h2><p>Vyberte si podľa toho, čo práve potrebujete.</p></div>",
+    "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť ďalšie aplikácie'></button>",
+    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Ďalšie aplikácie</h2><p>Nástroje mimo rýchlych záznamov a domovskej obrazovky.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-drawer aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-drawer-scroll' id='v5DrawerScroll'></div>",
     "</aside></div>",
@@ -220,18 +276,20 @@
     v5Cards: ["Kartičky", "Narodenie, míľniky a znamenia"],
     v5Checklists: ["Checklisty", "Kategórie podľa situácie"],
     v5Prenatal: ["Pred narodením", "Príprava po krátkych krokoch"],
-    v5Sounds: ["Zvuky a uspávanky", "Pokojný prehrávač zostáva poruke"],
+    v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
+    v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
     sounds: ["Zvuky a uspávanky", "Pokoj a zaspávanie"],
     sleep: ["Spánok", "Časovač a dnešný prehľad"],
     tracker: ["Denné záznamy", "Starostlivosť na jednom mieste"],
     guide: ["Sprievodca", "Krátka cesta krok po kroku"],
-    assistant: ["AI pomoc", "Otázka vlastnými slovami"],
+    assistant: ["Otázka a odporúčanie", "Orientačná pomoc, nie diagnóza"],
     urgent: ["Urgentná pomoc", "Varovné signály a kontakty"],
     calendar: ["Kalendár", "Spoločné rodinné termíny"],
     shopping: ["Nákup", "Spoločný zoznam rodiny"],
     contacts: ["Kontakty", "Dôležití ľudia a služby"],
-    growth: ["Rast", "Merania dieťaťa"],
+    growth: ["Rast a váha", "Hmotnosť, výška a obvod hlavy"],
     health: ["Zdravie", "Záznamy, alergie a report"],
+    teeth: ["Zúbky", "Mapa mliečnych zubov a starostlivosť"],
     travel: ["Cestovanie", "Pôvodná funkcia V4"],
     checklists: ["Checklisty", "Zoznamy podľa situácie"],
     beforeBirth: ["Pred narodením", "Príprava krok po kroku"],
@@ -239,10 +297,12 @@
     stateSupport: ["Úrady", "Lokálne kroky a podpora"],
     products: ["Výbava a produkty", "Používané veci"],
     family: ["Rodina", "Úlohy a spoločné informácie"],
-    diary: ["Spomienky", "Fotografie a rodinný príbeh"],
+    diary: ["Momenty", "Jedna fotka alebo krátka veta"],
+    privateSpace: ["Môj priestor", "Súkromné zápisy na tomto zariadení"],
     memoryOutput: ["Kronika", "Výstupy z uložených chvíľ"],
     birthCard: ["Kartička narodenia", "Údaje dieťaťa na jednom mieste"],
     firstYear: ["Obsah podľa veku", "Aktuálne obdobie dieťaťa"],
+    activities: ["Aktivity", "Spoločné chvíle podľa veku"],
     premium: ["Premium", "Rozšírené rodinné funkcie"]
   };
 
@@ -256,10 +316,13 @@
   function ensureFavoritePhase() {
     const phase = state.profile.status || "expecting";
     if (state.v5.phase !== phase && !state.v5.favoritesCustomized) {
-      state.v5.phase = phase;
       state.v5.favorites = defaultFavorites(phase);
-      persist();
     }
+    const normalizedFavorites = normalizeFavorites(state.v5.favorites, phase);
+    const changed = state.v5.phase !== phase || normalizedFavorites.join("|") !== state.v5.favorites.join("|");
+    state.v5.phase = phase;
+    state.v5.favorites = normalizedFavorites;
+    if (changed) persist();
   }
 
   function routeTo(view) {
@@ -313,7 +376,7 @@
   function activeFeatureId() {
     const view = currentView();
     if (view === "v5Flow") {
-      const flowMap = { sleep: "sleep", feeding: "feeding", diaper: "diaper", temperature: "temperature", weather: "weather" };
+      const flowMap = { sleep: "sleep", feeding: "feeding", diaper: "diaper", temperature: "temperature", bath: "bath", weather: "weather" };
       return flowMap[state.v5.flow.type] || "";
     }
     return Object.keys(features).find(key => features[key].view === view) || "";
@@ -322,7 +385,8 @@
   function renderBottomBar() {
     ensureFavoritePhase();
     const active = activeFeatureId();
-    byId("v5BottomBar").innerHTML = "<button class='v5-bottom-handle' type='button' data-v5-open-drawer aria-label='Otvoriť všetky funkcie'><span aria-hidden='true'>⌃</span> Všetky funkcie</button>" + state.v5.favorites.slice(0, 4).map(key => {
+    const visibleFavorites = state.v5.favorites.filter(key => state.profile.status !== "expecting" || !["privateSpace", "teeth", "activities"].includes(key));
+    byId("v5BottomBar").innerHTML = "<button class='v5-bottom-handle' type='button' data-v5-open-drawer aria-label='Otvoriť ďalšie aplikácie'><span aria-hidden='true'>⌃</span> Ďalšie aplikácie</button>" + visibleFavorites.slice(0, 4).map(key => {
       const feature = features[key] || features.sleep;
       return [
         "<button class='v5-bottom-action", active === key ? " active" : "", "' type='button' data-v5-feature='", key,
@@ -341,11 +405,11 @@
     ].join("");
   }
 
-  function quickFeatureButton(key) {
+  function quickFeatureButton(key, label) {
     const feature = features[key] || features.sleep;
     return [
       "<button class='v5-quick-tile' type='button' data-v5-feature='", key, "'>",
-      "<span class='v5-icon'>", icon(feature.icon), "</span><strong>", escapeHtml(feature.label), "</strong></button>"
+      "<span class='v5-icon'>", icon(feature.icon), "</span><strong>", escapeHtml(label || feature.label), "</strong></button>"
     ].join("");
   }
 
@@ -364,6 +428,9 @@
       .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
     const today = todayKey();
     const todayMemory = state.diary.find(item => (item.date || String(item.created || "").slice(0, 10)) === today);
+    const momentCard = {
+      text: todayMemory ? "Dnešný moment je uložený. Môžete si ho pozrieť alebo pridať ďalší." : "Pridajte jednu fotku alebo krátku vetu."
+    };
     const phaseLine = expecting ? dueText() : escapeHtml(age?.label || "Spoločný deň");
     const pregnancyAvatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, label: "mango", position: "0% 100%" };
     const babyAvatar = expecting
@@ -372,7 +439,7 @@
         ].join("")
       : state.profile.photo
         ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
-        : "<button class='v5-baby-avatar v5-empty-avatar' type='button' data-v5-child-avatar aria-label='Nahrať fotografiu dieťaťa'>☺<span class='v5-sr-only'>Nahrať fotografiu</span></button>";
+        : "<button class='v5-baby-avatar v5-empty-avatar' type='button' data-v5-child-avatar aria-label='Nahrať fotografiu dieťaťa'>" + icon("baby") + "<span class='v5-sr-only'>Nahrať fotografiu</span></button>";
     const avatarPopover = expecting ? [
       "<div class='v5-avatar-popover' id='v5AvatarPopover' hidden>",
       "<span class='v5-avatar-popover-photo v5-fruit-avatar' role='img' aria-label='", escapeHtml(pregnancyAvatar.label), "' style='background-position:", pregnancyAvatar.position, "'></span>",
@@ -394,27 +461,21 @@
       ? "Pripravte dnes jednu vec do pôrodnice."
       : state.sleepTimer?.active
         ? "Spánok práve prebieha."
-        : "Jeden malý záznam stačí.";
-    const recommendationAction = expecting ? "hospital" : state.sleepTimer?.active ? "sleep" : "tracker";
-    const recommendationLabel = expecting ? "Otvoriť checklist Taška do pôrodnice" : state.sleepTimer?.active ? "Otvoriť prebiehajúci spánok" : "Otvoriť denné záznamy";
+        : "Dnešný malý moment";
+    const recommendationAction = expecting ? "hospital" : state.sleepTimer?.active ? "sleep" : "memories";
+    const recommendationLabel = expecting ? "Otvoriť checklist Taška do pôrodnice" : state.sleepTimer?.active ? "Otvoriť prebiehajúci spánok" : momentCard.text;
     target.innerHTML = [
       "<section class='v5-home-hero'><div class='v5-home-person'>", babyAvatar, "<div><h1>", escapeHtml(name), "</h1><p>", phaseLine, "</p></div><button class='v5-mini-profile' type='button' data-v5-feature='profiles' aria-label='Otvoriť profil'>",
       icon("user"), "</button></div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 3).map(item => "<div class='v5-glance'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></div>").join(""),
       "</div></section>",
-      "<section class='v5-quick-panel'><div class='v5-compact-head'><div><h2>Rýchlo zaznamenať</h2><p>Jedným dotykom.</p></div><button type='button' data-v5-open-drawer>Upraviť</button></div><div class='v5-quick-grid'>",
-      state.v5.favorites.map(quickFeatureButton).join(""), "</div></section>",
+      "<section class='v5-quick-panel'><div class='v5-compact-head'><div><h2>Rýchle záznamy</h2><p>Najčastejšie údaje sú spolu na jednom mieste.</p></div></div>",
+      "<button class='v5-record-cta' type='button' data-v5-open-record><span class='v5-icon'>", icon("plus"), "</span><span><strong>Zaznamenať</strong><small>Spánok · kŕmenie · prebaľovanie · teplota · výška a váha · kúpanie</small></span></button></section>",
       "<button class='v5-row-card' type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"),
       "</span><div><strong>", nextReminder ? escapeHtml(nextReminder.title) : "Najbližšia udalosť",
       "</strong><span>", nextReminder ? escapeHtml(new Date(nextReminder.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })) : "Pridať do kalendára",
       "</span></div><span class='v5-row-arrow'>›</span></button>",
-      "<button class='v5-today-card' type='button' data-v5-today-action='", recommendationAction, "' aria-label='", escapeHtml(recommendation + " " + recommendationLabel), "'><span class='v5-icon'>", icon(expecting ? "checklist" : "sparkle"), "</span><div><small>Dnes</small><strong>", escapeHtml(recommendation), "</strong><span class='v5-today-hint'>", escapeHtml(recommendationLabel), "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      expecting ? "" : [
-        "<button class='v5-row-card' type='button' data-v5-feature='first100'><span class='v5-icon'>", icon("memory"),
-        "</span><div><strong>", todayMemory ? "Dnešný okamih je uložený" : "Uložiť dnešný okamih",
-        "</strong><span>", todayMemory ? "Doplniť fotografiu alebo text" : "Fotografia alebo krátka veta",
-        "</span></div><span class='v5-row-arrow'>›</span></button>"
-      ].join("")
+      "<button class='v5-today-card' type='button' data-v5-today-action='", recommendationAction, "' aria-label='", escapeHtml(recommendation + " " + recommendationLabel), "'><span class='v5-icon'>", icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory"), "</span><div><small>Dnes</small><strong>", escapeHtml(recommendation), "</strong><span class='v5-today-hint'>", escapeHtml(recommendationLabel), "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>"
     ].join("");
   }
 
@@ -427,7 +488,7 @@
       "<section class='v5-drawer-group' id='v5FavoriteEditor'><h3>Moje spodné menu · presuňte potiahnutím</h3>",
       "<div class='v5-favorite-list'>",
       state.v5.favorites.map((key, index) => {
-        const options = favoriteOptions.map(option => "<option value='" + option + "'" + (option === key ? " selected" : "") + ">" + escapeHtml(features[option].label) + "</option>").join("");
+        const options = favoriteOptions(state.profile.status || "expecting").map(option => "<option value='" + option + "'" + (option === key ? " selected" : "") + ">" + escapeHtml(features[option].label) + "</option>").join("");
         return [
           "<div class='v5-favorite-item' draggable='true' data-v5-favorite-index='", index, "'>",
           "<span class='v5-drag-handle' aria-hidden='true'>↕</span><strong>", escapeHtml(features[key].label),
@@ -438,11 +499,32 @@
     ].join("");
   }
 
+  function drawerApp(key, priority) {
+    const feature = features[key];
+    const pinned = state.v5.favorites.includes(key);
+    return [
+      "<div class='v5-drawer-app-wrap", priority ? " is-priority" : "", "'>",
+      "<button class='v5-drawer-app' type='button' data-v5-feature='", key, "'>",
+      "<span class='v5-icon'>", icon(feature.icon), "</span><strong>", escapeHtml(feature.label), "</strong></button>",
+      "<button class='v5-drawer-pin", pinned ? " active" : "", "' type='button' data-v5-pin-feature='", key,
+      "' aria-pressed='", String(pinned), "' aria-label='", pinned ? "Pripnuté v spodnom menu: " : "Pripnúť do spodného menu: ", escapeHtml(feature.label), "'>",
+      icon("pin"), "</button></div>"
+    ].join("");
+  }
+
   function renderDrawer() {
     const scroll = byId("v5DrawerScroll");
     if (!scroll) return;
+    if (state.profile.status !== "expecting") {
+      scroll.innerHTML = [
+        "<div class='v5-drawer-grid v5-drawer-flat'>",
+        postpartumDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
+        "</div>"
+      ].join("");
+      return;
+    }
     scroll.innerHTML = [
-      featureGroups.map(group => [
+      featureGroups.map(group => [group[0], group[1].filter(key => state.profile.status !== "expecting" || !["privateSpace", "teeth", "activities"].includes(key))]).filter(group => group[1].length).map(group => [
         "<section class='v5-drawer-group'><h3>", escapeHtml(group[0]), "</h3><div class='v5-drawer-grid'>",
         group[1].map(key => {
           const feature = features[key];
@@ -455,6 +537,24 @@
       ].join("")).join(""),
       renderFavoriteEditor()
     ].join("");
+  }
+
+  function openQuickRecord() {
+    const overlay = byId("v5QuickRecordOverlay");
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => overlay.querySelector("[data-v5-close-record]")?.focus(), 40);
+  }
+
+  function closeQuickRecord() {
+    const overlay = byId("v5QuickRecordOverlay");
+    if (!overlay) return;
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    byId("v5BottomBar")?.classList.remove("v5-hidden-for-modal");
+    if (!byId("v5DrawerOverlay")?.classList.contains("open")) document.body.style.overflow = "";
   }
 
   function openDrawer() {
@@ -477,9 +577,18 @@
   function openFeature(key) {
     const feature = features[key];
     if (!feature) return;
+    if (["privateSpace", "teeth", "activities"].includes(key) && state.profile.status === "expecting") return;
     closeDrawer();
+    closeQuickRecord();
     if (feature.flow) {
       state.v5.flow = { type: feature.flow, step: 0, data: {} };
+      persist();
+      routeTo("v5Flow");
+      renderFlow();
+      return;
+    }
+    if (key === "teeth" && state.profile.status !== "expecting") {
+      state.v5.flow = { type: "teeth-intro", step: 0, data: {} };
       persist();
       routeTo("v5Flow");
       renderFlow();
@@ -528,7 +637,31 @@
       renderSounds();
       return;
     }
+    if (feature.view === "v5Care") {
+      routeTo("v5Care");
+      renderCare();
+      return;
+    }
     routeTo(feature.view);
+  }
+
+  function renderCare() {
+    const target = byId("v5CareContent");
+    if (!target) return;
+    const options = [
+      ["guide", "sparkle", "Potrebujem poradiť", "Krátke otázky a ďalší krok"],
+      ["urgent", "alert", "Dieťa má ťažkosti", "Príznaky a hranica, kedy volať pomoc"],
+      ["night", "moon", "Náročná noc", "Upokojenie, spánok a orientácia v noci"],
+      ["health", "health", "Zdravotné záznamy", "Alergie, reakcie, úrazy a report pre pediatra"],
+      ["ai", "sparkle", "Opýtať sa vlastnými slovami", "Súkromné orientačné vyhodnotenie v tomto zariadení"]
+    ];
+    target.innerHTML = [
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Jedno miesto</span><h1>Pomoc a starostlivosť</h1><p>Vyberte, čo práve riešite.</p></header>",
+      "<section class='v5-care-emergency'><div><small>Bezprostredné ohrozenie</small><strong>Dieťa nedýcha, modrie, nereaguje alebo má kŕče</strong></div><div><a href='tel:155'>155</a><a href='tel:112'>112</a></div></section>",
+      "<div class='v5-care-grid'>",
+      options.map(item => "<button class='v5-action v5-care-option' type='button' data-v5-feature='" + item[0] + "'><span class='v5-icon'>" + icon(item[1]) + "</span><span><strong>" + item[2] + "</strong><small>" + item[3] + "</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>").join(""),
+      "</div><p class='v5-care-disclaimer'>Odporúčania sú orientačné a nenahrádzajú pediatra ani tiesňovú pomoc.</p>"
+    ].join("");
   }
 
   function openChecklistCategory(category) {
@@ -573,6 +706,7 @@
           choice("sleep-start", state.sleepTimer?.active ? "Spánok práve beží" : "Spustiť spánok", state.sleepTimer?.active ? "Ukončíte ho z časovača dole." : "Časovač zostane dostupný v celej aplikácii.", "moon") +
           choice("sleep-past", "Pridať spätne", "Doplňte začiatok a koniec.", "calendar") +
           choice("sleep-overview", "Dnešný prehľad", "Pozrite si dnešné uložené spánky.", "growth") +
+          choice("sleep-sounds", "Zvuky na zaspávanie", "Biely šum, uspávanka alebo vlastná nahrávka.", "sound") +
           "</div>";
       } else if (data.mode === "start") {
         html = flowHead("Spánok", "Aký spánok začína?", "Stačí vybrať typ a spustiť meranie.", 1, 2) +
@@ -632,16 +766,20 @@
 
     if (flow.type === "diaper") {
       if (flow.step === 0) {
-        html = flowHead("Plienky", "Čo ste zaznamenali?", "Najprv stačí typ. Podrobnosti sú nepovinné.", 0, 2) +
+        html = flowHead("Prebaľovanie", "Čo bolo v plienke?", "Vyberte dôvod prebalenia.", 0, 2) +
           "<div class='v5-choice-grid'>" +
-          choice("diaper-wet", "Mokrá", "Rýchly záznam moču.", "diaper") +
-          choice("diaper-dirty", "Stolica", "Voliteľne doplníte farbu a konzistenciu.", "diaper") +
-          choice("diaper-both", "Oboje", "Mokrá plienka aj stolica.", "diaper") +
-          choice("diaper-dry", "Suchá", "Kontrolná výmena bez obsahu.", "diaper") +
+          choice("diaper-wet", "Cikalo", "Mokrá plienka.", "diaper") +
+          choice("diaper-dirty", "Kakalo", "Voliteľne doplníte detail stolice.", "diaper") +
+          choice("diaper-both", "Cikalo aj kakalo", "Mokrá plienka aj stolica.", "diaper") +
+          choice("diaper-dry", "Iba kontrola", "Suchá plienka alebo bežná výmena.", "diaper") +
           "</div>";
       } else {
-        html = flowHead("Plienky", "Chcete doplniť detail?", "Ak nie, záznam môžete hneď uložiť.", 1, 2) +
-          "<div class='v5-form-card'><div class='v5-info-box'>Typ: <strong>" + escapeHtml(data.diaperLabel || "") + "</strong></div>" +
+        const diaperTime = data.time || new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        const diaperSizes = [["", "Neuvádzať"], ["0", "0 · pre najmenšie deti"], ["1", "1 · novorodenecká"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"], ["6", "6"], ["7", "7"]];
+        html = flowHead("Prebaľovanie", "Kedy ste prebaľovali?", "Čas a dôvod stačia. Ostatné údaje sú nepovinné.", 1, 2) +
+          "<div class='v5-form-card'><div class='v5-info-box'>Dôvod: <strong>" + escapeHtml(data.diaperLabel || "") + "</strong></div>" +
+          "<label>Čas prebalenia<input id='v5DiaperTime' type='datetime-local' value='" + escapeHtml(diaperTime) + "'></label>" +
+          "<label>Veľkosť plienky — nepovinné<select id='v5DiaperSize'>" + diaperSizes.map(item => "<option value='" + item[0] + "'" + (item[0] === state.v5.lastDiaperSize ? " selected" : "") + ">" + item[1] + "</option>").join("") + "</select></label>" +
           (data.diaper === "dirty" || data.diaper === "both" ? "<label>Farba — nepovinné<select id='v5DiaperColor'><option value=''>Neuvádzať</option><option>Žltá</option><option>Hnedá</option><option>Zelená</option><option>Čierna</option><option>Červená / krv</option></select></label><label>Konzistencia — nepovinné<select id='v5DiaperConsistency'><option value=''>Neuvádzať</option><option>Bežná</option><option>Riedka</option><option>Tuhá</option><option>Hlienovitá</option></select></label>" : "") +
           "<label>Poznámka — nepovinné<textarea id='v5DiaperNote' placeholder='Čokoľvek, čo si chcete zapamätať'></textarea></label></div>" +
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-diaper'>Uložiť prebalenie</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
@@ -655,6 +793,28 @@
         "<label>Poznámka — nepovinné<textarea id='v5TemperatureNote' placeholder='Miesto merania alebo ďalšie pozorovanie'></textarea></label>" +
         "<div class='v5-warning-box'>Ak máte pochybnosti alebo sa dieťa správa nezvyčajne, obráťte sa na pediatra. Pri urgentnom stave volajte miestne tiesňové číslo.</div></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-temperature'>Uložiť meranie</button></div>";
+    }
+
+    if (flow.type === "bath") {
+      const bathTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      html = flowHead("Kúpanie", "Kedy sa dieťa kúpalo?", "Stačí uložiť čas. Poznámka je nepovinná.", 0, 1) +
+        "<div class='v5-form-card'><label>Čas kúpania<input id='v5BathTime' type='datetime-local' value='" + bathTime + "'></label>" +
+        "<label>Poznámka — nepovinné<textarea id='v5BathNote' placeholder='Napríklad pokožka, vlásky alebo nálada'></textarea></label></div>" +
+        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-bath'>Uložiť kúpanie</button></div>";
+    }
+
+    if (flow.type === "teeth-intro") {
+      const age = ageData();
+      const stage = !age
+        ? { eyebrow: "Podľa veku dieťaťa", title: "Kedy budú Zúbky aktuálne?", copy: "Doplňte dátum narodenia a nabudúce vám ukážeme odporúčanie podľa veku." }
+        : age.days < 120
+          ? { eyebrow: age.label, title: "Na prvé zúbky je ešte pravdepodobne čas.", copy: "Každé dieťa je iné. Aplikáciu si môžete pokojne pozrieť už teraz a pripraviť sa." }
+          : age.days < 210
+            ? { eyebrow: age.label, title: "Obdobie prvých zúbkov sa môže približovať.", copy: "Pozrite si jemnú starostlivosť, prejavy a miesto na prvé záznamy." }
+            : { eyebrow: age.label, title: "Zúbky už môžu byť aktuálne.", copy: "Otvorte mapu zúbkov, starostlivosť a vlastné záznamy." };
+      html = flowHead(stage.eyebrow, stage.title, stage.copy, 0, 1) +
+        "<div class='v5-form-card v5-teeth-age-card'><span class='v5-icon'>" + icon("tooth") + "</span><div><strong>Zúbky</strong><p>Všetky funkcie zostávajú dostupné bez ohľadu na vek.</p></div></div>" +
+        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='enter-teeth'>Vstúpiť do Zúbkov</button><button class='v5-secondary' type='button' data-v5-home>Teraz nie</button></div>";
     }
 
     if (flow.type === "weather") {
@@ -830,7 +990,7 @@
         "<div class='v5-form-card'>",
         state.profile.status === "expecting" ? "" : [
           "<div class='v5-child-photo-card'>",
-          state.profile.photo ? "<img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'>" : "<span aria-hidden='true'>☺</span>",
+          state.profile.photo ? "<img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'>" : "<span aria-hidden='true'>" + icon("baby") + "</span>",
           "<div><strong>Fotografia dieťaťa</strong><small>Môže nahradiť ovocný avatar, keď je bábätko na svete.</small><label class='v5-photo-picker'>", state.profile.photo ? "Zmeniť fotografiu" : "Nahrať fotografiu", "<input id='v5ChildPhoto' type='file' accept='image/*'></label></div></div>"
         ].join("") ,
         "<label>Meno<input id='v5ChildName' value='", escapeHtml(state.profile.name || ""), "'></label>",
@@ -1047,7 +1207,7 @@
       palettes.map(item => "<option value='" + item[0] + "'" + (item[0] === state.v5.cardPalette ? " selected" : "") + ">" + item[1] + "</option>").join("") +
       "</select></label></div><div class='v5-zodiac-grid'>" +
       zodiac.map(item => "<button type='button' class='" + (item[0] === selected[0] ? "active" : "") + "' data-v5-zodiac='" + item[0] + "'><span>" + item[2] + "</span><strong>" + item[1] + "</strong><small>" + item[3] + "</small></button>").join("") +
-      "</div><div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='open-birth-card'>Upraviť kartičku narodenia</button><button class='v5-secondary' type='button' data-v5-feature='first100'>Výstupy prvých 100 dní</button></div>";
+      "</div><div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='open-birth-card'>Upraviť kartičku narodenia</button><button class='v5-secondary' type='button' data-v5-feature='memories'>Otvoriť Momenty</button></div>";
   }
 
   const checklistCategories = [
@@ -1149,13 +1309,13 @@
     target.classList.add("active");
     document.body.classList.add("v5-audio-active");
     const remaining = audio.stopAt ? Math.max(0, Math.ceil((new Date(audio.stopAt).getTime() - Date.now()) / 60000)) : 0;
-    target.innerHTML = "<div class='v5-audio-dock-inner'><span class='v5-timer-icon'>" + icon("sound") + "</span><div><strong>" + escapeHtml(audio.title || "Zvuk") + "</strong><span>" + (remaining ? "Vypne sa približne o " + remaining + " min" : "Prehráva sa na pozadí") + "</span></div><button type='button' data-v5-feature='sounds'>Otvoriť</button><button type='button' data-v5-action='stop-audio'>Vypnúť</button></div><div class='v5-audio-controls'><label>Hlasitosť <input id='v5AudioVolume' type='range' min='4' max='45' value='" + escapeHtml(audio.volume || 18) + "'></label><label>Časovač <select id='v5AudioTimer'><option value=''>Bez časovača</option><option value='15'>15 min</option><option value='30'>30 min</option><option value='60'>60 min</option></select></label></div>";
+    target.innerHTML = "<div class='v5-audio-dock-inner'><span class='v5-timer-icon'>" + icon("sound") + "</span><div><strong>" + escapeHtml(audio.title || "Zvuk") + "</strong><span>" + (remaining ? "Vypne sa približne o " + remaining + " min" : "Prehráva sa na pozadí") + "</span></div><button type='button' data-v5-feature='sleep'>Spánok</button><button type='button' data-v5-action='stop-audio'>Vypnúť</button></div><div class='v5-audio-controls'><label>Hlasitosť <input id='v5AudioVolume' type='range' min='4' max='45' value='" + escapeHtml(audio.volume || 18) + "'></label><label>Časovač <select id='v5AudioTimer'><option value=''>Bez časovača</option><option value='15'>15 min</option><option value='30'>30 min</option><option value='60'>60 min</option></select></label></div>";
   }
 
   function renderSounds() {
     const target = byId("v5SoundsContent");
     if (!target) return;
-    target.innerHTML = flowHead("Zvuky", "Čo dnes pomôže pri zaspávaní?", "Vyberte šum, uspávanku alebo nahrajte vlastný rodinný zvuk.", 0, 1) +
+    target.innerHTML = flowHead("Spánok", "Zvuky na zaspávanie", "Vyberte šum, uspávanku alebo vlastný rodinný zvuk.", 0, 1) +
       "<div class='v5-choice-grid'>" +
       "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Biely šum</strong><small>Jemné stále pozadie.</small></span></button>" +
       "<button class='v5-choice' type='button' data-v5-audio-type='lullaby-soft' data-v5-audio-title='Jemná uspávanka'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Uspávanka</strong><small>Pokojná predvolená melódia.</small></span></button>" +
@@ -1165,7 +1325,9 @@
 
   function updateHeader() {
     const view = currentView();
-    const title = viewTitles[view] || ["Guguboo", "Rodinný pomocník"];
+    const title = view === "v5Flow" && state.v5.flow?.type === "teeth-intro"
+      ? ["Zúbky", "Odporúčanie podľa veku"]
+      : viewTitles[view] || ["Guguboo", "Rodinný pomocník"];
     byId("v5Header").dataset.home = String(view === "home");
     byId("v5HeaderTitle").textContent = title[0];
     byId("v5HeaderSubtitle").textContent = title[1];
@@ -1186,11 +1348,18 @@
     if (currentView() === "v5Checklists") renderChecklists();
     if (currentView() === "v5Prenatal") renderPrenatal();
     if (currentView() === "v5Sounds") renderSounds();
-    byId("v5DrawerTip").hidden = state.v5.drawerHintDismissed || ["welcome", "birthIntro", "pregnancyIntro"].includes(currentView());
+    byId("v5DrawerTip").hidden = true;
   }
 
   function handleFlowChoice(choiceKey) {
     const flow = state.v5.flow;
+    if (choiceKey === "sleep-sounds") {
+      state.v5.soundSection = "home";
+      persist();
+      routeTo("v5Sounds");
+      renderSounds();
+      return;
+    }
     if (choiceKey.startsWith("prenatal-")) {
       const section = choiceKey.replace("prenatal-", "");
       if (["bag", "documents", "home"].includes(section)) {
@@ -1225,7 +1394,7 @@
         flow.step = 2;
       }
     } else if (flow.type === "diaper") {
-      const labels = { wet: "Mokrá", dirty: "Stolica", both: "Oboje", dry: "Suchá" };
+      const labels = { wet: "Cikalo", dirty: "Kakalo", both: "Cikalo aj kakalo", dry: "Iba kontrola" };
       flow.data.diaper = choiceKey.replace("diaper-", "");
       flow.data.diaperLabel = labels[flow.data.diaper];
       flow.step = 1;
@@ -1313,6 +1482,19 @@
       openFeature(action);
       return;
     }
+    const pinButton = event.target.closest("[data-v5-pin-feature]");
+    if (pinButton) {
+      const key = pinButton.dataset.v5PinFeature;
+      if (!features[key] || !favoriteOptions(state.profile.status || "expecting").includes(key)) return;
+      if (state.v5.favorites.includes(key)) return announce(features[key].label + " už je pripnutá v spodnom menu.");
+      const removed = state.v5.favorites.length >= 4 ? state.v5.favorites.pop() : "";
+      state.v5.favorites.push(key);
+      state.v5.favoritesCustomized = true;
+      persist();
+      renderDrawer();
+      renderBottomBar();
+      return announce(removed ? features[key].label + " je pripnutá namiesto " + features[removed].label + "." : features[key].label + " je pripnutá v spodnom menu.");
+    }
     const featureButtonElement = event.target.closest("[data-v5-feature]");
     if (featureButtonElement) {
       openFeature(featureButtonElement.dataset.v5Feature);
@@ -1328,6 +1510,8 @@
       return announce(state.v5.night ? "Nočný režim je zapnutý." : "Nočný režim je vypnutý.");
     }
     if (event.target.closest("[data-v5-open-drawer]")) return openDrawer();
+    if (event.target.closest("[data-v5-open-record]")) return openQuickRecord();
+    if (event.target.closest("[data-v5-close-record]")) return closeQuickRecord();
     if (event.target.closest("[data-v5-close-drawer]")) return closeDrawer();
     if (event.target.closest("[data-v5-dismiss-tip]")) {
       state.v5.drawerHintDismissed = true;
@@ -1451,8 +1635,12 @@
     if (action === "save-diaper") {
       const color = byId("v5DiaperColor")?.value || "";
       const consistency = byId("v5DiaperConsistency")?.value || "";
-      const value = [state.v5.flow.data.diaperLabel, color, consistency].filter(Boolean).join(" · ");
-      state.events.push({ id: createId(), type: "Plienka", value, note: byId("v5DiaperNote")?.value.trim() || "", author: "rodina", created: new Date().toISOString(), diaper: { type: state.v5.flow.data.diaper, color, consistency } });
+      const size = byId("v5DiaperSize")?.value || "";
+      const time = byId("v5DiaperTime")?.value ? new Date(byId("v5DiaperTime").value) : new Date();
+      if (!Number.isFinite(time.getTime())) return announce("Skontrolujte čas prebalenia.");
+      const value = [state.v5.flow.data.diaperLabel, size ? "veľkosť " + size : "", color, consistency].filter(Boolean).join(" · ");
+      state.v5.lastDiaperSize = size;
+      state.events.push({ id: createId(), type: "Plienka", value, note: byId("v5DiaperNote")?.value.trim() || "", author: "rodina", created: time.toISOString(), diaper: { type: state.v5.flow.data.diaper, reason: state.v5.flow.data.diaperLabel, size, color, consistency } });
       if (typeof save === "function") save(); else persist();
       completeFlow("Prebalenie je uložené.", "Záznam sa zobrazí v dnešnom prehľade.");
       return announce(color.includes("Červená") ? "Záznam je uložený. Pri krvi kontaktujte pediatra." : "Prebalenie bolo uložené.");
@@ -1466,6 +1654,20 @@
       if (typeof save === "function") save(); else persist();
       completeFlow("Meranie teploty je uložené.", "Ak máte pochybnosti, obráťte sa na pediatra.");
       return announce("Teplota bola uložená.");
+    }
+    if (action === "save-bath") {
+      const time = byId("v5BathTime")?.value ? new Date(byId("v5BathTime").value) : new Date();
+      if (!Number.isFinite(time.getTime())) return announce("Skontrolujte čas kúpania.");
+      state.events.push({ id: createId(), type: "Kúpanie", value: "Kúpanie", note: byId("v5BathNote")?.value.trim() || "", author: "rodina", created: time.toISOString() });
+      if (typeof save === "function") save(); else persist();
+      completeFlow("Kúpanie je uložené.", "Záznam sa zobrazí v dnešnom rodinnom prehľade.");
+      return announce("Kúpanie bolo uložené.");
+    }
+    if (action === "enter-teeth") {
+      skipHistory = true;
+      switchView("teeth");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return announce("Zúbky sú otvorené.");
     }
     if (action === "evaluate-weather") {
       const outdoor = Number(byId("v5WeatherOutdoor").value);
@@ -1593,7 +1795,13 @@
       renderChecklists();
       return announce("Vlastná položka bola pridaná.");
     }
-    if (action === "open-birth-card") return routeTo("birthCard");
+    if (action === "open-birth-card") {
+      state.birthCard ||= {};
+      state.birthCard.zodiac = state.v5.selectedZodiac || state.birthCard.zodiac || "";
+      state.birthCard.zodiacManual = Boolean(state.v5.selectedZodiac);
+      if (typeof populateBirthCardForm === "function") populateBirthCardForm();
+      return routeTo("birthCard");
+    }
   });
 
   document.addEventListener("change", event => {
@@ -1669,6 +1877,10 @@
     if (event.target === byId("v5DrawerOverlay")) closeDrawer();
   });
 
+  byId("v5QuickRecordOverlay").addEventListener("click", event => {
+    if (event.target === byId("v5QuickRecordOverlay")) closeQuickRecord();
+  });
+
   const customSoundAudio = byId("customSoundAudio");
   if (customSoundAudio) {
     customSoundAudio.addEventListener("play", () => {
@@ -1727,7 +1939,8 @@
 
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
-      if (byId("v5DrawerOverlay").classList.contains("open")) closeDrawer();
+      if (byId("v5QuickRecordOverlay").classList.contains("open")) closeQuickRecord();
+      else if (byId("v5DrawerOverlay").classList.contains("open")) closeDrawer();
       else if (!["home", "welcome", "birthIntro", "pregnancyIntro"].includes(currentView())) goBack();
     }
   });
@@ -1748,7 +1961,7 @@
       if (next === "v5Checklists") renderChecklists();
       if (next === "v5Prenatal") renderPrenatal();
       if (next === "v5Sounds") renderSounds();
-      byId("v5DrawerTip").hidden = state.v5.drawerHintDismissed || ["welcome", "birthIntro", "pregnancyIntro"].includes(next);
+      byId("v5DrawerTip").hidden = true;
     }
   });
   document.querySelectorAll(".view").forEach(view => observer.observe(view, { attributes: true, attributeFilter: ["class"] }));

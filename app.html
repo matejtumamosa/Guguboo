@@ -2618,6 +2618,245 @@
       .birth-card-layout { grid-template-columns: 1fr; }
       .birth-card-form-panel { position: static; }
     }
+
+    /* V6.10 — kartička narodenia podľa 12 znamení zverokruhu */
+    .birth-card-zodiac-summary { display:grid; grid-template-columns:48px 1fr; gap:12px; align-items:center; margin:14px 0 18px; padding:12px 14px; border:1px solid color-mix(in srgb,var(--brand) 22%,var(--line)); border-radius:16px; background:linear-gradient(135deg,var(--accent-soft),rgba(255,255,255,.82)); }
+    .birth-card-zodiac-summary > span { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; background:#fff; color:var(--brand); font-family:"Segoe UI Symbol",sans-serif; font-size:28px; }
+    .birth-card-zodiac-summary strong,.birth-card-zodiac-summary small { display:block; }
+    .birth-card-zodiac-summary small { margin-top:3px; color:var(--muted); line-height:1.35; }
+    .birth-zodiac-picker { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    .birth-zodiac-option { min-height:76px; padding:9px 6px; display:grid; place-items:center; gap:2px; border:1px solid var(--line); border-radius:14px; background:#fff; color:var(--ink); font-size:11px; font-weight:800; }
+    .birth-zodiac-option span { color:var(--brand); font-family:"Segoe UI Symbol",sans-serif; font-size:25px; }
+    .birth-zodiac-option small { color:var(--muted); font-size:8px; }
+    .birth-zodiac-option.active,.birth-zodiac-option[aria-pressed="true"] { border-color:var(--brand); background:var(--accent-soft); box-shadow:0 0 0 3px rgba(123,107,200,.12); }
+    .birth-zodiac-help { margin:9px 0 0; color:var(--muted); font-size:12px; line-height:1.45; }
+    .birth-card-zodiac-art { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .birth-card-zodiac-art::before { content:"✦  ·  ✧     ·  ✦     ·  ✧  ·  ✦"; position:absolute; inset:4% 5% auto; color:color-mix(in srgb,var(--card-accent) 35%,transparent); font-size:clamp(14px,3vw,24px); line-height:2.6; word-spacing:15px; text-align:center; }
+    .birth-card-zodiac-symbol-art { position:absolute; right:5%; bottom:2%; color:color-mix(in srgb,var(--card-accent) 14%,transparent); font-family:"Segoe UI Symbol",sans-serif; font-size:clamp(120px,33vw,230px); line-height:1; }
+    .birth-card-zodiac-constellation { position:absolute; left:6%; bottom:8%; color:color-mix(in srgb,var(--card-accent) 35%,transparent); font-size:clamp(19px,4vw,34px); letter-spacing:.18em; transform:rotate(-8deg); }
+    .birth-card-zodiac-badge { display:inline-flex; align-items:center; align-self:center; gap:7px; margin:3px auto 7px; padding:5px 11px; border:1px solid color-mix(in srgb,var(--card-accent) 28%,transparent); border-radius:999px; background:rgba(255,255,255,.34); color:var(--card-accent); font-size:clamp(10px,2vw,13px); font-weight:800; }
+    .birth-card-zodiac-badge span { font-family:"Segoe UI Symbol",sans-serif; font-size:1.35em; }
+    .birth-card-zodiac-tagline { margin:1px auto 5px; max-width:34ch; color:var(--card-ink); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(12px,2.6vw,17px); line-height:1.3; }
+    .birth-card-preview.zodiac-baran { background:radial-gradient(circle at 18% 12%,rgba(255,202,159,.72),transparent 27%),linear-gradient(155deg,#fff7ee,#f3d8d2); }
+    .birth-card-preview.zodiac-byk { background:radial-gradient(circle at 82% 14%,rgba(186,211,174,.72),transparent 29%),linear-gradient(155deg,#fffaf0,#dfead9); }
+    .birth-card-preview.zodiac-blizenci { background:radial-gradient(circle at 20% 20%,rgba(189,218,245,.7),transparent 24%),radial-gradient(circle at 82% 18%,rgba(242,199,211,.65),transparent 25%),linear-gradient(155deg,#fbf8ff,#e8e4f7); }
+    .birth-card-preview.zodiac-rak { background:radial-gradient(circle at 50% 2%,rgba(255,255,255,.96),transparent 30%),linear-gradient(155deg,#eef7ff,#e4def4); }
+    .birth-card-preview.zodiac-lev { background:radial-gradient(circle at 50% 12%,rgba(255,215,116,.65),transparent 26%),linear-gradient(155deg,#fff7d9,#f1d3d0); }
+    .birth-card-preview.zodiac-panna { background:radial-gradient(circle at 14% 14%,rgba(224,211,169,.7),transparent 28%),linear-gradient(155deg,#fffdf4,#e7e5d5); }
+    .birth-card-preview.zodiac-vahy { background:linear-gradient(145deg,#f7e8ef 0 48%,#e6e8f8 48% 52%,#f8eee7 52%); }
+    .birth-card-preview.zodiac-skorpion { background:radial-gradient(circle at 82% 14%,rgba(204,171,215,.68),transparent 26%),linear-gradient(155deg,#f9f3fb,#e7d9e9); }
+    .birth-card-preview.zodiac-strelec { background:radial-gradient(circle at 18% 15%,rgba(216,186,240,.7),transparent 28%),linear-gradient(155deg,#f7f0ff,#f5ddcf); }
+    .birth-card-preview.zodiac-kozorozec { background:radial-gradient(circle at 78% 11%,rgba(184,203,191,.72),transparent 26%),linear-gradient(155deg,#f8f5ed,#dce4df); }
+    .birth-card-preview.zodiac-vodnar { background:radial-gradient(circle at 20% 12%,rgba(176,222,230,.72),transparent 28%),linear-gradient(155deg,#effbfc,#dfe2f8); }
+    .birth-card-preview.zodiac-ryby { background:radial-gradient(circle at 78% 13%,rgba(184,208,241,.72),transparent 27%),linear-gradient(155deg,#f1f8ff,#e8ddf4); }
+    @media (max-width:560px) { .birth-zodiac-picker { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+
+    /* V6.11 — prémiová kartička inšpirovaná gravírovanou drevenou metrikou */
+    .birth-card-preview-wrap {
+      padding: clamp(14px, 3vw, 26px);
+      background:
+        linear-gradient(110deg, rgba(255,255,255,.7), transparent 36%),
+        #ece8e0;
+      border: 1px solid rgba(78, 64, 49, .12);
+      border-radius: 28px;
+    }
+
+    .birth-card-preview {
+      --card-wood: #f4ead8;
+      --card-ink: #3d332b;
+      aspect-ratio: 4 / 5;
+      border: 6px solid var(--card-frame);
+      border-radius: 28px;
+      color: var(--card-ink);
+      background-color: var(--card-wood) !important;
+      background-image:
+        repeating-linear-gradient(7deg, rgba(95,70,45,.022) 0 1px, transparent 1px 9px),
+        radial-gradient(ellipse at 18% 12%, rgba(255,255,255,.68), transparent 32%),
+        linear-gradient(145deg, #fbf4e8, #eadbc5) !important;
+      box-shadow:
+        0 22px 55px rgba(69, 55, 42, .2),
+        inset 0 0 0 2px rgba(255,255,255,.62),
+        inset 0 0 42px rgba(117,83,48,.055);
+    }
+
+    .birth-card-preview::after {
+      inset: 13px;
+      border: 1px solid color-mix(in srgb, var(--card-frame) 44%, transparent);
+      border-radius: 19px;
+    }
+
+    .birth-card-preview.zodiac-baran { --card-wood:#f4e4d5; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 15% 8%,rgba(199,112,72,.13),transparent 28%),linear-gradient(145deg,#fff5e9,#edd5c3)!important; }
+    .birth-card-preview.zodiac-byk { --card-wood:#e8ead9; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 85% 8%,rgba(103,132,87,.12),transparent 29%),linear-gradient(145deg,#f8f4e7,#dce3d0)!important; }
+    .birth-card-preview.zodiac-blizenci { --card-wood:#e7e5ed; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 14% 12%,rgba(91,139,173,.11),transparent 25%),linear-gradient(145deg,#f8f3ec,#dddce8)!important; }
+    .birth-card-preview.zodiac-rak { --card-wood:#e5e9e8; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 50% 0,rgba(120,142,157,.12),transparent 30%),linear-gradient(145deg,#f7f3e9,#dce3e4)!important; }
+    .birth-card-preview.zodiac-lev { --card-wood:#f1e2c5; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 50% 8%,rgba(186,126,46,.14),transparent 28%),linear-gradient(145deg,#fff4dc,#e8cfaa)!important; }
+    .birth-card-preview.zodiac-panna { --card-wood:#eee8d8; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 12% 10%,rgba(126,116,79,.12),transparent 28%),linear-gradient(145deg,#faf6e9,#e4dcc9)!important; }
+    .birth-card-preview.zodiac-vahy { --card-wood:#eee1df; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 82% 10%,rgba(153,105,120,.11),transparent 27%),linear-gradient(145deg,#faf1ec,#e6d7db)!important; }
+    .birth-card-preview.zodiac-skorpion { --card-wood:#e8dce2; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 82% 10%,rgba(114,75,111,.13),transparent 27%),linear-gradient(145deg,#f7eee9,#ddced9)!important; }
+    .birth-card-preview.zodiac-strelec { --card-wood:#e9dfeb; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 16% 10%,rgba(115,89,150,.12),transparent 29%),linear-gradient(145deg,#f9f0e9,#dfd4e6)!important; }
+    .birth-card-preview.zodiac-kozorozec { --card-wood:#e6e2d8; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 84% 10%,rgba(87,110,93,.12),transparent 27%),linear-gradient(145deg,#f5f0e5,#d9ded5)!important; }
+    .birth-card-preview.zodiac-vodnar { --card-wood:#dfe8e8; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 15% 10%,rgba(73,131,145,.12),transparent 29%),linear-gradient(145deg,#f2f1e8,#d3e2e4)!important; }
+    .birth-card-preview.zodiac-ryby { --card-wood:#e3e3ea; background-image:repeating-linear-gradient(7deg,rgba(95,70,45,.022) 0 1px,transparent 1px 9px),radial-gradient(circle at 84% 10%,rgba(91,112,158,.12),transparent 28%),linear-gradient(145deg,#f5f1e9,#d9dbe7)!important; }
+
+    .birth-card-paper {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto auto auto auto auto 1fr auto;
+      height: 100%;
+      padding: clamp(25px, 4.5vw, 43px) clamp(24px, 5vw, 48px) clamp(20px, 4vw, 36px);
+      text-align: center;
+    }
+
+    .birth-card-brand {
+      color: color-mix(in srgb, var(--card-frame) 82%, #493729);
+      font: 800 clamp(8px, 1.5vw, 11px)/1.2 Montserrat, sans-serif;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+    }
+
+    .birth-card-constellation-stage {
+      width: min(66%, 290px);
+      height: clamp(70px, 15vw, 112px);
+      margin: 8px auto -2px;
+      color: color-mix(in srgb, var(--card-frame) 76%, #5b4635);
+    }
+
+    .birth-card-constellation-stage svg { width:100%; height:100%; overflow:visible; }
+    .birth-card-constellation-stage .constellation-line { stroke:currentColor; stroke-width:1.35; opacity:.48; }
+    .birth-card-constellation-stage .constellation-star { fill:var(--card-wood); stroke:currentColor; stroke-width:1.8; }
+    .birth-card-constellation-stage .constellation-star.major { fill:currentColor; }
+
+    .birth-card-zodiac-badge {
+      display: flex;
+      margin: 0 auto 4px;
+      padding: 0;
+      gap: 7px;
+      color: color-mix(in srgb, var(--card-frame) 86%, #493729);
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      font-size: clamp(9px, 1.8vw, 12px);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .birth-card-zodiac-badge strong { font-weight:900; }
+    .birth-card-zodiac-badge > span:not(.hidden) { opacity:.72; }
+
+    .birth-card-name,
+    .birth-card-preview.name-font-elegant .birth-card-name {
+      margin: 0;
+      color: color-mix(in srgb, var(--card-frame) 88%, #3d2d24);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(48px, 10vw, 82px);
+      font-style: normal;
+      font-weight: 700;
+      line-height: .98;
+      letter-spacing: -.045em;
+      text-shadow: none;
+    }
+
+    .birth-card-preview.name-font-hand .birth-card-name { font-size:clamp(55px,11vw,90px); }
+    .birth-card-preview.name-font-modern .birth-card-name { font-size:clamp(41px,8vw,68px); letter-spacing:-.055em; text-transform:uppercase; }
+
+    .birth-card-zodiac-tagline {
+      margin: 5px auto 8px;
+      color: var(--card-ink);
+      font: italic clamp(11px, 2vw, 15px)/1.35 "Cormorant Garamond", Georgia, serif;
+      opacity: .78;
+    }
+
+    .birth-card-photo-shell {
+      display: none;
+      width: clamp(84px, 19vw, 126px);
+      height: clamp(84px, 19vw, 126px);
+      margin: 2px auto 8px;
+      border-width: 1px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(255,255,255,.25);
+    }
+
+    .birth-card-photo-shell.has-photo { display:block; }
+    .birth-card-monogram { display:none !important; }
+
+    .birth-card-sentence {
+      display: grid;
+      gap: 1px;
+      margin: 3px auto 10px;
+      font-family: Montserrat, sans-serif;
+      font-size: clamp(9px, 1.7vw, 12px);
+      line-height: 1.25;
+    }
+
+    .birth-card-sentence > span { color:var(--card-ink); opacity:.68; }
+    .birth-card-sentence > b { color:var(--card-ink); font-family:"Playfair Display",Georgia,serif; font-size:clamp(18px,3.5vw,27px); font-weight:700; }
+    .birth-card-sentence > small { color:color-mix(in srgb,var(--card-frame) 78%,#493729); font-size:clamp(8px,1.4vw,10px); letter-spacing:.08em; text-transform:uppercase; }
+
+    .birth-card-facts {
+      width: 100%;
+      max-width: none;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 0;
+      margin: 0;
+      padding: 10px 0;
+      border-top: 1px solid color-mix(in srgb,var(--card-frame) 28%,transparent);
+      border-bottom: 1px solid color-mix(in srgb,var(--card-frame) 28%,transparent);
+    }
+
+    .birth-card-fact {
+      display: grid;
+      min-width: 0;
+      min-height: 54px;
+      padding: 3px 7px;
+      grid-template-columns: 1fr;
+      gap: 2px;
+      place-items: center;
+      background: transparent;
+      border: 0;
+      border-right: 1px solid color-mix(in srgb,var(--card-frame) 20%,transparent);
+      border-radius: 0;
+      font-family: Montserrat, sans-serif;
+      text-align: center;
+      backdrop-filter: none;
+    }
+
+    .birth-card-fact:last-child { border-right:0; }
+    .birth-card-fact-icon { display:none; }
+    .birth-card-fact small { display:block; color:var(--card-ink); font-size:clamp(7px,1.35vw,9px); font-weight:700; letter-spacing:.06em; opacity:.58; text-transform:uppercase; }
+    .birth-card-fact b { display:block; margin-top:2px; color:var(--card-ink); font-family:"Playfair Display",Georgia,serif; font-size:clamp(13px,2.3vw,18px); white-space:nowrap; }
+
+    .birth-card-keepsake-meta {
+      display:flex;
+      min-height:42px;
+      margin-top:8px;
+      justify-content:center;
+      align-items:center;
+      gap:20px;
+    }
+
+    .birth-card-keepsake-meta > div { min-width:0; }
+    .birth-card-keepsake-meta small,.birth-card-keepsake-meta b { display:block; }
+    .birth-card-keepsake-meta small { color:var(--card-ink); font-size:clamp(7px,1.3vw,9px); letter-spacing:.07em; opacity:.55; text-transform:uppercase; }
+    .birth-card-keepsake-meta b { margin-top:2px; color:var(--card-ink); font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(11px,2vw,15px); font-weight:700; }
+
+    #birthCardPreviewMessage {
+      align-self:center;
+      min-height:0;
+      margin: 7px auto 0;
+      color:color-mix(in srgb,var(--card-frame) 84%,#493729);
+      font:italic 700 clamp(11px,2.2vw,16px)/1.25 "Cormorant Garamond",Georgia,serif;
+    }
+
+    .birth-card-landscape { height:auto; margin-top:auto; padding-top:7px; }
+    .birth-card-landscape span { position:static; display:block; transform:none; color:var(--card-ink); font-size:clamp(6px,1.2vw,8px); letter-spacing:.17em; opacity:.5; }
+
+    @media(max-width:430px){
+      .birth-card-paper { padding:22px 20px 17px; }
+      .birth-card-constellation-stage { height:74px; margin-top:5px; }
+      .birth-card-facts { padding-block:7px; }
+      .birth-card-fact { min-height:46px; padding-inline:3px; }
+      .birth-card-keepsake-meta { gap:12px; }
+    }
     /* Guguboo visual refresh — aligned with the landing page */
     :root { --radius: 22px; }
     body { background: radial-gradient(circle at 10% 5%,rgba(123,107,200,.16),transparent 28%),radial-gradient(circle at 92% 0%,rgba(255,117,130,.16),transparent 30%),#fff9f7; }
@@ -2762,7 +3001,7 @@
     img, video, canvas, audio { max-width: 100%; }
     .grid > *, .form-grid > *, .quick-grid > *, .home-primary-actions > *,
     .tool-group-grid > *, .topbar > *, .actions > * { min-width: 0; }
-    p, h1, h2, h3, h4, strong, span, label { overflow-wrap: anywhere; }
+    p, h1, h2, h3, h4, strong, span, label { overflow-wrap: break-word; word-break: normal; }
 
     @media (min-width: 1180px) {
       body:not(.welcome-mode):not(.intro-only) .app {
@@ -2838,7 +3077,10 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <link rel="stylesheet" href="v5-mobile.css?v=6.19">
+  <link rel="stylesheet" href="v5-mobile.css?v=6.32">
+  <link rel="stylesheet" href="private-space.css?v=1">
+  <link rel="stylesheet" href="teeth.css?v=1">
+  <link rel="stylesheet" href="activities.css?v=2">
 </head>
 <body>
   <div class="app" id="app">
@@ -2866,15 +3108,18 @@
         <button data-view="night" data-tier="plus">🌙 Noc</button>
         <button data-view="shopping" data-tier="plus">🛒 Nákup</button>
         <button data-view="diary" data-tier="plus">📖 Denník</button>
+        <button data-view="privateSpace" data-tier="free">🔒 Môj priestor</button>
         <button data-view="memoryOutput" data-tier="dokup">🎞️ Pamätné výstupy</button>
         <button data-view="calendar" data-tier="start">📅 Pripomienky</button>
         <button data-view="growth" data-tier="plus">📏 Rast</button>
         <button data-view="health" data-tier="plus">🩺 Zdravotná karta</button>
+        <button data-view="teeth" data-tier="free">🦷 Zúbky</button>
         <button data-view="contacts" data-tier="start">📇 Kontakty</button>
         <button data-view="travel" data-tier="free">🧳 Cestujem</button>
         <button data-view="birthCard" data-tier="free">💛 Kartička narodenia</button>
         <button data-view="guide" data-tier="start">🧭 Sprievodca</button>
         <button data-view="firstYear" data-tier="plus">🌱 Prvý rok</button>
+        <button data-view="activities" data-tier="free">🧸 Aktivity</button>
         <button data-view="products" data-tier="plus">🧴 Produkty</button>
         <button data-view="stateSupport" data-tier="plus">🏛️ Úrady</button>
         <button data-view="family" data-tier="premium">🤝 Rodina</button>
@@ -3849,18 +4094,18 @@
       <section class="view" id="assistant">
         <div class="topbar">
           <div>
-            <h2>Rýchla AI pomoc</h2>
-            <p>Napíšte vlastnými slovami, čo riešite. Guguboo otázku interne zaradí a pripraví najbližší praktický alebo bezpečnostný krok.</p>
+            <h2>Otázka a odporúčanie</h2>
+            <p>Napíšte vlastnými slovami, čo riešite. Guguboo pripraví najbližší praktický alebo bezpečnostný krok.</p>
           </div>
         </div>
         <div class="grid">
           <article class="panel span-8">
-            <div class="ai-local-note"><strong>🔒 Súkromné beta vyhodnotenie</strong><span>V tomto prototype zostáva text v tomto prehliadači a neposiela sa externej AI službe.</span></div>
+            <div class="ai-local-note"><strong>🔒 Súkromné vyhodnotenie</strong><span>Text zostáva v tomto prehliadači a nikam sa neodosiela.</span></div>
             <div class="chat" id="chat"></div>
             <label class="ai-open-label" for="chatInput">Čo sa deje alebo s čím potrebujete pomôcť?</label>
             <textarea id="chatInput" rows="4" placeholder="Napr. Bábätko od rána horšie pije, je spavejšie a malo iba dve mokré plienky. Čo si mám všimnúť a čo zapísať pre pediatra?"></textarea>
             <div class="actions ai-send-actions">
-              <button class="primary" id="sendChat">Vyhodnotiť otázku</button>
+              <button class="primary" id="sendChat">Ukázať ďalší krok</button>
               <span class="muted small">Výsledok je orientačný, nie diagnóza. Pri akútnych príznakoch nečakajte na aplikáciu.</span>
             </div>
           </article>
@@ -3886,6 +4131,10 @@
           </div>
         </div>
         <div class="grid">
+          <article class="panel span-12 urgent-first-action">
+            <div><strong>Ak dieťa nedýcha, modrie, nereaguje alebo má kŕče, nečakajte na vyhodnotenie v aplikácii.</strong><span>Volajte záchrannú službu a postupujte podľa pokynov operátora.</span></div>
+            <div class="contact-actions"><a href="tel:155">Volať 155</a><a href="tel:112">Volať 112</a></div>
+          </article>
           <article class="panel span-5">
             <h3>Čo riešiš?</h3>
               <label>Situácia
@@ -4280,7 +4529,7 @@
       <section class="view" id="growth">
         <div class="topbar">
           <div>
-            <h2>Rast</h2>
+            <h2>Rast a váha</h2>
             <p>Hmotnosť, výška a obvod hlavy na jednom mieste. Rýchlo, bez miešania s alergiami a úrazmi.</p>
           </div>
         </div>
@@ -4427,7 +4676,16 @@
             <h3>Zdravotná história</h3>
             <div class="list" id="incidentList"></div>
           </article>
+          <article class="panel span-12">
+            <h3>Zúbky majú vlastnú jednoduchú mapu</h3>
+            <p class="muted small">Prerezávanie a starostlivosť sledujte bez miešania so zdravotnými záznamami.</p>
+            <div class="actions"><button class="ghost" data-view-jump="teeth" type="button">Otvoriť Zúbky</button></div>
+          </article>
         </div>
+      </section>
+
+      <section class="view" id="teeth" aria-label="Zúbky">
+        <div id="teethApp"></div>
       </section>
 
       <section class="view" id="products">
@@ -4630,6 +4888,7 @@
           <article class="panel span-12">
             <span class="premium-badge">rodinný prístup</span>
             <h3>Mama / Otec</h3>
+            <div class="demo-notice"><strong>Lokálny prototyp</strong><span>Rodinné údaje sú zatiaľ uložené iba v tomto prehliadači. Účty, synchronizácia a notifikácie ešte nie sú aktívne.</span></div>
             <p class="muted small">Každý rodič má vidieť to isté dôležité: posledný spánok, posledné jedlo, aktuálne úlohy a čo treba kúpiť. V ostrej appke bude mať každý vlastné prihlásenie, notifikácie a potvrdenie úlohy.</p>
             <div class="segmented" role="group" aria-label="Rodinný pohľad">
               <button class="active" data-parent-role="mama" type="button">Mama</button>
@@ -4707,76 +4966,53 @@
         </div>
       </section>
 
+      <section class="view" id="privateSpace" aria-label="Môj priestor">
+        <div id="privateSpaceApp"></div>
+      </section>
+
       <section class="view" id="diary">
         <div class="topbar">
           <div>
-            <h2>Denník</h2>
-            <p>Rodinné chvíle a malé momenty, ku ktorým sa chcete vrátiť.</p>
+            <h2>Momenty</h2>
+            <p>Fotky, prvé razy a príbeh toho, ako dieťa rastie.</p>
           </div>
         </div>
         <div class="grid">
-          <article class="panel span-5">
-            <h3>Nová spomienka</h3>
-            <label>Typ okamihu
-              <select id="diaryMomentType">
-                <option>Vlastná spomienka</option>
-                <option>Fotky po narodení</option>
-                <option>Prvá noc spolu</option>
-                <option>Návšteva v nemocnici</option>
-                <option>Cesta domov</option>
-                <option>Prvýkrát doma</option>
-                <option>Prvé papanie</option>
-                <option>Prvé odgrgnutie</option>
-                <option>Prvé kako</option>
-                <option>Prvé prebalenie doma</option>
-                <option>Prvý kúpeľ</option>
-                <option>Prvé kočíkovanie</option>
-                <option>Prvá prechádzka vonku</option>
-                <option>Prvýkrát zaspal/a na mne</option>
-                <option>Prvý úsmev</option>
-                <option>Prvá poradňa u pediatra</option>
-                <option>Prvá návšteva rodiny</option>
-                <option>Prvý pokojný večer</option>
-                <option>Prvá náročná noc</option>
-                <option>Prvé malé víťazstvo</option>
-                <option>Prvá obľúbená poloha</option>
-                <option>Prvá fotka s mamou</option>
-                <option>Prvá fotka s otcom</option>
-                <option>Prvý mesiac spolu</option>
-                <option>Moment, ktorý nechcem zabudnúť</option>
-              </select>
-            </label>
-            <label>Názov
-              <input id="diaryTitle" placeholder="Prvá noc doma">
-            </label>
-            <div class="form-grid">
-              <label>Dátum okamihu
-                <input id="diaryDate" type="date">
-              </label>
-              <label>Deň života — automaticky
-                <input id="diaryDay" type="number" min="1" max="365" placeholder="napr. 108">
-              </label>
-            </div>
-            <p class="muted small">Keď spomienku zapisujete neskôr, vyberte dátum. Guguboo ju automaticky zaradí do rodinnej časovej osi podľa veku dieťaťa.</p>
-            <label>Text
-              <textarea id="diaryText" placeholder="Jedna veta z dneška stačí."></textarea>
-            </label>
-            <label>Fotka okamihu
+          <article class="panel span-12 moments-capture-card">
+            <span class="pill">Dnes</span>
+            <h3>Dnešný malý moment</h3>
+            <p class="muted moments-capture-intro">Jedna fotka alebo krátka veta úplne stačí.</p>
+            <label class="moments-photo-input">
               <input id="diaryPhoto" type="file" accept="image/*" capture="environment">
+              <span class="moments-photo-icon" aria-hidden="true">⌾</span>
+              <strong>Pridať fotku</strong>
+              <span>Odfotiť alebo vybrať zo zariadenia</span>
             </label>
             <div class="memory-preview" id="diaryPhotoPreview">Fotka sa zobrazí tu.</div>
-            <div class="actions">
-              <button class="ghost" id="diaryTodayBtn" type="button">Dnes</button>
-              <button class="primary" id="saveDiary">Uložiť spomienku</button>
+            <label>Krátka veta — nepovinné
+              <textarea id="diaryText" placeholder="Čo bolo dnes milé, nové alebo dôležité?"></textarea>
+            </label>
+            <select id="diaryMomentType" hidden aria-hidden="true">
+              <option>Vlastná spomienka</option>
+              <option>Dnešná fotka</option>
+              <option>Moment, ktorý nechcem zabudnúť</option>
+            </select>
+            <input id="diaryDay" type="hidden">
+            <details class="moments-details">
+              <summary>Upraviť dátum alebo názov</summary>
+              <label>Dátum
+                <input id="diaryDate" type="date">
+              </label>
+              <label>Názov — nepovinné
+                <input id="diaryTitle" placeholder="Guguboo ho doplní, ak ho necháte prázdny">
+              </label>
+            </details>
+            <div class="actions moments-capture-actions">
+              <button class="primary" id="saveDiary">Uložiť moment</button>
             </div>
           </article>
-          <article class="panel span-7">
-            <h3>Nápady na rodinné spomienky</h3>
-            <p class="muted small">Klikni na moment a Guguboo ti predvyplní zápis. Nemusíš loviť v hlave, čo dnes uložiť.</p>
-            <div class="quick-grid memory-ideas" id="memoryIdeaGrid"></div>
-          </article>
-          <article class="panel span-12">
-            <h3>Časová os</h3>
+          <article class="panel span-12 moments-history-card">
+            <h3>Predchádzajúce momenty</h3>
             <div class="list" id="diaryList"></div>
           </article>
         </div>
@@ -4950,6 +5186,10 @@
         </div>
       </section>
 
+      <section class="view" id="activities" aria-label="Aktivity s dieťaťom">
+        <div id="activitiesApp"></div>
+      </section>
+
       <section class="view" id="gift">
         <div class="topbar">
           <div>
@@ -5040,15 +5280,15 @@
         <div class="topbar">
           <div>
             <h2>Kartička narodenia</h2>
-            <p>Pripravte ju pred pôrodom a po narodení doplňte posledné údaje. Rozloženie zostáva profesionálne pripravené, vy si vyberiete iba tému a farbu rámu.</p>
+            <p>Dátum narodenia automaticky vyberie jedno z 12 znamení. Každé má vlastný dizajn; farbu rámu a typografiu si upravíte podľa seba.</p>
           </div>
         </div>
         <div class="birth-card-layout">
           <article class="panel birth-card-form-panel">
-            <span class="pill" id="birthCardModePill">Príprava pred pôrodom</span>
-            <h3 id="birthCardFormTitle">Pripravte základ kartičky</h3>
-            <p class="muted" id="birthCardFormIntro">Teraz stačí meno, text pre rodičov a určiť, kto ju po pôrode dokončí.</p>
-            <div class="birth-card-progress" id="birthCardProgress" aria-label="Priebeh dokončenia kartičky"></div>
+            <span class="pill" id="birthCardModePill">Znamenie podľa dátumu</span>
+            <h3 id="birthCardFormTitle">Vytvorte kartičku podľa znamenia</h3>
+            <p class="muted" id="birthCardFormIntro">Vyplňte údaje narodenia. Znamenie a jeho vizuál sa nastavia automaticky.</p>
+            <div class="birth-card-zodiac-summary" id="birthCardZodiacSummary" aria-live="polite"><span id="birthCardZodiacSummarySymbol" aria-hidden="true">✦</span><div><strong id="birthCardZodiacSummaryName">Znamenie sa určí podľa dátumu</strong><small id="birthCardZodiacSummaryText">Po zadaní dátumu uvidíte zodpovedajúci dizajn.</small></div></div>
 
             <div class="form-grid">
               <label>Meno dieťaťa <span aria-hidden="true">*</span>
@@ -5103,13 +5343,22 @@
             </fieldset>
 
             <fieldset class="birth-card-style-group">
-              <legend>Téma pozadia</legend>
-              <div class="birth-theme-picker">
-                <button class="birth-theme-option" data-birth-theme="balloons" type="button" aria-pressed="false"><span>🎈</span>Balóny</button>
-                <button class="birth-theme-option" data-birth-theme="angel" type="button" aria-pressed="false"><span>🪽</span>Anjelik</button>
-                <button class="birth-theme-option" data-birth-theme="hearts" type="button" aria-pressed="false"><span>♡</span>Srdiečka</button>
-                <button class="birth-theme-option" data-birth-theme="stars" type="button" aria-pressed="false"><span>☾</span>Hviezdna noc</button>
+              <legend>Znamenie a dizajn</legend>
+              <div class="birth-zodiac-picker" id="birthCardZodiacPicker">
+                <button class="birth-zodiac-option" data-birth-zodiac="baran" type="button" aria-pressed="false"><span>♈</span>Baran<small>21. 3. – 19. 4.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="byk" type="button" aria-pressed="false"><span>♉</span>Býk<small>20. 4. – 20. 5.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="blizenci" type="button" aria-pressed="false"><span>♊</span>Blíženci<small>21. 5. – 20. 6.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="rak" type="button" aria-pressed="false"><span>♋</span>Rak<small>21. 6. – 22. 7.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="lev" type="button" aria-pressed="false"><span>♌</span>Lev<small>23. 7. – 22. 8.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="panna" type="button" aria-pressed="false"><span>♍</span>Panna<small>23. 8. – 22. 9.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="vahy" type="button" aria-pressed="false"><span>♎</span>Váhy<small>23. 9. – 22. 10.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="skorpion" type="button" aria-pressed="false"><span>♏</span>Škorpión<small>23. 10. – 21. 11.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="strelec" type="button" aria-pressed="false"><span>♐</span>Strelec<small>22. 11. – 21. 12.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="kozorozec" type="button" aria-pressed="false"><span>♑</span>Kozorožec<small>22. 12. – 19. 1.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="vodnar" type="button" aria-pressed="false"><span>♒</span>Vodnár<small>20. 1. – 18. 2.</small></button>
+                <button class="birth-zodiac-option" data-birth-zodiac="ryby" type="button" aria-pressed="false"><span>♓</span>Ryby<small>19. 2. – 20. 3.</small></button>
               </div>
+              <p class="birth-zodiac-help">Predvolené znamenie vychádza z dátumu narodenia. Výber môžete ručne zmeniť bez zmeny dátumu.</p>
             </fieldset>
 
             <fieldset class="birth-card-style-group">
@@ -5135,30 +5384,31 @@
           <article class="panel">
             <div class="birth-card-preview-wrap">
               <div class="birth-card-preview" id="birthCardPreview" aria-label="Náhľad kartičky narodenia">
-                <div class="birth-card-theme-art" aria-hidden="true">
-                  <div class="theme-art theme-art-balloons"><i></i><i></i><i></i></div>
-                  <div class="theme-art theme-art-hearts"></div>
-                  <div class="theme-art theme-art-angel"></div>
-                  <div class="theme-art theme-art-stars"></div>
-                </div>
                 <div class="birth-card-paper">
-                  <div class="birth-card-brand">Guguboo · vitaj na svete</div>
+                  <div class="birth-card-brand">Vitaj na svete</div>
+                  <div class="birth-card-constellation-stage" aria-hidden="true">
+                    <svg id="birthCardPreviewConstellation" viewBox="0 0 320 150" role="img"></svg>
+                  </div>
+                  <div class="birth-card-zodiac-badge"><strong id="birthCardPreviewZodiacName">Ryby</strong><span id="birthCardPreviewZodiacRange">19. 2. – 20. 3.</span><span class="hidden" id="birthCardPreviewZodiacSymbol">♓</span><span class="hidden" id="birthCardPreviewZodiacArt">♓</span></div>
                   <div class="birth-card-name" id="birthCardPreviewName">Bábätko</div>
+                  <p class="birth-card-zodiac-tagline" id="birthCardPreviewZodiacTagline">Nežné sny a pokojné objatia.</p>
                   <div class="birth-card-photo-shell" id="birthCardPhotoShell">
                     <img id="birthCardPreviewPhoto" alt="Fotografia dieťaťa">
                     <div class="birth-card-monogram" id="birthCardMonogram" aria-hidden="true">B</div>
                   </div>
-                  <div class="birth-card-sentence">
-                    <span id="birthCardPreviewBornLabel">Narodil/a som sa</span> <b id="birthCardPreviewDate">—</b>
-                  </div>
+                  <div class="birth-card-sentence"><span id="birthCardPreviewBornLabel">Narodil/a som sa</span><b id="birthCardPreviewDate">—</b><small id="birthCardPreviewWeekday">náš výnimočný deň</small></div>
                   <div class="birth-card-facts">
-                    <div class="birth-card-fact"><span class="birth-card-fact-icon">◷</span><span>o <b id="birthCardPreviewTime">—</b> hod. <span id="birthCardPreviewRecipient">maminke a tatinkovi</span></span></div>
-                    <div class="birth-card-fact"><span class="birth-card-fact-icon">↕</span><span><span id="birthCardPreviewMeasureLabel">meral/a som</span> <b id="birthCardPreviewHeight">—</b></span></div>
-                    <div class="birth-card-fact"><span class="birth-card-fact-icon">◉</span><span><span id="birthCardPreviewWeightLabel">vážil/a som</span> <b id="birthCardPreviewWeight">—</b></span></div>
-                    <div class="birth-card-fact hidden" id="birthCardPreviewPlaceRow"><span class="birth-card-fact-icon">⌖</span><span>miesto: <b id="birthCardPreviewPlace"></b></span></div>
+                    <div class="birth-card-fact"><span class="birth-card-fact-icon">◷</span><span><small>Čas</small><b id="birthCardPreviewTime">—</b></span></div>
+                    <div class="birth-card-fact"><span class="birth-card-fact-icon">↕</span><span><small id="birthCardPreviewMeasureLabel">Dĺžka</small><b id="birthCardPreviewHeight">—</b></span></div>
+                    <div class="birth-card-fact"><span class="birth-card-fact-icon">○</span><span><small id="birthCardPreviewWeightLabel">Hmotnosť</small><b id="birthCardPreviewWeight">—</b></span></div>
+                    <div class="birth-card-fact" id="birthCardPreviewGestationRow"><span class="birth-card-fact-icon">✦</span><span><small>Narodené v</small><b id="birthCardPreviewGestation">— tt</b></span></div>
+                  </div>
+                  <div class="birth-card-keepsake-meta">
+                    <div class="hidden" id="birthCardPreviewPlaceRow"><small>Miesto narodenia</small><b id="birthCardPreviewPlace"></b></div>
+                    <div><small>Prišiel/prišla k</small><b id="birthCardPreviewRecipient">maminke a tatinkovi</b></div>
                   </div>
                   <p class="small" id="birthCardPreviewMessage"></p>
-                  <div class="birth-card-landscape"><span>malý zázrak · veľká láska</span></div>
+                  <div class="birth-card-landscape"><span>Guguboo · malý zázrak, veľká láska</span></div>
                 </div>
               </div>
             </div>
@@ -5273,17 +5523,13 @@
 
   <script>
     const storeKey = "guguboo-upgrade-v4";
-    // Testovacia V6 zámerne neuchováva profil ani zadané údaje medzi obnoveniami stránky.
-    // Počas jedného otvorenia aplikácie zostáva stav funkčný iba v pamäti.
-    localStorage.removeItem(storeKey);
-    sessionStorage.removeItem(storeKey);
-    const volatileStorage = new Map();
-    const appStorage = {
-      getItem(key) { return volatileStorage.has(key) ? volatileStorage.get(key) : null; },
-      setItem(key, value) { volatileStorage.set(key, String(value)); },
-      removeItem(key) { volatileStorage.delete(key); }
-    };
-    const state = JSON.parse(appStorage.getItem(storeKey) || "{}");
+    // Hlavný stav sa uchová lokálne aj po obnovení stránky. Rovnaká vrstva sa používa
+    // vo všetkých moduloch, aby profil, záznamy a rodinné údaje nezmizli po reload-e.
+    const appStorage = localStorage;
+    let restoredState = {};
+    try { restoredState = JSON.parse(appStorage.getItem(storeKey) || "{}"); }
+    catch (error) { console.warn("Guguboo: uložený stav sa nepodarilo načítať", error); }
+    const state = restoredState;
     state.profile ||= {};
     state.profile.country ||= "SK";
     state.user ||= { name: "", birthYear: "", birthDate: "", email: "", phone: "" };
@@ -5317,6 +5563,8 @@
       preparedBy: "otec",
       message: "",
       theme: "balloons",
+      zodiac: "",
+      zodiacManual: false,
       frame: "#2e716b",
       font: "elegant",
       photo: "",
@@ -5325,6 +5573,8 @@
       completedAt: ""
     };
     state.birthCard.theme ||= "balloons";
+    state.birthCard.zodiac ||= "";
+    state.birthCard.zodiacManual ||= false;
     state.birthCard.frame ||= "#2e716b";
     state.birthCard.font ||= "elegant";
     state.birthCard.photo ||= "";
@@ -5370,6 +5620,11 @@
     };
 
     const memoryIdeas = [
+      ["📆", "Dnešná fotka", "Jeden obyčajný záber z dneška úplne stačí."],
+      ["📏", "Týždenná fotka rastu", "Rovnaké miesto alebo oblečenie pekne ukáže, ako dieťa rastie."],
+      ["🥣", "Prvá nová chuť", "Tvár, podbradník a jedlo, ktoré dnes ochutnalo prvýkrát."],
+      ["🛒", "Prvé zaspatie v kočíku", "Kde ste boli a čo mu pomohlo pokojne zaspať?"],
+      ["👵", "Prvýkrát s babkou a dedkom", "Spoločná fotka, objatie alebo prvá chvíľa bez rodiča."],
       ["📷", "Fotky po narodení", "Prvé fotky, ktoré zachytia úplný začiatok."],
       ["🌙", "Prvá noc spolu", "Ako vyzerala prvá noc? Čo bolo krásne, ťažké alebo nečakané?"],
       ["🏥", "Návšteva v nemocnici", "Kto prišiel, čo povedal a aký moment si chcete zapamätať?"],
@@ -5429,6 +5684,68 @@
       setTimeout(() => toast.classList.remove("show"), 1800);
     }
 
+    const birthCardZodiacSigns = [
+      { id:"baran", name:"Baran", symbol:"♈", range:"21. 3. – 19. 4.", constellation:"✦ · · ✦", tagline:"Odvážny začiatok plný nežnosti." },
+      { id:"byk", name:"Býk", symbol:"♉", range:"20. 4. – 20. 5.", constellation:"· ✦ · ✦", tagline:"Pokojné chvíle, ktoré rastú s láskou." },
+      { id:"blizenci", name:"Blíženci", symbol:"♊", range:"21. 5. – 20. 6.", constellation:"✦ · ✦ ·", tagline:"Dve iskričky zvedavosti v jednom príbehu." },
+      { id:"rak", name:"Rak", symbol:"♋", range:"21. 6. – 22. 7.", constellation:"· · ✦ ✦", tagline:"Domov je tam, kde ste spolu." },
+      { id:"lev", name:"Lev", symbol:"♌", range:"23. 7. – 22. 8.", constellation:"✦ ✦ · ·", tagline:"Malé svetlo, ktoré rozžiarilo rodinu." },
+      { id:"panna", name:"Panna", symbol:"♍", range:"23. 8. – 22. 9.", constellation:"✦ · · · ✦", tagline:"Každý detail vášho príbehu je jedinečný." },
+      { id:"vahy", name:"Váhy", symbol:"♎", range:"23. 9. – 22. 10.", constellation:"· ✦ ✦ ·", tagline:"Jemná rovnováha spoločných dní." },
+      { id:"skorpion", name:"Škorpión", symbol:"♏", range:"23. 10. – 21. 11.", constellation:"✦ · ✦ ✦", tagline:"Hlboké puto od prvého objatia." },
+      { id:"strelec", name:"Strelec", symbol:"♐", range:"22. 11. – 21. 12.", constellation:"· ✦ · · ✦", tagline:"Pred vami je celý svet spoločných ciest." },
+      { id:"kozorozec", name:"Kozorožec", symbol:"♑", range:"22. 12. – 19. 1.", constellation:"✦ ✦ · ✦", tagline:"Malé kroky tvoria veľký rodinný príbeh." },
+      { id:"vodnar", name:"Vodnár", symbol:"♒", range:"20. 1. – 18. 2.", constellation:"· · ✦ · ✦", tagline:"Váš vlastný jedinečný rytmus." },
+      { id:"ryby", name:"Ryby", symbol:"♓", range:"19. 2. – 20. 3.", constellation:"✦ · · ✦ ·", tagline:"Nežné sny a pokojné objatia." }
+    ];
+
+    const birthCardConstellations = {
+      baran: { p:[[35,108],[82,73],[126,82],[174,50],[226,61],[278,34]], l:[[0,1],[1,2],[2,3],[3,4],[4,5]] },
+      byk: { p:[[42,38],[82,73],[121,55],[151,91],[194,69],[231,101],[278,78]], l:[[0,1],[1,2],[1,3],[3,4],[4,5],[5,6]] },
+      blizenci: { p:[[54,35],[75,91],[110,68],[140,112],[181,83],[213,111],[247,72],[277,104]], l:[[0,1],[1,2],[2,3],[2,4],[4,5],[4,6],[6,7]] },
+      rak: { p:[[40,75],[82,46],[122,67],[158,50],[196,78],[238,58],[281,91]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[2,4]] },
+      lev: { p:[[34,103],[75,75],[112,94],[146,58],[187,39],[229,63],[278,45]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] },
+      panna: { p:[[38,91],[78,62],[117,76],[157,42],[196,67],[237,49],[279,78],[196,108]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[4,7]] },
+      vahy: { p:[[43,93],[84,70],[124,82],[160,48],[198,82],[238,70],[278,93]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[2,4]] },
+      skorpion: { p:[[39,43],[70,86],[111,68],[144,102],[185,75],[222,98],[278,61]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[4,6]] },
+      strelec: { p:[[39,111],[77,87],[119,97],[156,67],[204,77],[253,38],[282,35]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[4,6]] },
+      kozorozec: { p:[[39,83],[80,52],[119,75],[157,47],[196,72],[232,104],[279,83]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[4,6]] },
+      vodnar: { p:[[39,54],[81,82],[122,50],[160,80],[201,48],[241,76],[280,46]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] },
+      ryby: { p:[[41,51],[82,78],[120,55],[159,91],[198,56],[238,80],[279,51],[159,35]], l:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[3,7]] }
+    };
+
+    function birthCardConstellationMarkup(id) {
+      const shape = birthCardConstellations[id] || birthCardConstellations.ryby;
+      const lines = shape.l.map(([from, to]) => `<line class="constellation-line" x1="${shape.p[from][0]}" y1="${shape.p[from][1]}" x2="${shape.p[to][0]}" y2="${shape.p[to][1]}"></line>`).join("");
+      const stars = shape.p.map(([x, y], index) => `<circle class="constellation-star${index === 3 ? " major" : ""}" cx="${x}" cy="${y}" r="${index === 3 ? 4.2 : 3}"></circle>`).join("");
+      return lines + stars;
+    }
+
+    function birthCardZodiacFromDate(value) {
+      if (!value) return "";
+      const date = new Date(value + "T12:00:00");
+      if (Number.isNaN(date.getTime())) return "";
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const edge = month * 100 + day;
+      if (edge >= 321 && edge <= 419) return "baran";
+      if (edge >= 420 && edge <= 520) return "byk";
+      if (edge >= 521 && edge <= 620) return "blizenci";
+      if (edge >= 621 && edge <= 722) return "rak";
+      if (edge >= 723 && edge <= 822) return "lev";
+      if (edge >= 823 && edge <= 922) return "panna";
+      if (edge >= 923 && edge <= 1022) return "vahy";
+      if (edge >= 1023 && edge <= 1121) return "skorpion";
+      if (edge >= 1122 && edge <= 1221) return "strelec";
+      if (edge >= 1222 || edge <= 119) return "kozorozec";
+      if (edge <= 218) return "vodnar";
+      return "ryby";
+    }
+
+    function birthCardZodiacData(id) {
+      return birthCardZodiacSigns.find(sign => sign.id === id) || null;
+    }
+
     function birthCardStateData() {
       return {
         name: state.profile.name || "",
@@ -5436,6 +5753,7 @@
         preparedBy: state.birthCard.preparedBy || "otec",
         message: state.birthCard.message || "",
         theme: state.birthCard.theme || "balloons",
+        zodiac: state.birthCard.zodiacManual ? state.birthCard.zodiac : birthCardZodiacFromDate(state.profile.birth),
         frame: state.birthCard.frame || "#2e716b",
         font: state.birthCard.font || "elegant",
         photo: state.birthCard.photo || "",
@@ -5443,7 +5761,9 @@
         time: state.profile.birthTime || "",
         place: state.profile.birthPlace || "",
         weight: state.profile.weight || "",
-        height: state.profile.height || ""
+        height: state.profile.height || "",
+        gestationalWeek: state.profile.gestationalWeek ?? "",
+        gestationalDay: state.profile.gestationalDay ?? ""
       };
     }
 
@@ -5454,6 +5774,7 @@
         preparedBy: $("birthCardPreparedBy").value,
         message: $("birthCardMessage").value.trim(),
         theme: state.birthCard.theme || "balloons",
+        zodiac: state.birthCard.zodiacManual ? state.birthCard.zodiac : birthCardZodiacFromDate($("birthCardDate").value),
         frame: state.birthCard.frame || "#2e716b",
         font: state.birthCard.font || "elegant",
         photo: state.birthCard.photo || "",
@@ -5461,7 +5782,9 @@
         time: $("birthCardTime").value,
         place: $("birthCardPlace").value.trim(),
         weight: $("birthCardWeight").value.trim(),
-        height: $("birthCardHeight").value.trim()
+        height: $("birthCardHeight").value.trim(),
+        gestationalWeek: state.profile.gestationalWeek ?? "",
+        gestationalDay: state.profile.gestationalDay ?? ""
       };
     }
 
@@ -5487,21 +5810,28 @@
     }
 
     function birthCardGrammar() {
-      if (state.profile.sex === "girl") return { born: "Narodila som sa", measured: "merala som", weighed: "vážila som" };
-      if (state.profile.sex === "boy") return { born: "Narodil som sa", measured: "meral som", weighed: "vážil som" };
-      return { born: "Narodil/a som sa", measured: "meral/a som", weighed: "vážil/a som" };
+      if (state.profile.sex === "girl") return { born: "Narodila sa" };
+      if (state.profile.sex === "boy") return { born: "Narodil sa" };
+      return { born: "Narodené" };
+    }
+
+    function birthCardWeekdayText(value) {
+      if (!value) return "náš výnimočný deň";
+      const date = new Date(value + "T12:00:00");
+      return Number.isNaN(date.getTime()) ? "náš výnimočný deň" : date.toLocaleDateString("sk-SK", { weekday:"long" });
     }
 
     function updateBirthCardAppearance(data = birthCardStateData()) {
       const preview = $("birthCardPreview");
       const themes = ["balloons", "angel", "hearts", "stars"];
       const fonts = ["elegant", "hand", "modern"];
-      themes.forEach(theme => preview.classList.toggle(`theme-${theme}`, data.theme === theme));
+      themes.forEach(theme => preview.classList.remove(`theme-${theme}`));
+      birthCardZodiacSigns.forEach(sign => preview.classList.toggle(`zodiac-${sign.id}`, data.zodiac === sign.id));
       fonts.forEach(font => preview.classList.toggle(`name-font-${font}`, data.font === font));
       preview.style.setProperty("--card-frame", data.frame || "#2e716b");
-      preview.style.setProperty("--card-accent", data.theme === "stars" ? "#f3cf86" : (data.frame || "#2e716b"));
-      document.querySelectorAll("[data-birth-theme]").forEach(button => {
-        const active = button.dataset.birthTheme === data.theme;
+      preview.style.setProperty("--card-accent", data.frame || "#2e716b");
+      document.querySelectorAll("[data-birth-zodiac]").forEach(button => {
+        const active = button.dataset.birthZodiac === data.zodiac;
         button.classList.toggle("active", active);
         button.setAttribute("aria-pressed", String(active));
       });
@@ -5519,6 +5849,7 @@
 
     function updateBirthCardPreview(data = birthCardStateData()) {
       const grammar = birthCardGrammar();
+      const sign = birthCardZodiacData(data.zodiac);
       updateBirthCardAppearance(data);
       $("birthCardPreviewName").textContent = data.name || "Bábätko";
       $("birthCardMonogram").textContent = (data.name || "B").trim().charAt(0).toLocaleUpperCase("sk-SK");
@@ -5528,15 +5859,27 @@
       $("birthCardPhotoLabel").textContent = data.photo ? "Zmeniť fotografiu" : "Pridať fotografiu dieťaťa";
       $("birthCardPreviewBornLabel").textContent = grammar.born;
       $("birthCardPreviewDate").textContent = birthCardDateText(data.date);
+      $("birthCardPreviewWeekday").textContent = birthCardWeekdayText(data.date);
       $("birthCardPreviewTime").textContent = data.time || "—";
       $("birthCardPreviewRecipient").textContent = data.recipient || "maminke a tatinkovi";
-      $("birthCardPreviewMeasureLabel").textContent = grammar.measured;
+      $("birthCardPreviewMeasureLabel").textContent = "Dĺžka";
       $("birthCardPreviewHeight").textContent = data.height || "—";
-      $("birthCardPreviewWeightLabel").textContent = grammar.weighed;
+      $("birthCardPreviewWeightLabel").textContent = "Hmotnosť";
       $("birthCardPreviewWeight").textContent = data.weight || "—";
+      $("birthCardPreviewGestation").textContent = data.gestationalWeek !== "" ? `${data.gestationalWeek}${data.gestationalDay !== "" ? "+" + data.gestationalDay : ""} tt` : "— tt";
       $("birthCardPreviewPlace").textContent = data.place;
       $("birthCardPreviewPlaceRow").classList.toggle("hidden", !data.place);
       $("birthCardPreviewMessage").textContent = data.message;
+      $("birthCardPreviewZodiacSymbol").textContent = sign?.symbol || "✦";
+      $("birthCardPreviewZodiacArt").textContent = sign?.symbol || "✦";
+      $("birthCardPreviewZodiacName").textContent = sign?.name || "Znamenie";
+      $("birthCardPreviewZodiacRange").textContent = sign?.range || "podľa dátumu";
+      $("birthCardPreviewZodiacTagline").textContent = sign?.tagline || "Znamenie sa určí podľa dátumu narodenia.";
+      $("birthCardPreviewConstellation").innerHTML = birthCardConstellationMarkup(sign?.id || "ryby");
+      $("birthCardZodiacSummarySymbol").textContent = sign?.symbol || "✦";
+      $("birthCardZodiacSummaryName").textContent = sign ? `${sign.name} · ${sign.range}` : "Znamenie sa určí podľa dátumu";
+      $("birthCardZodiacSummaryText").textContent = sign ? `${sign.tagline}${state.birthCard.zodiacManual ? " Zvolené ručne." : " Vybrané automaticky."}` : "Po zadaní dátumu uvidíte zodpovedajúci dizajn.";
+      $("birthCardModePill").textContent = sign ? "Znamenie podľa dátumu" : "Doplňte dátum narodenia";
     }
 
     function birthCardProgressHtml(data = birthCardStateData()) {
@@ -5557,13 +5900,12 @@
       const prepared = !!(data.name && data.recipient);
       const week = expecting ? pregnancyWeek() : null;
       const progress = birthCardProgressHtml(data);
-      $("birthCardProgress").innerHTML = progress;
       $("prenatalBirthCardProgress").innerHTML = progress;
-      $("birthCardModePill").textContent = expecting ? "Príprava pred pôrodom" : "Bábätko je na svete";
-      $("birthCardFormTitle").textContent = expecting ? "Pripravte základ kartičky" : "Doplňte údaje a skontrolujte kartičku";
+      $("birthCardModePill").textContent = data.zodiac ? "Znamenie podľa dátumu" : "Doplňte dátum narodenia";
+      $("birthCardFormTitle").textContent = "Vytvorte kartičku podľa znamenia";
       $("birthCardFormIntro").textContent = expecting
-        ? "Meno a text pripravíte teraz. Dátum, čas, hmotnosť a dĺžku doplníte pokojne až po narodení."
-        : "Kartičku možno dokončiť až po vyplnení všetkých povinných údajov označených hviezdičkou.";
+        ? "Meno a farbu pripravíte teraz. Po narodení dátum automaticky vyberie znamenie a jeho dizajn."
+        : "Dátum automaticky vyberie znamenie. Môžete ho zmeniť ručne a upraviť farbu rámu aj typografiu.";
       $("completeBirthCard").textContent = state.birthCard.complete ? "Kartička je dokončená" : "Dokončiť kartičku";
       $("completeBirthCard").disabled = !!state.birthCard.complete;
       ["shareBirthCard", "downloadBirthCard", "saveBirthCardMemory"].forEach(id => $(id).disabled = !state.birthCard.complete);
@@ -5645,6 +5987,8 @@
         preparedBy: data.preparedBy,
         message: data.message,
         theme: data.theme,
+        zodiac: data.zodiac,
+        zodiacManual: !!state.birthCard.zodiacManual,
         frame: data.frame,
         font: data.font,
         photo: data.photo,
@@ -5760,6 +6104,18 @@
 
     function birthCardThemePalette(theme, frame) {
       const themes = {
+        baran: { top: "#fff7ee", bottom: "#f3d8d2", ink: "#443733", accent: frame },
+        byk: { top: "#fffaf0", bottom: "#dfead9", ink: "#34463d", accent: frame },
+        blizenci: { top: "#fbf8ff", bottom: "#e8e4f7", ink: "#403a56", accent: frame },
+        rak: { top: "#eef7ff", bottom: "#e4def4", ink: "#37465d", accent: frame },
+        lev: { top: "#fff7d9", bottom: "#f1d3d0", ink: "#51402f", accent: frame },
+        panna: { top: "#fffdf4", bottom: "#e7e5d5", ink: "#47453a", accent: frame },
+        vahy: { top: "#f7e8ef", bottom: "#f8eee7", ink: "#503e4b", accent: frame },
+        skorpion: { top: "#f9f3fb", bottom: "#e7d9e9", ink: "#493a51", accent: frame },
+        strelec: { top: "#f7f0ff", bottom: "#f5ddcf", ink: "#493e55", accent: frame },
+        kozorozec: { top: "#f8f5ed", bottom: "#dce4df", ink: "#3d4944", accent: frame },
+        vodnar: { top: "#effbfc", bottom: "#dfe2f8", ink: "#374a58", accent: frame },
+        ryby: { top: "#f1f8ff", bottom: "#e8ddf4", ink: "#3e435b", accent: frame },
         balloons: { top: "#fffaf1", bottom: "#f0d9d7", ink: "#443733", accent: frame },
         angel: { top: "#fffefa", bottom: "#dce6ed", ink: "#4b4a50", accent: frame },
         hearts: { top: "#fff9f8", bottom: "#f1d9df", ink: "#573d43", accent: frame },
@@ -5781,6 +6137,31 @@
 
     function drawBirthCardTheme(ctx, theme) {
       ctx.save();
+      const zodiacSign = birthCardZodiacData(theme);
+      if (zodiacSign) {
+        const stars = [[120,150,7],[245,105,4],[985,160,7],[1080,300,4],[170,500,5],[1035,620,6],[145,980,4],[1070,1090,7],[285,1320,5],[920,1260,4]];
+        ctx.fillStyle = "rgba(83,68,106,.2)";
+        stars.forEach(([x,y,r]) => {
+          ctx.beginPath();
+          for (let i = 0; i < 8; i += 1) {
+            const angle = i * Math.PI / 4;
+            const radius = i % 2 ? r * .35 : r;
+            i ? ctx.lineTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius) : ctx.moveTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+          }
+          ctx.closePath();
+          ctx.fill();
+        });
+        ctx.globalAlpha = .1;
+        ctx.fillStyle = "#4f4268";
+        ctx.textAlign = "center";
+        ctx.font = "260px 'Segoe UI Symbol', sans-serif";
+        ctx.fillText(zodiacSign.symbol, 1000, 1370);
+        ctx.globalAlpha = .28;
+        ctx.font = "42px Georgia, serif";
+        ctx.fillText(zodiacSign.constellation, 210, 1280);
+        ctx.restore();
+        return;
+      }
       if (theme === "balloons") {
         const balloons = [
           [128, 210, 62, 78, "rgba(193,112,117,.23)"],
@@ -5860,13 +6241,13 @@
       canvas.width = 1200;
       canvas.height = 1500;
       const ctx = canvas.getContext("2d");
-      const palette = birthCardThemePalette(data.theme, data.frame);
+      const palette = birthCardThemePalette(data.zodiac, data.frame);
       const gradient = ctx.createLinearGradient(0, 0, 1200, 1500);
       gradient.addColorStop(0, palette.top);
       gradient.addColorStop(1, palette.bottom);
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 1200, 1500);
-      drawBirthCardTheme(ctx, data.theme);
+      drawBirthCardTheme(ctx, data.zodiac);
 
       ctx.strokeStyle = data.frame;
       ctx.lineWidth = 38;
@@ -5889,12 +6270,22 @@
           ? `900 ${nameSize}px Nunito, sans-serif`
           : `italic 700 ${nameSize}px Playfair Display, Georgia, serif`;
       ctx.font = nameFont;
-      ctx.fillText(data.name, 600, 270);
+      ctx.fillText(data.name, 600, 245);
+
+      const zodiacSign = birthCardZodiacData(data.zodiac);
+      if (zodiacSign) {
+        ctx.fillStyle = palette.accent;
+        ctx.font = "700 31px 'Segoe UI Symbol', Inter, sans-serif";
+        ctx.fillText(`${zodiacSign.symbol}  ${zodiacSign.name.toUpperCase()}  ·  ${zodiacSign.range}`, 600, 292);
+        ctx.fillStyle = palette.ink;
+        ctx.font = "italic 600 25px Playfair Display, Georgia, serif";
+        ctx.fillText(zodiacSign.tagline, 600, 330);
+      }
 
       const photoX = 255;
-      const photoY = 320;
+      const photoY = 355;
       const photoWidth = 690;
-      const photoHeight = 360;
+      const photoHeight = 325;
       ctx.save();
       roundedCanvasRect(ctx, photoX, photoY, photoWidth, photoHeight, 62);
       ctx.clip();
@@ -5909,7 +6300,7 @@
         }
       }
       if (!photoDrawn) {
-        ctx.fillStyle = data.theme === "stars" ? "rgba(255,255,255,.08)" : "rgba(255,255,255,.34)";
+        ctx.fillStyle = "rgba(255,255,255,.34)";
         ctx.fillRect(photoX, photoY, photoWidth, photoHeight);
         ctx.fillStyle = palette.accent;
         ctx.globalAlpha = .58;
@@ -5941,8 +6332,8 @@
       const factPositions = [[130,800],[620,800],[130,980],[620,980]];
       facts.forEach((fact, index) => {
         const [x,y] = factPositions[index];
-        ctx.fillStyle = data.theme === "stars" ? "rgba(255,255,255,.08)" : "rgba(255,255,255,.38)";
-        ctx.strokeStyle = data.theme === "stars" ? "rgba(243,207,134,.28)" : "rgba(80,65,60,.13)";
+        ctx.fillStyle = "rgba(255,255,255,.38)";
+        ctx.strokeStyle = "rgba(80,65,60,.13)";
         ctx.lineWidth = 2;
         roundedCanvasRect(ctx, x, y, 450, 145, 24);
         ctx.fill();
@@ -6442,7 +6833,7 @@
         <h3>${escapeHtml(data[0])}</h3>
         <div class="list">
           ${data.slice(1).map((item, index) => `<div class="item"><main><strong>${index + 1}. krok</strong><span class="muted">${escapeHtml(item)}</span></main></div>`).join("")}
-        </div>`;
+        </div>${(state.firstYearTopic || "now") === "development" ? `<div class="actions"><button class="secondary" type="button" data-open-activities>Otvoriť Aktivity</button><button class="ghost" type="button" data-open-teeth>Otvoriť Zúbky</button></div>` : ""}`;
       document.querySelectorAll("[data-year-topic]").forEach(btn => btn.classList.toggle("active", btn.dataset.yearTopic === (state.firstYearTopic || "now")));
     }
 
@@ -6532,7 +6923,7 @@
       $("journeyRing").style.setProperty("--progress", `${progress}%`);
       $("journeyDay").textContent = journeyDay;
       if ($("journeyUnit")) $("journeyUnit").textContent = "z prvého roka";
-      if ($("openDiaryBtn")) $("openDiaryBtn").textContent = "Rodinný denník";
+      if ($("openDiaryBtn")) $("openDiaryBtn").textContent = "Otvoriť Momenty";
       const nextMilestone = journeyDay < 30
         ? "prvý mesačný prehľad"
         : journeyDay < 180
@@ -6632,6 +7023,13 @@
         $("diaryDate").value = dateInputToday();
         $("diaryDay").value = diaryDayFromDate($("diaryDate").value) || "";
       }
+      const memoryRhythm = state.v5?.memoryRhythm || ((days ?? 0) < 100 ? "daily100" : "weekly");
+      document.querySelectorAll("[data-memory-rhythm]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.memoryRhythm === memoryRhythm)));
+      if ($("momentsRhythmText")) $("momentsRhythmText").textContent = memoryRhythm === "daily100"
+        ? "Prvých 100 dní ponúkne Guguboo každý deň jednu fotku alebo vetu. Vynechaný deň nevadí."
+        : memoryRhythm === "weekly"
+          ? "Raz za týždeň pripomenieme fotografiu rastu. Medzitým ukladajte iba výnimočné chvíle."
+          : "Bez pravidelného pripomínania. Guguboo ponúkne nápady na prvé razy a rodinné chvíle.";
       const diaryDays = new Set(state.diary.map(memory => Number(memory.day) || diaryDayFromDate(memory.date)).filter(day => day >= 1 && day <= 100));
       const diaryPhotos = state.diary.filter(memory => memory.photo).length;
       if ($("outputMemoryCount")) $("outputMemoryCount").textContent = diaryDays.size;
@@ -6794,6 +7192,7 @@
             ["🧭", "Sprievodca", "Jedna otázka naraz", "guide", "start"],
             ["🔊", "Zvuky a uspávanky", "Spusti zvuk, ktorý dieťa pozná", "sounds", "start"],
             ["🩺", "Zdravotná karta", "", "health", "plus"],
+            ["🦷", "Zúbky", "Mapa, starostlivosť a zubár", "teeth", "free"],
             ["📏", "Rast dieťaťa", "Aktuálna váha, výška a vývoj", "growth", "plus"],
             ["📇", "Kontakty", "", "contacts", "start"],
             ["🧳", "Cestujem", "Balenie, lekárnička a pomoc podľa krajiny", "travel", "free"],
@@ -6801,7 +7200,9 @@
             ["🏛️", "Úrady", "", "stateSupport", "plus"],
             ["🤝", "Rodinný prehľad", "Čo sa deje a čo môžeš prevziať", "family", "premium"],
             ["📖", "Denník", "", "diary", "plus"],
+            ["🔒", "Môj priestor", "Súkromné zápisy chránené PIN-om", "privateSpace", "free"],
             ["🌱", "Podľa veku", "Od prvých dní po prvé roky", "firstYear", "plus"],
+            ["🧸", "Aktivity", "Krátke spoločné chvíle podľa veku", "activities", "free"],
             ["🛒", "Čo treba kúpiť", "Spoločný zoznam s typom a veľkosťou", "shopping", "plus"],
             ["🎞️", "Pamätné výstupy", "Voliteľné spomienky a výstupy", "memoryOutput", "dokup"]
           ];
@@ -6825,13 +7226,15 @@
           ]
         : fatherView ? [
             ["Starostlivosť a zastúpenie mamy", ["tracker", "sleep", "sounds", "night", "guide"]],
-            ["Dieťa a zdravie", ["growth", "health", "contacts", "travel"]],
+            ["Dieťa a zdravie", ["growth", "health", "teeth", "contacts", "travel"]],
             ["Spoločná rodina", ["family", "calendar", "shopping", "products", "checklists"]],
-            ["Spomienky", ["birthCard", "diary", "firstYear", "memoryOutput"]]
+            ["Spomienky a spoločný čas", ["birthCard", "diary", "firstYear", "activities", "memoryOutput"]],
+            ["Súkromie", ["privateSpace"]]
           ] : [
             ["Každodenná starostlivosť", ["tracker", "sleep", "sounds", "night"]],
-            ["Zdravie a bezpečie", ["guide", "health", "growth", "contacts", "travel"]],
-            ["Rodina a spomienky", ["birthCard", "family", "diary", "firstYear", "memoryOutput"]],
+            ["Zdravie a bezpečie", ["guide", "health", "teeth", "growth", "contacts", "travel"]],
+            ["Rodina a spomienky", ["birthCard", "family", "diary", "firstYear", "activities", "memoryOutput"]],
+            ["Súkromie", ["privateSpace"]],
             ["Organizácia", ["calendar", "stateSupport", "shopping", "products", "checklists"]]
           ];
       $("homeMenuPrimary").innerHTML = primaryCards.map(card => cardHtml(card, true)).join("");
@@ -6927,13 +7330,13 @@
 
     function updateNavForMode(expecting) {
       const fatherView = state.parentRole === "otec";
-      const hiddenBeforeBirth = new Set(["tracker", "sleep", "sounds", "night", "diary", "memoryOutput", "growth", "health", "guide", "firstYear", "urgent", "assistant", "family", "premium", "gift", "products", "checklists"]);
+      const hiddenBeforeBirth = new Set(["tracker", "sleep", "sounds", "night", "diary", "privateSpace", "memoryOutput", "growth", "health", "teeth", "activities", "guide", "firstYear", "urgent", "assistant", "family", "premium", "gift", "products", "checklists"]);
       const hiddenAfterBirth = new Set(["beforeBirth", "premium", "gift"]);
       const navOrder = expecting
         ? ["home", "travel", "beforeBirth", "birthCard", "calendar", "contacts", "stateSupport", "shopping"]
         : fatherView
-          ? ["home", "family", "tracker", "shopping", "calendar", "sounds", "sleep", "growth", "health", "contacts", "travel", "guide", "night", "checklists", "products", "birthCard", "diary", "firstYear", "stateSupport", "memoryOutput"]
-          : ["home", "travel", "birthCard", "guide", "tracker", "sleep", "sounds", "health", "growth", "firstYear", "contacts", "calendar", "stateSupport", "family", "diary", "checklists", "night", "products", "shopping", "memoryOutput"];
+          ? ["home", "family", "tracker", "shopping", "calendar", "sounds", "sleep", "growth", "health", "teeth", "contacts", "travel", "guide", "night", "checklists", "products", "birthCard", "diary", "privateSpace", "firstYear", "activities", "stateSupport", "memoryOutput"]
+          : ["home", "travel", "birthCard", "guide", "tracker", "sleep", "sounds", "health", "teeth", "growth", "firstYear", "activities", "contacts", "calendar", "stateSupport", "family", "diary", "privateSpace", "checklists", "night", "products", "shopping", "memoryOutput"];
       const beforeBirthLabels = {
         beforeBirth: "🤰 Moja príprava",
         birthCard: "💛 Pripraviť kartičku",
@@ -6973,13 +7376,17 @@
     function renderMemoryIdeas() {
       const grid = $("memoryIdeaGrid");
       if (!grid) return;
-      grid.innerHTML = memoryIdeas.map(([icon, title, prompt], index) => `
+      const ideaButton = ([icon, title], index) => `
         <button class="quick" type="button" data-memory-idea-index="${index}">
           <span>${icon}</span>
           <strong>${escapeHtml(title)}</strong>
-          <small>${escapeHtml(prompt)}</small>
         </button>
-      `).join("");
+      `;
+      grid.innerHTML = memoryIdeas.slice(0, 6).map(ideaButton).join("") + `
+        <details class="moments-more-ideas">
+          <summary>Ďalšie prvé razy</summary>
+          <div>${memoryIdeas.slice(6).map((idea, index) => ideaButton(idea, index + 6)).join("")}</div>
+        </details>`;
       grid.querySelectorAll("[data-memory-idea-index]").forEach(btn => {
         btn.addEventListener("click", () => {
           const idea = memoryIdeas[Number(btn.dataset.memoryIdeaIndex)];
@@ -7968,7 +8375,16 @@ Otázky:
     });
 
     document.querySelectorAll("[data-memory-shortcut]").forEach(btn => {
-      btn.addEventListener("click", () => prefillMemory("Moment, ktorý nechcem zabudnúť"));
+      btn.addEventListener("click", () => prefillMemory(btn.dataset.memoryShortcut || "Moment, ktorý nechcem zabudnúť"));
+    });
+
+    document.querySelectorAll("[data-memory-rhythm]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.v5 ||= {};
+        state.v5.memoryRhythm = btn.dataset.memoryRhythm;
+        save();
+        showToast(btn.dataset.memoryRhythm === "daily100" ? "Prvých 100 dní je zapnutých" : btn.dataset.memoryRhythm === "weekly" ? "Týždenná fotka rastu je zapnutá" : "Budeme pripomínať iba prvé razy");
+      });
     });
 
     document.querySelectorAll("[data-parent-role]").forEach(btn => {
@@ -8045,14 +8461,16 @@ Otázky:
     });
 
     $("saveDiary").addEventListener("click", () => {
-      if (!$("diaryTitle").value.trim()) return showToast("Doplň názov spomienky");
       const pickedDate = $("diaryDate").value || dateInputToday();
       const typedDay = Number($("diaryDay").value);
       const computedDay = diaryDayFromDate(pickedDate);
       const day = typedDay >= 1 && typedDay <= 100 ? typedDay : computedDay;
+      const selectedMoment = $("diaryMomentType").value;
+      const fallbackTitle = selectedMoment && selectedMoment !== "Vlastná spomienka" ? selectedMoment : (diaryPhotoData ? "Dnešná fotka" : "Malý moment");
+      if (!diaryPhotoData && !$("diaryText").value.trim() && !$("diaryTitle").value.trim()) return showToast("Pridaj fotku alebo jednu vetu");
       state.diary.push({
-        title: $("diaryTitle").value.trim(),
-        moment: $("diaryMomentType").value,
+        title: $("diaryTitle").value.trim() || fallbackTitle,
+        moment: selectedMoment,
         text: $("diaryText").value.trim(),
         photo: diaryPhotoData,
         date: pickedDate,
@@ -8068,7 +8486,7 @@ Otázky:
       diaryPhotoData = "";
       $("diaryPhotoPreview").innerHTML = "Fotka sa zobrazí tu.";
       save();
-      showToast("Spomienka uložená");
+      showToast("Moment je uložený");
     });
 
     const shoppingPresets = {
@@ -8572,11 +8990,14 @@ Otázky:
     $("downloadBirthCard").addEventListener("click", downloadBirthCardImage);
     $("shareBirthCard").addEventListener("click", shareBirthCardImage);
     $("saveBirthCardMemory").addEventListener("click", saveBirthCardToDiary);
-    document.querySelectorAll("[data-birth-theme]").forEach(button => button.addEventListener("click", () => {
-      state.birthCard.theme = button.dataset.birthTheme;
+    document.querySelectorAll("[data-birth-zodiac]").forEach(button => button.addEventListener("click", () => {
+      state.birthCard.zodiac = button.dataset.birthZodiac;
+      state.birthCard.zodiacManual = true;
+      state.v5 ||= {};
+      state.v5.selectedZodiac = state.birthCard.zodiac;
       appStorage.setItem(storeKey, JSON.stringify(state));
       updateBirthCardPreview(birthCardFormData());
-      showToast(`Téma ${button.textContent.trim()} vybraná`);
+      showToast(`Znamenie ${birthCardZodiacData(state.birthCard.zodiac)?.name || ""} vybrané`);
     }));
     document.querySelectorAll("[data-birth-frame]").forEach(button => button.addEventListener("click", () => {
       state.birthCard.frame = button.dataset.birthFrame;
@@ -8615,6 +9036,12 @@ Otázky:
     });
     document.querySelectorAll("#birthCard input, #birthCard select, #birthCard textarea").forEach(field => {
       const refreshPreview = () => {
+        if (field.id === "birthCardDate") {
+          state.birthCard.zodiacManual = false;
+          state.birthCard.zodiac = birthCardZodiacFromDate(field.value);
+          state.v5 ||= {};
+          state.v5.selectedZodiac = state.birthCard.zodiac;
+        }
         const data = birthCardFormData();
         updateBirthCardPreview(data);
         const missing = birthCardMissingFields(data);
@@ -8754,9 +9181,7 @@ Otázky:
       $("diaryDay").value = diaryDayFromDate($("diaryDate").value) || "";
       const day = $("diaryDay").value;
       const guidedText = prompt || idea?.[2];
-      $("diaryText").value = guidedText || (!day
-        ? "Dnes sa stal malý okamih, ktorý si chceme pamätať."
-        : `Deň ${day} zo 100. Dnes sa stal malý okamih, ktorý si chceme pamätať.`);
+      $("diaryText").value = guidedText || "Dnes sa stal malý okamih, ktorý si chceme pamätať.";
       $("diaryPhoto").focus();
     }
 
@@ -8767,7 +9192,7 @@ Otázky:
       $("diaryDay").value = day;
       const date = dateForDiaryDay(day);
       $("diaryDate").value = date || dateInputToday();
-      $("diaryText").value = `Deň ${day} zo 100. Čo sa dnes stalo?`;
+      $("diaryText").value = "Čo si z tohto dňa chcete pamätať?";
       $("diaryPhoto").focus();
     }
 
@@ -8791,7 +9216,7 @@ Otázky:
       if (!day && state.profile.birth) showToast("Dátum je mimo prvého roka");
     });
 
-    $("diaryTodayBtn").addEventListener("click", () => {
+    if ($("diaryTodayBtn")) $("diaryTodayBtn").addEventListener("click", () => {
       $("diaryDate").value = dateInputToday();
       $("diaryDay").value = diaryDayFromDate($("diaryDate").value) || "";
       showToast("Nastavené na dnes");
@@ -9139,6 +9564,10 @@ Otázky:
     setTimeout(() => playBrandVoice(true), 450);
   </script>
   <script src="v4-upgrade.js?v=6.9"></script>
-  <script src="v5-mobile.js?v=6.9"></script>
+  <script src="v5-mobile.js?v=6.31"></script>
+  <script src="private-space.js?v=1"></script>
+  <script src="activities-data.js?v=1"></script>
+  <script src="teeth.js?v=1"></script>
+  <script src="activities.js?v=2"></script>
 </body>
 </html>
