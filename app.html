@@ -1185,6 +1185,25 @@
       margin: 8px 0 0;
     }
 
+    .welcome-chapter-card { text-align: center; }
+    .welcome-chapter-greeting { font-weight: 800; font-size: 15px; color: var(--brand); margin: 0 0 10px; }
+    .welcome-chapter-eyebrow { font-weight: 800; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--brand); }
+    .welcome-chapter-title { margin: 12px 0 14px; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; font-weight: 700; color: var(--ink); }
+    .welcome-chapter-text { margin: 0 auto 22px; max-width: 340px; font-size: 15px; line-height: 1.6; color: var(--muted); }
+    .welcome-chapter-text strong { color: var(--ink); }
+    .welcome-chapter-timeline { position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin: 0 0 24px; padding: 0 6px; }
+    .welcome-chapter-timeline::before { content: ""; position: absolute; top: 9px; left: 28px; right: 28px; height: 2px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); opacity: .3; }
+    .welcome-chapter-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+    .welcome-chapter-dot { width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .welcome-chapter-step-label { font-weight: 800; font-size: 9px; letter-spacing: .5px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+    .welcome-chapter-step-label.is-final { color: var(--ink); }
+    .welcome-chapter-checklist { display: flex; flex-direction: column; gap: 12px; text-align: left; margin: 0 0 8px; }
+    .welcome-chapter-check { display: flex; align-items: center; gap: 10px; }
+    .welcome-chapter-check-icon { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .welcome-chapter-check-icon svg { display: block; }
+    .welcome-chapter-check span:last-child { font-size: 14px; color: var(--muted); }
+    .welcome-chapter-edit-link { font-family: inherit; font-weight: 700; font-size: 12px; color: var(--muted); background: none; border: none; padding: 6px; margin-top: 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
     .hidden { display: none !important; }
 
     .welcome-step { display: none; }
@@ -3183,13 +3202,12 @@
                 <h2>Začnime tebou.</h2>
                 <div class="welcome-profile-fields">
                   <label class="welcome-friendly-field"><span class="v5-sr-only">Meno alebo oslovenie</span>
-                    <input id="welcomeUserName" autocomplete="name" placeholder="napr. Obelix, mama, omyl" autofocus>
+                    <input id="welcomeUserName" autocomplete="name" placeholder="napr. Michaela" autofocus>
                   </label>
-                  <label class="welcome-friendly-field"><span class="v5-sr-only">Rok narodenia</span>
-                    <input id="welcomeUserBirthYear" type="number" min="1900" inputmode="numeric" placeholder="Rok narodenia, napr. 1992">
+                  <label class="welcome-friendly-field"><span class="v5-sr-only">Dátum narodenia</span>
+                    <input id="welcomeUserBirth" type="date" autocomplete="bday">
                   </label>
                 </div>
-                <p class="welcome-profile-note">Meno a rok úplne stačia.</p>
               </div>
               <div class="actions welcome-story-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" data-welcome-next>Pokračovať</button></div>
             </div>
@@ -3197,10 +3215,10 @@
             <div class="welcome-step welcome-story-step" data-welcome-step="3">
               <div class="welcome-location-step">
                 <h2><span data-welcome-personal-name>Ahoj</span>. Pokračujeme miestom.</h2>
-                <p class="welcome-story-lead">Pre všetko dôležité v Tvojom okolí a cestovanie.</p>
+                <p class="welcome-story-lead">Stačí krajina — zvyšok appka doladí sama.</p>
                 <aside class="welcome-location-card" aria-label="Nastavenie polohy alebo krajiny">
                   <button class="secondary" type="button" id="welcomeLocateBtn">Povoliť polohu</button>
-                  <p class="welcome-location-benefit">Použijeme ju iba na určenie krajiny. Súradnice neukladáme.</p>
+                  <p class="welcome-location-benefit">Zistíme len krajinu, súradnice si neukladáme.</p>
                   <button class="welcome-text-button" type="button" id="welcomeManualCountryBtn" aria-expanded="false" aria-controls="welcomeManualCountry">Vybrať krajinu ručne</button>
                   <div class="welcome-manual-country hidden" id="welcomeManualCountry">
                     <label>Krajina pobytu
@@ -3217,7 +3235,7 @@
                       </select>
                     </label>
                   </div>
-                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"><span aria-hidden="true">✓</span><span><b>Slovensko.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span></p>
+                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"><span aria-hidden="true">✓</span><span><b>Slovensko.</b> Prispôsobíme dôležité kontakty, miestne zdroje aj cestovanie.</span></p>
                   <p class="welcome-location-source hidden" id="welcomeLocationSource">Určenie krajiny: © OpenStreetMap contributors</p>
                   <p class="hidden" id="countryCopy"></p>
                 </aside>
@@ -3227,7 +3245,7 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="4">
               <span class="welcome-story-kicker">Naladíme Guguboo</span>
-              <h2><span data-welcome-personal-name>Ahoj</span>, vyber jednu z možností.</h2>
+              <h2><span data-welcome-name-only>Ty</span>, vyber jednu z možností.</h2>
               <div class="welcome-options welcome-story-choices">
                 <button class="choice-card" type="button" data-welcome-status="expecting">
                   <span class="welcome-choice-icon" aria-hidden="true">☾</span>
@@ -3244,7 +3262,6 @@
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="5">
-              <span class="welcome-story-kicker">Jedno malé miesto</span>
               <h2>Koho spolu privítame?</h2>
               <p class="welcome-story-lead">Teraz stačia dve drobnosti. Zvyšok počká v profile.</p>
               <div class="welcome-baby-card">
@@ -3267,7 +3284,6 @@
                 </span>
                 <span class="welcome-fruit-avatar-check" aria-hidden="true">✓</span>
               </button>
-              <p class="welcome-soft-note"><span aria-hidden="true">✦</span> Presnosť nemusí byť dokonalá. Údaje sa dajú upraviť.</p>
               <div class="actions welcome-story-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" data-welcome-next>Pokračovať</button></div>
             </div>
 
@@ -3287,21 +3303,43 @@
             </div>
 
             <div class="welcome-step welcome-story-step welcome-finish-step" data-welcome-step="7">
-              <span class="welcome-finish-mark" aria-hidden="true">✓</span>
-              <span class="welcome-story-kicker">Tvoj priestor je pripravený</span>
-              <h2>Môžeme začať pokojne.</h2>
-              <p class="welcome-story-lead">Ukážeme ti len to, čo sa hodí pre vašu dnešnú etapu.</p>
-              <div class="welcome-finish-summary" aria-label="Súhrn nastavenia">
-                <span><small>Pre koho</small><strong id="welcomeSummaryName">Vaša rodina</strong></span>
-                <span><small>Teraz</small><strong id="welcomeSummaryPhase">Pokojná príprava</strong></span>
-                <span><small>Miestny obsah</small><strong id="welcomeSummaryCountry">Slovensko</strong></span>
+              <div id="welcomeFinishBornVariant">
+                <span class="welcome-finish-mark" aria-hidden="true">✓</span>
+                <span class="welcome-story-kicker">Tvoj priestor je pripravený</span>
+                <h2>Môžeme začať pokojne.</h2>
+                <p class="welcome-story-lead">Ukážeme ti len to, čo sa hodí pre vašu dnešnú etapu.</p>
+                <div class="welcome-finish-summary" aria-label="Súhrn nastavenia">
+                  <span><small>Pre koho</small><strong id="welcomeSummaryName">Vaša rodina</strong></span>
+                  <span><small>Teraz</small><strong id="welcomeSummaryPhase">Pokojná príprava</strong></span>
+                  <span><small>Miestny obsah</small><strong id="welcomeSummaryCountry">Slovensko</strong></span>
+                </div>
+                <p class="welcome-soft-note"><span aria-hidden="true">♡</span> E-mail, telefón aj ďalšie detaily doplníš iba vtedy, keď ich budeš potrebovať.</p>
+                <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
               </div>
-              <p class="welcome-soft-note"><span aria-hidden="true">♡</span> E-mail, telefón aj ďalšie detaily doplníš iba vtedy, keď ich budeš potrebovať.</p>
-              <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
+
+              <div id="welcomeChapterCard" class="welcome-chapter-card">
+                <div class="welcome-chapter-greeting"><span data-welcome-personal-name>Ahoj</span>.</div>
+                <span class="welcome-chapter-eyebrow">Kapitola 1 · Pokojná príprava</span>
+                <h2 class="welcome-chapter-title">Váš príbeh sa začína.</h2>
+                <p class="welcome-chapter-text">O <strong id="welcomeChapterDays">63 dní</strong> privítate v živote <strong id="welcomeChapterBabyName">vaše bábätko</strong>. Krok za krokom vás prevedieme prípravou, prispôsobenou životu v krajine <span id="welcomeChapterCountry">Slovensko</span> aj vašej etape.</p>
+                <div class="welcome-chapter-timeline">
+                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label">Dnes</span></div>
+                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label">Priebežne</span></div>
+                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label is-final" id="welcomeChapterDaysLabel">O 63 dní</span></div>
+                </div>
+                <div class="welcome-chapter-checklist">
+                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Čo vybaviť a kedy</span></div>
+                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Kontakty, ktoré sa zídu</span></div>
+                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Nič netreba riešiť naraz</span></div>
+                </div>
+                <button class="welcome-chapter-edit-link" type="button" id="welcomeChapterEditSettings">Upraviť nastavenia</button>
+                <div class="actions welcome-story-actions welcome-finish-actions">
+                  <button class="primary" type="button" id="saveWelcomeChapter">Otvoriť prvú kapitolu <span aria-hidden="true">→</span></button>
+                </div>
+              </div>
             </div>
 
             <div class="welcome-legacy-fields hidden" aria-hidden="true">
-              <input id="welcomeUserBirth" type="date" tabindex="-1">
               <input id="welcomeEmail" type="email" tabindex="-1">
               <input id="welcomePhone" type="tel" tabindex="-1">
               <select id="welcomeSex" tabindex="-1"><option value=""></option><option value="unknown">Neuvádzam</option><option value="girl">Dievčatko</option><option value="boy">Chlapček</option></select>
@@ -3332,24 +3370,6 @@
             <div class="actions">
               <button class="primary" id="openBirthCardFromIntro">Vytvoriť kartičku narodenia</button>
               <button class="ghost" id="enterHomeFromBirthIntro">Teraz nie, ďalej do aplikácie</button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="view" id="pregnancyIntro">
-        <div class="welcome-shell">
-          <article class="panel hero-panel welcome-card">
-            <img class="welcome-logo" data-brand-voice src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo">
-            <span class="pill">Od bruška po prvé roky</span>
-            <h2 id="pregnancyIntroTitle">Bábätko je už za chvíľku tu.</h2>
-            <p id="pregnancyIntroText">Vaše malé šťastie sa čoskoro narodí. Som tu, aby sme si spolu pokojne pripravili pôrodnicu, prvé dni doma, kontakty a všetko dôležité.</p>
-            <div class="welcome-note">
-              <strong>Začneme jemne.</strong>
-              <p class="muted">Nemusíš mať všetko v hlave. Prevediem ťa prípravou krok po kroku a po narodení sa domov prispôsobí veku dieťaťa aj potrebám oboch rodičov.</p>
-            </div>
-            <div class="actions">
-              <button class="primary" id="enterBeforeBirthFromPregnancyIntro">Ďalej do prípravy</button>
             </div>
           </article>
         </div>
@@ -6446,48 +6466,14 @@
       return Math.max(0, Math.floor(diff / 86400000));
     }
 
-    function daysUntilDue() {
-      if (!state.profile.due) return null;
-      const due = new Date(state.profile.due + "T00:00:00");
+    function calcDueDays(dueValue) {
+      if (!dueValue) return null;
+      const due = new Date(dueValue + "T00:00:00");
       return Math.ceil((due.getTime() - Date.now()) / 86400000);
     }
 
-    function pregnancyIntroCopy(name, dueDays) {
-      const babyName = name && name !== "Bábätko" ? name : "Bábätko";
-      if (dueDays === null) {
-        return {
-          title: `${babyName} má pred sebou svoju cestu k vám.`,
-          text: "Som tu, aby sme si spolu pokojne nastavili termín, pôrodnicu, kontakty a prvé praktické kroky."
-        };
-      }
-      if (dueDays < 0) {
-        return {
-          title: `${babyName} je po termíne, držíme pokojný plán.`,
-          text: `Termín bol pred ${Math.abs(dueDays)} dňami. Guguboo ti pomôže mať pokope kontakty, tašku a otázky, ale pri neistote sa riaď pokynmi lekára alebo pôrodnice.`
-        };
-      }
-      if (dueDays <= 10) {
-        return {
-          title: `${babyName} je už naozaj blízko.`,
-          text: `Do termínu zostáva ${dueDays} dní. Teraz má zmysel doladiť tašku, pôrodnicu, cestu domov, pediatra a ľudí, ktorým vieš zavolať.`
-        };
-      }
-      if (dueDays <= 35) {
-        return {
-          title: `${babyName} príde už o pár týždňov.`,
-          text: `Do termínu zostáva ${dueDays} dní. Spolu si upraceme pôrodnicu, tašku, pediatra, kontakty, výbavu domov a prvé dni po návrate.`
-        };
-      }
-      if (dueDays <= 100) {
-        return {
-          title: `${babyName} príde približne o ${dueDays} dní.`,
-          text: "Nie je to ešte panika na poslednú chvíľu. Je to ideálny čas pokojne si pripraviť systém: čo vybaviť, čo kúpiť, koho uložiť do kontaktov a čo nechceš držať v hlave."
-        };
-      }
-      return {
-        title: `${babyName} má ešte čas rásť.`,
-        text: `Do termínu zostáva približne ${dueDays} dní. Guguboo zatiaľ pomôže jemne zbierať dôležité informácie, plánovať výbavu a pripraviť sa bez zbytočného tlaku.`
-      };
+    function daysUntilDue() {
+      return calcDueDays(state.profile.due);
     }
 
     function pregnancyWeek(dueValue = state.profile.due) {
@@ -6907,11 +6893,6 @@
         $("birthIntroTitle").textContent = `Vitaj na svete, ${name}.`;
         const bornAt = [state.profile.birthTime, state.profile.birthPlace].filter(Boolean).join(" · ");
         $("birthIntroText").textContent = `Vitaj na svete, ${name}.${bornAt ? " " + bornAt + "." : ""} Guguboo teraz pripraví rodine praktický prehľad podľa tvojho veku a potrieb.`;
-      }
-      if ($("pregnancyIntroTitle")) {
-        const pregnancyCopy = pregnancyIntroCopy(name, dueDays);
-        $("pregnancyIntroTitle").textContent = pregnancyCopy.title;
-        if ($("pregnancyIntroText")) $("pregnancyIntroText").textContent = pregnancyCopy.text;
       }
       const journey = $("journeyRing").closest(".journey");
       journey.classList.toggle("expecting-home", expecting);
@@ -7785,7 +7766,7 @@ Otázky:
         b.classList.toggle("active", target === id);
       });
       document.body.classList.toggle("welcome-mode", id === "welcome");
-      document.body.classList.toggle("intro-only", id === "birthIntro" || id === "pregnancyIntro");
+      document.body.classList.toggle("intro-only", id === "birthIntro");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -7798,7 +7779,7 @@ Otázky:
     }
 
     function initSectionMenuButtons() {
-      const excluded = new Set(["welcome", "birthIntro", "pregnancyIntro", "home"]);
+      const excluded = new Set(["welcome", "birthIntro", "home"]);
       document.querySelectorAll(".view").forEach(view => {
         if (excluded.has(view.id)) return;
         const topbar = view.querySelector(".topbar");
@@ -7908,7 +7889,7 @@ Otázky:
       if ($("countrySetupSummary")) {
         const ready = country === "SK" || country === "CZ";
         $("countrySetupSummary").innerHTML = ready
-          ? `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span>`
+          ? `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Prispôsobíme dôležité kontakty, miestne zdroje aj cestovanie.</span>`
           : `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Použijeme európsky základ; miestny obsah budeme postupne dopĺňať.</span>`;
       }
       if ($("countryCopy")) {
@@ -8018,10 +7999,32 @@ Otázky:
       document.querySelectorAll("[data-welcome-personal-name]").forEach(el => {
         el.textContent = userName === "Ahoj" ? userName : `Ahoj, ${userName}`;
       });
+      document.querySelectorAll("[data-welcome-name-only]").forEach(el => {
+        el.textContent = $("welcomeUserName")?.value.trim() || state.user.name || "Ty";
+      });
       if ($("welcomeSummaryName")) $("welcomeSummaryName").textContent = $("welcomeName")?.value.trim() || "Vaša rodina";
       if ($("welcomeSummaryPhase")) $("welcomeSummaryPhase").textContent = (state.welcomeStatus || "expecting") === "born" ? "Spoločný rytmus" : "Pokojná príprava";
       if ($("welcomeSummaryCountry")) $("welcomeSummaryCountry").textContent = euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa";
+      updateWelcomeChapterScreen();
       updateWelcomeFruitAvatar();
+    }
+
+    function updateWelcomeChapterScreen() {
+      const bornVariant = $("welcomeFinishBornVariant");
+      const chapterCard = $("welcomeChapterCard");
+      if (!bornVariant || !chapterCard) return;
+      const isExpecting = (state.welcomeStatus || "expecting") !== "born";
+      bornVariant.classList.toggle("hidden", isExpecting);
+      chapterCard.classList.toggle("hidden", !isExpecting);
+      if (!isExpecting) return;
+      const babyName = $("welcomeName")?.value.trim() || "vaše bábätko";
+      const dueDays = calcDueDays($("welcomeDue")?.value);
+      const daysText = dueDays === null ? "čoskoro" : dueDays < 0 ? "veľmi skoro" : `${dueDays} dní`;
+      const timelineLabel = dueDays === null ? "Čoskoro" : dueDays < 0 ? "Už skoro" : `O ${dueDays} dní`;
+      if ($("welcomeChapterBabyName")) $("welcomeChapterBabyName").textContent = babyName;
+      if ($("welcomeChapterDays")) $("welcomeChapterDays").textContent = daysText;
+      if ($("welcomeChapterDaysLabel")) $("welcomeChapterDaysLabel").textContent = timelineLabel;
+      if ($("welcomeChapterCountry")) $("welcomeChapterCountry").textContent = euCountries[$("welcomeCountry")?.value || getCountry()] || "Slovensku";
     }
 
     function updateWelcomeFruitAvatar() {
@@ -8040,7 +8043,7 @@ Otázky:
     function saveWelcomeDraft() {
       state.welcomeDraft = {
         userName: $("welcomeUserName")?.value || "",
-        userBirthYear: $("welcomeUserBirthYear")?.value || "",
+        userBirth: $("welcomeUserBirth")?.value || "",
         babyName: $("welcomeName")?.value || "",
         due: $("welcomeDue")?.value || "",
         birth: $("welcomeBirth")?.value || "",
@@ -8076,9 +8079,8 @@ Otázky:
     function validateWelcomeStep(step) {
       if (step === 2) {
         if (!$("welcomeUserName").value.trim()) return "Napíš prosím, ako ťa môžeme oslovovať.";
-        const year = Number($("welcomeUserBirthYear").value);
-        if (!year) return "Doplň prosím rok narodenia.";
-        if (year < 1900 || year > new Date().getFullYear()) return "Skontroluj prosím rok narodenia.";
+        if (!$("welcomeUserBirth").value) return "Doplň prosím dátum narodenia.";
+        if ($("welcomeUserBirth").value > dateInputToday()) return "Skontroluj prosím dátum narodenia.";
       }
       if (step === 4 && !state.welcomeStatus) return "Vyber prosím, v ktorej fáze sa nachádzate.";
       if (step === 5) {
@@ -8096,9 +8098,8 @@ Otázky:
       const missing = [];
 
       if (!$("welcomeUserName").value.trim()) missing.push("tvoje meno");
-      const userBirthYear = Number($("welcomeUserBirthYear").value);
-      if (!userBirthYear) missing.push("rok narodenia");
-      if (userBirthYear && (userBirthYear < 1900 || userBirthYear > new Date().getFullYear())) return "Skontroluj prosím rok narodenia.";
+      if (!$("welcomeUserBirth").value) missing.push("tvoj dátum narodenia");
+      if ($("welcomeUserBirth").value && $("welcomeUserBirth").value > today) return "Skontroluj prosím dátum narodenia.";
       if (!$("welcomeName").value.trim()) missing.push("meno alebo pracovné meno dieťaťa");
 
       if (status === "expecting") {
@@ -8121,8 +8122,8 @@ Otázky:
       state.user = {
         ...state.user,
         name: $("welcomeUserName").value.trim(),
-        birthYear: $("welcomeUserBirthYear").value,
         birthDate: $("welcomeUserBirth").value || state.user.birthDate || "",
+        birthYear: $("welcomeUserBirth").value ? $("welcomeUserBirth").value.slice(0, 4) : state.user.birthYear || "",
         email: $("welcomeEmail").value.trim().toLowerCase() || state.user.email || "",
         phone: $("welcomePhone").value.trim() || state.user.phone || ""
       };
@@ -8155,7 +8156,7 @@ Otázky:
       updateCountryUI(state.profile.country || "SK");
       if (status === "expecting" && state.checkTab === "prenatalDeep") state.checkTab = "admin";
       save();
-      switchView(status === "expecting" ? "pregnancyIntro" : "birthIntro");
+      switchView(status === "expecting" ? "home" : "birthIntro");
       showToast("Začiatok uložený");
     }
 
@@ -8282,7 +8283,7 @@ Otázky:
         $("welcomeManualCountryBtn").setAttribute("aria-expanded", "false");
       }
     });
-    ["welcomeUserName", "welcomeUserBirthYear", "welcomeName", "welcomeDue", "welcomeBirth", "welcomePartnerEmail"].forEach(id => {
+    ["welcomeUserName", "welcomeUserBirth", "welcomeName", "welcomeDue", "welcomeBirth", "welcomePartnerEmail"].forEach(id => {
       if (!$(id)) return;
       $(id).addEventListener("input", () => {
         updateWelcomeStory();
@@ -8924,7 +8925,7 @@ Otázky:
     $("welcomeCountry").addEventListener("change", () => {
       state.travelCountry = $("welcomeCountry").value;
       updateCountryUI($("welcomeCountry").value);
-      if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<span aria-hidden="true">✓</span><span><b>${euCountries[$("welcomeCountry").value]}.</b> Podľa krajiny prispôsobíme dôležité kontakty, miestne zdroje a cestovné informácie.</span>`;
+      if ($("countrySetupSummary")) $("countrySetupSummary").innerHTML = `<span aria-hidden="true">✓</span><span><b>${euCountries[$("welcomeCountry").value]}.</b> Prispôsobíme dôležité kontakty, miestne zdroje aj cestovanie.</span>`;
       if ($("welcomeLocationSource")) $("welcomeLocationSource").classList.add("hidden");
       setWelcomeInsurance("");
       setWelcomeStatus(state.welcomeStatus || "expecting");
@@ -8983,6 +8984,8 @@ Otázky:
     $("welcomeName").addEventListener("blur", () => maybeGuessSex("welcomeName", "welcomeSex"));
     $("babyName").addEventListener("blur", () => maybeGuessSex("babyName", "babySex"));
     $("saveWelcome").addEventListener("click", completeWelcome);
+    $("saveWelcomeChapter").addEventListener("click", completeWelcome);
+    $("welcomeChapterEditSettings").addEventListener("click", () => setWelcomeStep(2));
     document.querySelectorAll("[data-open-birth-card]").forEach(btn => btn.addEventListener("click", openBirthCardView));
     $("openBirthCardFromIntro").addEventListener("click", openBirthCardView);
     $("saveBirthCardDraft").addEventListener("click", () => storeBirthCardForm(false));
@@ -9054,7 +9057,6 @@ Otázky:
       field.addEventListener("change", refreshPreview);
     });
     $("enterHomeFromBirthIntro").addEventListener("click", () => switchView("home"));
-    $("enterBeforeBirthFromPregnancyIntro").addEventListener("click", () => switchView("home"));
     if ($("homeProfileBtn")) $("homeProfileBtn").addEventListener("click", () => $("profileBtn").click());
     $("openChildrenProfile").addEventListener("click", () => $("profileBtn").click());
     $("profileToContacts").addEventListener("click", () => {
@@ -9535,9 +9537,7 @@ Otázky:
     updateCountryUI(state.profile.country || "SK");
     if ($("welcomeCountry")) $("welcomeCountry").value = state.profile.country || "SK";
     $("welcomeUserName").value = state.welcomeDraft?.userName || state.user.name || "";
-    $("welcomeUserBirthYear").value = state.welcomeDraft?.userBirthYear || state.user.birthYear || "";
-    $("welcomeUserBirthYear").max = String(new Date().getFullYear());
-    $("welcomeUserBirth").value = state.user.birthDate || "";
+    $("welcomeUserBirth").value = state.welcomeDraft?.userBirth || state.user.birthDate || "";
     $("welcomeEmail").value = state.user.email || "";
     $("welcomePhone").value = state.user.phone || "";
     $("welcomePartnerEmail").value = state.welcomeDraft?.partnerEmail || state.partnerInvite.email || "";
