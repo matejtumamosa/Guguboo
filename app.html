@@ -1429,6 +1429,13 @@
       background: var(--soft-fill);
     }
 
+    .prenatal-next-actions button.done {
+      color: var(--muted);
+      font-weight: 700;
+      text-decoration: line-through;
+      background: repeating-linear-gradient(135deg, #fff, #fff 6px, #faf6f1 6px, #faf6f1 12px);
+    }
+
     .prep-card {
       border: 1px solid var(--line);
       background: #fff;
@@ -3479,8 +3486,8 @@
         <div class="grid">
           <article class="panel hero-panel span-12">
             <span class="pill">Celá príprava je zdarma</span>
-            <h3 id="beforeBirthTitle">Pripravujeme štart</h3>
-            <p id="beforeBirthText">Nastav termín pôrodu v profile a appka ti ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť.</p>
+            <h3 id="beforeBirthTitle">Nemusíš mať nič v hlave.</h3>
+            <p id="beforeBirthText">Guguboo ťa krok po kroku prevedie prípravou na pôrod aj prvé dni doma — nastav termín a appka ukáže, čo má práve teraz najväčší zmysel.</p>
             <div class="prenatal-status-grid">
               <div class="prenatal-status-card">
                 <small id="prenatalWeekLabel">Tvoje obdobie</small>
@@ -3489,9 +3496,9 @@
               </div>
               <div class="prenatal-status-card">
                 <small>Pripravenosť</small>
-                <strong id="prenatalProgressText">0 krokov hotových</strong>
+                <strong id="prenatalProgressText">0 zo 6 kľúčových krokov</strong>
                 <div class="prep-progress-track" aria-hidden="true"><span class="prep-progress-bar" id="prenatalProgressBar"></span></div>
-                <span class="muted small">Zaškrtávaj iba to, čo sa týka vašej rodiny.</span>
+                <span class="muted small">Počítame len tých pár najdôležitejších krokov, nie všetky drobnosti.</span>
               </div>
             </div>
             <strong>Odporúčané ďalšie kroky</strong>
@@ -3524,15 +3531,15 @@
             <h3>Moja príprava</h3>
             <p class="muted small">Vyber jednu tému. Otvorí sa iba jej obsah a po dokončení sa vrátiš sem.</p>
             <div class="prep-cards">
-              <button class="prep-card active" data-prep="profile"><span>📋</span><strong>Môj plán</strong><small>Termín, pôrodnica a odborné kontakty.</small></button>
-              <button class="prep-card" data-prep="hospital"><span>🏥</span><strong>Pôrodnica</strong><small>Príjem, pokyny a prepustenie.</small></button>
-              <button class="prep-card" data-prep="bag"><span>🧳</span><strong>Taška</strong><small>Doklady, mama, bábätko a odchod.</small></button>
-              <button class="prep-card" data-prep="equipment"><span>🛏️</span><strong>Výbava doma</strong><small>Spánok, kŕmenie, hygiena a zdravie.</small></button>
-              <button class="prep-card" data-prep="supplies"><span>🧺</span><strong>Prvé zásoby</strong><small>Rozumné minimum na prvé dni.</small></button>
-              <button class="prep-card" data-prep="mother"><span>🤱</span><strong>Pre mamu</strong><small>Pohodlie, dojčenie a pokoj doma.</small></button>
-              <button class="prep-card" data-prep="doctor"><span>🩺</span><strong>Pediater</strong><small>Výber, prvá poradňa a otázky.</small></button>
-              <button class="prep-card" data-prep="home"><span>🏠</span><strong>Návrat domov</strong><small>Autosedačka a prvé hodiny doma.</small></button>
-              <button class="prep-card" data-prep="admin"><span>🏛️</span><strong>Práca a úrady</strong><small>Čo overiť ešte pred pôrodom.</small></button>
+              <button class="prep-card active" data-prep="profile"><span>📋</span><strong>Môj plán</strong><small>Nech nič dôležité nezostane len v hlave.</small></button>
+              <button class="prep-card" data-prep="hospital"><span>🏥</span><strong>Pôrodnica</strong><small>Aby si presne vedela, kam ísť a čo čakať.</small></button>
+              <button class="prep-card" data-prep="bag"><span>🧳</span><strong>Taška</strong><small>Zbalená vopred = pokoj v deň, keď to príde.</small></button>
+              <button class="prep-card" data-prep="equipment"><span>🛏️</span><strong>Výbava doma</strong><small>Doma pripravené, kým ešte máte na to silu.</small></button>
+              <button class="prep-card" data-prep="supplies"><span>🧺</span><strong>Prvé zásoby</strong><small>Nech večer nikto nehľadá plienky ani vodu.</small></button>
+              <button class="prep-card" data-prep="mother"><span>🤱</span><strong>Pre mamu</strong><small>Pokoj patrí aj tebe, nielen bábätku.</small></button>
+              <button class="prep-card" data-prep="doctor"><span>🩺</span><strong>Pediater</strong><small>Vybraný vopred, nech prvá poradňa nie je zhon.</small></button>
+              <button class="prep-card" data-prep="home"><span>🏠</span><strong>Návrat domov</strong><small>Premyslená cesta domov, nie improvizácia.</small></button>
+              <button class="prep-card" data-prep="admin"><span>🏛️</span><strong>Práca a úrady</strong><small>Vybavené vopred, nech vás to nedobehne po pôrode.</small></button>
             </div>
 
             <div class="prep-detail active" data-prep-detail="profile">
@@ -3566,6 +3573,7 @@
 
             <div class="prep-detail" data-prep-detail="bag">
               <h4>Taška do pôrodnice</h4>
+              <p class="muted small">Zbaľ ju pokojne dopredu — nech v deň odchodu do pôrodnice riešiš len cestu, nie hľadanie vecí.</p>
               <div class="sub-prep-cards" aria-label="Časti tašky do pôrodnice">
                 <button class="sub-prep-card active" type="button" data-bag-tab="docs"><span>🪪</span><strong>Doklady</strong><small>Pri príjme</small></button>
                 <button class="sub-prep-card" type="button" data-bag-tab="mom"><span>🧴</span><strong>Pre mamu</strong><small>Hygiena a pohodlie</small></button>
@@ -3622,6 +3630,7 @@
 
             <div class="prep-detail" data-prep-detail="hospital">
               <h4>Pôrodnica</h4>
+              <p class="muted small">Čím viac vieš vopred, tým menej prekvapení v deň D — over si to teraz, nie cestou tam.</p>
               <div class="checklist-grid">
                 <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-admission"><span><b>Príjem:</b> zistiť kam prísť cez deň a kam v noci, kedy volať pred príchodom.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-parking"><span><b>Príchod autom:</b> zistiť kde bezpečne zastaviť pri príchode a kto odparkuje auto.</span></label>
@@ -3638,6 +3647,7 @@
 
             <div class="prep-detail" data-prep-detail="equipment">
               <h4>Výbava doma</h4>
+              <p class="muted small">Netreba mať všetko hneď — len toľko, aby prvé dni doma boli pokojné, nie zháňanie za pochodu.</p>
               <div class="sub-prep-cards" aria-label="Časti výbavy doma">
                 <button class="sub-prep-card active" type="button" data-equip-tab="sleep"><span>🛏️</span><strong>Spánok</strong><small>Základ doma</small></button>
                 <button class="sub-prep-card" type="button" data-equip-tab="feeding"><span>🍼</span><strong>Kŕmenie</strong><small>Mlieko a fľaše</small></button>
@@ -3745,6 +3755,7 @@
 
             <div class="prep-detail" data-prep-detail="doctor">
               <h4>Pediater a gynekológ</h4>
+              <p class="muted small">Vybraný pediater vopred znamená, že prvá poradňa je pokojná kontrola, nie zoznamovanie sa naslepo.</p>
               <div class="checklist-grid">
                 <label class="check-row"><input type="checkbox" data-check-key="prep-doctor-pediatrician"><span><b>Pediater:</b> uložiť meno, telefón, email, ordinačné hodiny a postup mimo ordinačných hodín.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-doctor-first-visit"><span><b>Prvá poradňa:</b> pripraviť prepúšťaciu správu, otázky, váhu, mliečko, prebalenie, teplotu.</span></label>
@@ -3755,6 +3766,7 @@
 
             <div class="prep-detail" data-prep-detail="home">
               <h4>Cesta domov a prvý večer</h4>
+              <p class="muted small">Prvé hodiny doma nemusia byť chaos — stačí mať premyslené tieto štyri veci.</p>
               <div class="checklist-grid">
                 <label class="check-row"><input type="checkbox" data-check-key="prep-home-car"><span><b>Auto:</b> autosedačka nainštalovaná, vyskúšané pásy, kto šoféruje, kde počká.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-home-ready"><span><b>Doma:</b> prejsť checklist Výbava a pripraviť len veci, ktoré reálne použijete v prvých dňoch.</span></label>
@@ -6989,9 +7001,9 @@
       if ($("supportGuideText")) $("supportGuideText").textContent = expecting
         ? "Vyber, čo chceš pred pôrodom upratať. Dám ti otázky pre úrad, Sociálnu poisťovňu alebo zamestnávateľa bez toho, aby som sa tvárila ako právnik."
         : "Vyber, čo riešite po narodení. Pomôžem ti oddeliť automatické veci od tých, ktoré treba overiť alebo niekomu poslať.";
-      $("beforeBirthTitle").textContent = dueDays === null ? "Pripravujeme štart" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`);
+      $("beforeBirthTitle").textContent = dueDays === null ? "Nemusíš mať nič v hlave." : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`);
       $("beforeBirthText").textContent = dueDays === null
-        ? "Nastav termín pôrodu v profile a appka ti ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť."
+        ? "Guguboo ťa krok po kroku prevedie prípravou na pôrod aj prvé dni doma — nastav termín a appka ukáže, čo má práve teraz najväčší zmysel."
         : "Nemusíš riešiť všetko naraz. Guguboo vyberie najbližšie praktické kroky podľa toho, koľko času zostáva.";
       renderPrenatalOverview(dueDays, week);
       $("prenatalHospital").value = state.prenatal.hospital || "";
@@ -7069,6 +7081,13 @@
       if (el) el.innerHTML = "";
     }
 
+    function isPrepTopicDone(key) {
+      const box = document.querySelector(`[data-prep-detail="${key}"]`);
+      if (!box) return false;
+      const items = Array.from(box.querySelectorAll("input[data-check-key]"));
+      return items.length > 0 && items.every(input => !!state.checks[input.dataset.checkKey]);
+    }
+
     function prenatalPlan(dueDays, week) {
       if (dueDays === null) return {
         label: "Najprv profil",
@@ -7108,12 +7127,13 @@
       };
     }
 
+    const KEY_PRENATAL_CHECKS = ["prep-bag-leave-seat", "equip-sleep-bed", "prep-doctor-pediatrician", "prep-hospital-admission", "prep-supplies-diapers", "prep-home-family"];
+
     function renderPrenatalProgress() {
-      const items = Array.from(document.querySelectorAll("#beforeBirth .app-menu-panel input[data-check-key]"));
-      const done = items.filter(input => !!state.checks[input.dataset.checkKey]).length;
-      const total = items.length;
-      const percent = total ? Math.round(done / total * 100) : 0;
-      if ($("prenatalProgressText")) $("prenatalProgressText").textContent = done ? `${percent}% prípravy označených` : "Začíname prvým krokom";
+      const keyDone = KEY_PRENATAL_CHECKS.filter(key => !!state.checks[key]).length;
+      const keyTotal = KEY_PRENATAL_CHECKS.length;
+      const percent = keyTotal ? Math.round(keyDone / keyTotal * 100) : 0;
+      if ($("prenatalProgressText")) $("prenatalProgressText").textContent = keyDone ? `${keyDone} zo ${keyTotal} kľúčových krokov` : "Začíname prvým krokom";
       if ($("prenatalProgressBar")) $("prenatalProgressBar").style.width = `${percent}%`;
     }
 
@@ -7134,7 +7154,10 @@
       if ($("prenatalStageText")) $("prenatalStageText").textContent = plan.text;
       const next = $("prenatalNextSteps");
       if (next) {
-        next.innerHTML = plan.steps.map(([key, label]) => `<button type="button" data-prep-open="${key}">${label}</button>`).join("");
+        next.innerHTML = plan.steps.map(([key, label]) => {
+          const done = isPrepTopicDone(key);
+          return `<button type="button" class="${done ? "done" : ""}" data-prep-open="${key}">${done ? `Hotovo: ${label}` : label}</button>`;
+        }).join("");
         next.querySelectorAll("[data-prep-open]").forEach(btn => btn.addEventListener("click", () => openPrepSection(btn.dataset.prepOpen)));
       }
       renderPrenatalProgress();
