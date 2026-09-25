@@ -56,7 +56,7 @@
 .private-message[data-kind="error"] { color: #a13f4a; }
 
 .private-shell button { min-height: 46px; border-radius: 13px; font: inherit; font-weight: 750; cursor: pointer; }
-.private-primary { border: 0; background: var(--private-accent); color: #fff; padding: 11px 18px; }
+.private-primary { display: inline-flex; align-items: center; justify-content: center; border: 0; background: var(--private-accent); color: #fff; padding: 11px 18px; text-decoration: none; cursor: pointer; }
 .private-primary:disabled { opacity: .55; cursor: wait; }
 .private-link { border: 0; background: transparent; color: var(--private-accent); text-decoration: underline; }
 .private-lock-button { border: 1px solid var(--private-line); background: #fff; color: var(--private-ink); padding: 8px 14px; }

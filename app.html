@@ -2,6 +2,15 @@
 <html lang="sk">
 <head>
   <meta charset="utf-8">
+  <script>
+    (function enforceSecureGugubooDomain() {
+      var host = window.location.hostname.toLowerCase();
+      if ((host === "guguboo.com" || host === "www.guguboo.com") &&
+          (window.location.protocol !== "https:" || host === "www.guguboo.com")) {
+        window.location.replace("https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Guguboo – mobilná beta V6</title>
   <style>
@@ -1184,25 +1193,6 @@
     .welcome-note p {
       margin: 8px 0 0;
     }
-
-    .welcome-chapter-card { text-align: center; }
-    .welcome-chapter-greeting { font-weight: 800; font-size: 15px; color: var(--brand); margin: 0 0 10px; }
-    .welcome-chapter-eyebrow { font-weight: 800; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--brand); }
-    .welcome-chapter-title { margin: 12px 0 14px; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; font-weight: 700; color: var(--ink); }
-    .welcome-chapter-text { margin: 0 auto 22px; max-width: 340px; font-size: 15px; line-height: 1.6; color: var(--muted); }
-    .welcome-chapter-text strong { color: var(--ink); }
-    .welcome-chapter-timeline { position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin: 0 0 24px; padding: 0 6px; }
-    .welcome-chapter-timeline::before { content: ""; position: absolute; top: 9px; left: 28px; right: 28px; height: 2px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); opacity: .3; }
-    .welcome-chapter-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
-    .welcome-chapter-dot { width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
-    .welcome-chapter-step-label { font-weight: 800; font-size: 9px; letter-spacing: .5px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
-    .welcome-chapter-step-label.is-final { color: var(--ink); }
-    .welcome-chapter-checklist { display: flex; flex-direction: column; gap: 12px; text-align: left; margin: 0 0 8px; }
-    .welcome-chapter-check { display: flex; align-items: center; gap: 10px; }
-    .welcome-chapter-check-icon { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .welcome-chapter-check-icon svg { display: block; }
-    .welcome-chapter-check span:last-child { font-size: 14px; color: var(--muted); }
-    .welcome-chapter-edit-link { font-family: inherit; font-weight: 700; font-size: 12px; color: var(--muted); background: none; border: none; padding: 6px; margin-top: 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
     .hidden { display: none !important; }
 
@@ -3096,7 +3086,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <link rel="stylesheet" href="v5-mobile.css?v=6.32">
+  <link rel="stylesheet" href="v5-mobile.css?v=7.3">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
@@ -3115,7 +3105,7 @@
 
       <div class="baby-card">
         <strong id="babyNameLabel">Bábätko</strong>
-        <span id="babyAgeLabel">Nastav profil dieťaťa</span>
+        <span id="babyAgeLabel">Nastavte profil dieťaťa</span>
         <span class="baby-growth-line hidden" id="sideBabyGrowthLine"><span class="baby-growth-fruit" id="sideBabyGrowthFruit">🥭</span><span class="baby-growth-text" id="sideBabyGrowthText"></span></span>
       </div>
 
@@ -3164,7 +3154,7 @@
         <div class="welcome-shell">
           <article class="panel hero-panel welcome-card" id="welcomeCard" data-step="1">
             <img class="welcome-logo" data-brand-voice src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo">
-            <span class="pill">Vitaj v aplikácii</span>
+            <span class="pill">Vitajte v aplikácii</span>
             <div class="stepper" id="welcomeStepper" aria-label="Priebeh nastavenia">
               <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
               <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
@@ -3174,7 +3164,7 @@
               <div class="welcome-first-grid">
                 <div class="welcome-first-copy">
                   <div class="welcome-first-message">
-                    <span class="welcome-first-kicker"><span aria-hidden="true">♡</span> Guguboo je tu s tebou</span>
+                    <span class="welcome-first-kicker"><span aria-hidden="true">♡</span> Guguboo je tu s vami</span>
                     <h2>Menej vecí v hlave.<span>Viac pokoja pre vás.</span></h2>
                     <p class="welcome-first-lead">Krok za krokom – nôžka za nôžkou <span aria-hidden="true">👣</span></p>
                   </div>
@@ -3199,7 +3189,7 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="2">
               <div class="welcome-profile-step">
-                <h2>Začnime tebou.</h2>
+                <h2>Najprv niečo o vás.</h2>
                 <div class="welcome-profile-fields">
                   <label class="welcome-friendly-field"><span class="v5-sr-only">Meno alebo oslovenie</span>
                     <input id="welcomeUserName" autocomplete="name" placeholder="napr. Michaela" autofocus>
@@ -3245,7 +3235,7 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="4">
               <span class="welcome-story-kicker">Naladíme Guguboo</span>
-              <h2><span data-welcome-name-only>Ty</span>, vyber jednu z možností.</h2>
+              <h2><span data-welcome-name-only>Vy</span>, vyberte jednu z možností.</h2>
               <div class="welcome-options welcome-story-choices">
                 <button class="choice-card" type="button" data-welcome-status="expecting">
                   <span class="welcome-choice-icon" aria-hidden="true">☾</span>
@@ -3289,11 +3279,11 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="6">
               <span class="welcome-story-kicker">Kruh podpory</span>
-              <h2>Chceš tu mať blízku osobu?</h2>
-              <p class="welcome-story-lead">Partnera, druhého rodiča alebo niekoho, komu dôveruješ. Je to úplne na tebe.</p>
+              <h2>Chcete tu mať blízku osobu?</h2>
+              <p class="welcome-story-lead">Partnera, druhého rodiča alebo niekoho, komu dôverujete. Je to úplne na vás.</p>
               <div class="welcome-options welcome-story-choices">
                 <button class="choice-card" type="button" data-partner-choice="yes"><span class="welcome-choice-icon" aria-hidden="true">＋</span><strong>Áno, pripravme pozvanie</strong><span>Spoločný priestor môžete nastaviť aj neskôr.</span></button>
-                <button class="choice-card active" type="button" data-partner-choice="no"><span class="welcome-choice-icon" aria-hidden="true">♡</span><strong>Zatiaľ nie</strong><span>Guguboo je tu rovnako aj pre teba.</span></button>
+                <button class="choice-card active" type="button" data-partner-choice="no"><span class="welcome-choice-icon" aria-hidden="true">♡</span><strong>Zatiaľ nie</strong><span>Guguboo je tu rovnako aj pre vás.</span></button>
               </div>
               <label id="welcomePartnerEmailWrap" class="welcome-friendly-field hidden">E-mail blízkej osoby
                 <input id="welcomePartnerEmail" type="email" autocomplete="email" placeholder="blizka.osoba@email.sk">
@@ -3303,40 +3293,40 @@
             </div>
 
             <div class="welcome-step welcome-story-step welcome-finish-step" data-welcome-step="7">
-              <div id="welcomeFinishBornVariant">
-                <span class="welcome-finish-mark" aria-hidden="true">✓</span>
-                <span class="welcome-story-kicker">Tvoj priestor je pripravený</span>
-                <h2>Môžeme začať pokojne.</h2>
-                <p class="welcome-story-lead">Ukážeme ti len to, čo sa hodí pre vašu dnešnú etapu.</p>
-                <div class="welcome-finish-summary" aria-label="Súhrn nastavenia">
-                  <span><small>Pre koho</small><strong id="welcomeSummaryName">Vaša rodina</strong></span>
-                  <span><small>Teraz</small><strong id="welcomeSummaryPhase">Pokojná príprava</strong></span>
-                  <span><small>Miestny obsah</small><strong id="welcomeSummaryCountry">Slovensko</strong></span>
+              <h2><span data-welcome-personal-name>Ahoj</span>.<span class="welcome-finish-title-line">Všetko je pripravené.</span></h2>
+              <p class="welcome-story-lead" id="welcomeFinishLead">Každý deň vám ponúkneme jeden malý krok. Nič netreba riešiť naraz.</p>
+
+              <section class="v5-home-hero welcome-finish-preview" aria-labelledby="welcomeFinishBabyName">
+                <div class="v5-home-person">
+                  <span class="v5-baby-avatar v5-fruit-avatar" id="welcomeFinishAvatar" role="img" aria-label="Ovocný avatar bábätka"></span>
+                  <div>
+                    <h3 id="welcomeFinishBabyName">Bábätko</h3>
+                    <p id="welcomeFinishBabyMeta">Ovocný avatar</p>
+                  </div>
                 </div>
-                <p class="welcome-soft-note"><span aria-hidden="true">♡</span> E-mail, telefón aj ďalšie detaily doplníš iba vtedy, keď ich budeš potrebovať.</p>
-                <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
+                <dl class="v5-glance-strip">
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel1">Týždeň</dt><dd id="welcomeFinishGlanceValue1">—</dd></div>
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel2">Termín</dt><dd id="welcomeFinishGlanceValue2">—</dd></div>
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel3">Do termínu</dt><dd id="welcomeFinishGlanceValue3">—</dd></div>
+                </dl>
+              </section>
+
+              <div class="v5-today-card welcome-finish-first-step">
+                <span class="v5-icon" aria-hidden="true"><svg id="welcomeFinishIconChecklist" viewBox="0 0 24 24"><path d="M9 5h10M9 12h10M9 19h10"/><path d="m3.5 5 1.5 1.5L7.5 4M3.5 12l1.5 1.5L7.5 11M3.5 19l1.5 1.5L7.5 18"/></svg><svg id="welcomeFinishIconMoment" class="hidden" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>
+                <div>
+                  <small>Prvý krok na domove</small>
+                  <strong id="welcomeFinishStepTitle">Pripravte dnes jednu vec do pôrodnice.</strong>
+                  <span class="v5-today-hint" id="welcomeFinishStepHint">Checklist Taška do pôrodnice nájdete po otvorení vášho Guguboo.</span>
+                </div>
               </div>
 
-              <div id="welcomeChapterCard" class="welcome-chapter-card">
-                <div class="welcome-chapter-greeting"><span data-welcome-personal-name>Ahoj</span>.</div>
-                <span class="welcome-chapter-eyebrow">Kapitola 1 · Pokojná príprava</span>
-                <h2 class="welcome-chapter-title">Váš príbeh sa začína.</h2>
-                <p class="welcome-chapter-text">O <strong id="welcomeChapterDays">63 dní</strong> privítate v živote <strong id="welcomeChapterBabyName">vaše bábätko</strong>. Krok za krokom vás prevedieme prípravou, prispôsobenou životu v krajine <span id="welcomeChapterCountry">Slovensko</span> aj vašej etape.</p>
-                <div class="welcome-chapter-timeline">
-                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label">Dnes</span></div>
-                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label">Priebežne</span></div>
-                  <div class="welcome-chapter-step"><span class="welcome-chapter-dot"></span><span class="welcome-chapter-step-label is-final" id="welcomeChapterDaysLabel">O 63 dní</span></div>
-                </div>
-                <div class="welcome-chapter-checklist">
-                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Čo vybaviť a kedy</span></div>
-                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Kontakty, ktoré sa zídu</span></div>
-                  <div class="welcome-chapter-check"><span class="welcome-chapter-check-icon" aria-hidden="true"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>Nič netreba riešiť naraz</span></div>
-                </div>
-                <button class="welcome-chapter-edit-link" type="button" id="welcomeChapterEditSettings">Upraviť nastavenia</button>
-                <div class="actions welcome-story-actions welcome-finish-actions">
-                  <button class="primary" type="button" id="saveWelcomeChapter">Otvoriť prvú kapitolu <span aria-hidden="true">→</span></button>
-                </div>
-              </div>
+              <ul class="welcome-finish-facts">
+                <li id="welcomeFinishCountry">Miestny obsah: Slovensko</li>
+                <li id="welcomeFinishPartner" class="hidden"></li>
+              </ul>
+
+              <button class="welcome-finish-edit" type="button" id="welcomeChapterEditSettings">Upraviť údaje o bábätku</button>
+              <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
             </div>
 
             <div class="welcome-legacy-fields hidden" aria-hidden="true">
@@ -3387,7 +3377,7 @@
           <article class="panel hero-panel today-panel">
             <span class="pill" id="todayPill">Dnes</span>
             <h2 id="dailyTitle">Pokojný štart</h2>
-            <p class="muted" id="dailyText">Dnes nemusíš vyriešiť všetko. Vyber jednu vec, ktorú teraz naozaj potrebuješ.</p>
+            <p class="muted" id="dailyText">Dnes nemusíte vyriešiť všetko. Vyberte jednu vec, ktorú teraz naozaj potrebujete.</p>
             <div class="home-quick-actions" id="homeQuickActions"></div>
           </article>
 
@@ -3441,7 +3431,7 @@
           </article>
           <article class="panel span-12 home-compact-section">
             <h3 id="homeMenuTitle">Jeden krok na teraz</h3>
-            <p class="home-menu-intro" id="homeMenuIntro">Vyber iba to, čo vám práve pomôže. Ostatné nástroje počkajú.</p>
+            <p class="home-menu-intro" id="homeMenuIntro">Vyberte iba to, čo vám práve pomôže. Ostatné nástroje počkajú.</p>
             <div class="home-primary-actions" id="homeMenuPrimary"></div>
             <details class="all-tools-panel" id="allToolsPanel">
               <summary>Všetky nástroje</summary>
@@ -3480,18 +3470,18 @@
           <article class="panel hero-panel span-12">
             <span class="pill">Celá príprava je zdarma</span>
             <h3 id="beforeBirthTitle">Pripravujeme štart</h3>
-            <p id="beforeBirthText">Nastav termín pôrodu v profile a appka ti ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť.</p>
+            <p id="beforeBirthText">Nastavte termín pôrodu v profile a appka vám ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť.</p>
             <div class="prenatal-status-grid">
               <div class="prenatal-status-card">
-                <small id="prenatalWeekLabel">Tvoje obdobie</small>
+                <small id="prenatalWeekLabel">Vaše obdobie</small>
                 <strong id="prenatalStageTitle">Najprv nastavíme termín</strong>
-                <span class="muted small" id="prenatalStageText">Potom dostaneš prípravu zoradenú podľa toho, koľko času zostáva.</span>
+                <span class="muted small" id="prenatalStageText">Potom dostanete prípravu zoradenú podľa toho, koľko času zostáva.</span>
               </div>
               <div class="prenatal-status-card">
                 <small>Pripravenosť</small>
                 <strong id="prenatalProgressText">0 krokov hotových</strong>
                 <div class="prep-progress-track" aria-hidden="true"><span class="prep-progress-bar" id="prenatalProgressBar"></span></div>
-                <span class="muted small">Zaškrtávaj iba to, čo sa týka vašej rodiny.</span>
+                <span class="muted small">Zaškrtávajte iba to, čo sa týka vašej rodiny.</span>
               </div>
             </div>
             <strong>Odporúčané ďalšie kroky</strong>
@@ -3515,14 +3505,14 @@
           <article class="panel span-5">
             <h3>Najbližšia príprava</h3>
             <div class="list">
-              <div class="item"><main><strong>Taška do pôrodnice</strong><span class="muted small">Rozklikni checklist nižšie: doklady, veci pre mamu, bábätko, praktické veci a odchod domov.</span></main></div>
+              <div class="item"><main><strong>Taška do pôrodnice</strong><span class="muted small">Rozkliknite checklist nižšie: doklady, veci pre mamu, bábätko, praktické veci a odchod domov.</span></main></div>
               <div class="item"><main><strong>Pediater</strong><span class="muted small">Nielen kontakt: čo priniesť, čo sa pýtať, čo poslať dopredu a čo sledovať doma.</span></main></div>
               <div class="item"><main><strong>Cesta domov</strong><span class="muted small">Autosedačka, kde bezpečne zastaviť pri odchode, kto šoféruje, čo mať pripravené doma.</span></main></div>
             </div>
           </article>
           <article class="panel span-12 app-menu-panel">
             <h3>Moja príprava</h3>
-            <p class="muted small">Vyber jednu tému. Otvorí sa iba jej obsah a po dokončení sa vrátiš sem.</p>
+            <p class="muted small">Vyberte jednu tému. Otvorí sa iba jej obsah a po dokončení sa vrátite sem.</p>
             <div class="prep-cards">
               <button class="prep-card active" data-prep="profile"><span>📋</span><strong>Môj plán</strong><small>Termín, pôrodnica a odborné kontakty.</small></button>
               <button class="prep-card" data-prep="hospital"><span>🏥</span><strong>Pôrodnica</strong><small>Príjem, pokyny a prepustenie.</small></button>
@@ -3539,24 +3529,24 @@
               <h4>Karta pred narodením</h4>
               <div class="form-grid">
                 <label>Pôrodnica
-                  <input id="prenatalHospital" placeholder="Napíš názov pôrodnice alebo mesto">
+                  <input id="prenatalHospital" placeholder="Napíšte názov pôrodnice alebo mesto">
                   <span class="muted small">V beta verzii radšej ručne. Overený výber pôrodníc príde až s databázou miest.</span>
                 </label>
                 <label>Gynekológ / poradňa
                   <input id="prenatalGynecologist" placeholder="Meno lekára alebo poradňa">
-                  <span class="muted small">Meno, ambulancia alebo miesto. Kontakt si doplníš v sekcii Kontakty.</span>
+                  <span class="muted small">Meno, ambulancia alebo miesto. Kontakt si doplníte v sekcii Kontakty.</span>
                 </label>
                 <label>Budúci pediater
                   <input id="prenatalPediatrician" placeholder="Meno pediatra alebo ambulancia">
-                  <span class="muted small">Neponúkame neoverený zoznam pediatrov. Zadaj vlastného alebo doplň neskôr.</span>
+                  <span class="muted small">Neponúkame neoverený zoznam pediatrov. Zadajte vlastného alebo doplňte neskôr.</span>
                 </label>
                 <label>Plánovaná poisťovňa / poisťovňa matky
-                  <input id="prenatalInsurance" list="insuranceOptions" placeholder="Vyber alebo napíš">
+                  <input id="prenatalInsurance" list="insuranceOptions" placeholder="Vyberte alebo napíšte">
                   <span class="muted small">Na Slovensku je novorodenec automaticky poistený v poisťovni matky; výber tu slúži ako poznámka.</span>
                 </label>
               </div>
               <label>Poznámka k pôrodu / prvým dňom
-                <textarea id="prenatalPlan" placeholder="Čo chceš mať pripravené, koho volať, čo nezabudnúť v pôrodnici"></textarea>
+                <textarea id="prenatalPlan" placeholder="Čo chcete mať pripravené, koho volať, čo nezabudnúť v pôrodnici"></textarea>
               </label>
               <div class="actions">
                 <button class="primary" id="savePrenatal">Uložiť prípravu</button>
@@ -3578,7 +3568,7 @@
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-id"><span>Občiansky preukaz alebo iný doklad totožnosti</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-insurance"><span>Kartička poistenca matky</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-book"><span>Tehotenská knižka</span></label>
-                  <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-reports"><span>Správa alebo odporúčanie od lekára, ktoré ti výslovne povedali priniesť do pôrodnice</span></label>
+                  <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-reports"><span>Správa alebo odporúčanie od lekára, ktoré vám výslovne povedali priniesť do pôrodnice</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-doc-father"><span>Sobášny list alebo doklad k otcovstvu, iba ak to pôrodnica alebo matrika vyžaduje</span></label>
                 </div>
               </div>
@@ -3597,7 +3587,7 @@
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-baby-hat"><span>Čiapka a ponožky</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-baby-blanket"><span>Deka alebo zavinovačka na cestu domov</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="prep-bag-baby-diapers"><span>Pár plienok na cestu, ak ich pôrodnica nebalí k prepusteniu</span></label>
-                  <label class="check-row"><input type="checkbox" data-check-key="prep-bag-baby-clean"><span>Obrúsky alebo voda a tampóny podľa toho, čo chceš používať</span></label>
+                  <label class="check-row"><input type="checkbox" data-check-key="prep-bag-baby-clean"><span>Obrúsky alebo voda a tampóny podľa toho, čo chcete používať</span></label>
                 </div>
               </div>
               <div class="bag-panel" data-bag-panel="practical">
@@ -3626,7 +3616,7 @@
                 <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-admission"><span><b>Príjem:</b> zistiť kam prísť cez deň a kam v noci, kedy volať pred príchodom.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-parking"><span><b>Príchod autom:</b> zistiť kde bezpečne zastaviť pri príchode a kto odparkuje auto.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-provided"><span><b>Pokyny pôrodnice:</b> uložiť ich vlastný zoznam vecí, pravidlá pre návštevy, partnera, príjem a prepustenie.</span></label>
-                <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-discharge"><span><b>Prepustenie:</b> zistiť aké dokumenty dostaneš pre pediatra a čo sledovať doma.</span></label>
+                <label class="check-row"><input type="checkbox" data-check-key="prep-hospital-discharge"><span><b>Prepustenie:</b> zistiť aké dokumenty dostanete pre pediatra a čo sledovať doma.</span></label>
               </div>
               <label>Poznámky k pôrodnici
                 <textarea id="hospitalDetails" placeholder="Vchod, telefón na príjem, kde zastaviť pri príchode, pokyny pôrodnice, návštevy"></textarea>
@@ -3657,8 +3647,8 @@
                 <div class="checklist-grid">
                   <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-bottles"><span>Fľašky podľa spôsobu kŕmenia, aspoň 2 kusy pri dokrmovaní alebo umelom mlieku</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-teats"><span>Cumlíky na fľašu s prietokom podľa veku novorodenca</span></label>
-                  <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-pump"><span>Odsávačka mlieka, ak plánuješ odsávať alebo chceš mať riešenie pri naliatych prsiach</span></label>
-                  <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-storage"><span>Nádobky alebo sáčky na materské mlieko, iba ak budeš mlieko skladovať</span></label>
+                  <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-pump"><span>Odsávačka mlieka, ak plánujete odsávať alebo chcete mať riešenie pri naliatych prsiach</span></label>
+                  <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-storage"><span>Nádobky alebo sáčky na materské mlieko, iba ak budete mlieko skladovať</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-clean"><span>Kefka na fľaše a miesto na sušenie fľašiek</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="equip-feeding-pacifier"><span>Cumlík na upokojenie podľa veľkosti 0-6 mesiacov, ak ho chcete skúsiť</span></label>
                 </div>
@@ -3670,7 +3660,7 @@
                   <label class="check-row"><input type="checkbox" data-check-key="equip-hygiene-wipes"><span>Vlhčené obrúsky alebo tampóny a čistá voda podľa toho, čo chcete používať</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="equip-hygiene-changing"><span>Prebaľovacia podložka alebo bezpečné miesto na prebaľovanie</span></label>
                   <label class="check-row"><input type="checkbox" data-check-key="equip-hygiene-bath"><span>Vanička alebo bezpečná podložka na kúpanie</span></label>
-                  <label class="check-row"><input type="checkbox" data-check-key="equip-hygiene-bath-thermo"><span>Teplomer do vody, ak chceš rýchlo kontrolovať teplotu kúpeľa</span></label>
+                  <label class="check-row"><input type="checkbox" data-check-key="equip-hygiene-bath-thermo"><span>Teplomer do vody, ak chcete rýchlo kontrolovať teplotu kúpeľa</span></label>
                 </div>
               </div>
               <div class="bag-panel" data-equip-panel="health">
@@ -3715,7 +3705,7 @@
               <h4>Príprava pre mamu</h4>
               <p class="muted small">Citlivo a prakticky. Informácie, ktoré podporia pokojnú prípravu pred pôrodom aj príjemnejší návrat domov.</p>
               <div class="checklist-grid">
-                <label class="check-row"><input type="checkbox" data-check-key="prep-mother-belly"><span><b>Krém alebo olej na bruško:</b> ak ho používaš, ulož značku a vôňu, ktorá ti sedí.</span></label>
+                <label class="check-row"><input type="checkbox" data-check-key="prep-mother-belly"><span><b>Krém alebo olej na bruško:</b> ak ho používate, uložte značku a vôňu, ktorá vám sedí.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-mother-pads"><span><b>Popôrodné vložky:</b> pripraviť doma aj do tašky, podľa pokynov pôrodnice.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-mother-underwear"><span><b>Pohodlné spodné prádlo:</b> mäkké, praktické, nie tesné.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-mother-nursing-bra"><span><b>Dojčiaca podprsenka:</b> radšej menej kusov pred pôrodom, veľkosť sa môže zmeniť.</span></label>
@@ -3730,7 +3720,7 @@
               <h4>Čo si overiť pred pôrodom</h4>
               <p class="muted small">Nie právna poradňa. Toto je len praktická navigácia, čo sa oplatí mať pripravené a kde sa pýtať.</p>
               <div class="checklist-grid">
-                <label class="check-row"><input type="checkbox" data-check-key="prep-admin-maternity"><span><b>Materské / tehotenské:</b> overiť, či sa ťa týka a aké doklady má dostať Sociálna poisťovňa alebo zamestnávateľ.</span></label>
+                <label class="check-row"><input type="checkbox" data-check-key="prep-admin-maternity"><span><b>Materské / tehotenské:</b> overiť, či sa vás týka a aké doklady má dostať Sociálna poisťovňa alebo zamestnávateľ.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-admin-employer"><span><b>Zamestnávateľ:</b> uložiť HR/mzdový kontakt a spýtať sa na interný postup pred materskou.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-admin-partner"><span><b>Otec / partner:</b> overiť, čo vie vybaviť cez svojho zamestnávateľa po narodení.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="prep-admin-insurance"><span><b>Poisťovňa:</b> poznačiť si poisťovňu matky a plánovanú poisťovňu dieťaťa podľa krajiny.</span></label>
@@ -3789,7 +3779,7 @@
           <article class="panel span-12">
             <h3>Taška do pôrodnice - čo má obsahovať</h3>
             <div class="age-cards">
-              <div class="age-card"><b>Doklady</b><span>Občiansky preukaz, kartička poistenca matky, tehotenská knižka, správa alebo odporúčanie od lekára, ktoré ti povedali priniesť, sobášny list alebo doklad k otcovstvu iba podľa situácie.</span></div>
+              <div class="age-card"><b>Doklady</b><span>Občiansky preukaz, kartička poistenca matky, tehotenská knižka, správa alebo odporúčanie od lekára, ktoré vám povedali priniesť, sobášny list alebo doklad k otcovstvu iba podľa situácie.</span></div>
               <div class="age-card"><b>Pre mamu</b><span>Nočná košeľa/pyžamo vhodné na dojčenie, župan, papuče, ponožky, hygienické potreby, uterák, vložky po pôrode, fľaša na vodu.</span></div>
               <div class="age-card"><b>Pre bábätko</b><span>Oblečenie na cestu domov, čiapka, deka podľa počasia, plienky, vlhčené obrúsky alebo voda, krém podľa potreby.</span></div>
               <div class="age-card"><b>Pre partnera</b><span>Telefón, nabíjačka, hotovosť/karta, voda, snack, doklady, kontakt na pôrodnicu a plán, kde zastaviť auto.</span></div>
@@ -3806,7 +3796,7 @@
               <label class="check-row"><input type="checkbox" data-check-key="hospital-3"><span>Uložený vlastný zoznam a pravidlá konkrétnej pôrodnice</span></label>
               <label class="check-row"><input type="checkbox" data-check-key="hospital-4"><span>Pravidlá pre partnera pri pôrode a návštevy po pôrode</span></label>
               <label class="check-row"><input type="checkbox" data-check-key="hospital-5"><span>Voliteľné služby: či existuje nadštandard alebo sprievod a kde sa na to pýtať</span></label>
-              <label class="check-row"><input type="checkbox" data-check-key="hospital-6"><span>Ako prebieha prepustenie a aké dokumenty dostaneš pre pediatra</span></label>
+              <label class="check-row"><input type="checkbox" data-check-key="hospital-6"><span>Ako prebieha prepustenie a aké dokumenty dostanete pre pediatra</span></label>
               <label class="check-row"><input type="checkbox" data-check-key="hospital-7"><span>Kde je najbližšia nonstop lekáreň alebo pohotovosť</span></label>
             </div>
             <label>Poznámky k pôrodnici
@@ -3817,7 +3807,7 @@
             </div>
           </article>
           <article class="panel span-6">
-            <h3>Pediater - čo budeš potrebovať</h3>
+            <h3>Pediater - čo budete potrebovať</h3>
             <div class="list">
               <div class="item"><main><strong>Pred prvou poradňou</strong><span class="muted small">Uložiť meno, telefón, email, ordinačné hodiny, spôsob objednania a čo robiť mimo ordinačných hodín.</span></main></div>
               <div class="item"><main><strong>Dokumenty</strong><span class="muted small">Prepúšťacia správa z pôrodnice, rodné číslo/rodný list podľa krajiny, poisťovňa alebo dočasné potvrdenie.</span></main></div>
@@ -3839,7 +3829,7 @@
             <div class="list">
               <div class="item"><main><strong>Príjem</strong><span class="muted small">Kam prísť, kedy volať, aké doklady treba.</span></main></div>
               <div class="item"><main><strong>Návštevy</strong><span class="muted small">Kedy môže prísť partner/rodina a aké sú pravidlá.</span></main></div>
-              <div class="item"><main><strong>Prepustenie</strong><span class="muted small">Aké správy dostaneš pre pediatra a čo sledovať doma.</span></main></div>
+              <div class="item"><main><strong>Prepustenie</strong><span class="muted small">Aké správy dostanete pre pediatra a čo sledovať doma.</span></main></div>
             </div>
           </article>
           <article class="panel span-4">
@@ -3860,7 +3850,7 @@
           </article>
           <article class="panel span-12">
             <h3>Kedy riešiť pôrodnicu</h3>
-            <p class="muted">Táto beta nedáva medicínske rozhodnutie. Pri kontrakciách, odtoku plodovej vody, krvácaní, znížených pohyboch bábätka alebo neistote kontaktuj pôrodnicu alebo svojho lekára podľa ich pokynov.</p>
+            <p class="muted">Táto beta nedáva medicínske rozhodnutie. Pri kontrakciách, odtoku plodovej vody, krvácaní, znížených pohyboch bábätka alebo neistote kontaktujte pôrodnicu alebo svojho lekára podľa ich pokynov.</p>
           </article>
           </div>
         </div>
@@ -3870,7 +3860,7 @@
         <div class="topbar">
           <div>
             <h2>O tretej</h2>
-            <p>Keď si už pri bábätku, skontroloval/a si základné veci a stále nevieš, čo ďalej.</p>
+            <p>Keď si už pri bábätku, skontroloval/a si základné veci a stále neviete, čo ďalej.</p>
           </div>
           <button class="secondary" id="dimNight">Stlmiť obrazovku</button>
         </div>
@@ -3878,7 +3868,7 @@
         <div class="grid">
           <article class="panel span-8">
             <h3>Nočný postup, nie druhý denník</h3>
-            <p class="muted">Najprv dieťa, potom aplikácia. Táto časť je iba pokojný scenár, keď je noc ťažká a potrebuješ sa zorientovať bez dlhého premýšľania.</p>
+            <p class="muted">Najprv dieťa, potom aplikácia. Táto časť je iba pokojný scenár, keď je noc ťažká a potrebujete sa zorientovať bez dlhého premýšľania.</p>
             <div class="quick-grid">
               <button class="quick" data-night-prompt="Bábätko plače večer alebo v noci. Už som skontroloval/a mliečko, prebalenie, teplotu a pohodlie. Čo mám skúsiť ďalej?"><span>1</span><span>Skontrolované, stále plače</span></button>
               <button class="quick" data-night-prompt="Bábätko sa budí krátko po zaspaní. Pomôž mi prejsť možné príčiny a ďalší krok."><span>2</span><span>Budí sa po chvíli</span></button>
@@ -3893,12 +3883,12 @@
           </article>
 
           <article class="panel span-4">
-            <h3>Najprv pozri toto</h3>
+            <h3>Najprv pozrite toto</h3>
             <div class="list">
               <div class="item"><main><strong>1. Bezpečie</strong><span class="muted small">Dýchanie, farba pier, reakcia na kontakt, poloha.</span></main></div>
               <div class="item"><main><strong>2. Základné potreby</strong><span class="muted small">Mliečko, prebalenie, teplo/chlad, nič netlačí.</span></main></div>
-              <div class="item"><main><strong>3. Únava</strong><span class="muted small">Ak je dlho hore, skús tmavšie prostredie, náruč, monotónny zvuk.</span></main></div>
-              <div class="item"><main><strong>4. Ak je to iné ako zvyčajne</strong><span class="muted small">Pri zlom pocite, apatii, horúčke alebo dýchaní rieš pediatra alebo akútnu pomoc.</span></main></div>
+              <div class="item"><main><strong>3. Únava</strong><span class="muted small">Ak je dlho hore, skúste tmavšie prostredie, náruč, monotónny zvuk.</span></main></div>
+              <div class="item"><main><strong>4. Ak je to iné ako zvyčajne</strong><span class="muted small">Pri zlom pocite, apatii, horúčke alebo dýchaní riešte pediatra alebo akútnu pomoc.</span></main></div>
             </div>
           </article>
         </div>
@@ -3960,19 +3950,19 @@
               <button class="ghost" data-noise="hum">Tiché hmkanie <span class="premium-badge">premium</span></button>
               <button class="danger" id="stopNoise">Vypnúť zvuk</button>
             </div>
-            <p class="muted small">Používaj primeranú hlasitosť a nedávaj telefón priamo k bábätku.</p>
+            <p class="muted small">Používajte primeranú hlasitosť a nedávajte telefón priamo k bábätku.</p>
           </article>
           <article class="panel span-6">
             <h3>Kedy sa hodí</h3>
             <div class="list">
               <div class="item"><main><strong>Uspávanie</strong><span class="muted small">Stály jemný zvuk môže pomôcť prekryť ruchy domácnosti.</span></main></div>
-              <div class="item"><main><strong>Kočík / nosenie</strong><span class="muted small">Použi nízku hlasitosť a sleduj, či dieťaťu zvuk sedí.</span></main></div>
+              <div class="item"><main><strong>Kočík / nosenie</strong><span class="muted small">Použite nízku hlasitosť a sledujte, či dieťaťu zvuk sedí.</span></main></div>
               <div class="item"><main><strong>Rituál</strong><span class="muted small">Rovnaký zvuk môže byť signál, že prichádza oddych.</span></main></div>
             </div>
           </article>
           <article class="panel span-6">
             <h3>Bezpečne</h3>
-            <p class="muted">Zvuk má byť len pozadie. Telefón alebo reproduktor nedávaj k hlave dieťaťa a hlasitosť drž radšej nízko. Rodinné nahrávky sú silné práve tým, že sú známe a osobné, nie tým, že hrajú nahlas.</p>
+            <p class="muted">Zvuk má byť len pozadie. Telefón alebo reproduktor nedávajte k hlave dieťaťa a hlasitosť držte radšej nízko. Rodinné nahrávky sú silné práve tým, že sú známe a osobné, nie tým, že hrajú nahlas.</p>
           </article>
         </div>
       </section>
@@ -3996,16 +3986,16 @@
           </article>
           <article class="panel span-6">
             <h3>Kedy skúsiť ďalší spánok?</h3>
-            <p class="muted small">Zadaj, kedy sa dieťa zobudilo. Guguboo dá iba orientačné okno podľa veku, nie tvrdý režim.</p>
+            <p class="muted small">Zadajte, kedy sa dieťa zobudilo. Guguboo dá iba orientačné okno podľa veku, nie tvrdý režim.</p>
             <label>Dieťa sa zobudilo
               <input id="sleepWakeTime" type="time">
             </label>
             <button class="secondary" id="sleepAdviceStandaloneBtn">Navrhnúť ďalší spánok</button>
-            <div class="report-box" id="sleepAdviceStandaloneBox">Po zobudení sleduj únavu: zívanie, odvracanie pohľadu, nepokoj alebo ťažšie upokojenie.</div>
+            <div class="report-box" id="sleepAdviceStandaloneBox">Po zobudení sledujte únavu: zívanie, odvracanie pohľadu, nepokoj alebo ťažšie upokojenie.</div>
           </article>
           <article class="panel span-12">
             <h3>Posledný spánok</h3>
-            <p class="muted small">Tu sú iba spánkové zápisy. Ak sa niečo uložilo omylom, vymaž to priamo tu.</p>
+            <p class="muted small">Tu sú iba spánkové zápisy. Ak sa niečo uložilo omylom, vymažte to priamo tu.</p>
             <div class="list" id="sleepEventList"></div>
           </article>
           <article class="panel span-12">
@@ -4031,16 +4021,16 @@
             <h3>Dnešná starostlivosť</h3>
             <p class="muted small">Rýchle uloženie toho, čo sa dnes stalo. Spánok má vlastnú miniaplikáciu, aby sa tu nemiešal režim, zvuky a nočný postup.</p>
             <div class="quick-grid">
-              <button class="quick" data-quick-event="Kŕmenie" data-quick-value="mliečko" data-quick-note="Kŕmenie uložené rýchlo, množstvo môžeš doplniť neskôr."><span>🍼</span><strong>Jedlo</strong></button>
+              <button class="quick" data-quick-event="Kŕmenie" data-quick-value="mliečko" data-quick-note="Kŕmenie uložené rýchlo, množstvo môžete doplniť neskôr."><span>🍼</span><strong>Jedlo</strong></button>
               <button class="quick" data-quick-event="Plienka" data-quick-value="prebalené" data-quick-note="Plienka vymenená."><span>🧷</span><strong>Prebalené</strong></button>
-              <button class="quick" data-quick-event="Teplota" data-quick-value="" data-quick-note="Rýchly záznam teploty, hodnotu doplň neskôr."><span>🌡️</span><strong>Teplota</strong></button>
-              <button class="quick" data-quick-event="Odsávanie" data-quick-value="odsaté mlieko" data-quick-note="Odsávanie uložené rýchlo, množstvo môžeš doplniť neskôr."><span>🥛</span><strong>Odsávanie</strong></button>
-              <button class="quick" data-quick-event="Poznámka" data-quick-value="otázka pre pediatra" data-quick-note="Doplň otázku, keď bude pokoj."><span>❔</span><strong>Otázka</strong></button>
+              <button class="quick" data-quick-event="Teplota" data-quick-value="" data-quick-note="Rýchly záznam teploty, hodnotu doplňte neskôr."><span>🌡️</span><strong>Teplota</strong></button>
+              <button class="quick" data-quick-event="Odsávanie" data-quick-value="odsaté mlieko" data-quick-note="Odsávanie uložené rýchlo, množstvo môžete doplniť neskôr."><span>🥛</span><strong>Odsávanie</strong></button>
+              <button class="quick" data-quick-event="Poznámka" data-quick-value="otázka pre pediatra" data-quick-note="Doplňte otázku, keď bude pokoj."><span>❔</span><strong>Otázka</strong></button>
               <button class="quick" data-memory-shortcut="Pridať okamih"><span>📷</span><strong>Okamih</strong></button>
             </div>
           </article>
           <article class="panel span-5">
-            <h3>Čo chceš uložiť?</h3>
+            <h3>Čo chcete uložiť?</h3>
             <div class="form-grid">
               <label>Oblasť
                 <select id="eventType">
@@ -4062,7 +4052,7 @@
               </label>
             </div>
             <label id="eventNoteLabel">Poznámka
-              <textarea id="eventNote" placeholder="Voliteľne: ako sa bábätko malo, čo pomohlo, čo si chceš zapamätať"></textarea>
+              <textarea id="eventNote" placeholder="Voliteľne: ako sa bábätko malo, čo pomohlo, čo si chcete zapamätať"></textarea>
             </label>
             <div class="actions">
               <button class="primary" id="saveEvent">Uložiť záznam</button>
@@ -4075,7 +4065,7 @@
           </article>
           <article class="panel span-12">
             <h3>Kam ďalej?</h3>
-            <p class="muted">Dnes je len zber udalostí. Ak riešiš spánok, nočné upokojenie, zvuk, úrad alebo nákup, otvor samostatnú miniaplikáciu, aby sa informácie neduplikovali.</p>
+            <p class="muted">Dnes je len zber udalostí. Ak riešite spánok, nočné upokojenie, zvuk, úrad alebo nákup, otvorte samostatnú miniaplikáciu, aby sa informácie neduplikovali.</p>
             <div class="actions">
               <button class="secondary" data-view-jump="sleep">Otvoriť Spánok</button>
               <button class="ghost" data-view-jump="shopping">Otvoriť Nákup</button>
@@ -4137,7 +4127,7 @@
               <button class="ghost prompt">Vracalo po mliečku</button>
               <button class="ghost prompt">Má vyrážku po plienkach</button>
               <button class="ghost prompt">Má málo mokrých plienok</button>
-              <button class="ghost prompt">Vytvor otázky pre pediatra</button>
+              <button class="ghost prompt">Vytvorte otázky pre pediatra</button>
             </div>
           </article>
         </div>
@@ -4156,7 +4146,7 @@
             <div class="contact-actions"><a href="tel:155">Volať 155</a><a href="tel:112">Volať 112</a></div>
           </article>
           <article class="panel span-5">
-            <h3>Čo riešiš?</h3>
+            <h3>Čo riešite?</h3>
               <label>Situácia
                 <select id="urgentTopic">
                   <option>Problém s dýchaním alebo modranie</option>
@@ -4186,7 +4176,7 @@
           </article>
           <article class="panel span-7">
             <h3>Odporúčaný ďalší krok</h3>
-            <div class="report-box decision" id="urgentResult">Vyber situáciu a označ príznaky. Ak ide o akútny stav, nečakaj na aplikáciu a kontaktuj odbornú pomoc.</div>
+            <div class="report-box decision" id="urgentResult">Vyberte situáciu a označte príznaky. Ak ide o akútny stav, nečakajte na aplikáciu a kontaktujte odbornú pomoc.</div>
             <div class="actions">
               <button class="ghost" id="saveUrgentNote">Uložiť do záznamu</button>
               <button class="secondary" data-view-jump="guide">Prejsť krok po kroku</button>
@@ -4251,14 +4241,14 @@
         <div class="topbar">
           <div>
             <h2 id="stateSupportTitle">Podpora od štátu</h2>
-            <p id="stateSupportIntro">Nie právna poradňa. Praktický pomocník, ktorý ti povie, čo si preveriť a kam sa pozrieť.</p>
+            <p id="stateSupportIntro">Nie právna poradňa. Praktický pomocník, ktorý vám povie, čo si preveriť a kam sa pozrieť.</p>
           </div>
         </div>
         <div class="grid">
           <article class="panel span-12">
-            <span class="pill">Som tu pre teba</span>
-            <h3>Čo teraz riešiš?</h3>
-            <p class="muted" id="supportGuideText">Vyber situáciu. Appka ti ukáže najbližší praktický krok, čo si overiť a kde nehľadať naslepo.</p>
+            <span class="pill">Som tu pre vás</span>
+            <h3>Čo teraz riešite?</h3>
+            <p class="muted" id="supportGuideText">Vyberte situáciu. Appka vám ukáže najbližší praktický krok, čo si overiť a kde nehľadať naslepo.</p>
             <div class="sub-prep-cards" aria-label="Situácie k podpore od štátu">
               <button class="sub-prep-card active" type="button" data-support-tab="pregnancy"><span>🤰</span><strong>Ešte čakáme</strong><small>Tehotenské, materské</small></button>
               <button class="sub-prep-card" type="button" data-support-tab="born"><span>👶</span><strong>Už sa narodilo</strong><small>Prvé úrady a dávky</small></button>
@@ -4277,9 +4267,9 @@
           <article class="panel span-7">
             <div class="bag-panel active" data-support-panel="pregnancy">
               <h3>Ešte čakáte bábätko</h3>
-              <div class="report-box">Najbližší krok: over si materské/tehotenské podľa svojej situácie. Appka nemá povedať “máš nárok”, ale pripraví otázky pre Sociálnu poisťovňu alebo zamestnávateľa.</div>
+              <div class="report-box">Najbližší krok: over si materské/tehotenské podľa svojej situácie. Appka nemá povedať “máte nárok”, ale pripraví otázky pre Sociálnu poisťovňu alebo zamestnávateľa.</div>
               <div class="age-cards">
-                <div class="age-card"><b>Čo si overiť</b><span>Či sa ťa týka tehotenské, materské alebo interný postup u zamestnávateľa.</span></div>
+                <div class="age-card"><b>Čo si overiť</b><span>Či sa vás týka tehotenské, materské alebo interný postup u zamestnávateľa.</span></div>
                 <div class="age-card"><b>Aký doklad</b><span>Ktorý doklad pripravuje lekár, čo potvrdzuje zamestnávateľ a čo rieši Sociálna poisťovňa.</span></div>
                 <div class="age-card"><b>Koho sa pýtať</b><span>HR/mzdy, Sociálna poisťovňa alebo gynekológ podľa konkrétnej situácie.</span></div>
               </div>
@@ -4291,7 +4281,7 @@
             </div>
             <div class="bag-panel" data-support-panel="born">
               <h3>Bábätko sa narodilo</h3>
-              <div class="report-box">Najbližší krok: nestrácať sa v úradoch. Po narodení si overíš rodný list, pediatra, poistenie, príspevok pri narodení a prídavok na dieťa. Niektoré veci môžu ísť automaticky, ale appka ťa nemá nechať hádať.</div>
+              <div class="report-box">Najbližší krok: nestrácať sa v úradoch. Po narodení si overíte rodný list, pediatra, poistenie, príspevok pri narodení a prídavok na dieťa. Niektoré veci môžu ísť automaticky, ale appka vás nemá nechať hádať.</div>
               <div class="age-cards">
                 <div class="age-card"><b>Rodný list</b><span>Zistiť, či ide všetko automaticky alebo treba niečo doplniť podľa mesta a pôrodnice.</span></div>
                 <div class="age-card"><b>Príspevky</b><span>Príspevok pri narodení a prídavok na dieťa vždy overiť cez oficiálny zdroj.</span></div>
@@ -4309,7 +4299,7 @@
               <div class="age-cards">
                 <div class="age-card"><b>Kedy riešiť</b><span>Rodičovský príspevok dáva zmysel overiť podľa toho, či predtým bolo materské.</span></div>
                 <div class="age-card"><b>Aktuálna suma</b><span>Sumy sa môžu meniť, preto má appka vždy smerovať na oficiálny zdroj.</span></div>
-                <div class="age-card"><b>Pripomienka</b><span>Ak sa blíži koniec materskej, pridaj si termín do Pripomienok.</span></div>
+                <div class="age-card"><b>Pripomienka</b><span>Ak sa blíži koniec materskej, pridajte si termín do Pripomienok.</span></div>
               </div>
               <div class="actions">
                 <button class="secondary" data-support-reminder="Overiť rodičovský príspevok">Pridať pripomienku</button>
@@ -4318,11 +4308,11 @@
             </div>
             <div class="bag-panel" data-support-panel="work">
               <h3>Práca, HR a materská</h3>
-              <div class="report-box">Najbližší krok: ujasniť si, komu v práci oznámiť tehotenstvo, aký doklad treba doložiť, kedy plánuješ nástup na materskú a kto ti potvrdí interný postup. Toto nie je právna poradňa, ale praktická príprava na rozhovor s HR/mzdami.</div>
+              <div class="report-box">Najbližší krok: ujasniť si, komu v práci oznámiť tehotenstvo, aký doklad treba doložiť, kedy plánujete nástup na materskú a kto vám potvrdí interný postup. Toto nie je právna poradňa, ale praktická príprava na rozhovor s HR/mzdami.</div>
               <div class="age-cards">
-                <div class="age-card"><b>Oznámenie</b><span>Tehotenstvo rieš písomne a s potvrdením od lekára, aby bolo jasné, odkedy má zamestnávateľ informáciu.</span></div>
-                <div class="age-card"><b>Materská</b><span>Nástup sa bežne rieši približne 6 týždňov pred termínom pôrodu, presný postup si potvrď cez lekára, HR a Sociálnu poisťovňu.</span></div>
-                <div class="age-card"><b>Návrat</b><span>Ulož si dátumy, kontakty a interné pravidlá pre materskú, rodičovskú a návrat do práce.</span></div>
+                <div class="age-card"><b>Oznámenie</b><span>Tehotenstvo riešte písomne a s potvrdením od lekára, aby bolo jasné, odkedy má zamestnávateľ informáciu.</span></div>
+                <div class="age-card"><b>Materská</b><span>Nástup sa bežne rieši približne 6 týždňov pred termínom pôrodu, presný postup si potvrďte cez lekára, HR a Sociálnu poisťovňu.</span></div>
+                <div class="age-card"><b>Návrat</b><span>Uložte si dátumy, kontakty a interné pravidlá pre materskú, rodičovskú a návrat do práce.</span></div>
               </div>
               <div class="checklist-grid">
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-1"><span><b>HR/mzdy:</b> uložiť meno, email, telefón a interný postup, komu sa posielajú doklady.</span></label>
@@ -4330,7 +4320,7 @@
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-3"><span><b>Pracovné podmienky:</b> overiť, či práca neobsahuje riziká, nočnú prácu, nadčasy, fyzickú záťaž alebo iné veci, ktoré treba riešiť s lekárom/HR.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-4"><span><b>Vyšetrenia:</b> spýtať sa HR, ako evidovať nevyhnutné tehotenské prehliadky počas pracovného času.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-5"><span><b>Materská:</b> uložiť orientačný dátum nástupu a zistiť, čo podpisuje lekár, čo zamestnávateľ a čo ide do Sociálnej poisťovne.</span></label>
-                <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-6"><span><b>Dovolenka:</b> overiť zostatok dovolenky a či ju chceš riešiť pred alebo po materskej podľa dohody so zamestnávateľom.</span></label>
+                <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-6"><span><b>Dovolenka:</b> overiť zostatok dovolenky a či ju chcete riešiť pred alebo po materskej podľa dohody so zamestnávateľom.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-7"><span><b>Rodičovská:</b> uložiť pripomienku pred koncom materskej, aby sa včas riešil ďalší krok.</span></label>
                 <label class="check-row"><input type="checkbox" data-check-key="support-ai-work-8"><span><b>Návrat:</b> poznačiť si interný kontakt, predpokladaný návrat, možnosť skráteného úväzku alebo flexibilnej dohody, ak to bude téma.</span></label>
               </div>
@@ -4556,7 +4546,7 @@
         <div class="grid">
           <article class="panel span-6">
             <h3>Nové meranie</h3>
-            <p class="muted small">Stačí uložiť údaj z poradne alebo domáceho merania. Detail môžeš doplniť neskôr.</p>
+            <p class="muted small">Stačí uložiť údaj z poradne alebo domáceho merania. Detail môžete doplniť neskôr.</p>
             <div class="form-grid">
               <label>Dátum merania
                 <input id="growthDate" type="date">
@@ -4603,9 +4593,9 @@
         </div>
         <div class="grid">
           <article class="panel hero-panel span-12">
-            <span class="pill" id="pregnancyWeekPill">Nastav termín pôrodu</span>
+            <span class="pill" id="pregnancyWeekPill">Nastavte termín pôrodu</span>
             <h3 id="pregnancyGrowthTitle">Bábätko rastie vlastným tempom.</h3>
-            <p class="muted" id="pregnancyGrowthText">Keď zadáš termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a hravé prirovnanie veľkosti.</p>
+            <p class="muted" id="pregnancyGrowthText">Keď zadáte termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a hravé prirovnanie veľkosti.</p>
             <div class="age-cards">
               <div class="age-card growth-fruit-card"><div class="fruit-icon" id="pregnancyFruitIcon">🥭</div><b id="pregnancyFruit">-</b><span id="pregnancyFruitText">a stále rastie :)</span></div>
               <div class="age-card"><b id="pregnancyTrimester">-</b><span>obdobie</span></div>
@@ -4651,11 +4641,11 @@
             <div class="actions">
               <button class="primary" id="saveReaction">Uložiť reakciu</button>
             </div>
-            <p class="muted small">Pri opuchu pier, probléme s dýchaním, apatii alebo vážnej reakcii vyhľadaj okamžitú pomoc.</p>
+            <p class="muted small">Pri opuchu pier, probléme s dýchaním, apatii alebo vážnej reakcii vyhľadajte okamžitú pomoc.</p>
           </article>
           <article class="panel span-7">
             <h3>Úraz alebo spätný zdravotný záznam</h3>
-            <p class="muted small">Použiteľné aj spätne: pád, teplota, vyrážka, reakcia na jedlo, návšteva pohotovosti alebo vec, ktorú chceš mať v histórii.</p>
+            <p class="muted small">Použiteľné aj spätne: pád, teplota, vyrážka, reakcia na jedlo, návšteva pohotovosti alebo vec, ktorú chcete mať v histórii.</p>
             <div class="form-grid">
               <label>Dátum
                 <input id="incidentDate" type="date">
@@ -4741,7 +4731,7 @@
               <button class="primary" id="productAdvice">Ukázať odporúčanie</button>
               <button class="ghost" id="diaperSizeAdvice">Odhadnúť veľkosť plienok</button>
             </div>
-            <div class="report-box" id="productBox">Vyber kategóriu a appka ukáže, podľa čoho vyberať.</div>
+            <div class="report-box" id="productBox">Vyberte kategóriu a appka ukáže, podľa čoho vyberať.</div>
           </article>
           <article class="panel span-7">
             <h3 id="productSecondTitle">Automatický nákup</h3>
@@ -4800,7 +4790,7 @@
                 <input id="shoppingQty" placeholder="2 balenia">
               </label>
               <label>Alternatíva
-                <input id="shoppingAlt" placeholder="ak nebude, kúp podobné bez parfumácie">
+                <input id="shoppingAlt" placeholder="ak nebude, kúpte podobné bez parfumácie">
               </label>
             </div>
             <label>Poznámka pre toho, kto kupuje
@@ -4824,7 +4814,7 @@
             <textarea id="shoppingExportBox" readonly placeholder="Tu sa pripraví zoznam na skopírovanie alebo poslanie."></textarea>
           </article>
           <article class="panel span-12">
-            <h3>Zaškrtni, čo treba kúpiť</h3>
+            <h3>Zaškrtnite, čo treba kúpiť</h3>
             <p class="muted">Rýchly checklist pre veci, ktoré sa míňajú stále. Zaškrtnuté položky sa pridajú do nákupného zoznamu a potom sa dajú exportovať.</p>
             <div class="shopping-catalog">
               <div>
@@ -5089,7 +5079,7 @@
           <article class="panel span-12">
             <span class="pill">100 dní spolu</span>
             <h3 id="outputReadinessTitle">Pripravujeme mozaiku</h3>
-            <p class="muted" id="outputReadinessText">Ukladaj fotky a krátke vety. Čím viac dní má svoj okamih, tým krajší bude výsledok.</p>
+            <p class="muted" id="outputReadinessText">Ukladajte fotky a krátke vety. Čím viac dní má svoj okamih, tým krajší bude výsledok.</p>
             <div class="age-cards">
               <div class="age-card"><b id="outputMemoryCount">0</b><span>uložených spomienok</span></div>
               <div class="age-card"><b id="outputPhotoCount">0</b><span>fotiek v mozaike</span></div>
@@ -5146,7 +5136,7 @@
 
           <article class="panel span-12">
             <h3>Náhľad predaja</h3>
-            <div class="report-box" id="outputPreview">Vyber výstup a appka ukáže, ako by ho rodič videl na konci 100 dní.</div>
+            <div class="report-box" id="outputPreview">Vyberte výstup a appka ukáže, ako by ho rodič videl na konci 100 dní.</div>
             <div class="actions">
               <button class="ghost" data-view-jump="diary">Doplniť spomienky</button>
               <button class="secondary" id="outputReminderBtn">Pripomenúť večer</button>
@@ -5220,7 +5210,7 @@
         <div class="grid">
           <article class="panel hero-panel span-12">
             <span class="pill">darčekový prístup</span>
-            <h3>Daruj pokoj na prvý rok</h3>
+            <h3>Darujte pokoj na prvý rok</h3>
             <p class="muted">Kupujúci daruje rodičom prístup do aplikácie a voliteľne kredit na spomienkový výstup po 100 dňoch. Ideálne pre kamarátov, starých rodičov alebo kolegov, ktorí chcú dať niečo naozaj použiteľné.</p>
             <div class="actions">
               <button class="primary" id="giftCopyText">Skopírovať darčekový text</button>
@@ -5493,7 +5483,7 @@
           <input id="babyHeight" placeholder="napr. 54 cm">
         </label>
         <label id="babyInsuranceLabel">Poisťovňa
-          <input id="babyInsurance" list="insuranceOptions" placeholder="Vyber alebo napíš poisťovňu">
+          <input id="babyInsurance" list="insuranceOptions" placeholder="Vyberte alebo napíšte poisťovňu">
         </label>
       </div>
       <p class="muted small">Pediater, pohotovosť, poisťovňa, úrady a rodinné kontakty patria do sekcie Kontakty.</p>
@@ -5612,7 +5602,7 @@
       SK: {
         countryName: "Slovensko",
         insuranceLabel: "Plánovaná poisťovňa / poisťovňa matky",
-        insuranceEmpty: "Vyber, alebo nechaj prázdne pred narodením",
+        insuranceEmpty: "Vyberte, alebo nechajte prázdne pred narodením",
         otherInsurance: "Iná / dopíšem neskôr",
         menuSupport: "Podpora",
         supportFull: "Podpora od štátu"
@@ -5620,7 +5610,7 @@
       CZ: {
         countryName: "Česko",
         insuranceLabel: "Plánovaná pojišťovna / pojišťovna matky",
-        insuranceEmpty: "Vyber, nebo nech prázdné před narozením",
+        insuranceEmpty: "Vyberte, nebo nechte prázdné před narozením",
         otherInsurance: "Jiná / dopíšu později",
         menuSupport: "Podpora",
         supportFull: "Podpora od státu"
@@ -5671,7 +5661,7 @@
     ];
     state.prenatal ||= {};
     state.prenatal.hospitalDetails ||= "";
-    state.chat ||= [{ role: "ai", text: "Som tu. Napíš, čo sa deje, a prejdeme to krok po kroku. Ak má dieťa problém s dýchaním, modrá, je apatické, má horúčku alebo máš silný pocit, že niečo nie je v poriadku, kontaktuj pediatra alebo urgentnú pomoc." }];
+    state.chat ||= [{ role: "ai", text: "Som tu. Napíšte, čo sa deje, a prejdeme to krok po kroku. Ak má dieťa problém s dýchaním, modrá, je apatické, má horúčku alebo máte silný pocit, že niečo nie je v poriadku, kontaktujte pediatra alebo urgentnú pomoc." }];
     state.checkTab ||= "admin";
     state.welcomeStatus ||= state.profile.status || "expecting";
     state.welcomeStep ||= 1;
@@ -5976,7 +5966,7 @@
     function storeBirthCardForm(markComplete = false) {
       const data = birthCardFormData();
       if (!data.name || !data.recipient) {
-        showToast("Doplň meno dieťaťa a text, komu sa narodilo");
+        showToast("Doplňte meno dieťaťa a text, komu sa narodilo");
         return false;
       }
       if (data.date && data.date > dateInputToday()) {
@@ -5986,7 +5976,7 @@
       const missing = birthCardMissingFields(data);
       if (markComplete && missing.length) {
         $("birthCardMissing").textContent = `Na dokončenie chýba: ${missing.join(", ")}.`;
-        showToast("Najprv doplň všetky povinné údaje");
+        showToast("Najprv doplňte všetky povinné údaje");
         return false;
       }
 
@@ -6079,7 +6069,7 @@
     }
 
     async function compressBirthCardPhoto(file) {
-      if (!file || !file.type.startsWith("image/")) throw new Error("Vyber obrázok JPG, PNG alebo WebP");
+      if (!file || !file.type.startsWith("image/")) throw new Error("Vyberte obrázok JPG, PNG alebo WebP");
       if (file.size > 12 * 1024 * 1024) throw new Error("Fotografia je príliš veľká");
       const sourceUrl = URL.createObjectURL(file);
       try {
@@ -6418,7 +6408,7 @@
         showToast("Text oznámenia je skopírovaný");
       } catch (error) {
         if (error && error.name === "AbortError") return;
-        showToast("Zdieľanie sa nepodarilo, skús stiahnuť PNG");
+        showToast("Zdieľanie sa nepodarilo, skúste stiahnuť PNG");
       }
     }
 
@@ -6522,7 +6512,7 @@
     window.GugubooPregnancyAvatar = { current: currentPregnancyAvatar };
 
     function pregnancyAdvice(week) {
-      if (!week) return ["Nastaviť termín pôrodu", "Uložiť pôrodnicu alebo mesto", "Začať si písať otázky, ktoré nechceš držať v hlave"];
+      if (!week) return ["Nastaviť termín pôrodu", "Uložiť pôrodnicu alebo mesto", "Začať si písať otázky, ktoré nechcete držať v hlave"];
       if (week < 20) return ["Uložiť termíny poradní", "Začať zbierať otázky ku gynekológovi", "Nerobiť veľké nákupy naslepo"];
       if (week < 30) return ["Vybrať pôrodnicu alebo aspoň mesto", "Začať ukladať budúceho pediatra", "Pripraviť prvý hrubý zoznam výbavy"];
       if (week < 36) return ["Dolaďovať tašku do pôrodnice", "Uložiť kontakty: pôrodnica, gynekológ, pediater", "Pripraviť domáce minimum na prvé dni"];
@@ -6847,10 +6837,10 @@
 
     function dailyCard(day) {
       const cards = [
-        ["Prvý krok", "Dnes nemusíš vyriešiť všetko. Skús si zapísať kŕmenie, plienku a jednu otázku pre pediatra."],
-        ["Noc doma", "Každá noc môže mať vlastný rytmus. Sleduj hlad, plienku, teplotu a bezpečné spanie."],
-        ["Otázky sa zabúdajú", "Keď ti niečo napadne, ulož si to hneď. V ambulancii sa otázky vedia vypariť."],
-        ["Malá spomienka", "Odfoť alebo napíš jednu vetu z dneška. O pár týždňov bude vzácna."],
+        ["Prvý krok", "Dnes nemusíte vyriešiť všetko. Skúste si zapísať kŕmenie, plienku a jednu otázku pre pediatra."],
+        ["Noc doma", "Každá noc môže mať vlastný rytmus. Sledujte hlad, plienku, teplotu a bezpečné spanie."],
+        ["Otázky sa zabúdajú", "Keď vám niečo napadne, uložte si to hneď. V ambulancii sa otázky vedia vypariť."],
+        ["Malá spomienka", "Odfoťte alebo napíšte jednu vetu z dneška. O pár týždňov bude vzácna."],
         ["Pokojný rytmus", "Režim sa ešte len tvorí. Dôležitejší než dokonalý plán je ďalší pokojný krok."]
       ];
       return cards[day % cards.length];
@@ -6872,12 +6862,12 @@
       renderBirthCard();
       $("babyNameLabel").textContent = name;
       $("babyAgeLabel").textContent = expecting
-        ? [sexText, dueDays === null ? "ešte čakáme - nastav termín" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`)].filter(Boolean).join(" · ")
-        : [sexText, days === null ? "nastav profil dieťaťa" : `${days}. deň života`].filter(Boolean).join(" · ");
+        ? [sexText, dueDays === null ? "ešte čakáme - nastavte termín" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`)].filter(Boolean).join(" · ")
+        : [sexText, days === null ? "nastavte profil dieťaťa" : `${days}. deň života`].filter(Boolean).join(" · ");
       if ($("homeBabyName")) $("homeBabyName").textContent = name;
       if ($("homeBabyMeta")) $("homeBabyMeta").textContent = expecting
         ? [sexText, dueDays === null ? "čakáme na termín" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`)].filter(Boolean).join(" · ")
-        : [sexText, days === null ? "nastav dátum narodenia" : `${days}. deň života`, state.profile.birthPlace || ""].filter(Boolean).join(" · ");
+        : [sexText, days === null ? "nastavte dátum narodenia" : `${days}. deň života`, state.profile.birthPlace || ""].filter(Boolean).join(" · ");
       if ($("homeBabyGrowthLine")) $("homeBabyGrowthLine").classList.toggle("hidden", !growthLine);
       applyPregnancyFruit($("homeBabyGrowthFruit"), size);
       if ($("homeBabyGrowthText")) $("homeBabyGrowthText").textContent = growthLine;
@@ -6962,19 +6952,19 @@
       if ($("lastSleep")) $("lastSleep").textContent = byType("Spánok") ? fmtTime(byType("Spánok").created) : "-";
       if ($("lastTemp")) $("lastTemp").textContent = byType("Teplota") ? (byType("Teplota").value || fmtTime(byType("Teplota").created)) : "-";
       const latestGrowth = state.growth.slice().sort((a, b) => new Date(b.date || b.created) - new Date(a.date || a.created))[0];
-      if ($("currentWeight")) $("currentWeight").textContent = latestGrowth?.weight || state.profile.weight || "-";
-      if ($("currentHeight")) $("currentHeight").textContent = latestGrowth?.height || state.profile.height || "-";
-      if ($("currentHead")) $("currentHead").textContent = latestGrowth?.head || state.profile.head || "-";
+      if ($("currentWeight")) $("currentWeight").textContent = latestGrowth?.weight || state.profile.currentWeight || state.profile.weight || "-";
+      if ($("currentHeight")) $("currentHeight").textContent = latestGrowth?.height || state.profile.currentHeight || state.profile.height || "-";
+      if ($("currentHead")) $("currentHead").textContent = latestGrowth?.head || state.profile.headCircumference || state.profile.head || "-";
       if ($("growthCount")) $("growthCount").textContent = state.growth.length;
       const dueLeft = daysUntilDue();
-      if ($("pregnancyWeekPill")) $("pregnancyWeekPill").textContent = week ? `${week}. týždeň tehotenstva` : "Nastav termín pôrodu";
+      if ($("pregnancyWeekPill")) $("pregnancyWeekPill").textContent = week ? `${week}. týždeň tehotenstva` : "Nastavte termín pôrodu";
       if ($("pregnancyGrowthTitle")) $("pregnancyGrowthTitle").textContent = week ? `Vaše bábätko je veľké ako ${size[1]}.` : "Bábätko rastie vlastným tempom.";
       if ($("pregnancyGrowthText")) $("pregnancyGrowthText").textContent = week
         ? `${size[3]} Toto prirovnanie je hravé a orientačné, nie lekárske meranie.`
-        : "Keď zadáš termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a hravé prirovnanie veľkosti.";
+        : "Keď zadáte termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a hravé prirovnanie veľkosti.";
       applyPregnancyFruit($("pregnancyFruitIcon"), size);
       if ($("pregnancyFruit")) $("pregnancyFruit").textContent = size ? `Veľké ako ${size[1]}` : "-";
-      if ($("pregnancyFruitText")) $("pregnancyFruitText").textContent = size ? "a stále rastie :)" : "zadáš termín a ukážem ti prirovnanie";
+      if ($("pregnancyFruitText")) $("pregnancyFruitText").textContent = size ? "a stále rastie :)" : "zadáte termín a ukážem vám prirovnanie";
       if ($("pregnancyTrimester")) $("pregnancyTrimester").textContent = !week ? "-" : (week < 13 ? "1. trimester" : week < 28 ? "2. trimester" : "3. trimester");
       if ($("pregnancyDaysLeft")) $("pregnancyDaysLeft").textContent = dueLeft === null ? "-" : (dueLeft >= 0 ? `${dueLeft} dní` : `${Math.abs(dueLeft)} dní po termíne`);
       if ($("pregnancyGrowthAdvice")) {
@@ -6985,14 +6975,14 @@
       const next = state.reminders
         .filter(r => new Date(r.date).getTime() >= Date.now())
         .sort((a,b) => new Date(a.date) - new Date(b.date))[0];
-      if ($("nextReminder")) $("nextReminder").textContent = next ? `${next.title} - ${fmtTime(next.date)}` : "Zatiaľ nemáš žiadnu pripomienku.";
+      if ($("nextReminder")) $("nextReminder").textContent = next ? `${next.title} - ${fmtTime(next.date)}` : "Zatiaľ nemáte žiadnu pripomienku.";
       if ($("supportGuideText")) $("supportGuideText").textContent = expecting
-        ? "Vyber, čo chceš pred pôrodom upratať. Dám ti otázky pre úrad, Sociálnu poisťovňu alebo zamestnávateľa bez toho, aby som sa tvárila ako právnik."
-        : "Vyber, čo riešite po narodení. Pomôžem ti oddeliť automatické veci od tých, ktoré treba overiť alebo niekomu poslať.";
+        ? "Vyberte, čo chcete pred pôrodom upratať. Dám vám otázky pre úrad, Sociálnu poisťovňu alebo zamestnávateľa bez toho, aby som sa tvárila ako právnik."
+        : "Vyberte, čo riešite po narodení. Pomôžem vám oddeliť automatické veci od tých, ktoré treba overiť alebo niekomu poslať.";
       $("beforeBirthTitle").textContent = dueDays === null ? "Pripravujeme štart" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`);
       $("beforeBirthText").textContent = dueDays === null
-        ? "Nastav termín pôrodu v profile a appka ti ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť."
-        : "Nemusíš riešiť všetko naraz. Guguboo vyberie najbližšie praktické kroky podľa toho, koľko času zostáva.";
+        ? "Nastavte termín pôrodu v profile a appka vám ukáže, koľko dní zostáva a čo má najväčší zmysel pripraviť."
+        : "Nemusíte riešiť všetko naraz. Guguboo vyberie najbližšie praktické kroky podľa toho, koľko času zostáva.";
       renderPrenatalOverview(dueDays, week);
       $("prenatalHospital").value = state.prenatal.hospital || "";
       $("prenatalGynecologist").value = state.prenatal.gynecologist || "";
@@ -7072,14 +7062,14 @@
     function prenatalPlan(dueDays, week) {
       if (dueDays === null) return {
         label: "Najprv profil",
-        title: "Nastav termín pôrodu",
-        text: "Stačí termín a meno. Ostatné údaje môžeš dopĺňať postupne.",
+        title: "Nastavte termín pôrodu",
+        text: "Stačí termín a meno. Ostatné údaje môžete dopĺňať postupne.",
         steps: [["profile", "Nastaviť môj plán"], ["hospital", "Vybrať pôrodnicu"], ["admin", "Pozrieť prácu a podporu"]]
       };
       if (dueDays < 0) return {
         label: week ? `${week}. týždeň tehotenstva` : "Po termíne",
         title: "Termín už uplynul",
-        text: "Ak je bábätko na svete, uprav profil podľa skutočného dátumu narodenia. Inak pokračuj podľa pokynov svojho lekára a pôrodnice.",
+        text: "Ak je bábätko na svete, upravte profil podľa skutočného dátumu narodenia. Inak pokračujte podľa pokynov svojho lekára a pôrodnice.",
         steps: [["hospital", "Pokyny pôrodnice"], ["bag", "Skontrolovať tašku"], ["home", "Pripraviť návrat"]]
       };
       if (dueDays > 84) return {
@@ -7156,8 +7146,8 @@
         ? (expecting ? "Otcovský prehľad prípravy" : "Čo potrebuje otec vedieť teraz")
         : (expecting ? "Jeden krok k pokojnej príprave" : "Jeden krok na teraz");
       if ($("homeMenuIntro")) $("homeMenuIntro").textContent = expecting
-        ? (fatherView ? "Pozri, čo je pripravené, čo treba kúpiť a ktorú úlohu môžeš prevziať." : "Vyber jednu vec. Guguboo ťa prevedie postupne a ostatné môže počkať.")
-        : (fatherView ? "Posledné záznamy, nákup, kalendár, údaje dieťaťa a uspávanie máš na jednom mieste." : "Vyber iba to, čo vám práve pomôže. Ostatné nástroje počkajú.");
+        ? (fatherView ? "Pozrite, čo je pripravené, čo treba kúpiť a ktorú úlohu môžete prevziať." : "Vyberte jednu vec. Guguboo vás prevedie postupne a ostatné môže počkať.")
+        : (fatherView ? "Posledné záznamy, nákup, kalendár, údaje dieťaťa a uspávanie máte na jednom mieste." : "Vyberte iba to, čo vám práve pomôže. Ostatné nástroje počkajú.");
       const cards = expecting
         ? [
             ["🤰", "Moja príprava", "", "beforeBirth", "free"],
@@ -7171,7 +7161,7 @@
             ["➕", "Čo sa dnes dialo", "Kŕmenie, plienky a posledné záznamy", "tracker", "start"],
             ["😴", "Spánok", "Posledný spánok a denný rytmus", "sleep", "start"],
             ["🧭", "Sprievodca", "Jedna otázka naraz", "guide", "start"],
-            ["🔊", "Zvuky a uspávanky", "Spusti zvuk, ktorý dieťa pozná", "sounds", "start"],
+            ["🔊", "Zvuky a uspávanky", "Spustite zvuk, ktorý dieťa pozná", "sounds", "start"],
             ["🩺", "Zdravotná karta", "", "health", "plus"],
             ["🦷", "Zúbky", "Mapa, starostlivosť a zubár", "teeth", "free"],
             ["📏", "Rast dieťaťa", "Aktuálna váha, výška a vývoj", "growth", "plus"],
@@ -7179,7 +7169,7 @@
             ["🧳", "Cestujem", "Balenie, lekárnička a pomoc podľa krajiny", "travel", "free"],
             ["📅", "Spoločný kalendár", "Poradne, termíny a rodinné úlohy", "calendar", "start"],
             ["🏛️", "Úrady", "", "stateSupport", "plus"],
-            ["🤝", "Rodinný prehľad", "Čo sa deje a čo môžeš prevziať", "family", "premium"],
+            ["🤝", "Rodinný prehľad", "Čo sa deje a čo môžete prevziať", "family", "premium"],
             ["📖", "Denník", "", "diary", "plus"],
             ["🔒", "Môj priestor", "Súkromné zápisy chránené PIN-om", "privateSpace", "free"],
             ["🌱", "Podľa veku", "Od prvých dní po prvé roky", "firstYear", "plus"],
@@ -7280,12 +7270,12 @@
       if ($("productAdvisorTitle")) $("productAdvisorTitle").textContent = expecting ? "Čo sa oplatí riešiť pred pôrodom" : "Poradca pri výbere";
       if ($("productSecondTitle")) $("productSecondTitle").textContent = expecting ? "Pridať do výbavy" : "Automatický nákup";
       if ($("productSecondText")) $("productSecondText").textContent = expecting
-        ? "Ak zistíš, že niečo dáva zmysel, pridaj to do výbavy alebo nákupného zoznamu. Cieľ nie je kúpiť všetko, ale vedieť, čo reálne potrebujete."
+        ? "Ak zistíte, že niečo dáva zmysel, pridajte to do výbavy alebo nákupného zoznamu. Cieľ nie je kúpiť všetko, ale vedieť, čo reálne potrebujete."
         : "Samostatná sekcia pripraví konkrétny zoznam pre partnera: položka, značka, veľkosť, množstvo a alternatíva.";
       if ($("diaperSizeAdvice")) $("diaperSizeAdvice").classList.toggle("hidden", expecting);
       if ($("productBox")) $("productBox").textContent = expecting
-        ? "Vyber kategóriu a Guguboo ukáže, či to dáva zmysel riešiť pred pôrodom, alebo počkať podľa reality po narodení."
-        : "Vyber kategóriu a appka ukáže, podľa čoho vyberať.";
+        ? "Vyberte kategóriu a Guguboo ukáže, či to dáva zmysel riešiť pred pôrodom, alebo počkať podľa reality po narodení."
+        : "Vyberte kategóriu a appka ukáže, podľa čoho vyberať.";
     }
 
     function updateSupportMode(expecting) {
@@ -7294,7 +7284,7 @@
       if (title) title.textContent = expecting ? "Podpora pred pôrodom" : "Podpora od štátu";
       if (intro) intro.textContent = expecting
         ? "Informatívny prehľad, čo si pred pôrodom overiť pri materskej, práci a partnerovi. Nie právna poradňa."
-        : "Nie právna poradňa. Praktický pomocník, ktorý ti povie, čo si preveriť a kam sa pozrieť.";
+        : "Nie právna poradňa. Praktický pomocník, ktorý vám povie, čo si preveriť a kam sa pozrieť.";
 
       const allowedBeforeBirth = new Set(["pregnancy", "work", "partner"]);
       document.querySelectorAll("[data-support-tab]").forEach(btn => {
@@ -7432,7 +7422,7 @@
       const list = $("customLullabyList");
       if (!list) return;
       if (!state.lullabies.length) {
-        list.innerHTML = `<div class="empty">Zatiaľ bez uložených uspávaniek. Nahraj prvú a pomenuj ju.</div>`;
+        list.innerHTML = `<div class="empty">Zatiaľ bez uložených uspávaniek. Nahrajte prvú a pomenujte ju.</div>`;
         return;
       }
       list.innerHTML = state.lullabies.slice().reverse().map(item => `
@@ -7452,7 +7442,7 @@
         const item = state.lullabies.find(lullaby => lullaby.id === btn.dataset.playLullaby);
         if (!item || !item.src) return showToast("Uspávanka nemá uložený zvuk");
         setCustomSound(item.src, item.title, "Uložená uspávanka z knižnice.");
-        $("customSoundAudio").play().catch(() => showToast("Klikni na play v prehrávači"));
+        $("customSoundAudio").play().catch(() => showToast("Kliknite na play v prehrávači"));
       }));
       list.querySelectorAll("[data-select-lullaby]").forEach(btn => btn.addEventListener("click", () => {
         state.selectedLullabyId = btn.dataset.selectLullaby;
@@ -7496,14 +7486,14 @@
         : "Zatiaľ bez zápisu prebalenia.";
       const taskText = nextTask
         ? `${nextTask.task} · ${nextTask.assignee || roleName.toLowerCase()} · ${nextTask.when || "podľa dohody"}`
-        : "Žiadna otvorená rodinná úloha. Môžeš ju pridať nižšie.";
+        : "Žiadna otvorená rodinná úloha. Môžete ju pridať nižšie.";
       const overviewHtml = [
         ["Kto práve pozerá", `${roleName} vidí stručný stav bez toho, aby musel/a všetko hľadať.`],
         ["Posledný spánok", sleepText],
         ["Posledné jedlo", feedText],
         ["Prebalenie", diaperText],
         ["Najbližšia úloha", taskText],
-        ["Nákup", shoppingCount ? `${shoppingCount} položiek v zozname. Otvor nákup a kúp presne značku, veľkosť a typ.` : "Nákupný zoznam je prázdny."]
+        ["Nákup", shoppingCount ? `${shoppingCount} položiek v zozname. Otvorte nákup a kúpte presne značku, veľkosť a typ.` : "Nákupný zoznam je prázdny."]
       ].map(([title, text]) => `<div class="age-card"><b>${escapeHtml(title)}</b><span>${escapeHtml(text)}</span></div>`).join("");
       wrap.innerHTML = overviewHtml;
       const fatherPanel = $("fatherHomePanel");
@@ -7559,7 +7549,7 @@ Otázky:
       const actions = [];
       if (c.phone) actions.push(`<a href="tel:${c.phone.replace(/\s+/g, "")}">Volať</a>`);
       if (c.email) actions.push(`<a href="${mailHref(c.email, "Guguboo - report a otázka")}">Email s reportom</a>`);
-      return `<main><strong>${c.type}: ${c.name}</strong><span class="muted small">${c.hours || "hodiny nezadané"}${c.note ? " · " + c.note : ""}</span><div class="contact-actions">${actions.join("") || "<span class='muted small'>Doplň telefón alebo email.</span>"}</div></main>`;
+      return `<main><strong>${c.type}: ${c.name}</strong><span class="muted small">${c.hours || "hodiny nezadané"}${c.note ? " · " + c.note : ""}</span><div class="contact-actions">${actions.join("") || "<span class='muted small'>Doplňte telefón alebo email.</span>"}</div></main>`;
     }
 
     function renderContacts() {
@@ -7705,7 +7695,7 @@ Otázky:
       "Poznámka": {
         label: "Poznámka",
         placeholder: "napr. otázka pre pediatra, dnešný postreh",
-        note: "Napíš čokoľvek, čo nechceš držať v hlave"
+        note: "Napíšte čokoľvek, čo nechcete držať v hlave"
       }
     };
 
@@ -7727,18 +7717,18 @@ Otázky:
       const data = checklistData[tab];
       if (data.custom === "normal") {
         const days = ageDays();
-        const ageText = days === null ? "Nastav profil dieťaťa a karty sa prispôsobia veku." : `Aktuálne: ${days}. deň života.`;
+        const ageText = days === null ? "Nastavte profil dieťaťa a karty sa prispôsobia veku." : `Aktuálne: ${days}. deň života.`;
         target.innerHTML = `
           <h3>${data.title}</h3>
           <p class="muted">${data.intro}</p>
           <p><span class="pill">${ageText}</span></p>
           <div class="age-cards">
-            <div class="age-card"><b>Spánok</b><span>U novorodenca môže byť nepravidelný. Sleduj skôr bezpečné spanie a celkový stav.</span></div>
+            <div class="age-card"><b>Spánok</b><span>U novorodenca môže byť nepravidelný. Sledujte skôr bezpečné spanie a celkový stav.</span></div>
             <div class="age-card"><b>Stolica</b><span>Farba a frekvencia sa mení podľa veku a kŕmenia. Krv, apatia alebo dehydratácia patria pediatrovi.</span></div>
-            <div class="age-card"><b>Plač</b><span>Plač je signál, nie zlyhanie rodiča. Skontroluj hlad, plienku, teplotu, kontakt a únavu.</span></div>
-            <div class="age-card"><b>Kŕmenie</b><span>Častejšie kŕmenie môže byť bežné. Pri zlom priberaní alebo výraznom vracaní rieš pediatra.</span></div>
+            <div class="age-card"><b>Plač</b><span>Plač je signál, nie zlyhanie rodiča. Skontrolujte hlad, plienku, teplotu, kontakt a únavu.</span></div>
+            <div class="age-card"><b>Kŕmenie</b><span>Častejšie kŕmenie môže byť bežné. Pri zlom priberaní alebo výraznom vracaní riešte pediatra.</span></div>
             <div class="age-card"><b>Pokožka</b><span>Drobné zmeny sú časté, ale mokvanie, opuch alebo rýchle zhoršenie treba ukázať odborníkovi.</span></div>
-            <div class="age-card"><b>Rodičovský pocit</b><span>Ak máš silný pocit, že niečo nie je v poriadku, je v poriadku volať pediatra.</span></div>
+            <div class="age-card"><b>Rodičovský pocit</b><span>Ak máte silný pocit, že niečo nie je v poriadku, je v poriadku volať pediatra.</span></div>
           </div>`;
         return;
       }
@@ -7951,7 +7941,7 @@ Otázky:
 
     function detectWelcomeCountry() {
       if (!navigator.geolocation) {
-        showWelcomeManualCountry("Toto zariadenie nevie zistiť polohu. Krajinu môžeš vybrať ručne.");
+        showWelcomeManualCountry("Toto zariadenie nevie zistiť polohu. Krajinu môžete vybrať ručne.");
         return;
       }
       const button = $("welcomeLocateBtn");
@@ -7959,12 +7949,12 @@ Otázky:
         button.disabled = true;
         button.textContent = "Zisťujem krajinu…";
       }
-      if ($("countrySetupSummary")) $("countrySetupSummary").textContent = "Čakám na tvoje povolenie polohy…";
+      if ($("countrySetupSummary")) $("countrySetupSummary").textContent = "Čakám na vaše povolenie polohy…";
       navigator.geolocation.getCurrentPosition(async position => {
         try {
           const code = await reverseWelcomeCountry(position.coords.latitude, position.coords.longitude);
           if (!euCountries[code]) {
-            showWelcomeManualCountry("Poloha je mimo podporovaných krajín EÚ. Vyber krajinu ručne.");
+            showWelcomeManualCountry("Poloha je mimo podporovaných krajín EÚ. Vyberte krajinu ručne.");
             return;
           }
           updateCountryUI(code);
@@ -7973,7 +7963,7 @@ Otázky:
           if ($("welcomeLocationSource")) $("welcomeLocationSource").classList.remove("hidden");
           updateWelcomeStory();
         } catch (error) {
-          showWelcomeManualCountry("Krajinu sa nepodarilo určiť. Pokojne ju vyber ručne.");
+          showWelcomeManualCountry("Krajinu sa nepodarilo určiť. Pokojne ju vyberte ručne.");
         } finally {
           if (button) {
             button.disabled = false;
@@ -7982,8 +7972,8 @@ Otázky:
         }
       }, error => {
         const message = error.code === 1
-          ? "Poloha nebola povolená — nič sa nedeje. Vyber krajinu ručne."
-          : "Poloha teraz nie je dostupná. Vyber krajinu ručne.";
+          ? "Poloha nebola povolená — nič sa nedeje. Vyberte krajinu ručne."
+          : "Poloha teraz nie je dostupná. Vyberte krajinu ručne.";
         showWelcomeManualCountry(message);
         if (button) {
           button.disabled = false;
@@ -8000,31 +7990,88 @@ Otázky:
         el.textContent = userName === "Ahoj" ? userName : `Ahoj, ${userName}`;
       });
       document.querySelectorAll("[data-welcome-name-only]").forEach(el => {
-        el.textContent = $("welcomeUserName")?.value.trim() || state.user.name || "Ty";
+        el.textContent = $("welcomeUserName")?.value.trim() || state.user.name || "Vy";
       });
-      if ($("welcomeSummaryName")) $("welcomeSummaryName").textContent = $("welcomeName")?.value.trim() || "Vaša rodina";
-      if ($("welcomeSummaryPhase")) $("welcomeSummaryPhase").textContent = (state.welcomeStatus || "expecting") === "born" ? "Spoločný rytmus" : "Pokojná príprava";
-      if ($("welcomeSummaryCountry")) $("welcomeSummaryCountry").textContent = euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa";
-      updateWelcomeChapterScreen();
+      updateWelcomeFinishScreen();
       updateWelcomeFruitAvatar();
     }
 
-    function updateWelcomeChapterScreen() {
-      const bornVariant = $("welcomeFinishBornVariant");
-      const chapterCard = $("welcomeChapterCard");
-      if (!bornVariant || !chapterCard) return;
-      const isExpecting = (state.welcomeStatus || "expecting") !== "born";
-      bornVariant.classList.toggle("hidden", isExpecting);
-      chapterCard.classList.toggle("hidden", !isExpecting);
-      if (!isExpecting) return;
-      const babyName = $("welcomeName")?.value.trim() || "vaše bábätko";
-      const dueDays = calcDueDays($("welcomeDue")?.value);
-      const daysText = dueDays === null ? "čoskoro" : dueDays < 0 ? "veľmi skoro" : `${dueDays} dní`;
-      const timelineLabel = dueDays === null ? "Čoskoro" : dueDays < 0 ? "Už skoro" : `O ${dueDays} dní`;
-      if ($("welcomeChapterBabyName")) $("welcomeChapterBabyName").textContent = babyName;
-      if ($("welcomeChapterDays")) $("welcomeChapterDays").textContent = daysText;
-      if ($("welcomeChapterDaysLabel")) $("welcomeChapterDaysLabel").textContent = timelineLabel;
-      if ($("welcomeChapterCountry")) $("welcomeChapterCountry").textContent = euCountries[$("welcomeCountry")?.value || getCountry()] || "Slovensku";
+    function slovakDays(count) {
+      const n = Math.abs(count);
+      if (n === 1) return `${count} deň`;
+      if (n >= 2 && n <= 4) return `${count} dni`;
+      return `${count} dní`;
+    }
+
+    function welcomeChildAgeLabel(birthValue) {
+      if (!birthValue) return "";
+      const days = Math.floor((Date.now() - new Date(birthValue + "T12:00:00").getTime()) / 86400000);
+      if (!Number.isFinite(days) || days < 0) return "";
+      if (days < 56) return `${Math.max(1, Math.ceil((days + 1) / 7))}. týždeň`;
+      if (days < 730) return `${Math.max(2, Math.floor(days / 30.4375))}. mesiac`;
+      return `${Math.floor(days / 365.25)}. rok`;
+    }
+
+    // Posledný krok onboardingu = náhľad domova v7.6 (rovnaké v5 bloky ako renderHome vo v5-mobile.js).
+    function updateWelcomeFinishScreen() {
+      if (!$("welcomeFinishAvatar")) return;
+      const setText = (id, value) => { if ($(id)) $(id).textContent = value; };
+      const expecting = (state.welcomeStatus || "expecting") !== "born";
+      const babyName = $("welcomeName")?.value.trim() || "Bábätko";
+      const dateLabel = (value, options) => value ? new Date(value + "T12:00:00").toLocaleDateString("sk-SK", options) : "—";
+      const avatar = $("welcomeFinishAvatar");
+      setText("welcomeFinishBabyName", babyName);
+      $("welcomeFinishIconChecklist")?.classList.toggle("hidden", !expecting);
+      $("welcomeFinishIconMoment")?.classList.toggle("hidden", expecting);
+
+      if (expecting) {
+        const due = $("welcomeDue")?.value || "";
+        const dueDays = calcDueDays(due);
+        const fruit = currentPregnancyAvatar(due);
+        avatar.textContent = "";
+        avatar.classList.add("v5-fruit-avatar");
+        avatar.style.backgroundPosition = fruit.position;
+        avatar.setAttribute("aria-label", `Ovocný avatar: ${fruit.label}`);
+        setText("welcomeFinishBabyMeta", fruit.week ? `${fruit.week}. týždeň · veľké približne ako ${fruit.label}` : "Ovocný avatar");
+        setText("welcomeFinishLead", dueDays === null || dueDays < 0
+          ? "Každý deň vám ponúkneme jeden malý krok. Nič netreba riešiť naraz."
+          : dueDays === 0
+            ? "Termín je dnes. Všetko dôležité máte na jednom mieste."
+            : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň vám ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
+        setText("welcomeFinishGlanceLabel1", "Týždeň");
+        setText("welcomeFinishGlanceValue1", fruit.week ? `${fruit.week}. týždeň` : "—");
+        setText("welcomeFinishGlanceLabel2", "Termín");
+        setText("welcomeFinishGlanceValue2", dateLabel(due, { day: "numeric", month: "long" }));
+        setText("welcomeFinishGlanceLabel3", "Do termínu");
+        setText("welcomeFinishGlanceValue3", dueDays === null || dueDays < 0 ? "—" : dueDays === 0 ? "Dnes" : slovakDays(dueDays));
+        setText("welcomeFinishStepTitle", "Pripravte dnes jednu vec do pôrodnice.");
+        setText("welcomeFinishStepHint", "Checklist Taška do pôrodnice nájdete po otvorení vášho Guguboo.");
+      } else {
+        const birth = $("welcomeBirth")?.value || "";
+        const ageLabel = welcomeChildAgeLabel(birth);
+        avatar.classList.remove("v5-fruit-avatar");
+        avatar.style.backgroundPosition = "";
+        avatar.textContent = babyName.charAt(0).toUpperCase();
+        avatar.setAttribute("aria-label", `Profil: ${babyName}`);
+        setText("welcomeFinishBabyMeta", ageLabel || "Vitaj na svete");
+        setText("welcomeFinishLead", "Kŕmenie, prebalenie, spánok aj všetko ostatné nájdete po otvorení vášho Guguboo.");
+        setText("welcomeFinishGlanceLabel1", "Vek");
+        setText("welcomeFinishGlanceValue1", ageLabel || "—");
+        setText("welcomeFinishGlanceLabel2", "Narodenie");
+        setText("welcomeFinishGlanceValue2", dateLabel(birth, { day: "numeric", month: "long" }));
+        setText("welcomeFinishGlanceLabel3", "Krajina");
+        setText("welcomeFinishGlanceValue3", euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa");
+        setText("welcomeFinishStepTitle", "Dnešný malý moment");
+        setText("welcomeFinishStepHint", "Pridajte jednu fotku alebo krátku vetu.");
+      }
+
+      setText("welcomeFinishCountry", `Miestny obsah: ${euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa"}`);
+      const partnerEmail = state.partnerInvite?.wanted ? ($("welcomePartnerEmail")?.value.trim() || "") : "";
+      const partnerLine = $("welcomeFinishPartner");
+      if (partnerLine) {
+        partnerLine.textContent = partnerEmail ? `Pozvanie pre ${partnerEmail} sme pripravili. Odoslať sa bude dať po pripojení účtu.` : "";
+        partnerLine.classList.toggle("hidden", !partnerEmail);
+      }
     }
 
     function updateWelcomeFruitAvatar() {
@@ -8035,7 +8082,7 @@ Otázky:
       applyPregnancyFruit($("welcomeFruitAvatarImage"), pregnancySizeData(avatar.week || 20));
       if ($("welcomeFruitAvatarWeek")) $("welcomeFruitAvatarWeek").textContent = avatar.week ? `${avatar.week}. týždeň · ovocný avatar` : "Ovocný avatar";
       if ($("welcomeFruitAvatarName")) $("welcomeFruitAvatarName").textContent = avatar.week ? `Bábätko je veľké približne ako ${avatar.label}` : "Bábätko rastie spolu s avatarom";
-      if ($("welcomeFruitAvatarHint")) $("welcomeFruitAvatarHint").textContent = selected ? "Tento pokojný avatar použijeme v aplikácii." : "Ťukni a pridaj ho do profilu bábätka.";
+      if ($("welcomeFruitAvatarHint")) $("welcomeFruitAvatarHint").textContent = selected ? "Tento pokojný avatar použijeme v aplikácii." : "Ťuknite a pridajte ho do profilu bábätka.";
       card.classList.toggle("active", selected);
       card.setAttribute("aria-pressed", String(selected));
     }
@@ -8078,17 +8125,18 @@ Otázky:
 
     function validateWelcomeStep(step) {
       if (step === 2) {
-        if (!$("welcomeUserName").value.trim()) return "Napíš prosím, ako ťa môžeme oslovovať.";
-        if (!$("welcomeUserBirth").value) return "Doplň prosím dátum narodenia.";
-        if ($("welcomeUserBirth").value > dateInputToday()) return "Skontroluj prosím dátum narodenia.";
+        if (!$("welcomeUserName").value.trim()) return "Napíšte prosím, ako vás môžeme oslovovať.";
+        if (!$("welcomeUserBirth").value) return "Doplňte prosím dátum narodenia.";
+        if ($("welcomeUserBirth").value > dateInputToday()) return "Skontrolujte prosím dátum narodenia.";
       }
-      if (step === 4 && !state.welcomeStatus) return "Vyber prosím, v ktorej fáze sa nachádzate.";
+      if (step === 4 && !state.welcomeStatus) return "Vyberte prosím, v ktorej fáze sa nachádzate.";
       if (step === 5) {
-        if (!$("welcomeName").value.trim()) return "Doplňte meno alebo pracovné meno dieťaťa.";
-        if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return "Doplňte termín pôrodu.";
-        if ((state.welcomeStatus || "expecting") === "born" && !$("welcomeBirth").value) return "Doplňte dátum narodenia.";
+        if (!$("welcomeName").value.trim()) return "Doplňte prosím meno alebo pracovné meno dieťaťa.";
+        if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return "Doplňte prosím termín pôrodu.";
+        if ((state.welcomeStatus || "expecting") === "expecting" && $("welcomeDue").value < dateInputToday()) return "Termín pôrodu nemôže byť v minulosti.";
+        if ((state.welcomeStatus || "expecting") === "born" && !$("welcomeBirth").value) return "Doplňte prosím dátum narodenia.";
       }
-      if (step === 6 && state.partnerInvite.wanted && !validEmail($("welcomePartnerEmail").value)) return "Doplň platný e-mail blízkej osoby, alebo zvoľ Zatiaľ nie.";
+      if (step === 6 && state.partnerInvite.wanted && !validEmail($("welcomePartnerEmail").value)) return "Doplňte platný e-mail blízkej osoby alebo zvoľte Zatiaľ nie.";
       return "";
     }
 
@@ -8097,9 +8145,9 @@ Otázky:
       const today = dateInputToday();
       const missing = [];
 
-      if (!$("welcomeUserName").value.trim()) missing.push("tvoje meno");
-      if (!$("welcomeUserBirth").value) missing.push("tvoj dátum narodenia");
-      if ($("welcomeUserBirth").value && $("welcomeUserBirth").value > today) return "Skontroluj prosím dátum narodenia.";
+      if (!$("welcomeUserName").value.trim()) missing.push("vaše meno");
+      if (!$("welcomeUserBirth").value) missing.push("váš dátum narodenia");
+      if ($("welcomeUserBirth").value && $("welcomeUserBirth").value > today) return "Skontrolujte prosím dátum narodenia.";
       if (!$("welcomeName").value.trim()) missing.push("meno alebo pracovné meno dieťaťa");
 
       if (status === "expecting") {
@@ -8111,7 +8159,7 @@ Otázky:
       }
       if (state.partnerInvite.wanted && !validEmail($("welcomePartnerEmail").value)) missing.push("platný e-mail blízkej osoby");
 
-      return missing.length ? `Doplň prosím: ${missing.join(", ")}.` : "";
+      return missing.length ? `Doplňte prosím: ${missing.join(", ")}.` : "";
     }
 
     function completeWelcome() {
@@ -8216,21 +8264,21 @@ Otázky:
       box.classList.remove("high", "ok");
       if (flags.length) {
         box.classList.add("high");
-        box.textContent = `Označené príznaky: ${flags.join(", ")}.\n\nToto patrí mimo aplikácie. Volaj 155 alebo 112 podľa situácie, prípadne choď na urgent/pohotovosť. Ak dieťa ťažko dýcha, modrá, nereaguje, má kŕče, opuch tváre/jazyka, silné krvácanie alebo ide o otravu, nečakaj na odpoveď v aplikácii.`;
+        box.textContent = `Označené príznaky: ${flags.join(", ")}.\n\nToto patrí mimo aplikácie. Volajte 155 alebo 112 podľa situácie, prípadne choďte na urgent/pohotovosť. Ak dieťa ťažko dýcha, modrá, nereaguje, má kŕče, opuch tváre/jazyka, silné krvácanie alebo ide o otravu, nečakajte na odpoveď v aplikácii.`;
         return;
       }
       const urgentSteps = {
-        "Problém s dýchaním alebo modranie": "Ak je dýchanie namáhavé, dieťa lapá po dychu alebo modrá, volaj 155/112. Ak si si iba neistý/á, radšej zavolaj pediatrovi alebo pohotovosť a popíš, čo vidíš.",
-        "Bezvedomie alebo výrazná apatia": "Ak dieťa nereaguje, je nezvyčajne ochabnuté alebo ho nevieš prebudiť ako zvyčajne, volaj 155/112.",
-        "Kŕče": "Pri kŕčoch alebo podozrení na kŕče volaj 155/112. Sleduj čas začiatku a nič nevkladaj dieťaťu do úst.",
-        "Vážna alergická reakcia": "Opuch tváre, pier, jazyka, sipot alebo problémy s dýchaním sú urgentné. Volaj 155/112.",
-        "Úraz, pád alebo krvácanie": "Pri vážnom páde, úraze hlavy, krvácaní, vracaní po páde alebo nezvyčajnej spavosti volaj odbornú pomoc.",
-        "Vysoká teplota u novorodenca": "Pri novorodencovi alebo veľmi malom bábätku rieš horúčku s pediatrom bez odkladu. Ak je dieťa malátne, zle dýcha alebo nereaguje, volaj 155/112.",
-        "Podozrenie na otravu": "Pri podozrení na prehltnutie lieku, chemikálie alebo cudzej látky volaj 155/112 alebo toxikologické informácie podľa krajiny. Nevyvolávaj vracanie bez pokynu odborníka.",
-        "Popálenina alebo obarenie": "Chlaď postihnuté miesto vlažnou tečúcou vodou a pri väčšej, hlbšej alebo tvárovej popálenine volaj odbornú pomoc."
+        "Problém s dýchaním alebo modranie": "Ak je dýchanie namáhavé, dieťa lapá po dychu alebo modrá, volajte 155/112. Ak ste si iba neistý/á, radšej zavolajte pediatrovi alebo pohotovosť a popíšte, čo vidíte.",
+        "Bezvedomie alebo výrazná apatia": "Ak dieťa nereaguje, je nezvyčajne ochabnuté alebo ho neviete prebudiť ako zvyčajne, volajte 155/112.",
+        "Kŕče": "Pri kŕčoch alebo podozrení na kŕče volajte 155/112. Sledujte čas začiatku a nič nevkladaj dieťaťu do úst.",
+        "Vážna alergická reakcia": "Opuch tváre, pier, jazyka, sipot alebo problémy s dýchaním sú urgentné. Volajte 155/112.",
+        "Úraz, pád alebo krvácanie": "Pri vážnom páde, úraze hlavy, krvácaní, vracaní po páde alebo nezvyčajnej spavosti volajte odbornú pomoc.",
+        "Vysoká teplota u novorodenca": "Pri novorodencovi alebo veľmi malom bábätku riešte horúčku s pediatrom bez odkladu. Ak je dieťa malátne, zle dýcha alebo nereaguje, volajte 155/112.",
+        "Podozrenie na otravu": "Pri podozrení na prehltnutie lieku, chemikálie alebo cudzej látky volajte 155/112 alebo toxikologické informácie podľa krajiny. Nevyvolávajte vracanie bez pokynu odborníka.",
+        "Popálenina alebo obarenie": "Chlaďte postihnuté miesto vlažnou tečúcou vodou a pri väčšej, hlbšej alebo tvárovej popálenine volajte odbornú pomoc."
       };
       box.classList.add("high");
-      box.textContent = `${urgentSteps[topic]}\n\nBezpečnostné usmernenie je zámerne prísne. Ak váhaš, zavolaj odbornú pomoc.`;
+      box.textContent = `${urgentSteps[topic]}\n\nBezpečnostné usmernenie je zámerne prísne. Ak váhate, zavolajte odbornú pomoc.`;
     }
 
     initSectionMenuButtons();
@@ -8276,7 +8324,7 @@ Otázky:
     if ($("welcomeManualCountryBtn")) $("welcomeManualCountryBtn").addEventListener("click", () => {
       const isHidden = $("welcomeManualCountry").classList.contains("hidden");
       if (isHidden) {
-        showWelcomeManualCountry("Vyber krajinu a miestny obsah nastavíme bez použitia polohy.");
+        showWelcomeManualCountry("Vyberte krajinu a miestny obsah nastavíme bez použitia polohy.");
         $("welcomeCountry").focus();
       } else {
         $("welcomeManualCountry").classList.add("hidden");
@@ -8304,7 +8352,7 @@ Otázky:
     document.querySelectorAll("[data-quick]").forEach(btn => btn.addEventListener("click", () => {
       const type = btn.dataset.quick;
       if (type === "Teplota") {
-        const value = prompt("Zadaj teplotu, napr. 37.1 °C") || "";
+        const value = prompt("Zadajte teplotu, napr. 37.1 °C") || "";
         if (value) addEvent(type, value);
       } else {
         addEvent(type);
@@ -8356,7 +8404,7 @@ Otázky:
     $("clearUrgent").addEventListener("click", () => {
       document.querySelectorAll(".redflag").forEach(x => x.checked = false);
       $("urgentResult").classList.remove("high", "ok");
-      $("urgentResult").textContent = "Vyber situáciu a označ príznaky. Ak ide o akútny stav, nečakaj na aplikáciu a kontaktuj odbornú pomoc.";
+      $("urgentResult").textContent = "Vyberte situáciu a označte príznaky. Ak ide o akútny stav, nečakajte na aplikáciu a kontaktujte odbornú pomoc.";
     });
     $("saveUrgentNote").addEventListener("click", () => {
       addEvent("Usmernenie: čo sa deje", $("urgentTopic").value, $("urgentResult").textContent);
@@ -8398,7 +8446,7 @@ Otázky:
     $("eventType").addEventListener("change", updateEventForm);
 
     $("saveReminder").addEventListener("click", () => {
-      if (!$("remTitle").value.trim() || !$("remDate").value) return showToast("Doplň názov a dátum");
+      if (!$("remTitle").value.trim() || !$("remDate").value) return showToast("Doplňte názov a dátum");
       state.reminders.push({ title: $("remTitle").value.trim(), date: $("remDate").value, type: $("remType").value });
       $("remTitle").value = "";
       $("remDate").value = "";
@@ -8407,7 +8455,7 @@ Otázky:
     });
 
     $("saveReaction").addEventListener("click", () => {
-      if (!$("reactionTrigger").value.trim()) return showToast("Doplň spúšťač");
+      if (!$("reactionTrigger").value.trim()) return showToast("Doplňte spúšťač");
       state.reactions.push({
         trigger: $("reactionTrigger").value.trim(),
         symptoms: $("reactionSymptoms").value.trim(),
@@ -8423,7 +8471,7 @@ Otázky:
     });
 
     $("saveIncident").addEventListener("click", () => {
-      if (!$("incidentText").value.trim()) return showToast("Doplň, čo sa stalo");
+      if (!$("incidentText").value.trim()) return showToast("Doplňte, čo sa stalo");
       state.incidents.push({
         date: $("incidentDate").value || dateInputToday(),
         type: $("incidentType").value,
@@ -8440,7 +8488,7 @@ Otázky:
       const weight = $("growthWeight").value.trim();
       const height = $("growthHeight").value.trim();
       const head = $("growthHead").value.trim();
-      if (!weight && !height && !head) return showToast("Doplň hmotnosť, výšku alebo obvod hlavy");
+      if (!weight && !height && !head) return showToast("Doplňte hmotnosť, výšku alebo obvod hlavy");
       state.growth.push({
         date: $("growthDate").value || dateInputToday(),
         weight,
@@ -8449,9 +8497,9 @@ Otázky:
         note: $("growthNote").value.trim(),
         created: new Date().toISOString()
       });
-      if (weight) state.profile.weight = weight;
-      if (height) state.profile.height = height;
-      if (head) state.profile.head = head;
+      if (weight) state.profile.currentWeight = weight;
+      if (height) state.profile.currentHeight = height;
+      if (head) state.profile.headCircumference = head;
       $("growthDate").value = dateInputToday();
       $("growthWeight").value = "";
       $("growthHeight").value = "";
@@ -8468,7 +8516,7 @@ Otázky:
       const day = typedDay >= 1 && typedDay <= 100 ? typedDay : computedDay;
       const selectedMoment = $("diaryMomentType").value;
       const fallbackTitle = selectedMoment && selectedMoment !== "Vlastná spomienka" ? selectedMoment : (diaryPhotoData ? "Dnešná fotka" : "Malý moment");
-      if (!diaryPhotoData && !$("diaryText").value.trim() && !$("diaryTitle").value.trim()) return showToast("Pridaj fotku alebo jednu vetu");
+      if (!diaryPhotoData && !$("diaryText").value.trim() && !$("diaryTitle").value.trim()) return showToast("Pridajte fotku alebo jednu vetu");
       state.diary.push({
         title: $("diaryTitle").value.trim() || fallbackTitle,
         moment: selectedMoment,
@@ -8493,12 +8541,12 @@ Otázky:
     const shoppingPresets = {
       "Plienky": { item: "Plienky", category: "prebaľovanie", brand: "", size: "podľa aktuálnej váhy", qty: "1-2 balenia", alt: "podobná veľkosť, ak nesedí značka", note: "Skontrolovať veľkosť podľa hmotnosti a či pokožka nereaguje." },
       "Dojčenská voda": { item: "Dojčenská voda", category: "kŕmenie", brand: "", size: "1 l / balenie podľa obchodu", qty: "6 ks", alt: "neperlivá dojčenská voda", note: "Kúpiť podľa toho, čo používate na mlieko alebo pitie." },
-      "Umelé mlieko": { item: "Umelé mlieko", category: "kŕmenie", brand: "", size: "presný typ podľa dieťaťa", qty: "1 balenie", alt: "nekupovať inú receptúru bez dohody", note: "Doplň presnú značku a typ. Pri zmene mlieka radšej riešiť s pediatrom." },
+      "Umelé mlieko": { item: "Umelé mlieko", category: "kŕmenie", brand: "", size: "presný typ podľa dieťaťa", qty: "1 balenie", alt: "nekupovať inú receptúru bez dohody", note: "Doplňte presnú značku a typ. Pri zmene mlieka radšej riešiť s pediatrom." },
       "Vlhčené obrúsky": { item: "Vlhčené obrúsky", category: "prebaľovanie", brand: "", size: "sensitive / bez parfumácie", qty: "2-4 balenia", alt: "čo najjednoduchšie zloženie", note: "Pri citlivej pokožke radšej bez parfumácie." },
       "Bepanthen / krém na zapareniny": { item: "Krém na zapareniny", category: "pokožka", brand: "Bepanthen alebo používaná značka", size: "malé balenie", qty: "1 ks", alt: "ochranný krém na zapareniny", note: "Kúpiť značku, ktorú dieťa toleruje." },
       "Prebaľovacie podložky": { item: "Prebaľovacie podložky", category: "prebaľovanie", brand: "", size: "jednorazové / cestovné", qty: "1 balenie", alt: "umývateľná podložka", note: "Hodia sa do tašky aj k lekárovi." },
       "Fyziologický roztok": { item: "Fyziologický roztok", category: "zdravie a hygiena", brand: "", size: "ampulky", qty: "1 balenie", alt: "sterilný roztok do nosa", note: "Nie je náhrada lekára, len bežná domáca zásoba." },
-      "Odsávačka hlienov": { item: "Odsávačka hlienov", category: "zdravie a hygiena", brand: "", size: "ručná / hadičková", qty: "1 ks", alt: "podľa preferencie rodiča", note: "Doplň typ, ktorý chcete používať." },
+      "Odsávačka hlienov": { item: "Odsávačka hlienov", category: "zdravie a hygiena", brand: "", size: "ručná / hadičková", qty: "1 ks", alt: "podľa preferencie rodiča", note: "Doplňte typ, ktorý chcete používať." },
       "Fľašky a cumlíky": { item: "Fľašky a cumlíky", category: "kŕmenie", brand: "", size: "veľkosť podľa veku", qty: "1-2 ks", alt: "kompatibilné s používanými fľaškami", note: "Pozor na veľkosť prietoku podľa veku." },
       "Prsné vložky": { item: "Prsné vložky", category: "pre mamu", brand: "", size: "jednorazové / prateľné", qty: "1 balenie", alt: "jemné, savé", note: "Podľa toho, čo mame vyhovuje." },
       "Vložky po pôrode": { item: "Vložky po pôrode", category: "pre mamu", brand: "", size: "popôrodné", qty: "1-2 balenia", alt: "vysoká savosť", note: "Kúpiť pohodlné a bez parfumácie." },
@@ -8566,7 +8614,7 @@ Otázky:
     });
 
     $("saveShopping").addEventListener("click", () => {
-      if (!$("shoppingItem").value.trim()) return showToast("Doplň položku");
+      if (!$("shoppingItem").value.trim()) return showToast("Doplňte položku");
       state.shopping.push(shoppingFormData());
       resetShoppingForm();
       save();
@@ -8575,8 +8623,8 @@ Otázky:
 
     $("saveFavoriteProduct").addEventListener("click", () => {
       const product = shoppingFormData();
-      if (!product.item) return showToast("Doplň názov produktu");
-      if (!product.brand && !product.size && !product.note) return showToast("Doplň značku, veľkosť, typ alebo poznámku");
+      if (!product.item) return showToast("Doplňte názov produktu");
+      if (!product.brand && !product.size && !product.note) return showToast("Doplňte značku, veľkosť, typ alebo poznámku");
       state.productFavorites = state.productFavorites.filter(p => p.item.toLowerCase() !== product.item.toLowerCase());
       state.productFavorites.push(product);
       save();
@@ -8585,7 +8633,7 @@ Otázky:
 
     $("addCheckedShopping").addEventListener("click", () => {
       const checked = Array.from(document.querySelectorAll("[data-shop-item]:checked"));
-      if (!checked.length) return showToast("Zaškrtni aspoň jednu položku");
+      if (!checked.length) return showToast("Zaškrtnite aspoň jednu položku");
       checked.forEach(input => {
         const itemName = input.dataset.shopItem || "";
         const favorite = state.productFavorites.find(p => p.item.toLowerCase() === itemName.toLowerCase());
@@ -8627,7 +8675,7 @@ Otázky:
       }
       try {
         await navigator.clipboard.writeText(text);
-        showToast("Zoznam skopírovaný, pošli ho cez Messenger/SMS");
+        showToast("Zoznam skopírovaný, pošlite ho cez Messenger/SMS");
       } catch (error) {
         showToast("Zoznam pripravený na kopírovanie");
       }
@@ -8682,7 +8730,7 @@ Otázky:
 
     $("useFavoriteMilk").addEventListener("click", () => {
       const product = favoriteMilkProduct();
-      if (!product) return showToast("Najprv ulož používané mlieko alebo dojčenskú vodu v Nákupnom zozname");
+      if (!product) return showToast("Najprv uložte používané mlieko alebo dojčenskú vodu v Nákupnom zozname");
       $("familyMilkProduct").value = [product.brand, product.item, product.size].filter(Boolean).join(" · ");
       if (product.note && !$("familyAfterCare").value.trim()) $("familyAfterCare").value = product.note;
       showToast("Používaný produkt doplnený");
@@ -8740,7 +8788,7 @@ Otázky:
 
     if ($("sleepAdviceBtn")) $("sleepAdviceBtn").addEventListener("click", () => {
       const wake = $("wakeTime").value;
-      if (!wake) return showToast("Zadaj čas zobudenia");
+      if (!wake) return showToast("Zadajte čas zobudenia");
       const [min, max] = sleepWindowMinutes(ageDays());
       const [hours, minutes] = wake.split(":").map(Number);
       const base = new Date();
@@ -8748,12 +8796,12 @@ Otázky:
       const from = new Date(base.getTime() + min * 60000);
       const to = new Date(base.getTime() + max * 60000);
       const fmt = d => d.toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" });
-      $("sleepAdviceBox").textContent = `Orientačne sleduj únavu približne medzi ${fmt(from)} a ${fmt(to)}. Ak zíva, odvracia pohľad, je nepokojné alebo sa horšie upokojuje, skús skôr pokojný rituál. Ak je spokojné, netreba tlačiť presný čas.`;
+      $("sleepAdviceBox").textContent = `Orientačne sledujte únavu približne medzi ${fmt(from)} a ${fmt(to)}. Ak zíva, odvracia pohľad, je nepokojné alebo sa horšie upokojuje, skúste skôr pokojný rituál. Ak je spokojné, netreba tlačiť presný čas.`;
     });
 
     $("sleepAdviceStandaloneBtn").addEventListener("click", () => {
       const wake = $("sleepWakeTime").value;
-      if (!wake) return showToast("Zadaj čas zobudenia");
+      if (!wake) return showToast("Zadajte čas zobudenia");
       const [min, max] = sleepWindowMinutes(ageDays());
       const [hours, minutes] = wake.split(":").map(Number);
       const base = new Date();
@@ -8761,7 +8809,7 @@ Otázky:
       const from = new Date(base.getTime() + min * 60000);
       const to = new Date(base.getTime() + max * 60000);
       const fmt = d => d.toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" });
-      $("sleepAdviceStandaloneBox").textContent = `Skús sledovať ďalšiu únavu približne medzi ${fmt(from)} a ${fmt(to)}. Keď sa objaví zívanie, odvracanie pohľadu, nepokoj alebo horšie upokojenie, je čas skúsiť pokojný rituál.`;
+      $("sleepAdviceStandaloneBox").textContent = `Skúste sledovať ďalšiu únavu približne medzi ${fmt(from)} a ${fmt(to)}. Keď sa objaví zívanie, odvracanie pohľadu, nepokoj alebo horšie upokojenie, je čas skúsiť pokojný rituál.`;
     });
 
     $("savePrenatal").addEventListener("click", () => {
@@ -8833,7 +8881,7 @@ Otázky:
     });
 
     $("saveContact").addEventListener("click", () => {
-      if (!$("contactName").value.trim()) return showToast("Doplň názov kontaktu");
+      if (!$("contactName").value.trim()) return showToast("Doplňte názov kontaktu");
       state.contacts.push({
         type: $("contactType").value,
         name: $("contactName").value.trim(),
@@ -8907,7 +8955,7 @@ Otázky:
     });
 
     $("addSibling").addEventListener("click", () => {
-      if (!$("siblingName").value.trim()) return showToast("Doplň meno dieťaťa");
+      if (!$("siblingName").value.trim()) return showToast("Doplňte meno dieťaťa");
       state.children.push({
         name: $("siblingName").value.trim(),
         date: $("siblingDate").value,
@@ -8984,8 +9032,7 @@ Otázky:
     $("welcomeName").addEventListener("blur", () => maybeGuessSex("welcomeName", "welcomeSex"));
     $("babyName").addEventListener("blur", () => maybeGuessSex("babyName", "babySex"));
     $("saveWelcome").addEventListener("click", completeWelcome);
-    $("saveWelcomeChapter").addEventListener("click", completeWelcome);
-    $("welcomeChapterEditSettings").addEventListener("click", () => setWelcomeStep(2));
+    $("welcomeChapterEditSettings").addEventListener("click", () => setWelcomeStep(5));
     document.querySelectorAll("[data-open-birth-card]").forEach(btn => btn.addEventListener("click", openBirthCardView));
     $("openBirthCardFromIntro").addEventListener("click", openBirthCardView);
     $("saveBirthCardDraft").addEventListener("click", () => storeBirthCardForm(false));
@@ -9074,7 +9121,7 @@ Otázky:
 
     function aiAnswer(text) {
       const t = text.toLowerCase();
-      const urgentLine = "Ak dieťa ťažko dýcha, modrá, nereaguje, má kŕče, opuch tváre/jazyka, silné krvácanie, vážny úraz alebo máš pocit akútneho stavu, volaj 155/112.";
+      const urgentLine = "Ak dieťa ťažko dýcha, modrá, nereaguje, má kŕče, opuch tváre/jazyka, silné krvácanie, vážny úraz alebo máte pocit akútneho stavu, volajte 155/112.";
       const age = ageDays();
       const babyAge = age === null ? "vek nie je zadaný" : `${age} dní`;
 
@@ -9088,54 +9135,54 @@ Otázky:
       }
 
       if (t.includes("dých") || t.includes("dych") || t.includes("modrá") || t.includes("modra")) {
-        return `Priorita: toto môže byť urgentné.\n\n1. Ak je dýchanie namáhavé, dieťa lapá po dychu, modrá alebo nereaguje, volaj 155/112.\n2. Nedávaj nič do úst a nesnaž sa problém riešiť čakaním na aplikáciu.\n3. Ak dýchanie vyzerá len „iné“, ale dieťa je ružové a reaguje, aj tak zavolaj pediatrovi/pohotovosti a popíš presne čo vidíš.\n\nZapíš: čas začiatku, farbu pier/tváre, dýchanie, teplotu, čo predchádzalo stavu.`;
+        return `Priorita: toto môže byť urgentné.\n\n1. Ak je dýchanie namáhavé, dieťa lapá po dychu, modrá alebo nereaguje, volajte 155/112.\n2. Nedávajte nič do úst a nesnažte sa problém riešiť čakaním na aplikáciu.\n3. Ak dýchanie vyzerá len „iné“, ale dieťa je ružové a reaguje, aj tak zavolajte pediatrovi/pohotovosti a popíšte presne čo vidíte.\n\nZapíšte: čas začiatku, farbu pier/tváre, dýchanie, teplotu, čo predchádzalo stavu.`;
       }
 
       if (t.includes("teplot") || t.includes("horúč") || t.includes("horuc") || /\b38\b/.test(t)) {
-        return `Priorita: teplotu rieš podľa veku. Vek v appke: ${babyAge}.\n\n1. Odmeraj teplotu rovnakým spôsobom a zapíš hodnotu aj čas.\n2. Pri novorodencovi alebo veľmi malom bábätku horúčku rieš s pediatrom bez odkladu.\n3. Ak je dieťa malátne, zle dýcha, nechce piť, nereaguje alebo má kŕče, volaj 155/112.\n4. Bez odporúčania lekára nedávaj lieky ani dávky „odhadom“.\n\nZapíš: hodnota, spôsob merania, správanie dieťaťa, posledné mliečko, mokré plienky.`;
+        return `Priorita: teplotu riešte podľa veku. Vek v appke: ${babyAge}.\n\n1. Odmerajte teplotu rovnakým spôsobom a zapíšte hodnotu aj čas.\n2. Pri novorodencovi alebo veľmi malom bábätku horúčku riešte s pediatrom bez odkladu.\n3. Ak je dieťa malátne, zle dýcha, nechce piť, nereaguje alebo má kŕče, volajte 155/112.\n4. Bez odporúčania lekára nedávajte lieky ani dávky „odhadom“.\n\nZapíšte: hodnota, spôsob merania, správanie dieťaťa, posledné mliečko, mokré plienky.`;
       }
 
       if (t.includes("vrac") || t.includes("grck") || t.includes("zvrac")) {
-        return `Najprv rozlišuj: malé grckanie po mliečku býva časté, opakované silné vracanie už treba riešiť.\n\nUrob teraz:\n1. Zapíš koľkokrát, kedy a či to bolo po mliečku.\n2. Sleduj mokré plienky a celkovú bdelosť.\n3. Po mliečku drž dieťa chvíľu vo zvislejšej polohe.\n4. Ak je vracanie opakované, prúdové, zelené, s krvou, dieťa je apatické alebo má málo mokrých plienok, kontaktuj pediatra.\n\n${urgentLine}`;
+        return `Najprv rozlišujte: malé grckanie po mliečku býva časté, opakované silné vracanie už treba riešiť.\n\nUrobte teraz:\n1. Zapíšte koľkokrát, kedy a či to bolo po mliečku.\n2. Sledujte mokré plienky a celkovú bdelosť.\n3. Po mliečku držte dieťa chvíľu vo zvislejšej polohe.\n4. Ak je vracanie opakované, prúdové, zelené, s krvou, dieťa je apatické alebo má málo mokrých plienok, kontaktujte pediatra.\n\n${urgentLine}`;
       }
 
       if (t.includes("plien") || t.includes("mokr") || t.includes("moč") || /\bmoc\b/.test(t)) {
-        return `Toto nemusí byť akútna téma, ale je dôležitá na sledovanie hydratácie.\n\nUrob teraz:\n1. Zapíš počet mokrých plienok za posledných 12-24 hodín.\n2. Skontroluj, či dieťa pije ako zvyčajne a či je bdelé.\n3. Sleduj suché pery/ústa, výraznú spavosť, slabý plač alebo zhoršený stav.\n4. Ak je mokrých plienok výrazne menej než zvyčajne, dieťa zle pije alebo pôsobí malátne, volaj pediatra.\n\nDo reportu ulož: posledné mliečko, počet plienok, teplotu a správanie.`;
+        return `Toto nemusí byť akútna téma, ale je dôležitá na sledovanie hydratácie.\n\nUrobte teraz:\n1. Zapíšte počet mokrých plienok za posledných 12-24 hodín.\n2. Skontrolujte, či dieťa pije ako zvyčajne a či je bdelé.\n3. Sledujte suché pery/ústa, výraznú spavosť, slabý plač alebo zhoršený stav.\n4. Ak je mokrých plienok výrazne menej než zvyčajne, dieťa zle pije alebo pôsobí malátne, volajte pediatra.\n\nDo reportu uložte: posledné mliečko, počet plienok, teplotu a správanie.`;
       }
 
       if (t.includes("vyráž") || t.includes("vyraz") || t.includes("alerg") || t.includes("reakc") || t.includes("opuch")) {
-        return `Najprv vylúč vážnu reakciu.\n\nVolaj 155/112, ak je opuch pier, jazyka alebo tváre, sipot, problém s dýchaním, výrazná slabosť alebo rýchle zhoršovanie.\n\nAk je to len kožná reakcia:\n1. Odfoť ju pri dobrom svetle.\n2. Zapíš nový produkt: plienky, krém, obrúsky, prací prostriedok, mlieko alebo jedlo.\n3. Nepoužívaj podozrivý produkt, kým sa neporadíš.\n4. Ak sa šíri, mokvá, bolí alebo sa pridá teplota, kontaktuj pediatra.\n\nUlož to do sekcie Zdravie > Alergia alebo reakcia.`;
+        return `Najprv vylúčte vážnu reakciu.\n\nVolajte 155/112, ak je opuch pier, jazyka alebo tváre, sipot, problém s dýchaním, výrazná slabosť alebo rýchle zhoršovanie.\n\nAk je to len kožná reakcia:\n1. Odfoťte ju pri dobrom svetle.\n2. Zapíšte nový produkt: plienky, krém, obrúsky, prací prostriedok, mlieko alebo jedlo.\n3. Nepoužívajte podozrivý produkt, kým sa neporadíte.\n4. Ak sa šíri, mokvá, bolí alebo sa pridá teplota, kontaktujte pediatra.\n\nUložte to do sekcie Zdravie > Alergia alebo reakcia.`;
       }
 
       if (t.includes("plač") || t.includes("place") || t.includes("plače") || t.includes("hodinu")) {
-        return `Plač sám o sebe nemusí byť akútny stav, ale je vyčerpávajúci a treba mať postup.\n\nSkontroluj v tomto poradí:\n1. Mliečko: kedy bolo naposledy?\n2. Plienka: mokrá, špinavá, otlak?\n3. Teplota: nie je dieťa prehriate alebo studené?\n4. Telo: nič netlačí, vlások okolo prsta, bruško, grckanie?\n5. Kontakt: náruč, nosenie, tmavšia miestnosť, monotónny šum.\n\nVolaj pediatra, ak je plač nezvyčajný, prenikavý, dieťa sa nedá utíšiť ako inokedy, má teplotu, vracia, zle dýcha, je apatické alebo máš zlý pocit.\n\nMôžem to uložiť ako epizódu plaču.`;
+        return `Plač sám o sebe nemusí byť akútny stav, ale je vyčerpávajúci a treba mať postup.\n\nSkontrolujte v tomto poradí:\n1. Mliečko: kedy bolo naposledy?\n2. Plienka: mokrá, špinavá, otlak?\n3. Teplota: nie je dieťa prehriate alebo studené?\n4. Telo: nič netlačí, vlások okolo prsta, bruško, grckanie?\n5. Kontakt: náruč, nosenie, tmavšia miestnosť, monotónny šum.\n\nVolajte pediatra, ak je plač nezvyčajný, prenikavý, dieťa sa nedá utíšiť ako inokedy, má teplotu, vracia, zle dýcha, je apatické alebo máte zlý pocit.\n\nMôžem to uložiť ako epizódu plaču.`;
       }
 
       if (t.includes("spat") || t.includes("spať") || t.includes("spán") || t.includes("span")) {
-        return `Pri bábätku je nepravidelný spánok bežný, ale cieľ je bezpečný a pokojný postup.\n\nSkús teraz:\n1. Mliečko alebo odgrgnutie.\n2. Suchá plienka.\n3. Menej svetla a menej stimulov.\n4. Rovnaký krátky rituál: náruč, položenie, šum.\n5. Bezpečné spanie: na chrbte, pevný rovný povrch, bez voľných predmetov.\n\nAk je dieťa nezvyčajne spavé, nedá sa prebudiť, zle pije alebo zle dýcha, rieš odbornú pomoc.`;
+        return `Pri bábätku je nepravidelný spánok bežný, ale cieľ je bezpečný a pokojný postup.\n\nSkúste teraz:\n1. Mliečko alebo odgrgnutie.\n2. Suchá plienka.\n3. Menej svetla a menej stimulov.\n4. Rovnaký krátky rituál: náruč, položenie, šum.\n5. Bezpečné spanie: na chrbte, pevný rovný povrch, bez voľných predmetov.\n\nAk je dieťa nezvyčajne spavé, nedá sa prebudiť, zle pije alebo zle dýcha, riešte odbornú pomoc.`;
       }
 
       if (t.includes("mlieko") || t.includes("umelé") || t.includes("dojčen") || t.includes("dojcen")) {
-        return `Pri mliečku nerob veľké zmeny naslepo, hlavne pri novorodencovi.\n\nPraktický postup:\n1. Zapíš, koľko a kedy dieťa vypilo alebo ako dlho sa dojčilo.\n2. Sleduj grckanie, vyrážku, stolicu, bruško a mokré plienky.\n3. Pri podozrení na intoleranciu/alergiu priprav pre pediatra zoznam príznakov a produkt.\n4. Pred zmenou umelého mlieka sa poraď s pediatrom, ak je vracanie, krv v stolici, zlé priberanie, silné bolesti bruška alebo vyrážka.\n\nOtázky pre pediatra: Máme meniť mlieko? Aké príznaky sledovať? Ako dlho skúšať jednu zmenu?`;
+        return `Pri mliečku nerobte veľké zmeny naslepo, hlavne pri novorodencovi.\n\nPraktický postup:\n1. Zapíšte, koľko a kedy dieťa vypilo alebo ako dlho sa dojčilo.\n2. Sledujte grckanie, vyrážku, stolicu, bruško a mokré plienky.\n3. Pri podozrení na intoleranciu/alergiu pripravte pre pediatra zoznam príznakov a produkt.\n4. Pred zmenou umelého mlieka sa poraďte s pediatrom, ak je vracanie, krv v stolici, zlé priberanie, silné bolesti bruška alebo vyrážka.\n\nOtázky pre pediatra: Máme meniť mlieko? Aké príznaky sledovať? Ako dlho skúšať jednu zmenu?`;
       }
 
       if (t.includes("očkov") || t.includes("ockov")) {
-        return `Očkovanie rieš podľa pediatra a oficiálneho kalendára v krajine.\n\nPred termínom:\n1. Zapíš aktuálny zdravotný stav a teplotu.\n2. Priprav otázky: čo očakávať po očkovaní, kedy volať, čo je bežná reakcia.\n3. Po očkovaní zapisuj teplotu, správanie, miesto vpichu a lieky iba podľa odporúčania lekára.\n\nAk má dieťa vysokú horúčku, zle dýcha, opúcha alebo nereaguje, volaj odbornú pomoc.`;
+        return `Očkovanie riešte podľa pediatra a oficiálneho kalendára v krajine.\n\nPred termínom:\n1. Zapíšte aktuálny zdravotný stav a teplotu.\n2. Pripravte otázky: čo očakávať po očkovaní, kedy volať, čo je bežná reakcia.\n3. Po očkovaní zapisujte teplotu, správanie, miesto vpichu a lieky iba podľa odporúčania lekára.\n\nAk má dieťa vysokú horúčku, zle dýcha, opúcha alebo nereaguje, volajte odbornú pomoc.`;
       }
 
       if (t.includes("matersk") || t.includes("tehotensk") || t.includes("rodičovsk") || t.includes("rodicovsk") || t.includes("príspev") || t.includes("prispev") || t.includes("zamestnáv") || t.includes("zamestnav") || t.includes("podpor")) {
-        return `Toto viem pomôcť upratať, ale nie rozhodnúť o nároku. Ber to ako prípravu na overenie.\n\nNajbližší praktický postup:\n1. Vyber presnú situáciu: ešte tehotenstvo, po narodení, po materskej, zamestnávateľ alebo otec/partner.\n2. Otvor sekciu Podpora od štátu a označ 2-3 veci, ktoré sa vás môžu týkať.\n3. Ulož kontakt: Sociálna poisťovňa, ÚPSVaR alebo HR/mzdové oddelenie.\n4. Priprav otázku: “Čo presne mám doložiť, dokedy a kam?”\n5. Sumy a podmienky potvrď cez oficiálny zdroj, lebo sa môžu meniť.\n\nKrátka správa pre úrad/HR:\nDobrý deň, čakáme/narodilo sa nám dieťa a chcem si overiť správny postup. Prosím, viete mi potvrdiť, aké doklady potrebujem, dokedy ich mám doručiť a či sa ma týka materské/rodičovský príspevok/príspevok pri narodení podľa mojej situácie?\n\nV appke si na to nastav pripomienku, aby to nezostalo v hlave.`;
+        return `Toto viem pomôcť upratať, ale nie rozhodnúť o nároku. Berte to ako prípravu na overenie.\n\nNajbližší praktický postup:\n1. Vyberte presnú situáciu: ešte tehotenstvo, po narodení, po materskej, zamestnávateľ alebo otec/partner.\n2. Otvorte sekciu Podpora od štátu a označte 2-3 veci, ktoré sa vás môžu týkať.\n3. Uložte kontakt: Sociálna poisťovňa, ÚPSVaR alebo HR/mzdové oddelenie.\n4. Pripravte otázku: “Čo presne mám doložiť, dokedy a kam?”\n5. Sumy a podmienky potvrďte cez oficiálny zdroj, lebo sa môžu meniť.\n\nKrátka správa pre úrad/HR:\nDobrý deň, čakáme/narodilo sa nám dieťa a chcem si overiť správny postup. Prosím, viete mi potvrdiť, aké doklady potrebujem, dokedy ich mám doručiť a či sa ma týka materské/rodičovský príspevok/príspevok pri narodení podľa mojej situácie?\n\nV appke si na to nastavte pripomienku, aby to nezostalo v hlave.`;
       }
 
       if (t.includes("vybavi") || t.includes("úrad") || t.includes("urad") || t.includes("poisť") || t.includes("poist")) {
-        return `Spravme z toho zoznam, nie stres v hlave.\n\nTypicky treba sledovať:\n1. Rodný list / matrika.\n2. Zdravotné poistenie dieťaťa podľa krajiny.\n3. Pediater a prvá poradňa.\n4. Príspevky a dávky podľa aktuálnych pravidiel.\n5. Zamestnávateľ / sociálne veci podľa situácie.\n\nNa Slovensku je novorodenec spravidla automaticky poistený v poisťovni matky. V Česku sa novorodenec prihlasuje do 8 dní k poisťovni matky. Pri dávkach a úradoch si vždy otvor aktuálny zdroj v appke a ulož si termín alebo otázku.`;
+        return `Spravme z toho zoznam, nie stres v hlave.\n\nTypicky treba sledovať:\n1. Rodný list / matrika.\n2. Zdravotné poistenie dieťaťa podľa krajiny.\n3. Pediater a prvá poradňa.\n4. Príspevky a dávky podľa aktuálnych pravidiel.\n5. Zamestnávateľ / sociálne veci podľa situácie.\n\nNa Slovensku je novorodenec spravidla automaticky poistený v poisťovni matky. V Česku sa novorodenec prihlasuje do 8 dní k poisťovni matky. Pri dávkach a úradoch si vždy otvorte aktuálny zdroj v appke a uložte si termín alebo otázku.`;
       }
 
       if (t.includes("pediatr") || t.includes("lekár") || t.includes("lekar")) {
-        return `Priprav pediatrovi stručný, použiteľný obraz.\n\nDo reportu daj:\n1. Čo sa deje a odkedy.\n2. Teploty s časom merania.\n3. Mliečko: dojčenie/fľaša, množstvo alebo trvanie.\n4. Plienky: mokré/špinavé za posledný deň.\n5. Spánok a správanie.\n6. Fotky vyrážky alebo reakcie.\n7. Čo ste už skúšali.\n\nPotom polož 3 jasné otázky. Appka vie pripraviť email s reportom v sekcii Zdravie.`;
+        return `Pripravte pediatrovi stručný, použiteľný obraz.\n\nDo reportu dajte:\n1. Čo sa deje a odkedy.\n2. Teploty s časom merania.\n3. Mliečko: dojčenie/fľaša, množstvo alebo trvanie.\n4. Plienky: mokré/špinavé za posledný deň.\n5. Spánok a správanie.\n6. Fotky vyrážky alebo reakcie.\n7. Čo ste už skúšali.\n\nPotom položte 3 jasné otázky. Appka vie pripraviť email s reportom v sekcii Zdravie.`;
       }
 
-      return `Rozumiem. Dám ti použiteľný postup, ale potrebujem zaradiť situáciu.\n\nOdpíš jednou vetou:\n1. Čo sa deje?\n2. Odkedy?\n3. Vek dieťaťa?\n4. Je prítomné niečo urgentné: ťažké dýchanie, modranie, nereaguje, kŕče, opuch tváre/jazyka, vážny úraz?\n\n${urgentLine}\n\nAk urgentné príznaky nie sú, navrhnem konkrétny ďalší krok a čo uložiť do záznamu.`;
+      return `Rozumiem. Dám vám použiteľný postup, ale potrebujem zaradiť situáciu.\n\nOdpíšte jednou vetou:\n1. Čo sa deje?\n2. Odkedy?\n3. Vek dieťaťa?\n4. Je prítomné niečo urgentné: ťažké dýchanie, modranie, nereaguje, kŕče, opuch tváre/jazyka, vážny úraz?\n\n${urgentLine}\n\nAk urgentné príznaky nie sú, navrhnem konkrétny ďalší krok a čo uložiť do záznamu.`;
     }
 
     function aiAssessmentMeta(text) {
@@ -9229,7 +9276,7 @@ Otázky:
       diaryPhotoData = "";
       $("diaryPhotoPreview").innerHTML = "Fotka sa zobrazí tu.";
       if (!file) return;
-      if (!file.type.startsWith("image/")) return showToast("Vyber fotku");
+      if (!file.type.startsWith("image/")) return showToast("Vyberte fotku");
       const reader = new FileReader();
       reader.onload = () => {
         diaryPhotoData = reader.result;
@@ -9278,43 +9325,43 @@ Otázky:
     $("productAdvice").addEventListener("click", () => {
       const c = $("productCategory").value;
       const advice = {
-        "Plienky": "Sleduj hmotnosť, postavu dieťaťa, presakovanie, otlaky na stehienkach a reakciu pokožky. Veľkosť je len orientačná, rozhoduje realita na tele dieťaťa. Pri vyrážke si ulož značku a čas reakcie. Partnerské odporúčania musia byť vždy označené.",
-        "Umelé mlieko": "Vyberaj podľa veku dieťaťa a odporúčania pediatra. Pri vracaní, krvi v stolici, zlom priberaní alebo výraznej vyrážke zmenu rieš s pediatrom.",
-        "Odsávačka mlieka": "Porovnaj, či potrebuješ občasné odsávanie, pravidelné odsávanie alebo budovanie zásoby. Dôležitý je komfort, veľkosť nástavca, čistenie, hlučnosť, prenosnosť a servis. Appka má vedieť ukladať objem, stranu, čas a zásobu mlieka.",
-        "Fľaše a cumlíky": "Sleduj prietok, vekové odporúčanie, prijatie dieťaťom, grckanie a spôsob čistenia. Pri kombinovanom kŕmení je praktické zapisovať, ktorá fľaša a cumlík fungovali najlepšie.",
+        "Plienky": "Sledujte hmotnosť, postavu dieťaťa, presakovanie, otlaky na stehienkach a reakciu pokožky. Veľkosť je len orientačná, rozhoduje realita na tele dieťaťa. Pri vyrážke si uložte značku a čas reakcie. Partnerské odporúčania musia byť vždy označené.",
+        "Umelé mlieko": "Vyberajte podľa veku dieťaťa a odporúčania pediatra. Pri vracaní, krvi v stolici, zlom priberaní alebo výraznej vyrážke zmenu riešte s pediatrom.",
+        "Odsávačka mlieka": "Porovnajte, či potrebujete občasné odsávanie, pravidelné odsávanie alebo budovanie zásoby. Dôležitý je komfort, veľkosť nástavca, čistenie, hlučnosť, prenosnosť a servis. Appka má vedieť ukladať objem, stranu, čas a zásobu mlieka.",
+        "Fľaše a cumlíky": "Sledujte prietok, vekové odporúčanie, prijatie dieťaťom, grckanie a spôsob čistenia. Pri kombinovanom kŕmení je praktické zapisovať, ktorá fľaša a cumlík fungovali najlepšie.",
         "Odsávačka hlienov": "Dôležité je šetrné používanie, ľahké čistenie a mať doma aj fyziologický roztok vhodný pre bábätká. Pri ťažkom dýchaní, modraní alebo apatii to nie je produktová otázka, ale situácia na odbornú pomoc.",
-        "Vanička / kúpanie": "Rieš hlavne bezpečné držanie dieťaťa, stabilitu, jednoduché vypustenie vody a miesto v kúpeľni. Teplomer do vody je praktická pomôcka, ale dieťa nikdy nesmie ostať vo vode bez ruky a dozoru.",
+        "Vanička / kúpanie": "Riešte hlavne bezpečné držanie dieťaťa, stabilitu, jednoduché vypustenie vody a miesto v kúpeľni. Teplomer do vody je praktická pomôcka, ale dieťa nikdy nesmie ostať vo vode bez ruky a dozoru.",
         "Váha pre bábätko": "Váha dáva zmysel najmä pri sledovaní priberania, predčasne narodenom dieťati alebo odporúčaní pediatra. Inak môže zbytočne zvyšovať stres; appka má vedieť zapisovať hodnoty a trend, nie strašiť jedným číslom.",
-        "Hryzátka a hračky": "Toto nie je vec na prvé dni. Hryzátka rieš až pri zúbkoch, hračky vyberaj podľa veku, bezpečnosti, ľahkého čistenia a toho, či dieťa reálne reaguje.",
+        "Hryzátka a hračky": "Toto nie je vec na prvé dni. Hryzátka riešte až pri zúbkoch, hračky vyberaj podľa veku, bezpečnosti, ľahkého čistenia a toho, či dieťa reálne reaguje.",
         "Príkrmy": "Príkrmy patria skôr do pokračovania po 100 dňoch. Hodnota appky je v postupnom zavádzaní potravín, zázname reakcií, alergénov, stolice a obľúbených kombinácií.",
-        "Vlhčené obrúsky": "Pri citlivej pokožke hľadaj jednoduché zloženie bez parfumácie. Ak sa objaví reakcia, skús zapisovať produkt a príznaky.",
-        "Kozmetika": "Menej je často viac. Sleduj parfumáciu, reakciu pokožky a používaj produkty primerané veku. Pri zhoršení sa poraď s pediatrom.",
+        "Vlhčené obrúsky": "Pri citlivej pokožke hľadaj jednoduché zloženie bez parfumácie. Ak sa objaví reakcia, skúste zapisovať produkt a príznaky.",
+        "Kozmetika": "Menej je často viac. Sledujte parfumáciu, reakciu pokožky a používajte produkty primerané veku. Pri zhoršení sa poraďte s pediatrom.",
         "Teplomer": "Praktický je rýchly digitálny teplomer. Dôležitá je konzistentná metóda merania a zapisovanie hodnôt pre pediatra.",
-        "Monitor dychu": "Rieš hlavne vhodnosť pre typ postieľky, spoľahlivé umiestnenie, alarm, batérie a servis. Appka môže uložiť model, návod, dátum kontroly a kontakt na podporu.",
-        "Nosítko / šatka": "Vyberaj podľa veku, hmotnosti, ergonómie, nastaviteľnosti a toho, kto bude nosiť. Pri novorodencovi je dôležité správne podsadenie a opora hlavičky; oplatí sa kontakt na poradkyňu nosenia.",
-        "Krém alebo olej na bruško": "Nie je to povinnosť, skôr príjemný rituál pre pokožku a pokoj. Sleduj zloženie, vôňu, citlivosť pokožky a či ti produkt reálne sedí. Appka ho vie uložiť do výbavy bez toho, aby tlačila na nákup veľkého balenia.",
-        "Tehotenský vankúš": "Dáva zmysel pri horšom spánku, bolestiach chrbta alebo potrebe opory brucha. Vyberaj podľa veľkosti postele, prateľného poťahu a toho, či ho využiješ aj pri dojčení.",
-        "Dojčiace podprsenky": "Praktické je mať 1-2 kusy pripravené, ale s veľkým nákupom počkaj, kým bude jasné, aká veľkosť a strih ti po pôrode sadnú.",
-        "Vložky po pôrode": "Do pôrodnice a prvých dní doma treba skôr mäkké, priedušné popôrodné vložky než bežné menštruačné. Over si, či pôrodnica niečo poskytuje, ale základ maj pripravený doma.",
+        "Monitor dychu": "Riešte hlavne vhodnosť pre typ postieľky, spoľahlivé umiestnenie, alarm, batérie a servis. Appka môže uložiť model, návod, dátum kontroly a kontakt na podporu.",
+        "Nosítko / šatka": "Vyberajte podľa veku, hmotnosti, ergonómie, nastaviteľnosti a toho, kto bude nosiť. Pri novorodencovi je dôležité správne podsadenie a opora hlavičky; oplatí sa kontakt na poradkyňu nosenia.",
+        "Krém alebo olej na bruško": "Nie je to povinnosť, skôr príjemný rituál pre pokožku a pokoj. Sledujte zloženie, vôňu, citlivosť pokožky a či vám produkt reálne sedí. Appka ho vie uložiť do výbavy bez toho, aby tlačila na nákup veľkého balenia.",
+        "Tehotenský vankúš": "Dáva zmysel pri horšom spánku, bolestiach chrbta alebo potrebe opory brucha. Vyberajte podľa veľkosti postele, prateľného poťahu a toho, či ho využijete aj pri dojčení.",
+        "Dojčiace podprsenky": "Praktické je mať 1-2 kusy pripravené, ale s veľkým nákupom počkajte, kým bude jasné, aká veľkosť a strih vám po pôrode sadnú.",
+        "Vložky po pôrode": "Do pôrodnice a prvých dní doma treba skôr mäkké, priedušné popôrodné vložky než bežné menštruačné. Overte si, či pôrodnica niečo poskytuje, ale základ majte pripravený doma.",
         "Prsné vložky": "Hodia sa ako poistka pri rozbiehaní dojčenia. Na začiatok stačí menšie balenie, potom sa uvidí podľa reality.",
-        "Krém na bradavky": "Môže pomôcť pri citlivosti pri dojčení. Vyberaj jednoduché zloženie a ulož si značku, ak ti sadne, aby partner kúpil presne tú istú.",
-        "Fľaša na vodu do pôrodnice": "Malá vec, veľký komfort. Vyber takú, ktorá sa dá používať jednou rukou a netečie v taške.",
-        "Oblečenie do pôrodnice": "Rieš pohodlie, dojčenie, prezlečenie a prateľnosť. Appka to má držať ako checklist po kusoch, nie ako jednu neurčitú položku.",
-        "Detský prací gél": "Na prvé pranie výbavičky hľadaj jemný produkt bez silnej parfumácie. Ak pokožka dieťaťa zareaguje, ulož si produkt medzi alergie/reakcie.",
-        "Základná výbava domov": "Cieľ nie je kúpiť všetko. Priprav len veci, ktoré znížia stres v prvých dňoch: miesto na spanie, kúpanie, prebaľovanie, teplomer, pár textilných plienok, oblečenie a bezpečnú cestu domov.",
-        "Autosedačka": "Rieš bezpečnostnú normu, vhodnosť pre vek/hmotnosť, správnu inštaláciu a kompatibilitu s autom. Toto je produkt, kde sa oplatí odborné poradenstvo."
+        "Krém na bradavky": "Môže pomôcť pri citlivosti pri dojčení. Vyberajte jednoduché zloženie a uložte si značku, ak vám sadne, aby partner kúpil presne tú istú.",
+        "Fľaša na vodu do pôrodnice": "Malá vec, veľký komfort. Vyberte takú, ktorá sa dá používať jednou rukou a netečie v taške.",
+        "Oblečenie do pôrodnice": "Riešte pohodlie, dojčenie, prezlečenie a prateľnosť. Appka to má držať ako checklist po kusoch, nie ako jednu neurčitú položku.",
+        "Detský prací gél": "Na prvé pranie výbavičky hľadaj jemný produkt bez silnej parfumácie. Ak pokožka dieťaťa zareaguje, uložte si produkt medzi alergie/reakcie.",
+        "Základná výbava domov": "Cieľ nie je kúpiť všetko. Pripravte len veci, ktoré znížia stres v prvých dňoch: miesto na spanie, kúpanie, prebaľovanie, teplomer, pár textilných plienok, oblečenie a bezpečnú cestu domov.",
+        "Autosedačka": "Riešte bezpečnostnú normu, vhodnosť pre vek/hmotnosť, správnu inštaláciu a kompatibilitu s autom. Toto je produkt, kde sa oplatí odborné poradenstvo."
       };
-      $("productBox").textContent = advice[c] || "Pri tejto položke si ulož značku, veľkosť, množstvo a dôvod, prečo ju chcete. Pomôže to kúpiť presne to isté a nerobiť zbytočné nákupy.";
+      $("productBox").textContent = advice[c] || "Pri tejto položke si uložte značku, veľkosť, množstvo a dôvod, prečo ju chcete. Pomôže to kúpiť presne to isté a nerobiť zbytočné nákupy.";
     });
 
     $("diaperSizeAdvice").addEventListener("click", () => {
       const kg = parseWeightKg(state.profile.weight);
       if (!kg) {
-        $("productBox").textContent = "Najprv doplň hmotnosť v profile dieťaťa. Potom appka navrhne orientačnú veľkosť plienok a pripomenie, čo sledovať na tele dieťaťa.";
+        $("productBox").textContent = "Najprv doplňte hmotnosť v profile dieťaťa. Potom appka navrhne orientačnú veľkosť plienok a pripomenie, čo sledovať na tele dieťaťa.";
         return;
       }
       const size = kg < 2.5 ? "veľkosť 0 / premature podľa značky" : kg < 5 ? "veľkosť 1" : kg < 6 ? "veľkosť 2" : kg < 9 ? "veľkosť 3" : kg < 14 ? "veľkosť 4" : kg < 17 ? "veľkosť 5" : "väčšia veľkosť podľa značky";
-      $("productBox").textContent = `Pri hmotnosti približne ${kg} kg vychádza orientačne ${size}. Skontroluj aj stavbu tela: ak presakuje, tlačí na stehnách alebo ostávajú výrazné otlaky, treba skúsiť inú veľkosť alebo strih.`;
+      $("productBox").textContent = `Pri hmotnosti približne ${kg} kg vychádza orientačne ${size}. Skontrolujte aj stavbu tela: ak presakuje, tlačí na stehnách alebo ostávajú výrazné otlaky, treba skúsiť inú veľkosť alebo strih.`;
     });
 
     $("makeReport").addEventListener("click", () => {
@@ -9328,7 +9375,7 @@ Otázky:
 
     $("emailPediatrician").addEventListener("click", () => {
       const pediatrician = primaryPediatrician();
-      if (!pediatrician.email) return showToast("Doplň email pediatra v kontaktoch");
+      if (!pediatrician.email) return showToast("Doplňte email pediatra v kontaktoch");
       window.location.href = mailHref(pediatrician.email, "Guguboo - report a otázka");
     });
 
@@ -9493,7 +9540,7 @@ Otázky:
           const file = new File([blob], "nahrana-uspavanka.webm", { type: blob.type });
           const dataUrl = await fileToDataUrl(file);
           const title = $("customSoundTitle").value.trim() || "Nahraná uspávanka";
-          setCustomSound(dataUrl, title, "Nahraté teraz. Ulož ju do knižnice uspávaniek.", dataUrl);
+          setCustomSound(dataUrl, title, "Nahraté teraz. Uložte ju do knižnice uspávaniek.", dataUrl);
           stopCustomRecordingUi();
           showToast("Uspávanka nahraná");
         });
@@ -9520,14 +9567,14 @@ Otázky:
       stopCustomSound();
       const dataUrl = await fileToDataUrl(file);
       const title = $("customSoundTitle").value.trim() || file.name.replace(/\.[^.]+$/, "") || "Moja uspávanka";
-      setCustomSound(dataUrl, title, "Vybraná zo zariadenia. Ulož ju do knižnice uspávaniek.", dataUrl);
+      setCustomSound(dataUrl, title, "Vybraná zo zariadenia. Uložte ju do knižnice uspávaniek.", dataUrl);
       showToast("Rodinná nahrávka pripravená");
     });
     $("saveCustomLullaby").addEventListener("click", () => {
       const title = $("customSoundTitle").value.trim() || $("customSoundName").textContent.trim() || "Moja uspávanka";
-      if (!customSoundData) return showToast("Najprv nahraj alebo vyber uspávanku");
+      if (!customSoundData) return showToast("Najprv nahrajte alebo vyberte uspávanku");
       if (state.lullabies.length >= 10) return showToast("V MVP počítame max. 10 uspávaniek");
-      const item = { id: uid(), title, src: customSoundData, created: new Date().toISOString() };
+      const item = { id: uid(), title, src: customSoundData, author: state.parentRole || "rodina", created: new Date().toISOString() };
       state.lullabies.push(item);
       state.selectedLullabyId ||= item.id;
       save();
@@ -9557,15 +9604,16 @@ Otázky:
     if ($("growthDate")) $("growthDate").value = dateInputToday();
     setWelcomeInsurance(state.profile.insurance || "");
     setWelcomeStatus(state.profile.status || state.welcomeStatus || "expecting");
-    setWelcomeStep(state.onboarded ? 1 : (state.welcomeStep || 1));
+    const previewStartsAtWelcome = new URLSearchParams(window.location.search).get("start") === "welcome";
+    setWelcomeStep(previewStartsAtWelcome ? 1 : state.onboarded ? 1 : (state.welcomeStep || 1));
     updateEventForm();
     render();
-    switchView(state.onboarded ? "home" : "welcome");
+    switchView(previewStartsAtWelcome ? "welcome" : state.onboarded ? "home" : "welcome");
     setTimeout(() => playBrandVoice(true), 450);
   </script>
   <script src="v4-upgrade.js?v=6.9"></script>
-  <script src="v5-mobile.js?v=6.31"></script>
-  <script src="private-space.js?v=1"></script>
+  <script src="v5-mobile.js?v=7.2"></script>
+  <script src="private-space.js?v=2"></script>
   <script src="activities-data.js?v=1"></script>
   <script src="teeth.js?v=1"></script>
   <script src="activities.js?v=2"></script>

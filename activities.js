@@ -32,7 +32,8 @@
     if (!birthDate) return null;
     const birth = new Date(`${birthDate}T12:00:00`);
     if (!Number.isFinite(birth.getTime())) return null;
-    return Math.max(0, Math.floor((now.getTime() - birth.getTime()) / 86400000));
+    const days = Math.floor((now.getTime() - birth.getTime()) / 86400000);
+    return days < 0 || days > 2192 ? null : days;
   }
 
   function correctedAgeDays({ birthDate, gestationalWeek, gestationalDay, now = new Date() }) {
@@ -121,7 +122,7 @@
         <div class="activities-essentials"><span>${escapeHtml(activity.minutes)} min</span><span>${escapeHtml(activity.supplies)}</span></div>
         <ol class="activities-steps">${activity.steps.slice(0, 3).map((step, index) => `<li><span>${index + 1}</span><p>${escapeHtml(step)}</p></li>`).join("")}</ol>
         <details class="activities-safety-details"><summary>Bezpečne</summary><p>${escapeHtml(activity.safety)}</p></details>
-        <div class="activities-actions"><button class="activities-done" type="button" data-activity-tried aria-pressed="${tried}">${tried ? "✓ Hotovo" : "Vyskúšali sme"}</button><button class="activities-next" type="button" data-activity-other aria-label="Ukáž inú aktivitu">Iný nápad <span aria-hidden="true">→</span></button></div>
+        <div class="activities-actions"><button class="activities-done" type="button" data-activity-tried aria-pressed="${tried}">${tried ? "✓ Hotovo" : "Vyskúšali sme"}</button><button class="activities-next" type="button" data-activity-other aria-label="Ukážte inú aktivitu">Iný nápad <span aria-hidden="true">→</span></button></div>
       </div>
     </article>`;
   }
@@ -141,7 +142,7 @@
       gestationalDay: state.profile.gestationalDay
     });
     if (age.days === null) {
-      root.innerHTML = `<div class="activities-shell activities-empty"><span aria-hidden="true">🧸</span><h1>Aktivity s dieťaťom</h1><p>Doplň dátum narodenia a Guguboo vyberie pokojné nápady pre aktuálne obdobie. Vek nebudeme odhadovať.</p><button type="button" data-activities-profile>Otvoriť Profil dieťaťa</button></div>`;
+      root.innerHTML = `<div class="activities-shell activities-empty"><span aria-hidden="true">🧸</span><h1>Aktivity s dieťaťom</h1><p>Doplňte dátum narodenia a Guguboo vyberie pokojné nápady pre aktuálne obdobie. Vek nebudeme odhadovať.</p><button type="button" data-activities-profile>Otvoriť Profil dieťaťa</button></div>`;
       return;
     }
     const period = selectAgePeriod(age.days);

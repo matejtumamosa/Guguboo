@@ -2,6 +2,15 @@
 <html lang="sk">
 <head>
   <meta charset="utf-8">
+  <script>
+    (function enforceSecureGugubooDomain() {
+      var host = window.location.hostname.toLowerCase();
+      if ((host === "guguboo.com" || host === "www.guguboo.com") &&
+          (window.location.protocol !== "https:" || host === "www.guguboo.com")) {
+        window.location.replace("https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Guguboo je rodinná aplikácia pre každodennú starostlivosť, spoločný prehľad rodičov, zdravie, rast, cestovanie a spomienky dieťaťa.">
   <title>Guguboo – starostlivosť, rodina a spomienky</title>

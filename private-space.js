@@ -10,7 +10,12 @@
   const root = document.getElementById("privateSpaceApp");
   const view = document.getElementById("privateSpace");
 
-  if (!root || !view || !window.crypto?.subtle) return;
+  if (!root || !view) return;
+  if (!window.crypto?.subtle) {
+    const secureUrl = "https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash;
+    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvorte aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
+    return;
+  }
 
   const privateStore = {
     read() {
@@ -138,11 +143,11 @@
 
   function renderSetup() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Nastav si prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Nastavte si prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-setup novalidate>
-        ${pinInput("privatePinNew", "Zadaj presne štyri číslice", "new-password")}
-        ${pinInput("privatePinConfirm", "Zopakuj prístupový kód", "new-password")}
-        <p class="private-security-note">Zápisy budú na tomto zariadení šifrované a chránené tvojím PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
+        ${pinInput("privatePinNew", "Zadajte presne štyri číslice", "new-password")}
+        ${pinInput("privatePinConfirm", "Zopakujte prístupový kód", "new-password")}
+        <p class="private-security-note">Zápisy budú na tomto zariadení šifrované a chránené vaším PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
         <button class="private-primary" type="submit">Nastaviť a pokračovať</button>
       </form>
@@ -152,7 +157,7 @@
 
   function renderLocked() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Zadaj svoj prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Zadajte svoj prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-unlock novalidate>
         ${pinInput("privatePinUnlock", "Prístupový kód", "current-password")}
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
@@ -175,7 +180,7 @@
     if (!list || !privateData) return;
     const entries = privateData.entries.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (!entries.length) {
-      list.innerHTML = `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Keď budeš chcieť, môžeš si sem uložiť prvú súkromnú myšlienku.</p></div>`;
+      list.innerHTML = `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Keď budete chcieť, môžete si sem uložiť prvú súkromnú myšlienku.</p></div>`;
       return;
     }
     list.innerHTML = entries.map(entry => {
@@ -202,7 +207,7 @@
         </section>
         <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editingId ? "Upraviť súkromný zápis" : "Nový súkromný zápis"}</h2>
           <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${type}</button>`).join("")}</div></fieldset>
-            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="Napíš, čo si chceš nechať pre seba."></textarea>
+            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="Napíšte, čo si chcete nechať pre seba."></textarea>
             <p class="private-message" data-private-message role="status" aria-live="polite"></p>
             <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId ? `<button type="button" data-private-cancel-edit>Zrušiť úpravu</button>` : ""}</div>
           </form>
@@ -267,7 +272,7 @@
     button.disabled = blocked;
     input.disabled = blocked;
     if (blocked) {
-      setMessage(`Skús to znova o ${remaining} s.`, "error");
+      setMessage(`Skúste to znova o ${remaining} s.`, "error");
       window.setTimeout(updateUnlockDelay, 250);
     }
   }
@@ -284,7 +289,7 @@
     const pin = form.elements.privatePinNew.value;
     const confirmation = form.elements.privatePinConfirm.value;
     if (!/^\d{4}$/.test(pin)) return setMessage("Prístupový kód musí mať presne štyri číslice.", "error");
-    if (pin !== confirmation) return setMessage("Prístupové kódy sa nezhodujú. Skús ich zadať znova.", "error");
+    if (pin !== confirmation) return setMessage("Prístupové kódy sa nezhodujú. Skúste ich zadať znova.", "error");
     const generation = ++operationGeneration;
     const submit = form.querySelector("button[type='submit']");
     submit.disabled = true;
@@ -302,13 +307,13 @@
       renderUnlocked();
     } catch (_) {
       submit.disabled = false;
-      setMessage("Priestor sa nepodarilo vytvoriť. Skús to znova.", "error");
+      setMessage("Priestor sa nepodarilo vytvoriť. Skúste to znova.", "error");
     }
   }
 
   async function handleUnlock(form) {
     const pin = form.elements.privatePinUnlock.value;
-    if (!/^\d{4}$/.test(pin)) return setMessage("Zadaj presne štyri číslice.", "error");
+    if (!/^\d{4}$/.test(pin)) return setMessage("Zadajte presne štyri číslice.", "error");
     const auth = readAuthState();
     if (auth.blockedUntil > Date.now()) return updateUnlockDelay();
     const generation = ++operationGeneration;
@@ -334,7 +339,7 @@
 
   async function handleEntrySave(form) {
     const text = form.querySelector("#privateEntryText").value.trim();
-    if (!text) return setMessage("Napíš text zápisu.", "error");
+    if (!text) return setMessage("Napíšte text zápisu.", "error");
     const now = new Date().toISOString();
     if (editingId) {
       const entry = privateData.entries.find(item => item.id === editingId);
@@ -355,7 +360,7 @@
       renderUnlocked();
       setMessage("Súkromný zápis je uložený.");
     } catch (_) {
-      setMessage("Zápis sa nepodarilo bezpečne uložiť. Skús to znova.", "error");
+      setMessage("Zápis sa nepodarilo bezpečne uložiť. Skúste to znova.", "error");
     }
   }
 
@@ -410,7 +415,7 @@
     }
     const remove = event.target.closest("[data-private-delete]");
     if (remove && privateData) {
-      const confirmed = window.confirm("Naozaj chceš tento súkromný zápis natrvalo vymazať?");
+      const confirmed = window.confirm("Naozaj chcete tento súkromný zápis natrvalo vymazať?");
       if (!confirmed) return;
       privateData.entries = privateData.entries.filter(item => item.id !== remove.dataset.privateDelete);
       try {
@@ -419,7 +424,7 @@
         renderUnlocked();
         setMessage("Súkromný zápis bol vymazaný.");
       } catch (_) {
-        setMessage("Zápis sa nepodarilo vymazať. Skús to znova.", "error");
+        setMessage("Zápis sa nepodarilo vymazať. Skúste to znova.", "error");
       }
       return;
     }
@@ -433,7 +438,7 @@
       privateStore.clear();
       clearAuthState();
       lock();
-      setMessage("Môj priestor bol vymazaný. Môžeš nastaviť nový kód.");
+      setMessage("Môj priestor bol vymazaný. Môžete nastaviť nový kód.");
     }
   });
 

@@ -4,7 +4,7 @@
   const source = "CDC Learn the Signs. Act Early.";
   const sourceUrl = "https://www.cdc.gov/act-early/milestones/index.html";
   const reviewedAt = "2026-09-09";
-  const commonSafety = "Zostaň pri dieťati, rešpektuj jeho polohu a skonči pri nepohode alebo nezvyčajnej reakcii.";
+  const commonSafety = "Zostaňte pri dieťati, rešpektuj jeho polohu a skonči pri nepohode alebo nezvyčajnej reakcii.";
   const periods = [
     { id: "0-2", label: "narodenie až 2 mesiace", minDays: 0, maxDays: 60 },
     { id: "2-4", label: "2 až 4 mesiace", minDays: 61, maxDays: 121 },
@@ -22,56 +22,56 @@
   });
 
   const activities = [
-    make("a001","0-2","Tvár nablízku","vzťah",2,"bez pomôcok",["Keď je dieťa bdelé a pokojné, priblíž tvár.","Pomaly sa usmej a chvíľu počkaj na reakciu."],"vzájomnú pozornosť a pocit bezpečia",["two-minutes","calm","no-tools"]),
-    make("a002","0-2","Pokojný hlas pri prebaľovaní","komunikácia",3,"bez pomôcok",["Počas prebaľovania pokojne pomenuj, čo robíš.","Urob pauzu, akoby ste sa rozprávali."],"počúvanie hlasu a striedanie kontaktu",["calm","no-tools"]),
-    make("a003","0-2","Pomalé sledovanie","poznávanie",2,"bezpečná kontrastná kartička",["Drž kartičku približne pred tvárou bdelého dieťaťa.","Pomaly ju posuň malý kúsok do strany."],"zrakovú pozornosť",["two-minutes","calm"],"Kartičku drž dospelý; nič nenechávaj v postieľke ani pri tvári počas spánku."),
-    make("a004","0-2","Chvíľka na brušku","motorika",2,"pevná podložka",["Polož bdelé dieťa na bruško na pevný povrch.","Buď pri ňom tvárou nablízku a skonči pri únave."],"krátku skúsenosť s polohou na brušku",["two-minutes","movement","no-tools"],"Iba v bdelosti a pod priamym dohľadom; na spánok vždy polož dieťa na chrbát."),
+    make("a001","0-2","Tvár nablízku","vzťah",2,"bez pomôcok",["Keď je dieťa bdelé a pokojné, priblíž tvár.","Pomaly sa usmej a chvíľu počkajte na reakciu."],"vzájomnú pozornosť a pocit bezpečia",["two-minutes","calm","no-tools"]),
+    make("a002","0-2","Pokojný hlas pri prebaľovaní","komunikácia",3,"bez pomôcok",["Počas prebaľovania pokojne pomenujte, čo robíte.","Urobte pauzu, akoby ste sa rozprávali."],"počúvanie hlasu a striedanie kontaktu",["calm","no-tools"]),
+    make("a003","0-2","Pomalé sledovanie","poznávanie",2,"bezpečná kontrastná kartička",["Držte kartičku približne pred tvárou bdelého dieťaťa.","Pomaly ju posuň malý kúsok do strany."],"zrakovú pozornosť",["two-minutes","calm"],"Kartičku držte dospelý; nič nenechávaj v postieľke ani pri tvári počas spánku."),
+    make("a004","0-2","Chvíľka na brušku","motorika",2,"pevná podložka",["Položte bdelé dieťa na bruško na pevný povrch.","Buďte pri ňom tvárou nablízku a skonči pri únave."],"krátku skúsenosť s polohou na brušku",["two-minutes","movement","no-tools"],"Iba v bdelosti a pod priamym dohľadom; na spánok vždy položte dieťa na chrbát."),
 
-    make("a005","2-4","Odpoveď na zvuky","komunikácia",3,"bez pomôcok",["Zopakuj zvuk, ktorý dieťa vydá.","Počkaj a nechaj priestor na ďalší zvuk."],"striedanie zvukov v rozhovore",["calm","no-tools"]),
-    make("a006","2-4","Ruky sa stretávajú","motorika",3,"ľahká látková hračka",["Ponúkni hračku do stredu zorného poľa.","Nechaj dieťa, aby sa jej dotklo oboma rukami."],"objavovanie rúk a dosahovanie",["calm"]),
-    make("a007","2-4","Zrkadlo a úsmev","vzťah",4,"bezpečné nerozbitné zrkadlo",["Drž zrkadlo pri bdelom dieťati.","Ukáž na odraz a pokojne sa prihováraj."],"sociálnu pozornosť",["calm"]),
-    make("a008","2-4","Bruško s uterákom","motorika",3,"zrolovaný uterák",["Pri bdelosti podopri hrudník malým zrolovaným uterákom.","Sadni si pred dieťa a hovori naň."],"zdvíhanie hlavy a oporu na predlaktiach",["movement"],"Iba na pevnej podložke, v bdelosti a pod priamym dohľadom; dieťa do polohy nenúť."),
+    make("a005","2-4","Odpoveď na zvuky","komunikácia",3,"bez pomôcok",["Zopakujte zvuk, ktorý dieťa vydá.","Počkajte a nechajte priestor na ďalší zvuk."],"striedanie zvukov v rozhovore",["calm","no-tools"]),
+    make("a006","2-4","Ruky sa stretávajú","motorika",3,"ľahká látková hračka",["Ponúknite hračku do stredu zorného poľa.","Nechajte dieťa, aby sa jej dotklo oboma rukami."],"objavovanie rúk a dosahovanie",["calm"]),
+    make("a007","2-4","Zrkadlo a úsmev","vzťah",4,"bezpečné nerozbitné zrkadlo",["Držte zrkadlo pri bdelom dieťati.","Ukážte na odraz a pokojne sa prihováraj."],"sociálnu pozornosť",["calm"]),
+    make("a008","2-4","Bruško s uterákom","motorika",3,"zrolovaný uterák",["Pri bdelosti podoprite hrudník malým zrolovaným uterákom.","Sadnite si pred dieťa a hovorte naň."],"zdvíhanie hlavy a oporu na predlaktiach",["movement"],"Iba na pevnej podložke, v bdelosti a pod priamym dohľadom; dieťa do polohy nenúťte."),
 
-    make("a009","4-6","Siahni po hračke","motorika",4,"ľahká bezpečná hračka",["Polož hračku na dosah bdelého dieťaťa.","Nechaj ho skúšať siahnuť bez posúvania tela nasilu."],"dosahovanie a koordináciu ruka–oko",["movement"]),
-    make("a010","4-6","Pesnička s pauzou","komunikácia",3,"bez pomôcok",["Zaspievaj krátku známu melódiu.","Pred posledným zvukom urob pauzu a sleduj reakciu."],"počúvanie a očakávanie",["calm","no-tools","bedtime"]),
-    make("a011","4-6","Čo počujeme vonku","poznávanie",5,"bez pomôcok",["Choďte na krátku chvíľu von alebo k otvorenému oknu.","Pomenúvaj jemné zvuky a smer, odkiaľ prichádzajú."],"pozornosť k okoliu",["calm","no-tools","outside"]),
-    make("a012","4-6","Kde je tvár?","vzťah",3,"ľahká látka",["Na chvíľu si zakry vlastnú tvár látkou.","Hneď ju odkry a usmej sa."],"spoločnú hru a očakávanie",["calm"],"Látku drž dospelý a nikdy ju nenechávaj na tvári dieťaťa ani v priestore na spánok."),
+    make("a009","4-6","Siahni po hračke","motorika",4,"ľahká bezpečná hračka",["Položte hračku na dosah bdelého dieťaťa.","Nechajte ho skúšať siahnuť bez posúvania tela nasilu."],"dosahovanie a koordináciu ruka–oko",["movement"]),
+    make("a010","4-6","Pesnička s pauzou","komunikácia",3,"bez pomôcok",["Zaspievajte krátku známu melódiu.","Pred posledným zvukom urobte pauzu a sledujte reakciu."],"počúvanie a očakávanie",["calm","no-tools","bedtime"]),
+    make("a011","4-6","Čo počujeme vonku","poznávanie",5,"bez pomôcok",["Choďte na krátku chvíľu von alebo k otvorenému oknu.","Pomenúvajte jemné zvuky a smer, odkiaľ prichádzajú."],"pozornosť k okoliu",["calm","no-tools","outside"]),
+    make("a012","4-6","Kde je tvár?","vzťah",3,"ľahká látka",["Na chvíľu si zakry vlastnú tvár látkou.","Hneď ju odkry a usmej sa."],"spoločnú hru a očakávanie",["calm"],"Látku držte dospelý a nikdy ju nenechávaj na tvári dieťaťa ani v priestore na spánok."),
 
-    make("a013","6-9","Dve bezpečné nádoby","poznávanie",5,"dve veľké plastové nádoby",["Ukáž vloženie jednej nádoby do druhej.","Nechaj dieťa skúšať a opisuj výsledok."],"skúmanie príčiny a priestoru",["calm"]),
-    make("a014","6-9","Bľabotavý rozhovor","komunikácia",3,"bez pomôcok",["Zopakuj slabiky dieťaťa.","Pridaj jednoduchú slabiku a počkaj."],"striedanie zvukov",["calm","no-tools"]),
-    make("a015","6-9","Hračka kúsok bokom","motorika",5,"väčšia bezpečná hračka",["Polož hračku kúsok mimo priameho dosahu.","Nechaj dieťa zvoliť vlastný bezpečný spôsob priblíženia."],"otáčanie a presuny podľa vlastných možností",["movement"],"Nenúť dieťa do sedu, lezenia ani inej polohy, ktorú samo bezpečne nezvláda."),
-    make("a016","6-9","Kuk spoza plienky","vzťah",3,"látková plienka",["Skry za plienku svoju tvár, nie tvár dieťaťa.","Odkry sa a povedz „kuk“ pokojne."],"spoločnú pozornosť a radosť z opakovania",["calm"],"Látku drž stále v ruke a odlož ju pred spánkom mimo dosahu."),
+    make("a013","6-9","Dve bezpečné nádoby","poznávanie",5,"dve veľké plastové nádoby",["Ukážte vloženie jednej nádoby do druhej.","Nechajte dieťa skúšať a opisujte výsledok."],"skúmanie príčiny a priestoru",["calm"]),
+    make("a014","6-9","Bľabotavý rozhovor","komunikácia",3,"bez pomôcok",["Zopakujte slabiky dieťaťa.","Pridajte jednoduchú slabiku a počkajte."],"striedanie zvukov",["calm","no-tools"]),
+    make("a015","6-9","Hračka kúsok bokom","motorika",5,"väčšia bezpečná hračka",["Položte hračku kúsok mimo priameho dosahu.","Nechajte dieťa zvoliť vlastný bezpečný spôsob priblíženia."],"otáčanie a presuny podľa vlastných možností",["movement"],"Nenúťte dieťa do sedu, lezenia ani inej polohy, ktorú samo bezpečne nezvláda."),
+    make("a016","6-9","Kuk spoza plienky","vzťah",3,"látková plienka",["Skryte za plienku svoju tvár, nie tvár dieťaťa.","Odkryte sa a povedzte „kuk“ pokojne."],"spoločnú pozornosť a radosť z opakovania",["calm"],"Látku držte stále v ruke a odložte ju pred spánkom mimo dosahu."),
 
-    make("a017","9-12","Dnu a von","poznávanie",6,"veľká nádoba a veľké predmety",["Vlož veľký bezpečný predmet do nádoby.","Nechaj dieťa predmet vyberať a vracať."],"chápanie priestoru a opakovania",["calm"],"Použi iba predmety väčšie než rizikové malé časti a zostaň pri dieťati."),
-    make("a018","9-12","Zamávame spolu","komunikácia",3,"bez pomôcok",["Pri odchode alebo príchode pomaly zamávaj.","Povedz jednoduché „pá-pá“ a počkaj na pokus."],"gestá a porozumenie rutine",["two-minutes","no-tools"]),
-    make("a019","9-12","Bezpečná cesta za cieľom","motorika",6,"vankúš a obľúbená hračka",["Na pevnej podlahe vytvor nízku mäkkú prekážku.","Polož hračku na dohľad a nechaj dieťa zvoliť pohyb."],"pohybové plánovanie",["movement"],"Odstráň ostré hrany a malé predmety; nenúť dieťa liezť ani stáť."),
-    make("a020","9-12","Tlieskame v rytme","vzťah",4,"bez pomôcok",["Zatlieskaj jednoduchý rytmus.","Ponúkni dieťaťu čas napodobniť alebo reagovať po svojom."],"napodobňovanie a spoločnú hru",["calm","no-tools"]),
+    make("a017","9-12","Dnu a von","poznávanie",6,"veľká nádoba a veľké predmety",["Vložte veľký bezpečný predmet do nádoby.","Nechajte dieťa predmet vyberať a vracať."],"chápanie priestoru a opakovania",["calm"],"Použite iba predmety väčšie než rizikové malé časti a zostaňte pri dieťati."),
+    make("a018","9-12","Zamávame spolu","komunikácia",3,"bez pomôcok",["Pri odchode alebo príchode pomaly zamávajte.","Povedzte jednoduché „pá-pá“ a počkajte na pokus."],"gestá a porozumenie rutine",["two-minutes","no-tools"]),
+    make("a019","9-12","Bezpečná cesta za cieľom","motorika",6,"vankúš a obľúbená hračka",["Na pevnej podlahe vytvorte nízku mäkkú prekážku.","Položte hračku na dohľad a nechajte dieťa zvoliť pohyb."],"pohybové plánovanie",["movement"],"Odstráňte ostré hrany a malé predmety; nenúťte dieťa liezť ani stáť."),
+    make("a020","9-12","Tlieskame v rytme","vzťah",4,"bez pomôcok",["Zatlieskajte jednoduchý rytmus.","Ponúknite dieťaťu čas napodobniť alebo reagovať po svojom."],"napodobňovanie a spoločnú hru",["calm","no-tools"]),
 
-    make("a021","12-15","Veža z dvoch","motorika",5,"dve veľké ľahké kocky",["Ukáž položenie jednej kocky na druhú.","Nechaj dieťa skúšať aj búrať."],"jemnú motoriku a koordináciu",["calm"],"Použi veľké nepoškodené kocky bez oddeliteľných malých častí."),
-    make("a022","12-15","Pomenuj a ukáž","komunikácia",4,"obrázková knižka",["Ukáž na jeden veľký obrázok a pomenuj ho.","Počkaj, kam sa dieťa pozrie alebo ukáže."],"spájanie slov s predmetmi",["calm","bedtime"]),
-    make("a023","12-15","Krabička s viečkom","poznávanie",5,"ľahká krabička s voľným viečkom",["Ukáž otvorenie a zatvorenie.","Nechaj dieťa skúšať bez opravovania každého pokusu."],"riešenie jednoduchého problému",["calm"],"Krabička musí byť čistá, bez ostrých hrán a malých oddeliteľných častí."),
-    make("a024","12-15","Spoločné kroky","vzťah",5,"bez pomôcok",["Ponúkni stabilnú ruku, ak ju dieťa chce.","Prejdite pár krokov jeho tempom a opisuj cestu."],"istotu v spoločnom pohybe",["movement","no-tools","outside"],"Neťahaj dieťa za ruky a nenúť ho kráčať, ak ešte samo nie je pripravené."),
+    make("a021","12-15","Veža z dvoch","motorika",5,"dve veľké ľahké kocky",["Ukážte položenie jednej kocky na druhú.","Nechajte dieťa skúšať aj búrať."],"jemnú motoriku a koordináciu",["calm"],"Použite veľké nepoškodené kocky bez oddeliteľných malých častí."),
+    make("a022","12-15","Pomenujte a ukážte","komunikácia",4,"obrázková knižka",["Ukážte na jeden veľký obrázok a pomenujte ho.","Počkajte, kam sa dieťa pozrie alebo ukáže."],"spájanie slov s predmetmi",["calm","bedtime"]),
+    make("a023","12-15","Krabička s viečkom","poznávanie",5,"ľahká krabička s voľným viečkom",["Ukážte otvorenie a zatvorenie.","Nechajte dieťa skúšať bez opravovania každého pokusu."],"riešenie jednoduchého problému",["calm"],"Krabička musí byť čistá, bez ostrých hrán a malých oddeliteľných častí."),
+    make("a024","12-15","Spoločné kroky","vzťah",5,"bez pomôcok",["Ponúknite stabilnú ruku, ak ju dieťa chce.","Prejdite pár krokov jeho tempom a opisujte cestu."],"istotu v spoločnom pohybe",["movement","no-tools","outside"],"Neťahajte dieťa za ruky a nenúťte ho kráčať, ak ešte samo nie je pripravené."),
 
-    make("a025","15-18","Pomocník s ponožkami","motorika",5,"čisté ponožky a košík",["Polož pár ponožiek vedľa košíka.","Ukáž vloženie a nechaj dieťa pomáhať po svojom."],"prenášanie a koordináciu",["movement"]),
-    make("a026","15-18","Jedno slovo navyše","komunikácia",3,"bez pomôcok",["Keď dieťa použije zvuk alebo slovo, zopakuj ho.","Pridaj jedno jednoduché slovo navyše."],"prirodzené rozširovanie komunikácie",["calm","no-tools"]),
-    make("a027","15-18","Čo patrí k sebe","poznávanie",6,"dve lyžice a dve misky",["Polož bezpečné predmety pred dieťa.","Ukáž jednu dvojicu a nechaj ho skúmať ostatné."],"triedenie a vzťahy medzi predmetmi",["calm"],"Použi iba veľké tupé predmety a zostaň pri dieťati."),
-    make("a028","15-18","Napodobníme domácnosť","vzťah",5,"mäkká handrička",["Ukáž jednoduché utretie stolíka.","Ponúkni handričku a poďakuj za akýkoľvek pokus."],"napodobňovanie a spoločnú rutinu",["calm"],"Použi čistú handričku bez čistiacich prostriedkov."),
+    make("a025","15-18","Pomocník s ponožkami","motorika",5,"čisté ponožky a košík",["Položte pár ponožiek vedľa košíka.","Ukážte vloženie a nechajte dieťa pomáhať po svojom."],"prenášanie a koordináciu",["movement"]),
+    make("a026","15-18","Jedno slovo navyše","komunikácia",3,"bez pomôcok",["Keď dieťa použije zvuk alebo slovo, zopakujte ho.","Pridajte jedno jednoduché slovo navyše."],"prirodzené rozširovanie komunikácie",["calm","no-tools"]),
+    make("a027","15-18","Čo patrí k sebe","poznávanie",6,"dve lyžice a dve misky",["Položte bezpečné predmety pred dieťa.","Ukážte jednu dvojicu a nechajte ho skúmať ostatné."],"triedenie a vzťahy medzi predmetmi",["calm"],"Použite iba veľké tupé predmety a zostaňte pri dieťati."),
+    make("a028","15-18","Napodobníme domácnosť","vzťah",5,"mäkká handrička",["Ukážte jednoduché utretie stolíka.","Ponúknite handričku a poďakuj za akýkoľvek pokus."],"napodobňovanie a spoločnú rutinu",["calm"],"Použite čistú handričku bez čistiacich prostriedkov."),
 
-    make("a029","18-24","Cesta po čiare","motorika",5,"maliarska papierová páska",["Nalep na zem krátku rovnú čiaru.","Kráčajte popri nej alebo po nej vlastným tempom."],"rovnováhu a plánovanie pohybu",["movement"],"Povrch musí byť protišmykový; odstráň prekážky a dieťa nepridŕžaj nasilu."),
-    make("a030","18-24","Dve slová v hre","komunikácia",4,"obľúbená hračka",["Opisuj hru krátkym spojením dvoch slov.","Počkaj na gesto, zvuk alebo vlastnú odpoveď dieťaťa."],"porozumenie a rozširovanie slov",["calm"]),
-    make("a031","18-24","Nájdi rovnaké","poznávanie",7,"dva páry veľkých bežných predmetov",["Polož pred dieťa dva známe predmety.","Ukáž zhodný predmet a hľadajte jeho pár."],"porovnávanie a pozornosť",["calm"],"Predmety musia byť veľké, čisté a bez ostrých alebo oddeliteľných častí."),
-    make("a032","18-24","Prechádzka s pomenovaním","vzťah",8,"bez pomôcok",["Vonku nechaj dieťa vybrať smer na krátkom bezpečnom úseku.","Pomenuj jednu vec, ktorú spolu vidíte."],"spoločnú pozornosť a samostatné voľby",["outside","movement","no-tools"],"Drž sa mimo premávky a vody; dieťa zostáva stále pod priamym dohľadom.")
+    make("a029","18-24","Cesta po čiare","motorika",5,"maliarska papierová páska",["Nalepte na zem krátku rovnú čiaru.","Kráčajte popri nej alebo po nej vlastným tempom."],"rovnováhu a plánovanie pohybu",["movement"],"Povrch musí byť protišmykový; odstráňte prekážky a dieťa nepridŕžaj nasilu."),
+    make("a030","18-24","Dve slová v hre","komunikácia",4,"obľúbená hračka",["Opisujte hru krátkym spojením dvoch slov.","Počkajte na gesto, zvuk alebo vlastnú odpoveď dieťaťa."],"porozumenie a rozširovanie slov",["calm"]),
+    make("a031","18-24","Nájdite rovnaké","poznávanie",7,"dva páry veľkých bežných predmetov",["Položte pred dieťa dva známe predmety.","Ukážte zhodný predmet a hľadajte jeho pár."],"porovnávanie a pozornosť",["calm"],"Predmety musia byť veľké, čisté a bez ostrých alebo oddeliteľných častí."),
+    make("a032","18-24","Prechádzka s pomenovaním","vzťah",8,"bez pomôcok",["Vonku nechajte dieťa vybrať smer na krátkom bezpečnom úseku.","Pomenujte jednu vec, ktorú spolu vidíte."],"spoločnú pozornosť a samostatné voľby",["outside","movement","no-tools"],"Držte sa mimo premávky a vody; dieťa zostáva stále pod priamym dohľadom.")
   ];
 
   const observationText = {
     "0-2": ["Môže na chvíľu sledovať tvár.","Môže reagovať na hlas alebo hlasný zvuk.","Môže pri polohe na brušku skúšať zdvihnúť hlavu.","Môže sa upokojiť pri hlase alebo dotyku blízkej osoby."],
-    "2-4": ["Môže sa usmievať, keď sa mu prihováraš.","Môže vydávať zvuky iné než plač.","Môže držať hlavu stabilnejšie pri držaní.","Môže sledovať pohybujúcu sa osobu alebo predmet."],
-    "4-6": ["Môže sa smiať alebo striedať zvuky s tebou.","Môže siahať po hračke, ktorú chce.","Môže sa pretáčať z bruška na chrbát.","Môže spoznávať známych ľudí."],
+    "2-4": ["Môže sa usmievať, keď sa mu prihovárate.","Môže vydávať zvuky iné než plač.","Môže držať hlavu stabilnejšie pri držaní.","Môže sledovať pohybujúcu sa osobu alebo predmet."],
+    "4-6": ["Môže sa smiať alebo striedať zvuky s vami.","Môže siahať po hračke, ktorú chce.","Môže sa pretáčať z bruška na chrbát.","Môže spoznávať známych ľudí."],
     "6-9": ["Môže vydávať opakované slabiky.","Môže sa dostať do sedu vlastným spôsobom.","Môže búchať dvoma predmetmi o seba.","Môže reagovať na odchod blízkej osoby."],
-    "9-12": ["Môže zamávať alebo používať iné gesto.","Môže vložiť predmet do nádoby.","Môže sa vytiahnuť do stoja s oporou.","Môže sa zapájať do jednoduchej hry s tebou."],
+    "9-12": ["Môže zamávať alebo používať iné gesto.","Môže vložiť predmet do nádoby.","Môže sa vytiahnuť do stoja s oporou.","Môže sa zapájať do jednoduchej hry s vami."],
     "12-15": ["Môže skúšať jedno či dve ďalšie slová.","Môže ukázať na vec, o ktorú žiada.","Môže urobiť niekoľko krokov sám.","Môže napodobniť jednoduché použitie predmetu."],
     "15-18": ["Môže skúšať viac slov okrem pomenovania rodiča.","Môže chodiť bez držania.","Môže napodobňovať jednoduchú domácu činnosť.","Môže sa vzdialiť a kontrolovať, či si nablízku."],
-    "18-24": ["Môže spájať dve slová.","Môže behať alebo skúšať kopať do lopty.","Môže sa hrať s viac než jedným predmetom naraz.","Môže sledovať tvoju tvár v novej situácii."]
+    "18-24": ["Môže spájať dve slová.","Môže behať alebo skúšať kopať do lopty.","Môže sa hrať s viac než jedným predmetom naraz.","Môže sledovať vašu tvár v novej situácii."]
   };
   const observations = Object.fromEntries(Object.entries(observationText).map(([period, texts]) => [period, texts.map((text, index) => ({
     id: `o-${period}-${index + 1}`, text, source, sourceUrl, reviewedAt
