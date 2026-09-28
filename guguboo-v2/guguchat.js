@@ -80,7 +80,12 @@
   const content = () => window.GugubooContent || {};
   const formatChecked = iso => iso ? new Date(iso + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric", year: "numeric" }) : "";
 
+  // Pravidlo (Samuel 28. 9.): nič si nevymýšľať. Obsah sa zobrazí len ak je každé tvrdenie doložené
+  // doslovným citátom zo zdroja a citát prešiel automatickou kontrolou (verification_status "evidence-verified").
+  const evidenceVerified = module => module?.meta?.verification_status === "evidence-verified";
+
   function weekEntry(ctx) {
+    if (!evidenceVerified(content().pregnancyWeeks)) return null;
     const weeks = content().pregnancyWeeks?.weeks;
     if (!weeks || ctx.pregnancy_week === null) return null;
     const week = Math.min(42, Math.max(4, ctx.pregnancy_week));

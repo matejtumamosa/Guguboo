@@ -12,7 +12,7 @@ window.GugubooContent = window.GugubooContent || {};
       country: "*",
       language: "sk",
       last_checked: "2026-09-28",
-      verification_status: "source-summarized",
+      verification_status: "withdrawn",
       review_required: true,
       note: "Zhrnutia z verejných zdrojov; pred ostrým spustením odporúčaná odborná kontrola. Dĺžky do 19. týždňa sú od hlavičky po zadoček, od 20. týždňa od hlavičky po päty (podľa NHS)."
     },

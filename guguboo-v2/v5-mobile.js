@@ -347,10 +347,12 @@
   state.v5.utilitySection ||= "shopping";
   const activeCirclePhase = state.profile.status || "expecting";
   if (state.v5.circlePhase && state.v5.circlePhase !== activeCirclePhase) {
-    state.v5.circleMode = "wellbeing";
+    state.v5.circleMode = activeCirclePhase === "expecting" ? "organize" : "wellbeing";
   }
   state.v5.circlePhase = activeCirclePhase;
-  state.v5.circleMode = "wellbeing"; // V2: Kruh je vždy pohoda (prepínač Organizácia zrušený)
+  state.v5.circleMode = ["wellbeing", "organize"].includes(state.v5.circleMode)
+    ? state.v5.circleMode
+    : state.profile.status === "expecting" ? "organize" : "wellbeing";
   state.v5.firstMoments ||= [];
   state.v5.lastDiaperSize ||= "";
   state.v5.adaptiveO = state.v5.adaptiveO && typeof state.v5.adaptiveO === "object" ? state.v5.adaptiveO : {};
@@ -553,7 +555,7 @@
     let changed = state.v5.phase !== phase || normalizedFavorites.join("|") !== state.v5.favorites.join("|");
     if (state.v5.circlePhase !== phase) {
       state.v5.circlePhase = phase;
-      state.v5.circleMode = "wellbeing";
+      state.v5.circleMode = phase === "expecting" ? "organize" : "wellbeing";
       changed = true;
     }
     state.v5.phase = phase;
@@ -848,9 +850,10 @@
   }
 
   function renderAdaptiveOHome() {
-    // V2 (Samuel 28. 9.): Kruh = len pohoda mamy; povinnosti sú v pláne TERAZ/ČOSKORO.
+    // V2 (Samuel 28. 9.): Kruh má dve jasne ODDELENÉ zobrazenia – „Príprava“ (kroky, ktoré mama
+    // dokončuje, kruh sa vypĺňa) a „Pohoda“ (len psychická a fyzická pohoda mamy, bez povinností).
     applyStageToCircle();
-    const wellbeing = true;
+    const wellbeing = state.v5.circleMode === "wellbeing";
     const role = "mother";
     const sections = wellbeing ? adaptiveOSections : organizationSections();
     const progress = Object.fromEntries(sections.map(section => [section.id, wellbeing ? adaptiveOProgress(section.id, role) : organizationProgress(section)]));
@@ -863,7 +866,12 @@
         : "<button class='v5-o-record' type='button' data-v5-open-record aria-label='Otvoriť rýchly záznam'><span aria-hidden='true'>＋</span><strong>Zaznamenať</strong></button>"
       : "<button class='v5-o-record v5-o-next-task' type='button' data-v5-org-section='" + firstOpenSection.id + "' aria-label='Otvoriť ďalšiu organizačnú úlohu'><span aria-hidden='true'>→</span><strong>Ďalšia úloha</strong></button>";
     return [
-      "<section class='v5-o-card' aria-label='Denné ciele'>",
+      "<section class='v5-o-card' aria-label='" + (wellbeing ? "Kruh pohody" : "Kruh prípravy") + "'>",
+      "<div class='v2-circle-tabs' role='tablist' aria-label='Zobrazenie kruhu'>",
+      "<button type='button' role='tab' data-v5-circle-mode='organize' aria-selected='", String(!wellbeing), "' class='", !wellbeing ? "active" : "", "'>", expecting ? "Príprava" : "Organizácia", "</button>",
+      "<button type='button' role='tab' data-v5-circle-mode='wellbeing' aria-selected='", String(wellbeing), "' class='", wellbeing ? "active" : "", "'>Pohoda</button>",
+      "</div>",
+      "<p class='v2-circle-hint'>", wellbeing ? "Len pre teba – malé kroky pohody, bez povinností." : "Kroky, ktoré postupne dokončíš. Kruh sa vypĺňa s každým hotovým krokom.", "</p>",
       "<div class='v5-o-layout'><div class='v5-o-ring-wrap'>",
       "<svg class='v5-o-ring' viewBox='0 0 420 420' role='group' aria-label='Tri oblasti denných cieľov'>",
       "<defs>",
@@ -2523,7 +2531,9 @@
 
   function pregnancyBookData(week) {
     // V2: ak je k dispozícii obsah týždeň po týždni (content/pregnancy-weeks.js, zdroj NHS), použije sa ten.
-    const weekly = week ? window.GugubooContent?.pregnancyWeeks?.weeks?.[Math.min(42, Math.max(4, week))] : null;
+    // Len obsah, ktorého každé tvrdenie má overený doslovný citát zo zdroja (pravidlo „nevymýšľať“).
+    const weeklyModule = window.GugubooContent?.pregnancyWeeks;
+    const weekly = week && weeklyModule?.meta?.verification_status === "evidence-verified" ? weeklyModule.weeks?.[Math.min(42, Math.max(4, week))] : null;
     if (weekly) {
       const sentences = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
       return {
@@ -2822,7 +2832,7 @@
       state.v5.circleMode = circleMode.dataset.v5CircleMode;
       persist();
       renderHome();
-      return announce(state.v5.circleMode === "organize" ? "Zobrazená organizácia." : "Zobrazený kruh pohody.");
+      return announce(state.v5.circleMode === "organize" ? "Zobrazená príprava." : "Zobrazený kruh pohody.");
     }
     const organizationSection = event.target.closest("[data-v5-org-section]");
     if (organizationSection) {
