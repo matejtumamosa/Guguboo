@@ -2532,8 +2532,7 @@
   function pregnancyBookData(week) {
     // V2: ak je k dispozícii obsah týždeň po týždni (content/pregnancy-weeks.js, zdroj NHS), použije sa ten.
     // Len obsah, ktorého každé tvrdenie má overený doslovný citát zo zdroja (pravidlo „nevymýšľať“).
-    const weeklyModule = window.GugubooContent?.pregnancyWeeks;
-    const weekly = week && weeklyModule?.meta?.verification_status === "evidence-verified" ? weeklyModule.weeks?.[Math.min(42, Math.max(4, week))] : null;
+    const weekly = week ? window.GugubooV2?.pregnancyWeek?.(week) : null;
     if (weekly) {
       const sentences = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
       return {

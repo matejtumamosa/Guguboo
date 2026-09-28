@@ -467,3 +467,6 @@ body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v
 .v2-circle-tabs button { min-height: 38px !important; padding: 6px 18px; color: var(--v5-muted); background: none; border: 0; border-radius: 999px; font-size: 13px; font-weight: 800; }
 .v2-circle-tabs button.active { color: var(--v5-brand-dark); background: var(--v5-surface); box-shadow: 0 4px 12px rgba(58, 44, 83, .1); }
 .v2-circle-hint { margin: 0 0 4px; color: var(--v5-muted); font-size: 12px; text-align: center; line-height: 1.4; }
+
+/* Odkaz na zdroj: globálne pravidlo .view a {min-height:44px} ho inak natiahne a čiara odskočí od textu. */
+.v2-source { min-height: 0 !important; padding: 2px 0; border-bottom: 0; text-decoration: underline dotted; text-underline-offset: 3px; line-height: 1.4; }

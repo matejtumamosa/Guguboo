@@ -55,11 +55,37 @@ function collectSources(content) {
   }
   const weeks = content.pregnancyWeeks?.weeks || {};
   for (const [week, entry] of Object.entries(weeks)) {
-    const ref = { module: "pregnancyWeeks", id: "week-" + week, title: week + ". týždeň", critical: false };
-    (entry.source_urls || []).forEach(url => add(url, ref));
+    const ref = { module: "pregnancyWeeks", id: "week-" + week, title: week + ". týždeň", critical: true };
+    [entry.source_url, ...(entry.source_urls || [])].forEach(url => add(url, ref));
   }
   return map;
 }
+
+// Všetky doslovné citáty (evidence) z obsahu: { url, quote, ref }.
+function collectEvidence(content) {
+  const list = [];
+  const push = (url, quote, ref) => { if (url && typeof quote === "string" && quote.trim()) list.push({ url, quote, ref }); };
+  for (const [week, entry] of Object.entries(content.pregnancyWeeks?.weeks || {})) {
+    const items = [entry.size, ...(entry.baby || []), ...(entry.you || []), entry.tip, entry.milestone].filter(Boolean);
+    items.forEach(item => (item.evidence || []).forEach(quote => push(entry.source_url, quote, "week-" + week + ": " + (item.sk || ""))));
+  }
+  for (const [country, module] of Object.entries(content.lifeAdmin || {})) {
+    for (const item of module.items || []) {
+      const urls = [item.source_url, ...(item.source_urls || [])].filter(Boolean);
+      for (const [field, quotes] of Object.entries(item.evidence || {})) {
+        (Array.isArray(quotes) ? quotes : [quotes]).forEach(entry => {
+          const quote = typeof entry === "string" ? entry : entry?.quote;
+          const url = (typeof entry === "object" && entry?.url) || null;
+          (url ? [url] : urls).forEach(target => push(target, quote, country + ":" + item.id + "." + field));
+        });
+      }
+    }
+  }
+  return list;
+}
+
+// Tolerantné porovnanie (entity, úvodzovky, medzery, veľkosť písmen) – obsah musí sedieť, nie formátovanie.
+const loose = text => String(text).normalize("NFC").toLowerCase().replace(/&[a-z#0-9]+;/g, " ").replace(/[^\p{L}\p{N}%€,.]+/gu, " ").replace(/\s+/g, " ").trim();
 
 // Peňažné sumy a čísla s desatinnou čiarkou z položky (napr. „829,86 €“, „2 254,70“).
 function moneyValues(item) {
@@ -129,6 +155,26 @@ async function main() {
 
   // Kontrola súm: každá suma v položke musí byť doslova v texte aspoň jedného jej zdroja.
   const mismatches = [];
+
+  // Kontrola citátov: každé tvrdenie v appke má citát, ktorý musí byť stále na zdrojovej stránke.
+  // Pre Life Admin stačí, ak je citát na ktoromkoľvek zo zdrojov položky.
+  const evidence = collectEvidence(content);
+  const snapshotCache = new Map();
+  const snapshot = async url => {
+    if (!snapshotCache.has(url)) snapshotCache.set(url, loose(await readFile(path.join(SNAP_DIR, snapName(url)), "utf8").catch(() => "")));
+    return snapshotCache.get(url);
+  };
+  const byRef = new Map();
+  for (const entry of evidence) {
+    const key = entry.ref + "|" + entry.quote;
+    const found = (await snapshot(entry.url)).includes(loose(entry.quote));
+    byRef.set(key, (byRef.get(key) || false) || found);
+  }
+  const missingEvidence = [...byRef.entries()].filter(([, found]) => !found).map(([key]) => key.split("|"));
+  if (missingEvidence.length) {
+    mismatches.push(...missingEvidence.slice(0, 40).map(([ref, quote]) => ({ id: ref, title: "citát", missing: ["„" + quote.slice(0, 120) + "“"] })));
+  }
+  console.log(`Citátov: ${byRef.size}, nenájdených na zdroji: ${missingEvidence.length}`);
   for (const [country, module] of Object.entries(content.lifeAdmin || {})) {
     for (const item of module.items || []) {
       const values = moneyValues(item);
@@ -160,7 +206,7 @@ async function main() {
       lines.push("**Treba skontrolovať:** položky vyššie, súvisiace pripomienky v pláne (Journey Engine) a odpovede GuguChatu k tejto téme.", "");
     }
     if (mismatches.length) {
-      lines.push("## 🔴 Sumy, ktoré sa na zdroji už nenachádzajú", "");
+      lines.push("## 🔴 Sumy alebo citáty, ktoré sa na zdroji už nenachádzajú", "");
       mismatches.forEach(entry => lines.push("- `" + entry.id + "` (" + entry.title + "): " + entry.missing.join(", ")));
       lines.push("", "Suma sa na oficiálnej stránke zmenila alebo zmizla – položku treba skontrolovať skôr, než ju Guguboo ukáže ako istú.", "");
     }

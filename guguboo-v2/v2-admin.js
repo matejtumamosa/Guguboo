@@ -17,9 +17,11 @@
   const esc = V5.escapeHtml;
   const byId = id => document.getElementById(id);
 
+  // Pravidlo „nevymýšľať“: modul sa použije len ak každý údaj prešiel kontrolou doslovných citátov.
   const countryModule = () => {
     const country = (state.profile?.country || "SK").toUpperCase();
-    return window.GugubooContent?.lifeAdmin?.[country] || null;
+    const module = window.GugubooContent?.lifeAdmin?.[country] || null;
+    return module?.meta?.verification_status === "evidence-verified" ? module : null;
   };
   const allItems = () => countryModule()?.items || [];
   const formatDate = iso => iso ? new Date(String(iso).slice(0, 10) + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric", year: "numeric" }) : "";

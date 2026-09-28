@@ -67,7 +67,7 @@
   const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
-    script.src = src + "?v=2.1.0";
+    script.src = src + "?v=2.2.0";
     script.onload = resolve;
     script.onerror = resolve; // chýbajúci modul appku nezastaví – GuguChat povie, že obsah pripravujeme
     document.head.appendChild(script);
@@ -84,19 +84,28 @@
   // doslovným citátom zo zdroja a citát prešiel automatickou kontrolou (verification_status "evidence-verified").
   const evidenceVerified = module => module?.meta?.verification_status === "evidence-verified";
 
+  // Týždeň z overeného obsahu (každá veta má citát v `evidence`) → jednoduchý tvar pre UI.
+  function pregnancyWeek(weekNumber) {
+    const module = content().pregnancyWeeks;
+    if (!evidenceVerified(module) || !weekNumber) return null;
+    const week = Math.min(42, Math.max(4, weekNumber));
+    const raw = module.weeks?.[week];
+    if (!raw) return null;
+    const text = value => Array.isArray(value) ? value.map(item => item?.sk).filter(Boolean).join(" ") : value?.sk || "";
+    const entry = { week, size: text(raw.size), baby: text(raw.baby), you: text(raw.you), tip: text(raw.tip), milestone: text(raw.milestone), source_urls: raw.source_url ? [raw.source_url] : [] };
+    return entry.baby || entry.you ? entry : null;
+  }
+
   function weekEntry(ctx) {
-    if (!evidenceVerified(content().pregnancyWeeks)) return null;
-    const weeks = content().pregnancyWeeks?.weeks;
-    if (!weeks || ctx.pregnancy_week === null) return null;
-    const week = Math.min(42, Math.max(4, ctx.pregnancy_week));
-    return weeks[week] ? { week, ...weeks[week] } : null;
+    if (ctx.pregnancy_week === null) return null;
+    return pregnancyWeek(ctx.pregnancy_week);
   }
 
   function sourceLine(entry, meta) {
     const url = entry.source_urls?.[0];
-    const name = content().pregnancyWeeks?.sources?.[entry.sources?.[0]]?.name || "Zdroj";
+    const name = Object.values(content().pregnancyWeeks?.sources || {})[0]?.name || "NHS";
     if (!url) return "";
-    return "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(name.split(" – ")[0]) + " · kontrola " + esc(formatChecked(meta?.last_checked)) + " ↗</a>";
+    return "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(name.split(" – ")[0]) + " · každá veta overená citátom · kontrola " + esc(formatChecked(meta?.last_checked)) + " ↗</a>";
   }
 
   function weekHtml(ctx) {
@@ -107,9 +116,9 @@
       "<section class='v2-week' aria-label='Tento týždeň'>",
       "<header><small>Tento týždeň</small><h2>", entry.week, ". týždeň</h2>", entry.size ? "<span class='v2-week-size'>" + esc(entry.size) + "</span>" : "", "</header>",
       entry.milestone ? "<p class='v2-week-milestone'>✦ " + esc(entry.milestone) + "</p>" : "",
-      "<div class='v2-week-block'><strong>Bábätko</strong><p>", esc(entry.baby), "</p></div>",
-      "<details class='v2-week-more'><summary>Ty a tip na tento týždeň</summary>",
-      "<div class='v2-week-block'><strong>Ty</strong><p>", esc(entry.you), "</p></div>",
+      entry.baby ? "<div class='v2-week-block'><strong>Bábätko</strong><p>" + esc(entry.baby) + "</p></div>" : "",
+      entry.you || entry.tip ? "<details class='v2-week-more'><summary>Ty a tip na tento týždeň</summary>" : "",
+      entry.you ? "<div class='v2-week-block'><strong>Ty</strong><p>" + esc(entry.you) + "</p></div>" : "",
       entry.tip ? "<div class='v2-week-block v2-week-tip'><strong>Tip</strong><p>" + esc(entry.tip) + "</p></div>" : "",
       "</details>",
       sourceLine(entry, meta),
@@ -317,7 +326,7 @@
       if (!entry) return { text: head, actions: [{ label: "Tehotenská knižka", kind: "feature", value: "pregnancy" }] };
       const url = entry.source_urls?.[0];
       return {
-        text: head + (entry.size ? "\nBábätko meria " + entry.size + "." : "") + "\n\nBábätko: " + entry.baby + "\n\nTy: " + entry.you + "\n\n(Zhrnuté zo zdroja NHS, kontrola " + formatChecked(content().pregnancyWeeks.meta.last_checked) + ".)",
+        text: head + (entry.size ? "\nBábätko meria " + entry.size + "." : "") + (entry.baby ? "\n\nBábätko: " + entry.baby : "") + (entry.you ? "\n\nTy: " + entry.you : "") + "\n\n(Zo zdroja NHS, každá veta overená citátom, kontrola " + formatChecked(content().pregnancyWeeks.meta.last_checked) + ".)",
         actions: url ? [{ label: "Zdroj", kind: "link", value: url }] : []
       };
     }
@@ -537,7 +546,7 @@
   });
 
   window.GugubooChat = { render, ask, answer, open: openChat };
-  window.GugubooV2 = { homeJourneyHtml, betaFooterHtml, openItem, track };
+  window.GugubooV2 = { homeJourneyHtml, betaFooterHtml, openItem, track, pregnancyWeek };
   refreshHome();
   loadContent().then(() => {
     refreshHome();
