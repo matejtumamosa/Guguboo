@@ -157,10 +157,10 @@
 
     // 1. Bezpečnosť má vždy prednosť.
     if (has(t, ["nedycha", "bezvedom", "nereaguje", "modrie", "modra ", "krc", "dusi sa", "opuch jazyka", "opuch pier", "vazny uraz"])) {
-      return { level: "urgent", text: "Toto môže byť vážne. Nečakaj na aplikáciu.\n\n1. Volaj 155 alebo 112.\n2. Postupuj podľa pokynov operátora.\n3. Priprav presnú adresu a odomkni dvere.\n\nGuguboo nenahrádza tiesňovú linku.", actions: [{ label: "Volať 155", kind: "tel", value: "155" }, { label: "Volať 112", kind: "tel", value: "112" }] };
+      return { level: "urgent", text: "Pri tomto je najlepšie hneď sa spojiť s odborníkom.\n\nZavolaj 155 – operátor ťa pokojne prevedie tým, čo robiť. Priprav si adresu, kde ste.", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
     }
     if (has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "kontrakci"])) {
-      return { level: "urgent", text: "Toto nechcem riešiť cez aplikáciu – je dôležité, aby sa na to hneď pozrel odborník.\n\nKontaktuj teraz svoju pôrodnicu alebo lekára. Ak máš pocit ohrozenia, volaj 155 alebo 112.", actions: [{ label: "Volať 155", kind: "tel", value: "155" }, { label: "Moje kontakty", kind: "feature", value: "contacts" }] };
+      return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
     if (has(t, ["ublizit si", "nechcem zit", "zabit sa", "samovrazd"])) {
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
@@ -222,7 +222,7 @@
     track("chat_gap");
     return {
       level: "unknown",
-      text: "Na toto ti zatiaľ neviem odpovedať s istotou a nechcem hádať. Otázku som si zapísala, aby sme Guguboo naučili aj toto.\n\nAk ide o zdravie, obráť sa na svojho lekára. Pri ohrození volaj 155 alebo 112.",
+      text: "Na toto ti zatiaľ neviem odpovedať s istotou a nechcem hádať. Otázku som si zapísala, aby sme Guguboo naučili aj toto.\n\nAk ide o zdravie, najlepšie ti poradí tvoj lekár.",
       actions: [{ label: "Čo ma teraz čaká?", kind: "ask", value: "Čo ma teraz čaká?" }]
     };
   }
@@ -268,11 +268,12 @@
     target.innerHTML = [
       "<div class='v2-chat'>",
       "<header class='v2-chat-head'><img src='guguboo-logo-3d-pastel-v2.png' alt=''><div><strong>GuguChat</strong><small>", esc(J.stageLabel(plan.context)), " · odpovedám z overeného obsahu Guguboo</small></div></header>",
-      "<div class='v2-chat-emergency'><span>Pri ohrození nečakaj</span><a href='tel:155'>155</a><a href='tel:112'>112</a></div>",
       "<div class='v2-chat-log' id='v2ChatLog' aria-live='polite'>", state.v2.chat.map(messageHtml).join(""), "</div>",
       "<div class='v2-chat-chips'>", chips(plan.context).map(chip => "<button type='button' data-v2-chat-ask='" + esc(chip) + "'>" + esc(chip) + "</button>").join(""), "</div>",
       "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš, čo riešiš…'><button class='v5-primary' type='submit'>Poslať</button></form>",
-      "<p class='v2-chat-disclaimer'>GuguChat nenahrádza lekára ani tiesňovú linku. Rozhovor sa po zatvorení okna vymaže.</p>",
+      // Samuel 28. 9.: žiadny trvalý „núdzový“ pás – pôsobí strašidelne. Pomoc je vždy nenápadne po ruke
+      // a naliehavé kontakty sa ukážu len vtedy, keď ich otázka naozaj vyžaduje.
+      "<p class='v2-chat-disclaimer'>GuguChat ti pomáha zorientovať sa. So zdravotnými otázkami sa kedykoľvek obráť aj na svojho lekára. <button type='button' class='v2-chat-help-link' data-v2-chat-kind='helpinfo'>Kontakty na pomoc</button></p>",
       "</div>"
     ].join("");
     const log = byId("v2ChatLog");
@@ -331,6 +332,11 @@
       if (kind === "open") return openItem(item);
       if (kind === "feature") return V5.openFeature(value);
       if (kind === "home") return V5.openHome();
+      if (kind === "helpinfo") {
+        state.v2.chat.push({ role: "bot", text: "Ak by si niekedy potrebovala rýchlu pomoc, stačí zavolať. Kontakt na svoju pôrodnicu a lekára si môžeš uložiť v Kontaktoch, aby si ich mala po ruke.", actions: [{ label: "Záchranka 155", kind: "tel", value: "155" }, { label: "Tiesňová linka 112", kind: "tel", value: "112" }, { label: "Moje kontakty", kind: "feature", value: "contacts" }] });
+        save();
+        return render();
+      }
       if (kind === "ask") return ask(value);
       if (kind === "explain" && item) {
         state.v2.chat.push({ role: "bot", text: item.why + "\n\nMôžeme to spraviť hneď, alebo ti to pripomeniem.", actions: itemActions(item).filter(action => action.kind !== "explain") });

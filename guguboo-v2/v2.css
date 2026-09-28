@@ -239,30 +239,6 @@ body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v
 .v2-chat-head strong { font-size: 20px; }
 .v2-chat-head small { color: var(--v5-muted); font-size: 12px; line-height: 1.35; }
 
-.v2-chat-emergency {
-  display: flex;
-  padding: 8px 12px;
-  align-items: center;
-  gap: 8px;
-  color: var(--v5-danger);
-  background: color-mix(in srgb, var(--v5-danger) 8%, var(--v5-surface));
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.v2-chat-emergency span { flex: 1; }
-.v2-chat-emergency a {
-  display: inline-grid;
-  min-width: 52px;
-  min-height: 36px !important;
-  place-items: center;
-  color: #fff;
-  background: var(--v5-danger);
-  border-radius: 999px;
-  text-decoration: none;
-}
-
 .v2-chat-log { display: grid; gap: 10px; }
 
 .v2-msg {
@@ -291,7 +267,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v
   box-shadow: 0 8px 22px rgba(58, 44, 83, .06);
 }
 
-.v2-level-urgent { border: 2px solid var(--v5-danger); }
+.v2-level-urgent { border: 1px solid color-mix(in srgb, var(--v5-brand) 35%, transparent); background: color-mix(in srgb, var(--v5-brand-soft) 55%, var(--v5-surface)); }
 .v2-level-support { background: color-mix(in srgb, var(--v5-peach) 16%, var(--v5-surface)); }
 .v2-level-unknown { background: var(--v5-surface-soft); }
 
@@ -311,7 +287,20 @@ body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v
   text-decoration: none;
 }
 
-.v2-chat-action-urgent { color: #fff; background: var(--v5-danger); }
+.v2-chat-action-urgent { color: #fff; background: var(--v5-brand-dark); }
+
+.v2-chat-help-link {
+  display: inline;
+  min-height: 0 !important;
+  padding: 0;
+  color: var(--v5-brand-dark);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 .v2-chat-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .v2-chat-chips::-webkit-scrollbar { display: none; }
