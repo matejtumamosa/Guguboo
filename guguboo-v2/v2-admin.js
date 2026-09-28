@@ -37,7 +37,10 @@
   }
 
   // Čo úrad alebo pôrodnica vybaví samy, nie je úloha pre mamu – len informácia (brief: „reduce work“).
-  const isAutomatic = item => /automatick/i.test([item.how, item.what, item.when?.text].filter(Boolean).join(" "));
+  // `automatic` je v dátach doložené citátom. Tehotenské a materské sú automatické len podmienečne
+  // (e-tehotenská knižka od 1. 8. 2026), preto ich appka ukazuje ako úlohu s vysvetlením v „Ako postupovať“.
+  const CONDITIONALLY_AUTOMATIC = new Set(["sk.benefit.tehotenske", "sk.benefit.materske"]);
+  const isAutomatic = item => item.automatic === true && !CONDITIONALLY_AUTOMATIC.has(item.id);
 
   // Položka Life Admin → položka Journey Engine (len ak má časové okno zo zdroja a treba niečo urobiť).
   // Tieto kroky už plán obsahuje ako prípravu (preg.pediatrician, baby.pediatrician-visit) – bez duplicity.
