@@ -79,9 +79,9 @@
     {
       id: "preg.birth-ready", stage: "pregnancy", type: "transition", priority: 50,
       window: { anchor: "week", from: 37, to: 42 },
-      title: "Keď sa bábätko narodí, klikni „Je na svete“",
-      why: "Guguboo sa samo prepne na prvé dni s bábätkom. Nič nemusíš nastavovať.",
-      feature: "profiles"
+      title: "Bábätko je na svete? Daj Guguboo vedieť",
+      why: "Stačí dátum narodenia – Guguboo sa samo prepne na prvé dni s bábätkom.",
+      action: "birth"
     },
 
     // ——— Po pôrode a bábätko ———
@@ -191,6 +191,12 @@
       const dayOfPregnancy = (40 * 7) - ctx.due_days;
       position = dayOfPregnancy - (item.window.from - 1) * 7;
       length = (item.window.to - item.window.from + 1) * 7;
+    } else if (item.window.anchor === "due") {
+      // Dni voči termínu pôrodu (záporné = pred termínom) – používa Life Admin z overených zdrojov.
+      if (ctx.due_days === null) return null;
+      const daysFromDue = -ctx.due_days;
+      position = daysFromDue - item.window.from;
+      length = item.window.to - item.window.from + 1;
     } else {
       if (ctx.baby_age_days === null) return null;
       position = ctx.baby_age_days - item.window.from;
@@ -208,9 +214,12 @@
     const j = journeyState(s);
     const today = now.getTime();
     const buckets = { now: [], soon: [], later: [], done: [] };
+    let transition = null;
     JOURNEY_ITEMS.forEach(item => {
       const place = placement(item, ctx);
       if (!place) return;
+      // Prechod (napr. „Bábätko je na svete“) nie je úloha – nezaberá miesto v limite TERAZ.
+      if (item.type === "transition") { if (place.horizon === "now") transition = { ...item, ...place }; return; }
       if (j.dismissed[item.id]) return;
       const entry = { ...item, ...place, done: isDone(item, s) };
       if (entry.done && !item.repeatable) { buckets.done.push(entry); return; }
@@ -234,8 +243,17 @@
       done: buckets.done,
       next_best_action: nowItems.find(item => item.type === "task") || nowItems[0] || null,
       emotional_moment: nowItems.find(item => item.type === "moment") || null,
+      transition,
       counts: { now: buckets.now.length, soon: buckets.soon.length, later: buckets.later.length + overflow.length, done: buckets.done.length }
     };
+  }
+
+  // Ďalšie moduly (napr. Life Admin z overenej znalostnej vrstvy) pridávajú položky ako dáta.
+  function registerItems(items) {
+    (items || []).forEach(entry => {
+      const index = JOURNEY_ITEMS.findIndex(existing => existing.id === entry.id);
+      if (index >= 0) JOURNEY_ITEMS[index] = entry; else JOURNEY_ITEMS.push(entry);
+    });
   }
 
   function markDone(s, id) { journeyState(s).done[id] = new Date().toISOString(); }
@@ -251,5 +269,5 @@
     return "Nastavme tvoju cestu";
   }
 
-  window.GugubooJourney = { items: JOURNEY_ITEMS, context, compute, markDone, undo, snooze, item, stageLabel, LIMITS };
+  window.GugubooJourney = { items: JOURNEY_ITEMS, context, compute, markDone, undo, snooze, item, stageLabel, registerItems, LIMITS };
 })();

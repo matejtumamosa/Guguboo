@@ -299,7 +299,7 @@
               <label>Trvanie v minútach<input id="v4FeedDuration" type="number" min="0" max="240" inputmode="numeric" placeholder="napr. 18"></label>
               <label>Množstvo<input id="v4FeedAmount" placeholder="napr. 90 ml"></label>
             </div>
-            <label>Poznámka<textarea id="v4FeedNote" placeholder="Voliteľne: reakcia, odgrgnutie alebo čo chcete zachovať"></textarea></label>
+            <label>Poznámka<textarea id="v4FeedNote" placeholder="Voliteľne: reakcia, odgrgnutie alebo čo chceš zachovať"></textarea></label>
             <div class="v4-sheet-actions"><button class="primary" id="v4SaveFeed" type="button">Uložiť kŕmenie</button></div>
           </section>
           <section class="v4-quick-panel" data-v4-panel="diaper">
@@ -320,7 +320,7 @@
           </section>
           <section class="v4-quick-panel" data-v4-panel="memory">
             <div class="v4-emotion-card">
-              <div><h3>Dnešok sa môže uložiť bez dvojitého vypĺňania</h3><p>Guguboo pripraví návrh z dnešných záznamov. Vy doplníte iba vetu alebo fotografiu.</p></div>
+              <div><h3>Dnešok sa môže uložiť bez dvojitého vypĺňania</h3><p>Guguboo pripraví návrh z dnešných záznamov. Ty doplníš iba vetu alebo fotografiu.</p></div>
               <button id="v4CreateMemoryDraft" type="button">Pripraviť návrh</button>
             </div>
             <div class="v4-sheet-actions"><button id="v4OpenBirthCard" type="button">Kartička narodenia</button><button id="v4OpenDiary" type="button">Otvoriť spomienky</button></div>
@@ -372,7 +372,7 @@
       </section>`).join("");
     target.innerHTML = `
       <header class="v4-apps-head">
-        <div><span class="v4-eyebrow">Všetko na jednom mieste</span><h1>Aplikácie Guguboo</h1><p>Free, Premium a jednorazové doplnky sú oddelené. Každú funkciu otvoríte priamo bez zaškrtávania a skrytých menu.</p></div>
+        <div><span class="v4-eyebrow">Všetko na jednom mieste</span><h1>Aplikácie Guguboo</h1><p>Free, Premium a jednorazové doplnky sú oddelené. Každú funkciu otvoríš priamo bez zaškrtávania a skrytých menu.</p></div>
         <button type="button" data-v4-view="assistant">✦ Opýtať sa AI pomocníka</button>
       </header>
       <nav class="v4-app-category-nav" aria-label="Kategórie aplikácií">${categoryNav}</nav>
@@ -507,7 +507,7 @@
 
     target.innerHTML = `
       <header class="v4-reports-head">
-        <div><span class="v4-eyebrow">Súhrn rodiny</span><h2>Prehľady starostlivosti</h2><p>Spánok, kŕmenie, prebalenie, zdravie, rast aj spomienky sú spolu. Každú kartu môžete otvoriť do detailu.</p></div>
+        <div><span class="v4-eyebrow">Súhrn rodiny</span><h2>Prehľady starostlivosti</h2><p>Spánok, kŕmenie, prebalenie, zdravie, rast aj spomienky sú spolu. Každú kartu môžeš otvoriť do detailu.</p></div>
         <div class="v4-report-range" aria-label="Obdobie prehľadu">${rangeButtons}</div>
       </header>
       <div class="v4-report-grid">${reportCards}</div>
@@ -521,11 +521,11 @@
         <article class="v4-report-panel">
           <div class="v4-report-panel-head"><div><span>Posledné udalosti</span><h3>Čo bolo uložené</h3></div></div>
           ${recentRows ? `<ul class="v4-report-list">${recentRows}</ul>` : `
-            <div class="v4-report-empty"><span>＋</span><strong>Zatiaľ tu nie sú záznamy</strong><p>Pridajte prvý spánok, kŕmenie, prebalenie alebo zdravotnú poznámku.</p><button type="button" data-v4-open-quick>Pridať záznam</button></div>`}
+            <div class="v4-report-empty"><span>＋</span><strong>Zatiaľ tu nie sú záznamy</strong><p>Pridaj prvý spánok, kŕmenie, prebalenie alebo zdravotnú poznámku.</p><button type="button" data-v4-open-quick>Pridať záznam</button></div>`}
         </article>
       </div>
       <article class="v4-report-shortcuts">
-        <div><span>Podrobné prehľady</span><h3>Otvorte konkrétnu oblasť</h3></div>
+        <div><span>Podrobné prehľady</span><h3>Otvor konkrétnu oblasť</h3></div>
         <div>
           <button type="button" data-v4-view="sleep">Spánok</button>
           <button type="button" data-v4-view="tracker">Denné záznamy</button>
@@ -572,7 +572,7 @@
   function v4RenderDashboard() {
     const target = document.getElementById("v4Dashboard");
     if (!target) return;
-    const name = state.profile.name || "vaše bábätko";
+    const name = state.profile.name || "tvoje bábätko";
     const expecting = state.profile.status === "expecting";
     const feed = v4LatestEvent("Kŕmenie");
     const diaper = v4LatestEvent("Plienka");
@@ -600,12 +600,12 @@
       ? `Pokojná príprava pre ${v4Escape(name)}.`
       : `Čo je dnes dôležité pre ${v4Escape(name)}?`;
     const copy = expecting
-      ? "Guguboo ukáže najbližší praktický krok a pripraví údaje, ktoré po narodení využijete bez nového vypĺňania."
-      : "Najdôležitejšie informácie sú na jednom mieste. Záznam pridáte jednou rukou a podrobnosti doplníte iba vtedy, keď ich potrebujete.";
+      ? "Guguboo ukáže najbližší praktický krok a pripraví údaje, ktoré po narodení využiješ bez nového vypĺňania."
+      : "Najdôležitejšie informácie sú na jednom mieste. Záznam pridáš jednou rukou a podrobnosti doplníš iba vtedy, keď ich potrebuješ.";
     const dueDate = state.profile.due ? new Date(`${state.profile.due}T12:00:00`) : null;
     const dueDays = dueDate && Number.isFinite(dueDate.getTime()) ? Math.ceil((dueDate.getTime() - Date.now()) / 86400000) : null;
     const statusGrid = expecting ? `
-      <div class="v4-status-item"><span>Termín pôrodu</span><strong>${dueDays === null ? "Doplňte v profile" : dueDays >= 0 ? `${dueDays} dní` : "Termín už prešiel"}</strong></div>
+      <div class="v4-status-item"><span>Termín pôrodu</span><strong>${dueDays === null ? "Doplň v profile" : dueDays >= 0 ? `${dueDays} dní` : "Termín už prešiel"}</strong></div>
       <div class="v4-status-item"><span>Pôrodnica</span><strong>${v4Escape(state.prenatal?.hospital || "Zatiaľ nevybraná")}</strong></div>
       <div class="v4-status-item"><span>Pripravené kroky</span><strong>${Object.values(state.checks || {}).filter(Boolean).length} hotových</strong></div>
       <div class="v4-status-item"><span>Cestovanie</span><strong>${v4Escape(state.travel?.city || "Free pomoc podľa mesta")}</strong></div>` : `
@@ -629,17 +629,17 @@
     const supportCard = expecting ? `
       <article class="v4-ai-home-card v4-premium-teaser">
         <span class="v4-ai-mark">Premium po narodení</span>
-        <div><h3>Dnes sa pripravujete zdarma</h3><p>Po narodení môžete odomknúť spánok, rodinné prehľady, AI pomoc, zdravie, rast a spomienky od 4,99 € mesačne.</p></div>
+        <div><h3>Dnes sa pripravuješ zdarma</h3><p>Po narodení môžeš odomknúť spánok, rodinné prehľady, AI pomoc, zdravie, rast a spomienky od 4,99 € mesačne.</p></div>
         <button type="button" data-v4-view="premium">Čo obsahuje Premium</button>
       </article>` : `
       <article class="v4-ai-home-card">
         <span class="v4-ai-mark">✦ AI pomoc</span>
-        <div><h3>Napíšte otázku vlastnými slovami</h3><p>Guguboo ju interne zaradí, upozorní na varovné výrazy a odporučí najbližší krok.</p></div>
+        <div><h3>Napíš otázku vlastnými slovami</h3><p>Guguboo ju interne zaradí, upozorní na varovné výrazy a odporučí najbližší krok.</p></div>
         <button type="button" data-v4-view="assistant">Opýtať sa</button>
       </article>`;
     const memoryCard = expecting ? "" : `
       <article class="v4-emotion-card">
-        <div><h3>${memoryToday ? "Dnešný okamih je uložený" : "Z dnešných záznamov môže vzniknúť spomienka"}</h3><p>${memoryToday ? "Fotku alebo text môžete kedykoľvek doplniť v rodinnej časovej osi." : `${todayEvents.length ? `Guguboo dnes zachytilo ${todayEvents.length} ${todayEvents.length === 1 ? "záznam" : todayEvents.length < 5 ? "záznamy" : "záznamov"}.` : "Stačí jedna veta alebo fotografia."} Praktické údaje sa nepíšu druhýkrát.`}</p></div>
+        <div><h3>${memoryToday ? "Dnešný okamih je uložený" : "Z dnešných záznamov môže vzniknúť spomienka"}</h3><p>${memoryToday ? "Fotku alebo text môžeš kedykoľvek doplniť v rodinnej časovej osi." : `${todayEvents.length ? `Guguboo dnes zachytilo ${todayEvents.length} ${todayEvents.length === 1 ? "záznam" : todayEvents.length < 5 ? "záznamy" : "záznamov"}.` : "Stačí jedna veta alebo fotografia."} Praktické údaje sa nepíšu druhýkrát.`}</p></div>
         <button type="button" data-v4-quick="memory">${memoryToday ? "Otvoriť časovú os" : "Pripraviť spomienku"}</button>
       </article>`;
     target.innerHTML = `
@@ -653,7 +653,7 @@
         <div class="v4-primary-actions">${quickActions}</div>
       </article>
       <article class="v4-home-apps">
-        <div class="v4-home-apps-head"><div><span class="v4-eyebrow">${expecting ? "Free" : "Rýchly prístup"}</span><h3>${expecting ? "Bezplatné funkcie pre vás" : "Najpoužívanejšie aplikácie"}</h3></div><button type="button" data-v4-view="apps">Všetky aplikácie →</button></div>
+        <div class="v4-home-apps-head"><div><span class="v4-eyebrow">${expecting ? "Free" : "Rýchly prístup"}</span><h3>${expecting ? "Bezplatné funkcie pre teba" : "Najpoužívanejšie aplikácie"}</h3></div><button type="button" data-v4-view="apps">Všetky aplikácie →</button></div>
         <div class="v4-home-app-grid">
           ${homeApps}
         </div>
@@ -668,7 +668,7 @@
     const text = v4CorrectedAgeText();
     const note = document.getElementById("v4ProfileAgeNote");
     if (note) {
-      note.textContent = text ? `${text} Korigovaný vek je orientačný údaj; vývoj hodnotí pediater.` : "Korigovaný vek sa zobrazí iba pri predčasnom narodení, ak doplníte gestačný týždeň.";
+      note.textContent = text ? `${text} Korigovaný vek je orientačný údaj; vývoj hodnotí pediater.` : "Korigovaný vek sa zobrazí iba pri predčasnom narodení, ak doplníš gestačný týždeň.";
       note.classList.toggle("show", !!text || state.profile.status === "born");
     }
   }
@@ -804,7 +804,7 @@
     state.events.push({ id: uid(), type: "Plienka", value, note, author: "rodina", created: new Date().toISOString(), diaper: { type, color, consistency, amount, mucus, blood, discomfort } });
     save();
     v4RenderDashboard();
-    showToast(blood ? "Záznam uložený – pri krvi kontaktujte pediatra" : "Prebalenie uložené");
+    showToast(blood ? "Záznam uložený – pri krvi kontaktuj pediatra" : "Prebalenie uložené");
   }
 
   function v4CreateMemoryDraft() {

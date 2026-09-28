@@ -1,0 +1,70 @@
+# GUGUBOO V2 – automatický monitoring oficiálnych zdrojov (Life Admin, obsah tehotenstva).
+# Rutinná kontrola (zdroj sa nezmenil) sa uloží sama. Zmena zdroja NIKDY nejde do appky sama –
+# otvorí sa PR „CRITICAL CHANGE DETECTED“ a človek rozhodne (automatizuj prácu, nie zodpovednosť).
+#
+# Pozn.: plánované spúšťanie (schedule) GitHub spúšťa len z predvolenej vetvy (main). Kým V2 žije
+# vo vetve v2, monitoring sa spustí pri každej zmene obsahu vo v2 alebo ručne.
+name: GUGUBOO V2 – monitoring zdrojov
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+  push:
+    branches: [v2]
+    paths:
+      - "guguboo-v2/content/*.js"
+      - "guguboo-v2/tools/knowledge-monitor.mjs"
+      - ".github/workflows/guguboo-v2-knowledge-monitor.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: guguboo-v2-knowledge-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Skontrolovať zdroje
+        id: monitor
+        run: node guguboo-v2/tools/knowledge-monitor.mjs
+
+      - name: Uložiť rutinnú kontrolu (bez zmeny obsahu)
+        if: steps.monitor.outputs.changed != 'true'
+        run: |
+          git config user.name "guguboo-knowledge-bot"
+          git config user.email "guguboo-knowledge-bot@users.noreply.github.com"
+          git add guguboo-v2/content/snapshots guguboo-v2/content/changes 2>/dev/null || true
+          if git diff --cached --quiet; then echo "Nič nové."; exit 0; fi
+          git commit -m "Monitoring zdrojov $(date +%F): bez zmeny pravidiel (aktualizovaný dátum kontroly)"
+          git push origin v2
+
+      - name: Otvoriť PR na kontrolu zmeny
+        if: steps.monitor.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ${{ steps.monitor.outputs.report }}
+          CRITICAL: ${{ steps.monitor.outputs.critical }}
+        run: |
+          BRANCH="knowledge/$(date +%F)"
+          git config user.name "guguboo-knowledge-bot"
+          git config user.email "guguboo-knowledge-bot@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add guguboo-v2/content/snapshots guguboo-v2/content/changes
+          git commit -m "Monitoring zdrojov $(date +%F): zistená zmena – čaká na kontrolu"
+          git push -f origin "$BRANCH"
+          TITLE="Zmena v oficiálnych zdrojoch $(date +%F)"
+          if [ "$CRITICAL" = "true" ]; then TITLE="CRITICAL CHANGE DETECTED – $TITLE"; fi
+          gh pr create --base v2 --head "$BRANCH" --title "$TITLE" --body-file "$REPORT" || gh pr edit "$BRANCH" --body-file "$REPORT"

@@ -103,7 +103,6 @@
     activities: { label: "Aktivity", description: "Krátke spoločné chvíle podľa veku", icon: "activity", tier: "free", view: "activities" },
     diary: { label: "Rodinný denník", description: "Chronologický príbeh rodiny", icon: "book", tier: "premium", view: "diary" },
     privateSpace: { label: "Môj priestor", description: "Súkromné zápisy chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
-    chronicle: { label: "Náš príbeh", description: "Výstupy z uložených chvíľ", icon: "memory", tier: "addon", view: "memoryOutput" },
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
@@ -167,6 +166,32 @@
     ]
   };
 
+  // V2: Kruh pohody mení názvy a drobné kroky podľa obdobia. Id ostávajú rovnaké, aby platil
+  // uložený výber a denný postup. Nikdy nehodnotí mamu a nemá série – každý deň začína nanovo.
+  const circleByStage = {
+    expecting: {
+      care: ["Oddych", "Odpočinok bez výčitiek.", { rest: "10 minút oddychu", nap: "Zdriemla som si", handover: "Niekto mi s niečím pomohol", quiet: "Chvíľa bez povinností" }],
+      movement: ["Telo", "Pitie, jedlo a jemný pohyb.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemný pohyb" }],
+      health: ["Opora", "Ako sa máš a kto je pri tebe.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
+    },
+    born: {
+      care: ["Zotavenie", "Oddych, spánok a telo po pôrode.", { rest: "Oddýchla som si", nap: "Zdriemla som si, keď spinkalo bábätko", handover: "Niekto ma vystriedal", quiet: "Chvíľa len pre mňa" }],
+      movement: ["Výživa", "Jedlo a pitie aj v rušnom dni.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemné pretiahnutie" }],
+      health: ["Opora", "Ako sa máš a kto je pri tebe.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
+    }
+  };
+  function applyStageToCircle() {
+    const stage = circleByStage[state.profile.status === "born" ? "born" : "expecting"];
+    adaptiveOSections.forEach(section => {
+      const [label, description, titles] = stage[section.id] || [];
+      if (!label) return;
+      section.label = label;
+      section.shortLabel = label;
+      section.description = description;
+      (adaptiveOGoals[section.id] || []).forEach(goal => { if (titles[goal.id]) goal.title = titles[goal.id]; });
+    });
+  }
+
   const adaptiveODefaults = {
     mother: {
       care: ["rest", "nap", "handover", "quiet"],
@@ -193,7 +218,7 @@
       ["v5-bag-hygiene", "Hygiena a praktické potreby", "bath"],
       ["v5-bag-home", "Oblečenie na odchod domov", "home"]
     ] },
-    { id: "admin", label: "Vybaviť", shortLabel: "Vybaviť", description: "Kontakty a doklady, ktoré chcete mať poruke.", icon: "book", start: 150, tasks: [
+    { id: "admin", label: "Vybaviť", shortLabel: "Vybaviť", description: "Kontakty a doklady, ktoré chceš mať poruke.", icon: "book", start: 150, tasks: [
       ["v5-health-pediatrician", "Vybrať pediatra", "health"],
       ["v5-doc-id", "Skontrolovať doklady rodiča", "book"],
       ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu", "contacts"],
@@ -225,23 +250,23 @@
   const featureGroups = [
     ["Pomoc a podpora", ["care"]],
     ["Zdravie a vývoj", ["teeth", "checklists", "activities"]],
-    ["Rodina a plánovanie", ["family", "profiles", "calendar", "shopping", "contacts", "travel", "products", "weather"]],
+    ["Rodina a plánovanie", ["family", "profiles", "calendar", "shopping", "contacts", "travel", "products"]],
     ["Chvíle a súkromie", ["memories", "privateSpace"]]
   ];
 
   const postpartumDrawerFeatures = [
     "privateSpace", "care", "activities", "teeth", "family", "shopping",
-    "contacts", "checklists", "administration", "travel", "products", "weather"
+    "contacts", "checklists", "administration", "travel", "products"
   ];
 
   const prenatalDrawerFeatures = [
     "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
-    "products", "family", "travel", "weather", "profiles"
+    "products", "family", "travel", "profiles"
   ];
 
   const favoriteOptions = phase => phase === "expecting"
     ? [...prenatalDrawerFeatures]
-    : ["privateSpace", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "weather", "teeth"];
+    : ["privateSpace", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
     ? ["beforeBirth", "contacts", "shopping", "travel"]
     : ["privateSpace", "memories", "activities", "shopping"];
@@ -322,12 +347,10 @@
   state.v5.utilitySection ||= "shopping";
   const activeCirclePhase = state.profile.status || "expecting";
   if (state.v5.circlePhase && state.v5.circlePhase !== activeCirclePhase) {
-    state.v5.circleMode = activeCirclePhase === "expecting" ? "organize" : "wellbeing";
+    state.v5.circleMode = "wellbeing";
   }
   state.v5.circlePhase = activeCirclePhase;
-  state.v5.circleMode = ["wellbeing", "organize"].includes(state.v5.circleMode)
-    ? state.v5.circleMode
-    : state.profile.status === "expecting" ? "organize" : "wellbeing";
+  state.v5.circleMode = "wellbeing"; // V2: Kruh je vždy pohoda (prepínač Organizácia zrušený)
   state.v5.firstMoments ||= [];
   state.v5.lastDiaperSize ||= "";
   state.v5.adaptiveO = state.v5.adaptiveO && typeof state.v5.adaptiveO === "object" ? state.v5.adaptiveO : {};
@@ -388,7 +411,7 @@
     "<nav id='v5BottomBar' aria-label='Štyri obľúbené funkcie'></nav>",
     "<div id='v5QuickRecordOverlay' aria-hidden='true'>",
     "<aside id='v5QuickRecord' role='dialog' aria-modal='true' aria-labelledby='v5QuickRecordTitle'>",
-    "<div class='v5-drawer-head'><div><h2 id='v5QuickRecordTitle'>Čo chcete zaznamenať?</h2><p>Vyberte jednu vec.</p></div>",
+    "<div class='v5-drawer-head'><div><h2 id='v5QuickRecordTitle'>Čo chceš zaznamenať?</h2><p>Vyber jednu vec.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-record aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-quick-record-grid'>",
     quickFeatureButton("sleep", "Spánok") + quickFeatureButton("feeding", "Kŕmenie") +
@@ -397,13 +420,13 @@
     "</div></aside></div>",
     "<div id='v5OOverlay' aria-hidden='true'>",
     "<aside id='v5OMenu' role='dialog' aria-modal='true' aria-labelledby='v5OMenuTitle'>",
-    "<div class='v5-drawer-head v5-o-modal-head'><button class='v5-icon-button v5-o-modal-back' id='v5OMenuBack' type='button' data-v5-o-back aria-label='Späť' hidden>" + icon("back") + "</button><div><h2 id='v5OMenuTitle'>Malé kroky</h2><p id='v5OMenuSubtitle'>Vyberte jednu možnosť.</p></div>",
+    "<div class='v5-drawer-head v5-o-modal-head'><button class='v5-icon-button v5-o-modal-back' id='v5OMenuBack' type='button' data-v5-o-back aria-label='Späť' hidden>" + icon("back") + "</button><div><h2 id='v5OMenuTitle'>Malé kroky</h2><p id='v5OMenuSubtitle'>Vyber jednu možnosť.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-o aria-label='Zrušiť'>×</button></div>",
     "<div id='v5OMenuBody'><div class='v5-quick-record-grid v5-o-menu-grid' id='v5OMenuGrid'></div></div></aside></div>",
     "<div id='v5DrawerOverlay' aria-hidden='true'>",
     "<aside id='v5Drawer' role='dialog' aria-modal='true' aria-labelledby='v5DrawerTitle'>",
     "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť ďalšie aplikácie'></button>",
-    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Ďalšie aplikácie</h2><p>Vyberte jednu aplikáciu.</p></div>",
+    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Ďalšie aplikácie</h2><p>Vyber jednu aplikáciu.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-drawer aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-drawer-scroll' id='v5DrawerScroll'></div>",
     "</aside></div>",
@@ -530,7 +553,7 @@
     let changed = state.v5.phase !== phase || normalizedFavorites.join("|") !== state.v5.favorites.join("|");
     if (state.v5.circlePhase !== phase) {
       state.v5.circlePhase = phase;
-      state.v5.circleMode = phase === "expecting" ? "organize" : "wellbeing";
+      state.v5.circleMode = "wellbeing";
       changed = true;
     }
     state.v5.phase = phase;
@@ -628,10 +651,10 @@
   }
 
   function dueText() {
-    if (!state.profile.due) return "Doplňte termín";
+    if (!state.profile.due) return "Doplň termín";
     const due = new Date(state.profile.due + "T12:00:00");
     const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
-    if (!Number.isFinite(days)) return "Doplňte termín";
+    if (!Number.isFinite(days)) return "Doplň termín";
     if (days > 1) return days + " dní do termínu";
     if (days === 1) return "Zajtra je termín";
     if (days === 0) return "Dnes je termín";
@@ -825,7 +848,9 @@
   }
 
   function renderAdaptiveOHome() {
-    const wellbeing = state.v5.circleMode !== "organize";
+    // V2 (Samuel 28. 9.): Kruh = len pohoda mamy; povinnosti sú v pláne TERAZ/ČOSKORO.
+    applyStageToCircle();
+    const wellbeing = true;
     const role = "mother";
     const sections = wellbeing ? adaptiveOSections : organizationSections();
     const progress = Object.fromEntries(sections.map(section => [section.id, wellbeing ? adaptiveOProgress(section.id, role) : organizationProgress(section)]));
@@ -839,7 +864,6 @@
       : "<button class='v5-o-record v5-o-next-task' type='button' data-v5-org-section='" + firstOpenSection.id + "' aria-label='Otvoriť ďalšiu organizačnú úlohu'><span aria-hidden='true'>→</span><strong>Ďalšia úloha</strong></button>";
     return [
       "<section class='v5-o-card' aria-label='Denné ciele'>",
-      "<div class='v5-circle-switch' role='group' aria-label='Režim kruhu'><button type='button' data-v5-circle-mode='wellbeing' aria-label='Pohoda' title='Pohoda' aria-pressed='", String(wellbeing), "' class='", wellbeing ? "active" : "", "'><span aria-hidden='true'>♡</span></button><button type='button' data-v5-circle-mode='organize' aria-label='Organizácia' title='Organizácia' aria-pressed='", String(!wellbeing), "' class='", !wellbeing ? "active" : "", "'><span aria-hidden='true'>✓</span></button></div>",
       "<div class='v5-o-layout'><div class='v5-o-ring-wrap'>",
       "<svg class='v5-o-ring' viewBox='0 0 420 420' role='group' aria-label='Tri oblasti denných cieľov'>",
       "<defs>",
@@ -890,7 +914,7 @@
       "<div class='v5-o-role-switch' role='group' aria-label='Ciele pre používateľa'>",
       ["mother", "partner"].map(value => "<button type='button' data-v5-o-role='" + value + "' aria-pressed='" + String(role === value) + "' class='" + (role === value ? "active" : "") + "'>" + (value === "mother" ? "Mama" : "Partner") + "</button>").join(""),
       "</div>",
-      "<div class='v5-o-simple-toolbar'><h2>", editing ? "Vyberte aplikácie" : "Moje aplikácie", "</h2><button type='button' data-v5-o-edit>", editing ? "Hotovo" : "Upraviť", "</button></div>",
+      "<div class='v5-o-simple-toolbar'><h2>", editing ? "Vyber aplikácie" : "Moje aplikácie", "</h2><button type='button' data-v5-o-edit>", editing ? "Hotovo" : "Upraviť", "</button></div>",
       "<div class='v5-o-app-grid", editing ? " is-editing" : "", "'>",
       visibleGoals.map(goal => {
         const tracked = selectedIds.includes(goal.id);
@@ -944,7 +968,7 @@
     const today = todayKey();
     const todayMemory = state.diary.find(item => (item.date || String(item.created || "").slice(0, 10)) === today);
     const momentCard = {
-      text: todayMemory ? "Dnešný moment je uložený. Môžete si ho pozrieť alebo pridať ďalší." : "Pridajte jednu fotku alebo krátku vetu."
+      text: todayMemory ? "Dnešný moment je uložený. Môžeš si ho pozrieť alebo pridať ďalší." : "Pridaj jednu fotku alebo krátku vetu."
     };
     const phaseLine = "";
     const pregnancyAvatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, label: "mango", position: "0% 100%" };
@@ -978,7 +1002,7 @@
       ["Vek", age?.label || "—"]
     ];
     const recommendation = expecting
-      ? "Pripravte dnes jednu vec do pôrodnice."
+      ? "Priprav dnes jednu vec do pôrodnice."
       : state.sleepTimer?.active
         ? "Spánok práve prebieha."
         : "Dnešný malý moment";
@@ -1098,7 +1122,7 @@
     title.textContent = section.label;
     const progress = adaptiveOProgress(section.id, "mother");
     const goals = adaptiveOGoals[section.id] || [];
-    subtitle.textContent = progress.done ? "Dnes " + progress.done + " z " + progress.total : "Vyberte jeden malý krok";
+    subtitle.textContent = progress.done ? "Dnes " + progress.done + " z " + progress.total : "Vyber jeden malý krok";
     back.hidden = true;
     body.innerHTML = "<p class='v5-o-summary-copy'>" + escapeHtml(section.description) + "</p><div class='v5-quick-record-grid v5-o-status-grid" + (goals.length === 2 ? " is-two" : "") + "' id='v5OMenuGrid'>" + goals.map(goal => {
       const done = adaptiveOGoalDone("mother", section.id, goal);
@@ -1125,7 +1149,7 @@
       "<div class='v5-org-next-card'><small>Ďalšia úloha</small><span class='v5-icon'>", icon(nextTask[2]), "</span><h3>", escapeHtml(nextTask[1]), "</h3>",
       "<button class='v5-primary' type='button' data-v5-org-complete='", nextTask[0], "'>Označiť ako hotové</button></div>",
       completed.length ? "<details class='v5-org-completed'><summary>Hotové · " + completed.length + "</summary>" + completed.map(task => "<div><span>✓</span>" + escapeHtml(task[1]) + "</div>").join("") + "</details>" : ""
-    ].join("") : "<div class='v5-o-modal-confirm'><span>✓</span><h3>Táto časť je hotová</h3><p>Môžete pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button></div>";
+    ].join("") : "<div class='v5-o-modal-confirm'><span>✓</span><h3>Táto časť je hotová</h3><p>Môžeš pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button></div>";
   }
 
   function openOrganizationMenu(sectionId) {
@@ -1250,7 +1274,7 @@
     }
     if (action === "moment") {
       const text = byId("v5OMomentText")?.value.trim() || "";
-      if (!text) return announce("Napíšte jednu krátku vetu.");
+      if (!text) return announce("Napíš jednu krátku vetu.");
       state.diary.push({ id: createId(), date: todayKey(), text, created: new Date().toISOString() });
       persist();
       return completeAdaptiveOModal("Dnešný moment je uložený.");
@@ -1336,7 +1360,7 @@
   function saveCalendarEvent() {
     const title = byId("v5CalendarTitle")?.value.trim() || "";
     const date = byId("v5CalendarDate")?.value || "";
-    if (!title || !date || !Number.isFinite(new Date(date).getTime())) return announce("Doplňte názov a dátum udalosti.");
+    if (!title || !date || !Number.isFinite(new Date(date).getTime())) return announce("Doplň názov a dátum udalosti.");
     const sharedWithPartner = Boolean(byId("v5CalendarSharePartner")?.checked);
     state.reminders.push({
       id: createId(),
@@ -1408,7 +1432,7 @@
     const weight = byId("v5GrowthWeight")?.value.trim() || "";
     const height = byId("v5GrowthHeight")?.value.trim() || "";
     const head = byId("v5GrowthHead")?.value.trim() || "";
-    if (!weight && !height && !head) return announce("Doplňte aspoň jednu hodnotu.");
+    if (!weight && !height && !head) return announce("Doplň aspoň jednu hodnotu.");
     state.growth = state.growth || [];
     state.growth.push({
       date: byId("v5GrowthDate")?.value || todayKey(),
@@ -1551,15 +1575,15 @@
     const target = byId("v5CareContent");
     if (!target) return;
     target.innerHTML = [
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Jedno miesto</span><h1>Pomoc a starostlivosť</h1><p>Vyberte, čo práve riešite.</p></header>",
-      "<section class='v5-care-emergency'><div><small>Bezprostredné ohrozenie</small><strong>Dieťa nedýcha, modrie, nereaguje alebo má kŕče</strong></div><div><a href='tel:155'>155</a><a href='tel:112'>112</a></div></section>",
+      // V2: pokoj a kľud – bez trvalého červeného pásu s tiesňovými číslami (Samuel 28. 9.).
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Jedno miesto</span><h1>Pomoc a starostlivosť</h1><p>Vyber, čo práve riešiš.</p></header>",
       "<div class='v5-care-grid'>",
       "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("health") + "</span><span><strong>Návšteva lekára</strong><small>Pokyny domov, nákup a ďalšia kontrola</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Dieťa niečo trápi</strong><small>Krátka orientácia bez diagnózy</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Bábätko niečo trápi</strong><small>Pomôžem ti usporiadať, čo pozoruješ</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-health-overview><span class='v5-icon'>" + icon("health") + "</span><span><strong>Zdravotné záznamy</strong><small>Teplota, merania a návštevy lekára</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("moon") + "</span><span><strong>Spánok a náročná noc</strong><small>Spánok, zobudenie, šum a uspávanky</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "<button class='v5-action v5-care-option' type='button' data-v5-urgent><span class='v5-icon'>" + icon("alert") + "</span><span><strong>Urgentná pomoc</strong><small>Varovné signály a tiesňové kontakty</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "</div><p class='v5-care-disclaimer'>Odporúčania sú orientačné a nenahrádzajú pediatra ani tiesňovú pomoc.</p>"
+      "<button class='v5-action v5-care-option' type='button' data-v5-urgent><span class='v5-icon'>" + icon("contacts") + "</span><span><strong>Kontakty na pomoc</strong><small>Pediater, pohotovosť a záchranka</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "</div><p class='v5-care-disclaimer'>Guguboo ti pomáha zorientovať sa. Pri zdravotných otázkach sa vždy môžeš obrátiť na svojho pediatra.</p>"
     ].join("");
   }
 
@@ -1582,7 +1606,7 @@
   }
 
   function openCareQuestionModal() {
-    showCareModal("Dieťa niečo trápi", "Vyberte, čo pozorujete", [
+    showCareModal("Dieťa niečo trápi", "Vyber, čo pozoruješ", [
       "<div class='v5-quick-record-grid v5-care-topic-grid'>",
       quickActionButton("care-fever", "temperature", "Teplota") +
       quickActionButton("care-cry", "baby", "Plač a nepokoj") +
@@ -1596,12 +1620,12 @@
 
   function openCareTopic(topic) {
     const topics = {
-      "care-fever": ["Teplota", "Zmerajte teplotu a sledujte celkový stav.", "temperature", "Zapísať teplotu"],
-      "care-cry": ["Plač a nepokoj", "Skontrolujte hlad, plienku, teplotu a potrebu blízkosti.", "diaper", "Skontrolovať prebaľovanie"],
-      "care-belly": ["Bruško a papanie", "Poznačte posledné kŕmenie, plienku a čo je oproti bežnému stavu iné.", "feeding", "Otvoriť kŕmenie"],
-      "care-skin": ["Koža a vyrážka", "Poznačte, kedy sa zmena objavila a či sa šíri. Pri zhoršení kontaktujte pediatra.", "doctor", "Zapísať pre lekára"],
-      "care-breath": ["Dýchanie", "Ak dieťa ťažko dýcha, modrie, nereaguje alebo má pauzy v dýchaní, volajte pomoc.", "urgent", "Zobraziť urgentnú pomoc"],
-      "care-other": ["Iné pozorovanie", "Zapíšte si, čo sa zmenilo, odkedy to trvá a čo ste už skúsili.", "doctor", "Pripraviť poznámku pre lekára"]
+      "care-fever": ["Teplota", "Zmeraj teplotu a sleduj celkový stav.", "temperature", "Zapísať teplotu"],
+      "care-cry": ["Plač a nepokoj", "Skontroluj hlad, plienku, teplotu a potrebu blízkosti.", "diaper", "Skontrolovať prebaľovanie"],
+      "care-belly": ["Bruško a papanie", "Poznač posledné kŕmenie, plienku a čo je oproti bežnému stavu iné.", "feeding", "Otvoriť kŕmenie"],
+      "care-skin": ["Koža a vyrážka", "Poznač, kedy sa zmena objavila a či sa šíri. Pri zhoršení kontaktuj pediatra.", "doctor", "Zapísať pre lekára"],
+      "care-breath": ["Dýchanie", "Ak dieťa ťažko dýcha, modrie, nereaguje alebo má pauzy v dýchaní, volaj pomoc.", "urgent", "Zobraziť urgentnú pomoc"],
+      "care-other": ["Iné pozorovanie", "Zapíš si, čo sa zmenilo, odkedy to trvá a čo si už skúsila.", "doctor", "Pripraviť poznámku pre lekára"]
     };
     const item = topics[topic] || topics["care-other"];
     byId("v5OMenuTitle").textContent = item[0];
@@ -1620,7 +1644,7 @@
   }
 
   function openUrgentModal() {
-    showCareModal("Urgentná pomoc", "Pri bezprostrednom ohrození nečakajte", "<section class='v5-care-emergency v5-care-emergency-modal'><div><small>Volajte ihneď</small><strong>Dieťa nedýcha, modrie, nereaguje, má kŕče alebo sa jeho stav rýchlo zhoršuje.</strong></div><div><a href='tel:155'>155</a><a href='tel:112'>112</a></div></section><div class='v5-info-box'>Pri neistote kontaktujte pediatra alebo pohotovosť. Táto obrazovka nenahrádza zdravotnícku pomoc.</div>");
+    showCareModal("Kontakty na pomoc", "Keď si nie si istá, stačí zavolať", "<div class='v5-info-box'>Ak ťa niečo znepokojuje, zavolaj svojmu pediatrovi – poradí ti, čo ďalej. Mimo ordinačných hodín pomôže pohotovosť.</div><div class='v2-help-contacts'><button type='button' class='v5-secondary' data-v5-feature='contacts'>Moje kontakty</button><a class='v5-secondary' href='tel:155'>Záchranka 155</a><a class='v5-secondary' href='tel:112'>Tiesňová linka 112</a></div><p class='v5-care-disclaimer'>Ak sa stav bábätka náhle zhorší, napríklad ťažko dýcha alebo nereaguje, zavolaj 155.</p>");
   }
 
   function openDoctorVisitModal() {
@@ -1642,7 +1666,7 @@
       "<label>Čo robiť doma<textarea id='v5DoctorHome' maxlength='600' placeholder='Jedna úloha na riadok'></textarea></label>",
       "<label>Čo treba kúpiť<textarea id='v5DoctorShopping' maxlength='300' placeholder='Každá položka na nový riadok'></textarea></label>",
       "<label>Ďalšia kontrola — nepovinné<input id='v5DoctorNext' type='datetime-local'></label>",
-      "<label class='v5-calendar-share'><input id='v5DoctorSharePartner' type='checkbox'><span>" + icon("family") + "</span><span><strong>Zdieľať s partnerom</strong><small>Pokyny, nákup aj kontrolu uvidí spoločne s vami.</small></span></label>",
+      "<label class='v5-calendar-share'><input id='v5DoctorSharePartner' type='checkbox'><span>" + icon("family") + "</span><span><strong>Zdieľať s partnerom</strong><small>Pokyny, nákup aj kontrolu uvidí spoločne s tebou.</small></span></label>",
       "<button class='v5-primary' type='button' data-v5-doctor-save>Uložiť návštevu</button></div>"
     ].join("");
     const overlay = byId("v5OOverlay");
@@ -1659,7 +1683,7 @@
     const home = byId("v5DoctorHome")?.value.trim() || "";
     const shoppingText = byId("v5DoctorShopping")?.value.trim() || "";
     const nextVisit = byId("v5DoctorNext")?.value || "";
-    if (!doctor && !summary && !home && !shoppingText && !nextVisit) return announce("Doplňte aspoň jednu informáciu z návštevy.");
+    if (!doctor && !summary && !home && !shoppingText && !nextVisit) return announce("Doplň aspoň jednu informáciu z návštevy.");
     const sharedWithPartner = Boolean(byId("v5DoctorSharePartner")?.checked);
     const shoppingItems = shoppingText.split(/[\n,;]+/).map(item => item.trim()).filter(Boolean);
     const visit = { id: createId(), doctor, summary, home, shoppingItems, nextVisit, sharedWithPartner, created: new Date().toISOString() };
@@ -1697,28 +1721,28 @@
       const rows = (state.shopping || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("shopping") + "</span><div><strong>" + escapeHtml(row.item.item || "Položka") + "</strong><span>" + escapeHtml([row.item.category, row.item.note].filter(Boolean).join(" · ") || "Spoločný nákup") + "</span></div>" + utilityRemoveButton(section, row.index, "Kúpené") + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Zoznam je prázdny. Pridajte iba to, čo treba kúpiť.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Zoznam je prázdny. Pridaj iba to, čo treba kúpiť.</div>") +
         "<div class='v5-form-card'><label>Čo treba kúpiť<input id='v5UtilityItem' maxlength='80' placeholder='napr. plienky'></label><label>Poznámka — nepovinné<input id='v5UtilityNote' maxlength='100' placeholder='značka, veľkosť alebo množstvo'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='shopping'>Pridať do nákupu</button></div>";
     } else if (section === "contacts") {
       const rows = (state.contacts || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("contacts") + "</span><div><strong>" + escapeHtml(row.item.name || row.item.type || "Kontakt") + "</strong><span>" + escapeHtml([row.item.type, row.item.phone].filter(Boolean).join(" · ")) + "</span></div>" + utilityRemoveButton(section, row.index) + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Pridajte pediatra, lekáreň alebo človeka, ktorému môžete zavolať.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Pridaj pediatra, lekáreň alebo človeka, ktorému môžeš zavolať.</div>") +
         "<div class='v5-form-card'><label>Meno alebo názov<input id='v5UtilityName' maxlength='80' placeholder='napr. MUDr. Nováková'></label><label>Typ<select id='v5UtilityType'><option>Pediater</option><option>Lekáreň</option><option>Pohotovosť</option><option>Rodina</option><option>Iné</option></select></label><label>Telefón<input id='v5UtilityPhone' type='tel' maxlength='30' placeholder='+421…'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='contacts'>Uložiť kontakt</button></div>";
     } else if (section === "products") {
       const rows = (state.productFavorites || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("products") + "</span><div><strong>" + escapeHtml(row.item.item || "Produkt") + "</strong><span>" + escapeHtml([row.item.brand, row.item.size].filter(Boolean).join(" · ") || "Uložená výbava") + "</span></div><button class='v5-link-button' type='button' data-v5-product-to-shopping='" + row.index + "'>Kúpiť</button>" + utilityRemoveButton(section, row.index) + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Uložte si iba veci, ktoré používate opakovane.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Ulož si iba veci, ktoré používaš opakovane.</div>") +
         "<div class='v5-form-card'><label>Produkt<input id='v5UtilityProduct' maxlength='80' placeholder='napr. plienky'></label><label>Značka — nepovinné<input id='v5UtilityBrand' maxlength='60'></label><label>Veľkosť — nepovinné<input id='v5UtilitySize' maxlength='30' value='" + escapeHtml(state.profile.diaperSize || "") + "'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='products'>Uložiť produkt</button></div>";
     } else if (section === "family") {
       const rows = (state.familyTasks || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("family") + "</span><div><strong>" + escapeHtml(row.item.task || "Rodinná úloha") + "</strong><span>" + escapeHtml([row.item.assignee || "rodina", row.item.when].filter(Boolean).join(" · ")) + "</span></div>" + utilityRemoveButton(section, row.index, "Hotovo") + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Rozdeľte si jednu konkrétnu úlohu bez dlhého plánovania.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Rozdeľ si jednu konkrétnu úlohu bez dlhého plánovania.</div>") +
         "<div class='v5-form-card'><label>Čo treba urobiť<input id='v5UtilityTask' maxlength='100' placeholder='napr. kúpiť plienky'></label><label>Kto<select id='v5UtilityAssignee'><option value='partner'>Partner</option><option value='mama'>Mama</option><option value='rodina'>Ktokoľvek z rodiny</option></select></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='family'>Pridať úlohu</button><button class='v5-secondary' type='button' data-v5-feature='profiles'>Spravovať rodinu</button></div>";
     } else {
@@ -1760,7 +1784,7 @@
     const lullabyCount = Array.isArray(state.lullabies) ? state.lullabies.length : 0;
     const recentLullabies = (state.lullabies || []).slice().reverse().slice(0, 3);
     return [
-      "<section class='v5-sleep-audio'><div class='v5-compact-head'><div><h3>Zvuky na zaspávanie</h3><p>Šum alebo vaša rodinná uspávanka.</p></div></div>",
+      "<section class='v5-sleep-audio'><div class='v5-compact-head'><div><h3>Zvuky na zaspávanie</h3><p>Šum alebo tvoja rodinná uspávanka.</p></div></div>",
       "<div class='v5-choice-grid v5-sleep-audio-grid'>",
       "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>", icon("sound"), "</span><span><strong>Biely šum</strong><small>Jemné zvukové pozadie.</small></span></button>",
       "<button class='v5-choice' type='button' data-v5-action='open-sleep-sounds'><span class='v5-icon'>", icon("family"), "</span><span><strong>Rodinné uspávanky</strong><small>", lullabyCount ? lullabyCount + " spoločných nahrávok" : "Nahrať hlas mamy alebo otca", "</small></span></button>",
@@ -1786,7 +1810,7 @@
             "<div class='v5-o-single-action v5-sleep-running'><span class='v5-icon'>" + icon(state.sleepTimer.type === "night" ? "moon" : "sun") + "</span><h3>Od " + escapeHtml(formatClock(state.sleepTimer.start)) + "</h3><button class='v5-primary' type='button' data-v5-action='stop-sleep-flow'>Zobudilo sa · ukončiť</button></div>" +
             "<div class='v5-choice-grid v5-sleep-tools v5-sleep-tools-one'>" +
             choice("sleep-overview", "Dnešný prehľad", "Uložené spánky.", "growth") + "</div>" + sleepAudioTools()
-          : flowHead("Spánok", "Začať spánok", "Vyberte denný alebo nočný spánok.", 0, 1) +
+          : flowHead("Spánok", "Začať spánok", "Vyber denný alebo nočný spánok.", 0, 1) +
             "<div class='v5-sleep-type-grid' role='radiogroup' aria-label='Typ spánku'>" +
             "<label class='v5-sleep-type'><input type='radio' name='v5SleepType' value='day' checked><span class='v5-icon'>" + icon("sun") + "</span><strong>Denný</strong></label>" +
             "<label class='v5-sleep-type'><input type='radio' name='v5SleepType' value='night'><span class='v5-icon'>" + icon("moon") + "</span><strong>Nočný</strong></label></div>" +
@@ -1802,14 +1826,14 @@
         const now = new Date();
         const end = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         const start = new Date(now.getTime() - 60 * 60000 - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        html = flowHead("Spánok", "Kedy dieťa spalo?", "Čas môžete neskôr opraviť.", 1, 2) +
+        html = flowHead("Spánok", "Kedy dieťa spalo?", "Čas môžeš neskôr opraviť.", 1, 2) +
           "<div class='v5-form-card'><label>Začiatok<input id='v5SleepPastStart' type='datetime-local' value='" + escapeHtml(data.start || start) + "'></label>" +
           "<label>Koniec<input id='v5SleepPastEnd' type='datetime-local' value='" + escapeHtml(data.end || end) + "'></label>" +
           "<label>Poznámka — nepovinné<textarea id='v5SleepPastNote' placeholder='Čo pomohlo zaspať?'>" + escapeHtml(data.note || "") + "</textarea></label></div>" +
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-sleep-past'>Uložiť spánok</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       } else {
         const sleeps = state.events.filter(event => normalized(event.type).includes("span") && todayKey(event.created) === todayKey()).slice().reverse();
-        html = flowHead("Spánok", "Dnešný prehľad", "Záznam môžete neskôr opraviť v histórii.", 1, 2) +
+        html = flowHead("Spánok", "Dnešný prehľad", "Záznam môžeš neskôr opraviť v histórii.", 1, 2) +
           "<div class='v5-list'>" + (sleeps.length ? sleeps.map(event =>
             "<div class='v5-row-card'><span class='v5-icon'>" + icon("moon") + "</span><div><strong>" + escapeHtml(event.value || "Spánok") + "</strong><span>" + formatClock(event.created) + "</span></div></div>"
           ).join("") : "<div class='v5-empty'>Zatiaľ tu nie je žiadny dnešný spánok.</div>") + "</div>" +
@@ -1819,7 +1843,7 @@
 
     if (flow.type === "feeding") {
       if (flow.step === 0) {
-        html = flowHead("Kŕmenie", "Čo práve papalo?", "Vyberte jednu možnosť.", 0, 3) +
+        html = flowHead("Kŕmenie", "Čo práve papalo?", "Vyber jednu možnosť.", 0, 3) +
           "<div class='v5-choice-grid'>" +
           choice("feed-breast", "Dojčenie", "Ľavý, pravý alebo oba.", "feeding") +
           choice("feed-bottle", "Fľaša", "Mlieko a množstvo.", "feeding") +
@@ -1827,22 +1851,22 @@
           choice("feed-other", "Iné", "Krátky vlastný záznam.", "sparkle") +
           "</div>";
       } else if (flow.step === 1 && data.method === "breast") {
-        html = flowHead("Dojčenie", "Ktorý prsník?", "Stranu môžete počas dojčenia zmeniť.", 1, 3) +
+        html = flowHead("Dojčenie", "Ktorý prsník?", "Stranu môžeš počas dojčenia zmeniť.", 1, 3) +
           "<div class='v5-choice-grid'>" +
           choice("side-left", "Ľavý", "Začať na ľavej strane.", "feeding") +
           choice("side-right", "Pravý", "Začať na pravej strane.", "feeding") +
           choice("side-both", "Oba", "Bez poradia strán.", "feeding") +
-          choice("side-none", "Bez uvedenia", "Stranu nechcete zapisovať.", "feeding") +
+          choice("side-none", "Bez uvedenia", "Stranu nechceš zapisovať.", "feeding") +
           "</div><div class='v5-actions'><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       } else if (flow.step === 2 && data.method === "breast") {
-        html = flowHead("Dojčenie", "Môžete začať.", "Časovač zostane dostupný aj po odchode z tejto obrazovky.", 2, 3) +
+        html = flowHead("Dojčenie", "Môžeš začať.", "Časovač zostane dostupný aj po odchode z tejto obrazovky.", 2, 3) +
           "<div class='v5-form-card'><div class='v5-info-box'>Začiatočná strana: <strong>" + escapeHtml(data.sideLabel || "bez uvedenia") + "</strong></div>" +
           "<label>Poznámka — nepovinné<textarea id='v5FeedNote' placeholder='Napríklad poloha alebo reakcia dieťaťa'></textarea></label></div>" +
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='start-feeding'>Spustiť dojčenie</button><button class='v5-secondary' type='button' data-v5-action='save-feeding-quick'>Uložiť bez časovača</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       } else {
         const isBottle = data.method === "bottle";
         const isSolids = data.method === "solids";
-        html = flowHead("Kŕmenie", isBottle ? "Fľaša" : isSolids ? "Príkrm" : "Iné kŕmenie", "Doplňte iba to podstatné.", 1, 2) +
+        html = flowHead("Kŕmenie", isBottle ? "Fľaša" : isSolids ? "Príkrm" : "Iné kŕmenie", "Doplň iba to podstatné.", 1, 2) +
           "<div class='v5-form-card'>" +
           (isBottle
             ? "<label>Typ mlieka<select id='v5FeedMilk'><option>Materské mlieko</option><option>Umelé mlieko</option><option>Kombinované</option></select></label><label>Množstvo v ml — nepovinné<input id='v5FeedAmount' type='number' min='0' max='1000' inputmode='numeric' placeholder='napr. 120'></label>"
@@ -1856,33 +1880,33 @@
 
     if (flow.type === "diaper") {
       if (flow.step === 0) {
-        html = flowHead("Prebaľovanie", "Čo bolo v plienke?", "Vyberte dôvod prebalenia.", 0, 2) +
+        html = flowHead("Prebaľovanie", "Čo bolo v plienke?", "Vyber dôvod prebalenia.", 0, 2) +
           "<div class='v5-choice-grid'>" +
           choice("diaper-wet", "Cikalo", "Mokrá plienka.", "diaper") +
-          choice("diaper-dirty", "Kakalo", "Voliteľne doplníte detail stolice.", "diaper") +
+          choice("diaper-dirty", "Kakalo", "Voliteľne doplníš detail stolice.", "diaper") +
           choice("diaper-both", "Cikalo aj kakalo", "Mokrá plienka aj stolica.", "diaper") +
           choice("diaper-dry", "Iba kontrola", "Suchá plienka alebo bežná výmena.", "diaper") +
           "</div>";
       } else {
         html = flowHead("Prebaľovanie", data.diaperLabel || "Prebalenie", "Uloží sa aktuálny čas.", 1, 2) +
           "<div class='v5-form-card v5-compact-record-card'><div class='v5-selected-record'><span class='v5-icon'>" + icon("diaper") + "</span><strong>" + escapeHtml(data.diaperLabel || "") + "</strong></div>" +
-          "<label>Poznámka — nepovinné<textarea id='v5DiaperNote' placeholder='Čokoľvek, čo si chcete zapamätať'></textarea></label></div>" +
+          "<label>Poznámka — nepovinné<textarea id='v5DiaperNote' placeholder='Čokoľvek, čo si chceš zapamätať'></textarea></label></div>" +
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-diaper'>Uložiť prebalenie</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       }
     }
 
     if (flow.type === "temperature") {
-      html = flowHead("Teplota", "Akú teplotu ste namerali?", "Uložte meranie. Aplikácia neurčuje diagnózu.", 0, 1) +
+      html = flowHead("Teplota", "Akú teplotu si namerala?", "Ulož meranie. Aplikácia neurčuje diagnózu.", 0, 1) +
         "<div class='v5-form-card'><label>Teplota v °C<input id='v5TemperatureValue' type='number' min='30' max='45' step='.1' inputmode='decimal' placeholder='napr. 37,1'></label>" +
         "<label>Čas merania<input id='v5TemperatureTime' type='datetime-local' value='" + new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) + "'></label>" +
         "<label>Poznámka — nepovinné<textarea id='v5TemperatureNote' placeholder='Miesto merania alebo ďalšie pozorovanie'></textarea></label>" +
-        "<div class='v5-warning-box'>Ak máte pochybnosti alebo sa dieťa správa nezvyčajne, obráťte sa na pediatra. Pri urgentnom stave volajte miestne tiesňové číslo.</div></div>" +
+        "<div class='v5-warning-box'>Ak máš pochybnosti alebo sa dieťa správa nezvyčajne, obráť sa na pediatra. Pri urgentnom stave volaj miestne tiesňové číslo.</div></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-temperature'>Uložiť meranie</button></div>";
     }
 
     if (flow.type === "bath") {
       if (flow.step === 0) {
-        html = flowHead("Kúpanie", "Čo ste umývali?", "Vyberte jednu možnosť.", 0, 2) +
+        html = flowHead("Kúpanie", "Čo si umývala?", "Vyber jednu možnosť.", 0, 2) +
           "<div class='v5-choice-grid v5-bath-choice-grid'>" +
           choice("bath-full", "Celý kúpeľ", "Telíčko aj vlásky.", "bath") +
           choice("bath-hair", "Vlásky", "Umývanie hlavičky.", "sparkle") +
@@ -1898,8 +1922,8 @@
 
     if (flow.type === "note") {
       const noteTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      html = flowHead("Poznámka", "Čo si chcete zapamätať?", "Stačí krátka veta.", 0, 1) +
-        "<div class='v5-form-card'><label>Poznámka<textarea id='v5QuickNoteText' placeholder='Napíšte krátku poznámku' autofocus></textarea></label>" +
+      html = flowHead("Poznámka", "Čo si chceš zapamätať?", "Stačí krátka veta.", 0, 1) +
+        "<div class='v5-form-card'><label>Poznámka<textarea id='v5QuickNoteText' placeholder='Napíš krátku poznámku' autofocus></textarea></label>" +
         "<label>Čas<input id='v5QuickNoteTime' type='datetime-local' value='" + noteTime + "'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-quick-note'>Uložiť poznámku</button></div>";
     }
@@ -1907,12 +1931,12 @@
     if (flow.type === "teeth-intro") {
       const age = ageData();
       const stage = !age
-        ? { eyebrow: "Podľa veku dieťaťa", title: "Kedy budú Zúbky aktuálne?", copy: "Doplňte dátum narodenia a nabudúce vám ukážeme odporúčanie podľa veku." }
+        ? { eyebrow: "Podľa veku dieťaťa", title: "Kedy budú Zúbky aktuálne?", copy: "Doplň dátum narodenia a nabudúce ti ukážeme odporúčanie podľa veku." }
         : age.days < 120
-          ? { eyebrow: age.label, title: "Na prvé zúbky je ešte pravdepodobne čas.", copy: "Každé dieťa je iné. Aplikáciu si môžete pokojne pozrieť už teraz a pripraviť sa." }
+          ? { eyebrow: age.label, title: "Na prvé zúbky je ešte pravdepodobne čas.", copy: "Každé dieťa je iné. Aplikáciu si môžeš pokojne pozrieť už teraz a pripraviť sa." }
           : age.days < 210
-            ? { eyebrow: age.label, title: "Obdobie prvých zúbkov sa môže približovať.", copy: "Pozrite si jemnú starostlivosť, prejavy a miesto na prvé záznamy." }
-            : { eyebrow: age.label, title: "Zúbky už môžu byť aktuálne.", copy: "Otvorte mapu zúbkov, starostlivosť a vlastné záznamy." };
+            ? { eyebrow: age.label, title: "Obdobie prvých zúbkov sa môže približovať.", copy: "Pozri si jemnú starostlivosť, prejavy a miesto na prvé záznamy." }
+            : { eyebrow: age.label, title: "Zúbky už môžu byť aktuálne.", copy: "Otvor mapu zúbkov, starostlivosť a vlastné záznamy." };
       html = flowHead(stage.eyebrow, stage.title, stage.copy, 0, 1) +
         "<div class='v5-form-card v5-teeth-age-card'><span class='v5-icon'>" + icon("tooth") + "</span><div><strong>Zúbky</strong><p>Všetky funkcie zostávajú dostupné bez ohľadu na vek.</p></div></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='enter-teeth'>Vstúpiť do Zúbkov</button><button class='v5-secondary' type='button' data-v5-home>Teraz nie</button></div>";
@@ -1920,7 +1944,7 @@
 
     if (flow.type === "weather") {
       if (flow.step === 0) {
-        html = flowHead("Počasie", "Kam sa chystáte?", "Odporúčanie sa prispôsobí situácii a veku dieťaťa.", 0, 3) +
+        html = flowHead("Počasie", "Kam sa chystáš?", "Odporúčanie sa prispôsobí situácii a veku dieťaťa.", 0, 3) +
           "<div class='v5-choice-grid'>" +
           choice("weather-out", "Ideme von", "Prechádzka alebo pobyt vonku.", "weather") +
           choice("weather-stroller", "Kočík", "Zohľadníme prúdenie vzduchu.", "baby") +
@@ -1929,7 +1953,7 @@
           choice("weather-home", "Zostávame doma", "Vnútorná teplota a komfort.", "home") +
           "</div>";
       } else if (flow.step === 1) {
-        html = flowHead("Počasie", "Aké sú podmienky?", "V ostrej verzii sa počasie načíta podľa povolenej polohy. V bete ho môžete zadať.", 1, 3) +
+        html = flowHead("Počasie", "Aké sú podmienky?", "V ostrej verzii sa počasie načíta podľa povolenej polohy. V bete ho môžeš zadať.", 1, 3) +
           "<div class='v5-form-card'><label>Vonkajšia teplota °C<input id='v5WeatherOutdoor' type='number' step='1' inputmode='numeric' value='" + escapeHtml(data.outdoor ?? 20) + "'></label>" +
           "<label>Pocitová teplota °C<input id='v5WeatherFeels' type='number' step='1' inputmode='numeric' value='" + escapeHtml(data.feels ?? data.outdoor ?? 20) + "'></label>" +
           "<label>Vietor<select id='v5WeatherWind'><option value='low'>Slabý</option><option value='medium'>Mierny</option><option value='strong'>Silný</option></select></label>" +
@@ -1939,9 +1963,9 @@
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='evaluate-weather'>Zobraziť odporúčanie</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       } else {
         const result = data.result || {};
-        html = flowHead("Počasie", "Krátke odporúčanie", "Každé dieťa je iné. Priebežne kontrolujte jeho komfort.", 2, 3) +
+        html = flowHead("Počasie", "Krátke odporúčanie", "Každé dieťa je iné. Priebežne kontroluj jeho komfort.", 2, 3) +
           "<div class='v5-form-card'><div class='v5-info-box'><strong>Oblečenie</strong><br>" + escapeHtml(result.clothing || "") + "</div>" +
-          "<div class='v5-info-box'><strong>Skontrolujte</strong><br>" + escapeHtml(result.check || "") + "</div>" +
+          "<div class='v5-info-box'><strong>Skontroluj</strong><br>" + escapeHtml(result.check || "") + "</div>" +
           "<div class='v5-warning-box'><strong>Na čo si dať pozor</strong><br>" + escapeHtml(result.warning || "") + "</div></div>" +
           "<div class='v5-actions'><button class='v5-secondary' type='button' data-v5-flow-back>Upraviť podmienky</button><button class='v5-primary' type='button' data-v5-action='weather-done'>Hotovo</button></div>";
       }
@@ -2187,27 +2211,27 @@
         "<label>Pobyt<select id='v5TravelStay'><option value='hotel'>Hotel alebo apartmán</option><option value='family'>U rodiny</option><option value='nature'>Príroda alebo kemp</option><option value='other'>Iný pobyt</option></select></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-travel'>Uložiť cestu</button><button class='v5-text-action' type='button' data-v5-travel-home>Späť</button></div>";
     } else if (section === "nearby") {
-      const queryCity = city || "zadajte mesto";
+      const queryCity = city || "zadaj mesto";
       const maps = term => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(term + " " + queryCity);
       content = "<div class='v5-form-card'><label>Mesto alebo oblasť<input id='v5NearbyCity' value='" + escapeHtml(city) + "' placeholder='napr. Barcelona'></label>" +
         "<div class='v5-info-box'>V ostrej aplikácii môže používateľ dobrovoľne povoliť GPS. Jazyk aplikácie sa pritom nezmení.</div></div>" +
         "<div class='v5-list' style='margin-top:14px'>" +
         [["Lekárne", "Lekáreň", "contacts"], ["Otvorené lekárne", "Otvorená lekáreň", "contacts"], ["Detská pohotovosť", "Detská pohotovosť", "health"], ["Nemocnice s pediatriou", "Pediatrická nemocnica", "health"], ["Urgentný príjem", "Urgentný príjem", "alert"]].map(item =>
           "<a class='v5-row-card' target='_blank' rel='noopener' href='" + maps(item[1]) + "'><span class='v5-icon'>" + icon(item[2]) + "</span><div><strong>" + item[0] + "</strong><span>Vyhľadať v okolí mesta " + escapeHtml(queryCity) + "</span></div><span class='v5-row-arrow'>›</span></a>"
-        ).join("") + "</div><div class='v5-warning-box' style='margin-top:14px'>Výsledok overte podľa názvu služby, otváracích hodín a oficiálneho zdroja. Lekáreň, ambulancia, pohotovosť a urgent nie sú to isté.</div>" +
+        ).join("") + "</div><div class='v5-warning-box' style='margin-top:14px'>Výsledok over podľa názvu služby, otváracích hodín a oficiálneho zdroja. Lekáreň, ambulancia, pohotovosť a urgent nie sú to isté.</div>" +
         "<div class='v5-actions'><button class='v5-text-action' type='button' data-v5-travel-home>Späť</button></div>";
     } else if (section === "medicines") {
       content = "<div class='v5-list'>" + (state.v5.medicines.length ? state.v5.medicines.map((medicine, index) =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("products") + "</span><div><strong>" + escapeHtml(medicine.name) + "</strong><span>" + escapeHtml([medicine.substance, medicine.concentration, medicine.form].filter(Boolean).join(" · ")) + "</span></div><button class='v5-link-button' type='button' data-v5-remove-medicine='" + index + "'>Odobrať</button></div>"
       ).join("") : "<div class='v5-empty'>Zatiaľ nie je uložený žiadny liek.</div>") + "</div>" +
         "<div class='v5-form-card' style='margin-top:14px'><label>Názov<input id='v5MedicineName'></label><label>Účinná látka<input id='v5MedicineSubstance'></label><label>Koncentrácia<input id='v5MedicineConcentration' placeholder='napr. 100 mg / 5 ml'></label><label>Forma<input id='v5MedicineForm' placeholder='sirup, tableta, kvapky'></label><label>Predpisujúci lekár — nepovinné<input id='v5MedicineDoctor'></label><label>Poznámka<textarea id='v5MedicineNote'></textarea></label></div>" +
-        "<div class='v5-warning-box' style='margin-top:14px'>Guguboo neurčuje dávku, neodporúča zmenu lieku a nepotvrdzuje bezpečnú zameniteľnosť. V zahraničí porovnávajte účinnú látku, formu a koncentráciu s lekárnikom alebo lekárom.</div>" +
+        "<div class='v5-warning-box' style='margin-top:14px'>Guguboo neurčuje dávku, neodporúča zmenu lieku a nepotvrdzuje bezpečnú zameniteľnosť. V zahraničí porovnávaj účinnú látku, formu a koncentráciu s lekárnikom alebo lekárom.</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='add-medicine'>Uložiť liek</button><button class='v5-text-action' type='button' data-v5-travel-home>Späť</button></div>";
     } else if (section === "country") {
       content = "<div class='v5-list'>" +
         [["Tiesňové čísla", "Jednotné európske tiesňové číslo 112", "https://digital-strategy.ec.europa.eu/en/policies/112"], ["Zdravotná starostlivosť", "Európsky preukaz zdravotného poistenia", "https://europa.eu/youreurope/citizens/health/unplanned-healthcare/temporary-stays/index_sk.htm"], ["Doklady dieťaťa", "Oficiálne informácie EÚ pre cestovanie", "https://europa.eu/youreurope/citizens/travel/entry-exit/travel-documents-minors/index_sk.htm"], ["Práva cestujúcich", "Your Europe – cestovanie", "https://europa.eu/youreurope/citizens/travel/index_sk.htm"]].map(item =>
           "<a class='v5-row-card' target='_blank' rel='noopener' href='" + item[2] + "'><span class='v5-icon'>" + icon("book") + "</span><div><strong>" + item[0] + "</strong><span>" + item[1] + "</span></div><span class='v5-row-arrow'>›</span></a>"
-        ).join("") + "</div><div class='v5-source-box' style='margin-top:14px'>Zdroj: oficiálne portály Európskej únie. Dátum poslednej kontroly prototypu: 24. 8. 2026. Pred cestou vždy overte aj národné pravidlá cieľovej krajiny.</div>" +
+        ).join("") + "</div><div class='v5-source-box' style='margin-top:14px'>Zdroj: oficiálne portály Európskej únie. Dátum poslednej kontroly prototypu: 24. 8. 2026. Pred cestou vždy over aj národné pravidlá cieľovej krajiny.</div>" +
         "<div class='v5-actions'><button class='v5-text-action' type='button' data-v5-travel-home>Späť</button></div>";
     } else if (section === "offline") {
       const offlineLines = [
@@ -2241,7 +2265,7 @@
       }).join("") + "</div><div class='v5-info-box' style='margin-top:14px'>Zoznam sa v ďalšej etape automaticky prispôsobí veku, počasiu, doprave, pobytu a spôsobu kŕmenia. Vlastnú položku možno vždy pridať.</div>" +
         "<div class='v5-actions'><button class='v5-text-action' type='button' data-v5-travel-home>Späť</button></div>";
     }
-    target.innerHTML = flowHead("Cestovanie", section === "home" ? "Ako vám dnes pomôžeme?" : ({
+    target.innerHTML = flowHead("Cestovanie", section === "home" ? "Ako ti dnes pomôžeme?" : ({
       prepare: "Pripraviť cestu", nearby: "Pomoc v okolí", medicines: "Lieky a zdravie", country: "Podmienky v krajine", offline: "Offline karta", checklist: "Cestovný checklist"
     })[section], "Jazyk aplikácie zostáva rovnaký. Mení sa iba miesto a lokálny obsah.", 0, 1) + content;
   }
@@ -2301,14 +2325,14 @@
     if (section === "today") {
       target.innerHTML = flowHead("Naše chvíle", day && day > 0 && day <= 100 ? day + ". deň spolu" : "Dnešný malý moment", "Stačí fotografia alebo jedna veta.", 0, 1) +
         "<div class='v5-form-card'><label>Dátum<input id='v5First100Date' type='date' value='" + escapeHtml(existing?.date || date) + "'></label>" +
-        "<label>Krátka veta<textarea id='v5First100Text' placeholder='Moment, ktorý si chcete zapamätať'>" + escapeHtml(existing?.text || "") + "</textarea></label>" +
+        "<label>Krátka veta<textarea id='v5First100Text' placeholder='Moment, ktorý si chceš zapamätať'>" + escapeHtml(existing?.text || "") + "</textarea></label>" +
         "<label>Fotografia — nepovinné<input id='v5First100Photo' type='file' accept='image/*'></label>" +
         (existing?.photo ? "<img src='" + escapeHtml(existing.photo) + "' alt='Dnešný moment' class='v5-moment-photo'>" : "") + "</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-first100'>Uložiť moment</button><button class='v5-secondary' type='button' data-v5-moments-home>Späť</button></div>";
       return;
     }
     if (section === "firsts") {
-      target.innerHTML = flowHead("Naše chvíle", "Prvé razy", "Klepnite iba na okamih, ktorý sa dnes stal.", 0, 1) +
+      target.innerHTML = flowHead("Naše chvíle", "Prvé razy", "Klepni iba na okamih, ktorý sa dnes stal.", 0, 1) +
         "<div class='v5-first-moments-grid'>" + firstOptions.map(item => {
           const saved = state.v5.firstMoments.find(entry => entry.key === item[0]);
           return "<button type='button' class='" + (saved ? "is-saved" : "") + "' data-v5-first-moment='" + item[0] + "' data-v5-first-label='" + escapeHtml(item[1]) + "'><span class='v5-icon'>" + icon(item[2]) + "</span><strong>" + escapeHtml(item[1]) + "</strong><small>" + (saved ? new Date(saved.date).toLocaleDateString("sk-SK") : "Zachytiť dnes") + "</small></button>";
@@ -2317,10 +2341,10 @@
     }
     const days = new Set(allMoments.map(item => item.date || todayKey(item.created))).size;
     const photos = allMoments.filter(item => item.photo).length;
-    target.innerHTML = flowHead("Naše chvíle", "Náš príbeh", "Guguboo pripraví výstup automaticky. Nemusíte vytvárať ani triediť albumy.", 0, 1) +
+    target.innerHTML = flowHead("Naše chvíle", "Náš príbeh", "Guguboo pripraví výstup automaticky. Nemusíš vytvárať ani triediť albumy.", 0, 1) +
       "<div class='v5-story-output-grid'><section><span>100</span><div><strong>Prvých 100 dní spolu</strong><small>" + days + " dní · " + photos + " fotografií · " + state.v5.firstMoments.length + " prvých razov</small></div></section>" +
       "<section><span>1</span><div><strong>Prvý rok spolu</strong><small>Príbeh bude priebežne rásť z rovnakých momentov.</small></div></section></div>" +
-      "<div class='v5-info-box'>Výstup si pred uložením alebo tlačou skontrolujete. Chýbajúci deň nevadí.</div>" +
+      "<div class='v5-info-box'>Výstup si pred uložením alebo tlačou skontroluješ. Chýbajúci deň nevadí.</div>" +
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>";
   }
 
@@ -2330,12 +2354,12 @@
     ["blizenci", "Blíženci", "♊", "✦ · ✦ ·", "Dve iskričky zvedavosti v jednom príbehu."],
     ["rak", "Rak", "♋", "· · ✦ ✦", "Domov je tam, kde ste spolu."],
     ["lev", "Lev", "♌", "✦ ✦ · ·", "Malé svetlo, ktoré rozžiarilo rodinu."],
-    ["panna", "Panna", "♍", "✦ · · · ✦", "Každý detail vášho príbehu je jedinečný."],
+    ["panna", "Panna", "♍", "✦ · · · ✦", "Každý detail tvojho príbehu je jedinečný."],
     ["vahy", "Váhy", "♎", "· ✦ ✦ ·", "Jemná rovnováha spoločných dní."],
     ["skorpion", "Škorpión", "♏", "✦ · ✦ ✦", "Hlboké puto od prvého objatia."],
-    ["strelec", "Strelec", "♐", "· ✦ · · ✦", "Pred vami je celý svet spoločných ciest."],
+    ["strelec", "Strelec", "♐", "· ✦ · · ✦", "Pred tebou je celý svet spoločných ciest."],
     ["kozorozec", "Kozorožec", "♑", "✦ ✦ · ✦", "Malé kroky tvoria veľký rodinný príbeh."],
-    ["vodnar", "Vodnár", "♒", "· · ✦ · ✦", "Váš vlastný jedinečný rytmus."],
+    ["vodnar", "Vodnár", "♒", "· · ✦ · ✦", "Tvoj vlastný jedinečný rytmus."],
     ["ryby", "Ryby", "♓", "✦ · · ✦ ·", "Nežné sny a pokojné objatia."]
   ];
 
@@ -2364,7 +2388,7 @@
       ["sky", "Nebeská modrá a jemná fialová"],
       ["powder", "Púdrová ružová a teplá béžová"]
     ];
-    target.innerHTML = flowHead("Kartičky", "Dvanásť znamení, váš vlastný štýl.", "Znamenie určuje iba vizuálnu tému. Neurčuje povahu dieťaťa.", 0, 1) +
+    target.innerHTML = flowHead("Kartičky", "Dvanásť znamení, tvoj vlastný štýl.", "Znamenie určuje iba vizuálnu tému. Neurčuje povahu dieťaťa.", 0, 1) +
       "<section class='v5-zodiac-preview palette-" + escapeHtml(state.v5.cardPalette) + " sign-" + escapeHtml(selected[0]) + "'><span class='v5-zodiac-constellation'>" + escapeHtml(selected[3]) + "</span><span class='v5-zodiac-symbol'>" + selected[2] + "</span><small>" + escapeHtml(selected[1]) + "</small><h2>" + escapeHtml(state.profile.name || "Naše bábätko") + "</h2><p>" + escapeHtml(selected[4]) + "</p><div class='v5-zodiac-facts'><span>" + escapeHtml(state.profile.birth || "dátum") + "</span><span>" + escapeHtml(state.profile.birthTime || "čas") + "</span><span>" + escapeHtml(state.profile.weight || "hmotnosť") + "</span></div></section>" +
       "<div class='v5-form-card' style='margin-top:14px'><label>Farebná paleta<select id='v5CardPalette'>" +
       palettes.map(item => "<option value='" + item[0] + "'" + (item[0] === state.v5.cardPalette ? " selected" : "") + ">" + item[1] + "</option>").join("") +
@@ -2386,7 +2410,7 @@
       ["v5-bag-hygiene", "Hygiena a praktické potreby"],
       ["v5-bag-home", "Odchod domov"]
     ]],
-    ["home", "Domov pre bábätko", "Pripraviť iba to, čo využijete", [
+    ["home", "Domov pre bábätko", "Pripraviť iba to, čo využiješ", [
       ["v5-home-sleep", "Bezpečné miesto na spánok"],
       ["v5-home-changing", "Miesto na prebaľovanie"],
       ["v5-home-clothes", "Základné oblečenie"],
@@ -2413,7 +2437,7 @@
     ["travel", "Cestovanie", "Doklady, balenie a zdravie", [
       ["v5-travel-docs", "Doklady a poistenie"],
       ["v5-travel-clothes", "Oblečenie podľa počasia"],
-      ["v5-travel-feed", "Kŕmenie podľa vašej rutiny"],
+      ["v5-travel-feed", "Kŕmenie podľa tvojej rutiny"],
       ["v5-travel-meds", "Lieky a účinné látky"]
     ]]
   ];
@@ -2439,7 +2463,7 @@
     const selected = visibleCategories.find(category => category[0] === state.v5.checklistCategory);
     if (state.v5.checklistCategory && !selected) state.v5.checklistCategory = "";
     if (!selected) {
-      target.innerHTML = "<section class='v5-checklist-shell'><header class='v5-checklist-intro'><span>" + (expecting ? "Moja príprava" : "Praktické zoznamy") + "</span><h1>Vyberte oblasť</h1></header>" +
+      target.innerHTML = "<section class='v5-checklist-shell'><header class='v5-checklist-intro'><span>" + (expecting ? "Moja príprava" : "Praktické zoznamy") + "</span><h1>Vyber oblasť</h1></header>" +
         "<div class='v5-checklist-grid'>" + visibleCategories.map(category => {
           const custom = state.v5.checklistCustom.filter(item => item.category === category[0]);
           const all = category[3].concat(custom.map(item => [item.id, item.label]));
@@ -2494,24 +2518,35 @@
         "<label>Kto mi môže pomôcť — nepovinné<input id='v5PrenatalHelper' value='" + escapeHtml(state.prenatal.helper || "") + "' placeholder='meno alebo kontakt'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-prenatal-mother'>Uložiť poznámku</button><button class='v5-text-action' type='button' data-v5-prenatal-home>Späť</button></div>";
     }
-    target.innerHTML = flowHead("Moja príprava", section === "home" ? "Čo chcete pripraviť?" : section === "hospital" ? "Moja pôrodnica" : "Podpora pre mamu", section === "home" ? "Vyberte jednu oblasť." : "Údaj sa uloží do spoločnej prípravy rodiny.", 0, 1) + content;
+    target.innerHTML = flowHead("Moja príprava", section === "home" ? "Čo chceš pripraviť?" : section === "hospital" ? "Moja pôrodnica" : "Podpora pre mamu", section === "home" ? "Vyber jednu oblasť." : "Údaj sa uloží do spoločnej prípravy rodiny.", 0, 1) + content;
   }
 
   function pregnancyBookData(week) {
+    // V2: ak je k dispozícii obsah týždeň po týždni (content/pregnancy-weeks.js, zdroj NHS), použije sa ten.
+    const weekly = week ? window.GugubooContent?.pregnancyWeeks?.weeks?.[Math.min(42, Math.max(4, week))] : null;
+    if (weekly) {
+      const sentences = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
+      return {
+        baby: [...sentences(weekly.baby), ...(weekly.size ? ["Veľkosť: " + weekly.size] : [])],
+        mother: sentences(weekly.you),
+        week: [weekly.milestone ? "Míľnik: " + weekly.milestone : "", weekly.tip || "", "Zapíš si jednu otázku pre lekára na najbližšiu kontrolu."].filter(Boolean),
+        source: weekly.source_urls?.[0] || ""
+      };
+    }
     const phase = !week || week < 14 ? 1 : week < 28 ? 2 : 3;
     if (phase === 1) return {
       baby: ["Bábätko sa v tomto období rýchlo vyvíja.", "Týždeň je orientačný podľa termínu pôrodu.", "Skutočný vývoj hodnotí zdravotník."],
-      mother: ["Únava alebo nevoľnosť môžu byť v tomto období bežné.", "Doprajte si tekutiny, jedlo a oddych podľa potreby.", "Otázky si uložte na najbližšiu kontrolu."],
+      mother: ["Únava alebo nevoľnosť môžu byť v tomto období bežné.", "Dopraj si tekutiny, jedlo a oddych podľa potreby.", "Otázky si ulož na najbližšiu kontrolu."],
       week: ["Skontrolovať najbližší termín.", "Zapísať jednu otázku pre lekára.", "Odborné rozhodnutia riešiť na kontrole."]
     };
     if (phase === 2) return {
       baby: ["Bábätko ďalej rastie a jeho pohyby môžu byť zreteľnejšie.", "Hravé prirovnanie veľkosti je iba orientačné.", "Rast hodnotí lekár podľa vyšetrení."],
-      mother: ["Telo sa postupne prispôsobuje rastúcemu brušku.", "Na kontrole sa sleduje zdravie mamy aj bábätka.", "Zaznamenajte si iba to, čo chcete prebrať s lekárom."],
-      week: ["Pozrieť najbližšiu kontrolu.", "Pridať otázku, ktorú nechcete zabudnúť.", "Prečítať iba obsah pre aktuálny týždeň."]
+      mother: ["Telo sa postupne prispôsobuje rastúcemu brušku.", "Na kontrole sa sleduje zdravie mamy aj bábätka.", "Zaznamenaj si iba to, čo chceš prebrať s lekárom."],
+      week: ["Pozrieť najbližšiu kontrolu.", "Pridať otázku, ktorú nechceš zabudnúť.", "Prečítať iba obsah pre aktuálny týždeň."]
     };
     return {
-      baby: ["Bábätko ďalej rastie a dozrieva.", "Všímajte si jeho obvyklý vzorec pohybov.", "Pri zmene pohybov kontaktujte zdravotníka."],
-      mother: ["Viac oddychu a pohodlná poloha môžu byť dôležitejšie.", "Na kontrole sa preberá zdravie aj príprava na pôrod.", "Pocity alebo obavy si zapíšte bez hodnotenia."],
+      baby: ["Bábätko ďalej rastie a dozrieva.", "Všímaj si jeho obvyklý vzorec pohybov.", "Pri zmene pohybov kontaktuj zdravotníka."],
+      mother: ["Viac oddychu a pohodlná poloha môžu byť dôležitejšie.", "Na kontrole sa preberá zdravie aj príprava na pôrod.", "Pocity alebo obavy si zapíš bez hodnotenia."],
       week: ["Skontrolovať termín najbližšej poradne.", "Pripraviť si otázky pre zdravotníka.", "Dôležité zdravotné zmeny neodkladať na ďalší deň."]
     };
   }
@@ -2531,7 +2566,7 @@
         .filter(item => new Date(item.date).getTime() >= Date.now())
         .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
       target.innerHTML = [
-        "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplňte termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p></div>",
+        "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplň termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p></div>",
         "<span class='v5-book-fruit v5-fruit-avatar' role='img' aria-label='Orientačná veľkosť: ", escapeHtml(avatar.label), "' style='background-position:", escapeHtml(avatar.position), "'></span></section>",
         "<div class='v5-book-main-grid'>",
         "<button type='button' data-v5-book-section='baby'><span class='v5-icon'>", icon("baby"), "</span><strong>Bábätko</strong><small>Vývoj v tomto období</small></button>",
@@ -2549,7 +2584,7 @@
       target.innerHTML = [
         flowHead("Tehotenská knižka", "Otázky pre lekára", "Krátky zoznam na najbližšiu kontrolu.", 0, 1),
         "<div class='v5-book-question-add'><input id='v5PregnancyQuestion' maxlength='120' placeholder='Čo sa chcem opýtať?'><button type='button' data-v5-book-add-question aria-label='Pridať otázku'>＋</button></div>",
-        state.v5.pregnancyQuestions.length ? "<div class='v5-book-question-list'>" + state.v5.pregnancyQuestions.map((question, index) => "<div><span>" + escapeHtml(question) + "</span><button type='button' data-v5-book-remove-question='" + index + "' aria-label='Odstrániť otázku'>×</button></div>").join("") + "</div>" : "<div class='v5-empty'>Zatiaľ nemáte uloženú otázku.</div>",
+        state.v5.pregnancyQuestions.length ? "<div class='v5-book-question-list'>" + state.v5.pregnancyQuestions.map((question, index) => "<div><span>" + escapeHtml(question) + "</span><button type='button' data-v5-book-remove-question='" + index + "' aria-label='Odstrániť otázku'>×</button></div>").join("") + "</div>" : "<div class='v5-empty'>Zatiaľ nemáš uloženú otázku.</div>",
         "<button class='v5-check-categories-button' type='button' data-v5-book-home>", icon("back"), " Tehotenská knižka</button>"
       ].join("");
       return;
@@ -2560,6 +2595,7 @@
       flowHead("Tehotenská knižka", selected[0], week ? week + ". týždeň" : "Aktuálne obdobie", 0, 1),
       "<div class='v5-book-detail-list'>", data[section].map(item => "<div><span class='v5-icon'>" + icon(selected[1]) + "</span><strong>" + escapeHtml(item) + "</strong></div>").join(""), "</div>",
       section === "week" ? "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-feature='calendar'>Otvoriť kontroly</button><button class='v5-secondary' type='button' data-v5-book-section='questions'>Pridať otázku</button></div>" : "",
+      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : "",
       "<button class='v5-check-categories-button' type='button' data-v5-book-home>", icon("back"), " Tehotenská knižka</button>"
     ].join("");
   }
@@ -2590,7 +2626,7 @@
       "<button class='v5-choice' type='button' data-v5-audio-type='lullaby-soft' data-v5-audio-title='Jemná uspávanka'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Jemná melódia</strong><small>Predvolená pokojná hudba.</small></span></button>" +
       "<button class='v5-choice' type='button' data-v5-action='open-original-sounds'><span class='v5-icon'>" + icon("family") + "</span><span><strong>Nahrať uspávanku</strong><small>Hlas mamy, otca alebo blízkej osoby.</small></span></button></div>" +
       (lullabies.length ? "<section class='v5-shared-lullabies'><div class='v5-compact-head'><div><h3>Naše nahrávky</h3><p>Spoločná knižnica rodičov.</p></div></div><div class='v5-lullaby-quick-list'>" + lullabies.map(item => "<button type='button' data-v5-play-lullaby='" + escapeHtml(item.id) + "'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>" + escapeHtml(item.title || "Rodinná uspávanka") + "</strong><small>" + escapeHtml(item.author === "otec" ? "Nahral otec" : item.author === "mama" ? "Nahrala mama" : "Rodinná nahrávka") + "</small></span><b>Prehrať</b></button>").join("") + "</div></section>" : "") +
-      "<div class='v5-info-box'>Zvuk má byť iba jemným pozadím. Telefón ani reproduktor nedávajte k hlave dieťaťa.</div>";
+      "<div class='v5-info-box'>Zvuk má byť iba jemným pozadím. Telefón ani reproduktor nedávaj k hlave dieťaťa.</div>";
   }
 
   function updateHeader() {
@@ -2635,7 +2671,7 @@
         state.v5.adaptiveO.modalParent = "sleep";
         persist();
         byId("v5OMenuTitle").textContent = "Zvuky na zaspávanie";
-        byId("v5OMenuSubtitle").textContent = "Vyberte jeden zvuk";
+        byId("v5OMenuSubtitle").textContent = "Vyber jeden zvuk";
         byId("v5OMenuBack").hidden = false;
         byId("v5OMenuBody").innerHTML = "<div class='v5-o-feature-choices'>" +
           quickAudioButton("white", "Biely šum") +
@@ -2739,7 +2775,7 @@
       const ageDays = Math.floor((Date.now() - parsedBirth.getTime()) / 86400000);
       if (!Number.isFinite(parsedBirth.getTime()) || ageDays < 0 || ageDays > 2192) {
         byId("v5ChildBirth")?.focus();
-        return announce("Skontrolujte dátum narodenia dieťaťa.");
+        return announce("Skontroluj dátum narodenia dieťaťa.");
       }
     }
     state.profile.name = byId("v5ChildName").value.trim();
@@ -2851,7 +2887,7 @@
       persist();
       renderAdaptiveO();
       renderHome();
-      return announce(selected.includes(goalId) ? "Cieľ už nesledujete." : "Cieľ je pridaný do vášho O.");
+      return announce(selected.includes(goalId) ? "Cieľ už nesleduješ." : "Cieľ je pridaný do tvojho O.");
     }
     const adaptiveComplete = event.target.closest("[data-v5-o-complete]");
     if (adaptiveComplete) {
@@ -2951,25 +2987,25 @@
     const calendarDone = event.target.closest("[data-v5-calendar-done]");
     if (calendarDone) return updateCalendarEvent(calendarDone.dataset.v5CalendarDone);
     const calendarDelete = event.target.closest("[data-v5-calendar-delete]");
-    if (calendarDelete && window.confirm("Naozaj chcete túto udalosť vymazať?")) return updateCalendarEvent(calendarDelete.dataset.v5CalendarDelete, true);
+    if (calendarDelete && window.confirm("Naozaj chceš túto udalosť vymazať?")) return updateCalendarEvent(calendarDelete.dataset.v5CalendarDelete, true);
     const utilityAdd = event.target.closest("[data-v5-utility-add]");
     if (utilityAdd) {
       const section = utilityAdd.dataset.v5UtilityAdd;
       if (section === "shopping") {
         const item = byId("v5UtilityItem")?.value.trim() || "";
-        if (!item) return announce("Napíšte, čo treba kúpiť.");
+        if (!item) return announce("Napíš, čo treba kúpiť.");
         state.shopping.push({ item, category: "Rodina", note: byId("v5UtilityNote")?.value.trim() || "", created: new Date().toISOString() });
       } else if (section === "contacts") {
         const name = byId("v5UtilityName")?.value.trim() || "";
-        if (!name) return announce("Doplňte meno alebo názov kontaktu.");
+        if (!name) return announce("Doplň meno alebo názov kontaktu.");
         state.contacts.push({ name, type: byId("v5UtilityType")?.value || "Iné", phone: byId("v5UtilityPhone")?.value.trim() || "", email: "", hours: "" });
       } else if (section === "products") {
         const item = byId("v5UtilityProduct")?.value.trim() || "";
-        if (!item) return announce("Doplňte názov produktu.");
+        if (!item) return announce("Doplň názov produktu.");
         state.productFavorites.push({ item, brand: byId("v5UtilityBrand")?.value.trim() || "", size: byId("v5UtilitySize")?.value.trim() || "", note: "" });
       } else if (section === "family") {
         const task = byId("v5UtilityTask")?.value.trim() || "";
-        if (!task) return announce("Doplňte rodinnú úlohu.");
+        if (!task) return announce("Doplň rodinnú úlohu.");
         state.familyTasks.push({ task, assignee: byId("v5UtilityAssignee")?.value || "rodina", when: "čo najskôr", details: "", created: new Date().toISOString() });
       }
       persist();
@@ -3018,7 +3054,7 @@
       const audioElement = byId("customSoundAudio");
       if (audioElement) {
         audioElement.src = item.src;
-        audioElement.play().catch(() => announce("Prehrávanie spustíte tlačidlom Play."));
+        audioElement.play().catch(() => announce("Prehrávanie spustíš tlačidlom Play."));
       }
       state.v5.audio = { ...state.v5.audio, active: true, type: "custom", title: item.title || "Rodinná uspávanka", stopAt: "" };
       persist();
@@ -3167,7 +3203,7 @@
     }
     if (event.target.closest("[data-v5-book-add-question]")) {
       const value = byId("v5PregnancyQuestion")?.value.trim() || "";
-      if (!value) return announce("Napíšte otázku.");
+      if (!value) return announce("Napíš otázku.");
       state.v5.pregnancyQuestions.push(value);
       persist();
       renderPregnancyBook();
@@ -3227,7 +3263,7 @@
       if (v5AudioButton.closest("#v5QuickRecord")) closeQuickRecord();
       renderAudioDock();
       if (v5AudioButton.closest("#v5OMenu") && state.v5.flow?.type !== "sleep") {
-        completeAdaptiveOModal((v5AudioButton.dataset.v5AudioTitle || "Zvuk") + " sa prehráva.", "Zvuk môžete kedykoľvek vypnúť v spodnom prehrávači.");
+        completeAdaptiveOModal((v5AudioButton.dataset.v5AudioTitle || "Zvuk") + " sa prehráva.", "Zvuk môžeš kedykoľvek vypnúť v spodnom prehrávači.");
       }
       return announce((v5AudioButton.dataset.v5AudioTitle || "Zvuk") + " sa prehráva.");
     }
@@ -3258,10 +3294,10 @@
     if (action === "save-sleep-past") {
       const start = new Date(byId("v5SleepPastStart").value);
       const end = new Date(byId("v5SleepPastEnd").value);
-      if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return announce("Skontrolujte začiatok a koniec spánku.");
+      if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return announce("Skontroluj začiatok a koniec spánku.");
       state.events.push({ id: createId(), type: "Spánok", value: formatDuration(end - start) + " · spätne", note: byId("v5SleepPastNote").value.trim(), author: "rodina", created: end.toISOString(), start: start.toISOString(), end: end.toISOString() });
       if (typeof save === "function") save(); else persist();
-      completeFlow("Spánok je uložený.", "Záznam sa zobrazí v dnešnom prehľade a môžete ho neskôr opraviť.");
+      completeFlow("Spánok je uložený.", "Záznam sa zobrazí v dnešnom prehľade a môžeš ho neskôr opraviť.");
       return announce("Spánok bol uložený.");
     }
     if (action === "start-feeding") return startFeeding();
@@ -3292,11 +3328,11 @@
     if (action === "save-temperature") {
       const raw = byId("v5TemperatureValue").value.replace(",", ".");
       const value = Number(raw);
-      if (!Number.isFinite(value) || value < 30 || value > 45) return announce("Zadajte nameranú teplotu v rozsahu 30 až 45 °C.");
+      if (!Number.isFinite(value) || value < 30 || value > 45) return announce("Zadaj nameranú teplotu v rozsahu 30 až 45 °C.");
       const time = byId("v5TemperatureTime").value ? new Date(byId("v5TemperatureTime").value) : new Date();
       state.events.push({ id: createId(), type: "Teplota", value: value.toFixed(1).replace(".", ",") + " °C", note: byId("v5TemperatureNote").value.trim(), author: "rodina", created: time.toISOString() });
       if (typeof save === "function") save(); else persist();
-      completeFlow("Meranie teploty je uložené.", "Ak máte pochybnosti, obráťte sa na pediatra.");
+      completeFlow("Meranie teploty je uložené.", "Ak máš pochybnosti, obráť sa na pediatra.");
       return announce("Teplota bola uložená.");
     }
     if (action === "save-bath") {
@@ -3308,12 +3344,12 @@
     }
     if (action === "save-quick-note") {
       const text = byId("v5QuickNoteText")?.value.trim() || "";
-      if (!text) return announce("Napíšte krátku poznámku.");
+      if (!text) return announce("Napíš krátku poznámku.");
       const time = byId("v5QuickNoteTime")?.value ? new Date(byId("v5QuickNoteTime").value) : new Date();
-      if (!Number.isFinite(time.getTime())) return announce("Skontrolujte čas poznámky.");
+      if (!Number.isFinite(time.getTime())) return announce("Skontroluj čas poznámky.");
       state.events.push({ id: createId(), type: "Poznámka", value: text, note: "", author: "rodina", created: time.toISOString() });
       if (typeof save === "function") save(); else persist();
-      completeFlow("Poznámka je uložená.", "Nájdete ju medzi dnešnými záznamami.");
+      completeFlow("Poznámka je uložená.", "Nájdeš ju medzi dnešnými záznamami.");
       return announce("Poznámka bola uložená.");
     }
     if (action === "enter-teeth") {
@@ -3329,13 +3365,13 @@
       const rain = byId("v5WeatherRain").value;
       const uv = byId("v5WeatherUv").value;
       const situation = state.v5.flow.data.situation;
-      let clothing = feels <= 5 ? "Zvážte teplejšie vrstvy, čiapku a ochranu pred vetrom." : feels <= 15 ? "Môžu pomôcť ľahšie vrstvy, ktoré sa dajú priebežne pridať alebo odobrať." : feels >= 27 ? "Zvážte ľahké priedušné oblečenie a tieň." : "Ľahké vrstvy podľa bežného komfortu dieťaťa.";
-      let check = "Skontrolujte zátylok, hrudník a celkový komfort dieťaťa.";
-      let warning = wind === "strong" || rain === "heavy" ? "Pobyt môže pomôcť skrátiť a zvoliť chránené miesto." : "Podmienky priebežne sledujte.";
-      if (uv === "high") warning += " Vyhnite sa najteplejšej časti dňa a použite vhodný tieň.";
-      if (situation === "stroller" && feels >= 24) warning += " Kočík nezakrývajte plienkou ani nepriedušnou látkou.";
-      if (situation === "carrier") check += " V nosiči zohľadnite aj teplo tela rodiča.";
-      if (situation === "car") check += " Počas jazdy kontrolujte teplotu v aute a bezpečné pripútanie bez hrubých vrstiev.";
+      let clothing = feels <= 5 ? "Zváž teplejšie vrstvy, čiapku a ochranu pred vetrom." : feels <= 15 ? "Môžu pomôcť ľahšie vrstvy, ktoré sa dajú priebežne pridať alebo odobrať." : feels >= 27 ? "Zváž ľahké priedušné oblečenie a tieň." : "Ľahké vrstvy podľa bežného komfortu dieťaťa.";
+      let check = "Skontroluj zátylok, hrudník a celkový komfort dieťaťa.";
+      let warning = wind === "strong" || rain === "heavy" ? "Pobyt môže pomôcť skrátiť a zvoliť chránené miesto." : "Podmienky priebežne sleduj.";
+      if (uv === "high") warning += " Vyhni sa najteplejšej časti dňa a použi vhodný tieň.";
+      if (situation === "stroller" && feels >= 24) warning += " Kočík nezakrývaj plienkou ani nepriedušnou látkou.";
+      if (situation === "carrier") check += " V nosiči zohľadni aj teplo tela rodiča.";
+      if (situation === "car") check += " Počas jazdy kontroluj teplotu v aute a bezpečné pripútanie bez hrubých vrstiev.";
       state.v5.flow.data = { ...state.v5.flow.data, outdoor, feels, wind, rain, uv, result: { clothing, check, warning } };
       state.v5.weatherLast = { ...state.v5.flow.data, created: new Date().toISOString() };
       state.v5.flow.step = 2;
@@ -3364,7 +3400,7 @@
       state.prenatal.hospitalDetails = byId("v5PrenatalHospitalDetails").value.trim();
       state.v5.motherProfile.hospital = state.prenatal.hospital;
       persist();
-      return announce("Poznámka k pôrodnici je uložená. Ďalej môžete skontrolovať tašku alebo doklady.");
+      return announce("Poznámka k pôrodnici je uložená. Ďalej môžeš skontrolovať tašku alebo doklady.");
     }
     if (action === "save-prenatal-mother") {
       state.prenatal.motherNote = byId("v5PrenatalMotherNote").value.trim();
@@ -3396,7 +3432,7 @@
     }
     if (action === "add-family-member") {
       const name = byId("v5MemberName").value.trim();
-      if (!name) return announce("Doplňte meno blízkej osoby.");
+      if (!name) return announce("Doplň meno blízkej osoby.");
       const accessMap = { view: "Iba zobrazenie", add: "Zobrazenie a pridávanie", edit: "Pridávanie a úpravy", manage: "Správa rodiny" };
       state.v5.familyMembers.push({
         id: createId(), name, relationship: byId("v5MemberRelationship").value, phone: byId("v5MemberPhone").value.trim(),
@@ -3421,11 +3457,11 @@
     }
     if (action === "add-medicine") {
       const name = byId("v5MedicineName").value.trim();
-      if (!name) return announce("Doplňte názov lieku.");
+      if (!name) return announce("Doplň názov lieku.");
       state.v5.medicines.push({ id: createId(), name, substance: byId("v5MedicineSubstance").value.trim(), concentration: byId("v5MedicineConcentration").value.trim(), form: byId("v5MedicineForm").value.trim(), doctor: byId("v5MedicineDoctor").value.trim(), note: byId("v5MedicineNote").value.trim() });
       persist();
       renderTravel();
-      return announce("Liek je uložený. V zahraničí porovnajte účinnú látku, formu a koncentráciu.");
+      return announce("Liek je uložený. V zahraničí porovnaj účinnú látku, formu a koncentráciu.");
     }
     if (action === "save-offline-card") {
       state.v5.offlineCardSavedAt = new Date().toISOString();
@@ -3439,7 +3475,7 @@
     }
     if (action === "add-travel-custom") {
       const value = byId("v5TravelCustomItem").value.trim();
-      if (!value) return announce("Napíšte vlastnú položku.");
+      if (!value) return announce("Napíš vlastnú položku.");
       state.v5.travelCustomItems ||= [];
       state.v5.travelCustomItems.push({ id: createId(), category: Number(event.target.closest("[data-category]").dataset.category), label: value, done: false });
       persist();
@@ -3448,7 +3484,7 @@
     }
     if (action === "save-first100") {
       const date = byId("v5First100Date").value;
-      if (!date) return announce("Vyberte dátum.");
+      if (!date) return announce("Vyber dátum.");
       let item = state.diary.find(memory => memory.first100 && memory.date === date);
       if (!item) {
         item = { id: createId(), first100: true, date, created: new Date().toISOString() };
@@ -3466,7 +3502,7 @@
     }
     if (action === "add-checklist-custom") {
       const label = byId("v5ChecklistCustom").value.trim();
-      if (!label) return announce("Napíšte vlastnú položku.");
+      if (!label) return announce("Napíš vlastnú položku.");
       state.v5.checklistCustom.push({ id: createId(), category: state.v5.checklistCategory, label });
       persist();
       renderChecklists();
@@ -3545,7 +3581,7 @@
       reader.onload = () => {
         state.v5.pendingFirst100Photo = reader.result;
         persist();
-        announce("Fotografia je pripravená. Uložte dnešný okamih.");
+        announce("Fotografia je pripravená. Ulož dnešný okamih.");
       };
       reader.readAsDataURL(event.target.files[0]);
     }

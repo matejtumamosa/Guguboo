@@ -23,6 +23,30 @@
 > 11. **Tehotenstvo:** týždenne krátko Bábätko + Ty; zdravie/príprava/úrady podľa míľnikov – OK.
 > 12. **Platobný model** sa rieši až keď bude appka hotová (kap. K/O sú len podklad).
 >
+> ## 🛠 Stav implementácie (28. 9. 2026, V2 2.1.0)
+> | Oblasť (P0) | Stav | Súbory |
+> |---|---|---|
+> | Samostatná V2, vlastné úložisko, beta bez ukladania (sessionStorage) | ✅ | `app.html`, `private-space.js` |
+> | Journey Engine (fáza, týždeň/vek, NOW/SOON/LATER, limity 3+2, prechody) | ✅ | `journey-engine.js` |
+> | Domov: Tento týždeň + Teraz/Čoskoro + „Bábätko je na svete?“ | ✅ | `guguchat.js` |
+> | GuguChat v1 (zámery, akcie, pokojná eskalácia, „neviem“ → medzery) | ✅ | `guguchat.js` |
+> | Spodná lišta: 2 + okrúhly GuguChat + 2, bez „Ďalšie aplikácie“, editor obľúbených | ✅ | `v5-mobile.js`, `v2.css` |
+> | Kruh pohody: len pohoda mamy, 3 časti podľa fázy, bez prepínača | ✅ | `v5-mobile.js` |
+> | Prechod pôrod → popôrodné obdobie + kartička narodenia | ✅ | `v2-birth.js` |
+> | Tehotenstvo týždeň po týždni 4.–42. (NHS, vlastnými slovami) | ✅ `review_required` | `content/pregnancy-weeks.js` |
+> | Life Admin SK (20 položiek, 14 overených, 6 čiastočne; sumy overené v pôvodnom texte stránok) | ✅ `review_required` | `content/life-admin-sk.js`, `v2-admin.js` |
+> | Automatický monitoring zdrojov + kontrola súm → PR na kontrolu človekom | ✅ (beží na GitHub Actions pri zmene obsahu vo `v2`) | `tools/knowledge-monitor.mjs`, `.github/workflows/…` |
+> | Matejov PR #3 (6 kľúčových krokov, hodnotové texty) | ✅ | `app.html` |
+> | Tykanie v celej V2 | ✅ (správy pre úrad/HR ostávajú vo vykaní zámerne) | všetky |
+> | Pokojný tón (bez trvalých núdzových pásov) | ✅ | `guguchat.js`, `v5-mobile.js` |
+> | Spätná väzba z bety + metrika „GUGUBOO moment“ (lokálne, stiahnuteľný súbor) | ✅ | `guguchat.js` |
+> | Odstránené: falošná AI, predajná stránka plagát/video/fotokniha, ručné počasie | ✅ | `v5-mobile.js` |
+>
+> **Ostáva (P1/P2):** AI vrstva GuguChatu (potrebuje server a kľúč), push notifikácie (PWA + server),
+> účty/partner/synchronizácia, Document Center (predvyplnenie formulárov), trackery s dôvodom (kontrakcie,
+> pohyby), očkovanie z overeného zdroja, percentily rastu, CZ modul, odborná kontrola obsahu pred ostrým spustením,
+> postupné odstránenie mŕtvej vrstvy v4 a legacy obrazoviek.
+
 > **Dôsledok pre techniku (mení kap. C2):** keďže sa ponecháva väčšina súčasných vzorov (menu, Kruh,
 > moduly) a beta nič neukladá, V2 sa stavia **postupným upgradom východiskovej kópie** v `guguboo-v2/`
 > (brief bod 6 „UPGRADE, NIE REDESIGN“), nie novou kostrou. Nové časti pribúdajú ako samostatné súbory
