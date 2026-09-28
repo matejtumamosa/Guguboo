@@ -18,9 +18,11 @@
     return;
   }
 
+  // Beta V2: rovnako ako hlavný stav len na čas otvorenej karty (sessionStorage).
+  const betaStorage = window.sessionStorage;
   const privateStore = {
     read() {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = betaStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       try {
         const record = JSON.parse(raw);
@@ -29,8 +31,8 @@
         return null;
       }
     },
-    write(record) { localStorage.setItem(STORAGE_KEY, JSON.stringify(record)); },
-    clear() { localStorage.removeItem(STORAGE_KEY); }
+    write(record) { betaStorage.setItem(STORAGE_KEY, JSON.stringify(record)); },
+    clear() { betaStorage.removeItem(STORAGE_KEY); }
   };
 
   let privateData = null;

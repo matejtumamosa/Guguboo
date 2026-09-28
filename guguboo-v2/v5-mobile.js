@@ -72,6 +72,7 @@
     tooth: "<path d='M7 3c-3 1-4 5-2 9l2 7c.4 1.4 2.3 1.3 2.6-.1L11 13h2l1.4 5.9c.3 1.4 2.2 1.5 2.6.1l2-7c2-4 1-8-2-9-2-.7-3 .5-5 .5S9 2.3 7 3Z'/>",
     activity: "<circle cx='8' cy='8' r='3'/><circle cx='16' cy='8' r='3'/><path d='M5 20v-2a4 4 0 0 1 6-3.5M19 20v-2a4 4 0 0 0-6-3.5M12 4v7'/>",
     plus: "<path d='M12 5v14M5 12h14'/>",
+    chat: "<path d='M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.3A2.5 2.5 0 0 1 4 13.5Z'/><path d='M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01'/>",
     pin: "<path d='m14.5 3.5 6 6-3.2 1.1-3.7 3.7-.2 4.1-1.7 1.7-3.3-5.5-5.5-3.3 1.7-1.7 4.1-.2 3.7-3.7Z'/><path d='m8.4 15.6-5 5'/>",
     more: "<circle cx='5' cy='5' r='1.5'/><circle cx='12' cy='5' r='1.5'/><circle cx='19' cy='5' r='1.5'/><circle cx='5' cy='12' r='1.5'/><circle cx='12' cy='12' r='1.5'/><circle cx='19' cy='12' r='1.5'/><circle cx='5' cy='19' r='1.5'/><circle cx='12' cy='19' r='1.5'/><circle cx='19' cy='19' r='1.5'/>"
   };
@@ -110,7 +111,8 @@
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
     family: { label: "Rodina", description: "Spoločné úlohy a zastúpenie", icon: "family", tier: "premium", view: "v5Utility" },
     profiles: { label: "Profily rodiny", description: "Mama, dieťa a blízke osoby", icon: "profile", tier: "free", view: "v5Profiles" },
-    ai: { label: "Otázka a odporúčanie", description: "Orientačný ďalší krok", icon: "sparkle", tier: "premium", view: "assistant" },
+    // V2: falošná „AI“ (kľúčové slová) nahradená GuguChatom – odpovede z overeného obsahu + akcie.
+    guguChat: { label: "GuguChat", description: "Opýtaj sa alebo vyrieš ďalší krok", icon: "chat", tier: "free", view: "guguChat" },
     care: { label: "Pomoc a starostlivosť", description: "Rady, choroba, noc a zdravotné záznamy", icon: "health", tier: "free", view: "v5Care" }
   };
 
@@ -243,7 +245,7 @@
   const defaultFavorites = phase => phase === "expecting"
     ? ["beforeBirth", "contacts", "shopping", "travel"]
     : ["privateSpace", "memories", "activities", "shopping"];
-  const legacyCareFeatures = new Set(["health", "urgent", "guide", "night", "ai"]);
+  const legacyCareFeatures = new Set(["health", "urgent", "guide", "night"]);
   const normalizeFavorites = (favorites, phase) => {
     const allowed = favoriteOptions(phase);
     const allowedSet = new Set(allowed);
@@ -376,7 +378,8 @@
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
     "<section class='view' id='v5Utility'><div class='v5-flow' id='v5UtilityContent'></div></section>",
-    "<section class='view' id='v5AdaptiveO'><div class='v5-flow' id='v5AdaptiveOContent'></div></section>"
+    "<section class='view' id='v5AdaptiveO'><div class='v5-flow' id='v5AdaptiveOContent'></div></section>",
+    "<section class='view' id='guguChat'><div class='v5-flow' id='guguChatContent'></div></section>"
   ].join(""));
 
   document.body.insertAdjacentHTML("beforeend", [
@@ -404,7 +407,7 @@
     "<button class='v5-icon-button' type='button' data-v5-close-drawer aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-drawer-scroll' id='v5DrawerScroll'></div>",
     "</aside></div>",
-    "<div class='v5-drawer-tip' id='v5DrawerTip'>Potiahnite spodné menu nahor a nájdete všetky funkcie.<button type='button' data-v5-dismiss-tip>Rozumiem</button></div>",
+    "<div class='v5-drawer-tip' id='v5DrawerTip'>Potiahni spodnú lištu nahor – nájdeš tam všetky aplikácie.<button type='button' data-v5-dismiss-tip>Rozumiem</button></div>",
     "<div class='sr-only' id='v5Live' aria-live='polite'></div>"
   ].join(""));
 
@@ -447,7 +450,7 @@
     sleep: ["Spánok", "Časovač a dnešný prehľad"],
     tracker: ["Denné záznamy", "Starostlivosť na jednom mieste"],
     guide: ["Sprievodca", "Krátka cesta krok po kroku"],
-    assistant: ["Otázka a odporúčanie", "Orientačná pomoc, nie diagnóza"],
+    guguChat: ["GuguChat", "Opýtaj sa – poradím a pomôžem to vybaviť"],
     urgent: ["Urgentná pomoc", "Varovné signály a kontakty"],
     calendar: ["Kalendár", "Spoločné rodinné termíny"],
     shopping: ["Nákup", "Spoločný zoznam rodiny"],
@@ -648,14 +651,32 @@
     ensureFavoritePhase();
     const active = activeFeatureId();
     const visibleFavorites = state.v5.favorites.filter(key => state.profile.status !== "expecting" || !["teeth", "activities"].includes(key));
-    byId("v5BottomBar").innerHTML = "<button class='v5-bottom-handle' type='button' data-v5-open-drawer aria-label='Otvoriť ďalšie aplikácie'><span aria-hidden='true'>⌃</span> Ďalšie aplikácie</button>" + visibleFavorites.slice(0, 4).map(key => {
+    // V2: krátke popisy, aby sa v lište nič neorezávalo („Moja prí…“). Celý názov ostáva v aria-label.
+    const shortLabels = {
+      beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Priestor", memories: "Chvíle",
+      travel: "Cesty", administration: "Úrady", products: "Výbava", checklists: "Zoznamy",
+      care: "Pomoc", profiles: "Profily", calendar: "Kalendár"
+    };
+    const favoriteButton = key => {
       const feature = features[key] || features.sleep;
       return [
         "<button class='v5-bottom-action", active === key ? " active" : "", "' type='button' data-v5-feature='", key,
         "' aria-label='", escapeHtml(feature.label), "'>",
-        "<span class='v5-nav-icon'>", icon(feature.icon), "</span><span>", escapeHtml(feature.label), "</span></button>"
+        "<span class='v5-nav-icon'>", icon(feature.icon), "</span><span>", escapeHtml(shortLabels[key] || feature.label), "</span></button>"
       ].join("");
-    }).join("");
+    };
+    // V2: GuguChat ako okrúhla „spúšť“ v strede lišty (rozhodnutie 28. 9.) – 2 obľúbené vľavo, 2 vpravo.
+    const chatButton = [
+      "<button class='v2-chat-shutter", active === "guguChat" ? " active" : "", "' type='button' data-v5-feature='guguChat' aria-label='Otvoriť GuguChat'>",
+      "<span class='v2-chat-shutter-ring' aria-hidden='true'><span class='v2-chat-shutter-core'>", icon("chat"), "</span></span>",
+      "<span class='v2-chat-shutter-label'>GuguChat</span></button>"
+    ].join("");
+    const favorites = visibleFavorites.slice(0, 4).map(favoriteButton);
+    byId("v5BottomBar").classList.add("v2-bottom-bar");
+    // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
+    // Pre čítačky obrazovky ostáva neviditeľné tlačidlo.
+    byId("v5BottomBar").innerHTML = "<button class='v5-sr-only' type='button' data-v5-open-drawer>Ďalšie aplikácie</button>" +
+      favorites.slice(0, 2).join("") + chatButton + favorites.slice(2).join("");
   }
 
   function featureButton(key) {
@@ -969,9 +990,12 @@
       "</strong><span>", nextReminder ? escapeHtml(new Date(nextReminder.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })) : "Pridať do kalendára",
       "</span></div><span class='v5-row-arrow'>›</span></button>"
     ].join("");
+    // V2: namiesto jednej pevnej karty „Dnes“ ukáže Journey Engine TERAZ / ČOSKORO (max 3 + 2).
+    const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
+      journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       calendarCard,
-      "<button class='v5-today-card' type='button' data-v5-today-action='", recommendationAction, "' aria-label='", escapeHtml(recommendation + " " + recommendationLabel), "'><span class='v5-icon'>", icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory"), "</span><div><small>Dnes</small><strong>", escapeHtml(recommendation), "</strong><span class='v5-today-hint'>", escapeHtml(recommendationLabel), "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>"
+      window.GugubooV2?.betaFooterHtml?.() || ""
     ].join("");
     target.innerHTML = [
       "<section class='v5-home-hero'><div class='v5-home-person'>", babyAvatar, "<div><h1>", escapeHtml(name), "</h1>", phaseLine ? "<p>" + phaseLine + "</p>" : "", "</div><button class='v5-mini-profile' type='button' data-v5-feature='profiles' aria-label='Otvoriť profil'>",
@@ -996,17 +1020,18 @@
 
   function renderFavoriteEditor() {
     return [
-      "<section class='v5-drawer-group' id='v5FavoriteEditor'><h3>Moje spodné menu · presuňte potiahnutím</h3>",
+      "<details class='v5-drawer-group v2-favorite-editor' id='v5FavoriteEditor'><summary><span class='v5-icon'>" + icon("pin") + "</span><span><strong>Upraviť spodné menu</strong><small>Vyber, ktoré 4 aplikácie chceš mať vždy po ruke</small></span></summary>",
+      "<p class='v2-favorite-hint'>Pozície 1–2 sú vľavo od GuguChatu, 3–4 vpravo. Poradie zmeníš aj potiahnutím.</p>",
       "<div class='v5-favorite-list'>",
       state.v5.favorites.map((key, index) => {
         const options = favoriteOptions(state.profile.status || "expecting").map(option => "<option value='" + option + "'" + (option === key ? " selected" : "") + ">" + escapeHtml(features[option].label) + "</option>").join("");
         return [
           "<div class='v5-favorite-item' draggable='true' data-v5-favorite-index='", index, "'>",
-          "<span class='v5-drag-handle' aria-hidden='true'>↕</span><strong>", escapeHtml(features[key].label),
-          "</strong><select aria-label='Funkcia ", index + 1, "' data-v5-favorite-select='", index, "'>", options, "</select></div>"
+          "<span class='v5-drag-handle' aria-hidden='true'>↕</span><strong>", index + 1, ". ", escapeHtml(features[key].label),
+          "</strong><select aria-label='Pozícia ", index + 1, " v spodnom menu' data-v5-favorite-select='", index, "'>", options, "</select></div>"
         ].join("");
       }).join(""),
-      "</div></section>"
+      "</div></details>"
     ].join("");
   }
 
@@ -1032,14 +1057,16 @@
         "<button class='v5-drawer-emotional-card' type='button' data-v5-feature='memories'><span class='v5-icon'>", icon("memory"), "</span><span><small>Spoločný príbeh</small><strong>Naše chvíle</strong><em>Dnešný moment · prvé razy · 100 dní a prvý rok</em></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
         "<div class='v5-drawer-grid v5-drawer-flat'>",
         postpartumDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
-        "</div>"
+        "</div>",
+        renderFavoriteEditor()
       ].join("");
       return;
     }
     scroll.innerHTML = [
       "<div class='v5-drawer-grid v5-drawer-flat v5-prenatal-drawer-grid'>",
       prenatalDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
-      "</div>"
+      "</div>",
+      renderFavoriteEditor()
     ].join("");
   }
 
@@ -3468,6 +3495,7 @@
       state.v5.favoritesCustomized = true;
       persist();
       renderDrawer();
+      byId("v5FavoriteEditor")?.setAttribute("open", "");
       renderBottomBar();
       renderHome();
       return announce("Spodné menu bolo upravené.");
@@ -3586,6 +3614,7 @@
     draggedFavorite = null;
     persist();
     renderDrawer();
+    byId("v5FavoriteEditor")?.setAttribute("open", "");
     renderBottomBar();
     renderHome();
     announce("Poradie spodného menu bolo zmenené.");
@@ -3629,6 +3658,7 @@
       if (next === "v5Prenatal") renderPrenatal();
       if (next === "v5Sounds") renderSounds();
       if (next === "v5AdaptiveO") renderAdaptiveO();
+      if (next === "guguChat") window.GugubooChat?.render?.();
       byId("v5DrawerTip").hidden = true;
     }
   });
@@ -3645,6 +3675,11 @@
       announce("Časovač zvuku prehrávanie ukončil.");
     }
   }, 1000);
+  // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
+  window.GugubooV5 = {
+    openFeature, routeTo, openHome, openQuickRecord, openChecklistCategory, openUrgentModal,
+    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features
+  };
   renderDrawer();
   renderAll();
   syncViewAccessibility();

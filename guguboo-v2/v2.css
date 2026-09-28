@@ -1,0 +1,344 @@
+/* GUGUBOO V2 – nové časti (Journey plán, GuguChat, beta). Používa tokeny z v5-mobile.css,
+   aby V2 pôsobila ako „moje Guguboo, len inteligentnejšie“ – vrátane nočného režimu. */
+
+/* ——— Spodná lišta: 2 obľúbené · GuguChat · 2 obľúbené ——— */
+body.v5-active #v5BottomBar.v2-bottom-bar {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 76px repeat(2, minmax(0, 1fr));
+  align-items: end;
+}
+
+body.v5-active #v5BottomBar.v2-bottom-bar {
+  min-height: calc(74px + env(safe-area-inset-bottom));
+  padding: 10px 10px calc(6px + env(safe-area-inset-bottom));
+  column-gap: 2px;
+}
+
+body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v5-bottom-action {
+  min-height: 52px;
+  font-size: 11px;
+  letter-spacing: -.01em;
+}
+
+.v2-chat-shutter {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  margin-top: -14px;
+  padding: 0 0 2px;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--v5-brand-dark);
+  background: none;
+  border: 0;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Vzor: spúšť fotoaparátu – biely prstenec a plný farebný stred, ktorý sa pri stlačení zmenší. */
+.v2-chat-shutter-ring {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  background: var(--v5-surface);
+  border: 3px solid color-mix(in srgb, var(--v5-brand) 26%, var(--v5-surface));
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(95, 79, 177, .28);
+}
+
+.v2-chat-shutter-core {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(145deg, #9483e6 0%, var(--v5-brand) 48%, var(--v5-peach) 100%);
+  border-radius: 50%;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+
+.v2-chat-shutter-core svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.v2-chat-shutter:active .v2-chat-shutter-core { transform: scale(.88); }
+.v2-chat-shutter:focus-visible .v2-chat-shutter-ring { outline: 3px solid var(--v5-brand); outline-offset: 3px; }
+.v2-chat-shutter.active .v2-chat-shutter-core { box-shadow: 0 0 0 4px var(--v5-brand-soft); }
+.v2-chat-shutter-label { line-height: 1; }
+
+/* ——— Editor spodného menu v zásuvke ——— */
+.v2-favorite-editor {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 17px;
+}
+
+.v2-favorite-editor summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.v2-favorite-editor summary::-webkit-details-marker { display: none; }
+.v2-favorite-editor summary > span:last-child { display: grid; gap: 2px; }
+.v2-favorite-editor summary small { color: var(--v5-muted); font-weight: 600; }
+.v2-favorite-hint { margin: 10px 0; color: var(--v5-muted); font-size: 13px; line-height: 1.4; }
+
+/* ——— Domov: plán TERAZ / ČOSKORO ——— */
+.v2-journey {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.v2-journey > header small {
+  color: var(--v5-brand-dark);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.v2-journey > header h2 { margin: 2px 0 0; font-size: 23px; letter-spacing: -.02em; }
+
+.v2-journey-card {
+  overflow: hidden;
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-radius);
+  box-shadow: 0 10px 28px rgba(58, 44, 83, .08);
+}
+
+.v2-journey-main {
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 16px;
+  align-items: center;
+  gap: 12px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: none;
+  border: 0;
+}
+
+.v2-journey-main .v5-icon { flex: 0 0 42px; width: 42px; height: 42px; border-radius: 14px; }
+.v2-journey-text { display: grid; flex: 1; gap: 3px; min-width: 0; }
+.v2-journey-text strong { font-size: 15px; line-height: 1.25; }
+.v2-journey-text small { color: var(--v5-muted); font-size: 13px; line-height: 1.35; }
+
+.v2-journey-moment { background: linear-gradient(135deg, color-mix(in srgb, var(--v5-peach) 22%, var(--v5-surface)), var(--v5-surface) 70%); }
+
+.v2-journey-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px 70px;
+  flex-wrap: wrap;
+}
+
+.v2-journey-actions button {
+  min-height: 36px !important;
+  padding: 6px 12px;
+  color: var(--v5-brand-dark);
+  background: var(--v5-brand-soft);
+  border: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.v2-journey-soon {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--v5-surface) 70%, transparent);
+  border: 1px dashed var(--v5-line);
+  border-radius: 20px;
+}
+
+.v2-journey-soon h3 { margin: 0 0 2px; color: var(--v5-muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+
+.v2-journey-soon button {
+  display: flex;
+  min-height: 44px;
+  padding: 6px 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: none;
+  border: 0;
+  font-weight: 700;
+}
+
+.v2-journey-soon em { flex: none; color: var(--v5-brand-dark); font-size: 12px; font-style: normal; font-weight: 800; }
+
+.v2-journey-later {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--v5-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.v2-journey-later button,
+.v2-beta-note button {
+  min-height: 40px !important;
+  padding: 6px 14px;
+  color: var(--v5-brand-dark);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.v2-journey-empty { margin: 0; padding: 16px; color: var(--v5-muted); background: var(--v5-surface); border-radius: var(--v5-radius); }
+
+.v2-beta-note {
+  display: flex;
+  margin: 18px 0 8px;
+  padding: 10px 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--v5-muted);
+  background: color-mix(in srgb, var(--v5-warning) 9%, var(--v5-surface));
+  border: 1px solid color-mix(in srgb, var(--v5-warning) 22%, transparent);
+  border-radius: 16px;
+  font-size: 12px;
+}
+
+.v2-beta-note strong { color: var(--v5-ink); }
+
+/* ——— GuguChat ——— */
+.v2-chat { display: grid; gap: 12px; padding-bottom: 12px; }
+
+.v2-chat-head { display: flex; align-items: center; gap: 12px; }
+.v2-chat-head img { width: 54px; height: auto; }
+.v2-chat-head div { display: grid; gap: 2px; }
+.v2-chat-head strong { font-size: 20px; }
+.v2-chat-head small { color: var(--v5-muted); font-size: 12px; line-height: 1.35; }
+
+.v2-chat-emergency {
+  display: flex;
+  padding: 8px 12px;
+  align-items: center;
+  gap: 8px;
+  color: var(--v5-danger);
+  background: color-mix(in srgb, var(--v5-danger) 8%, var(--v5-surface));
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.v2-chat-emergency span { flex: 1; }
+.v2-chat-emergency a {
+  display: inline-grid;
+  min-width: 52px;
+  min-height: 36px !important;
+  place-items: center;
+  color: #fff;
+  background: var(--v5-danger);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.v2-chat-log { display: grid; gap: 10px; }
+
+.v2-msg {
+  max-width: 92%;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  border-radius: 20px;
+}
+
+.v2-msg p { margin: 0; }
+
+.v2-msg-user {
+  justify-self: end;
+  color: #fff;
+  background: var(--v5-brand);
+  border-bottom-right-radius: 6px;
+}
+
+.v2-msg-bot {
+  justify-self: start;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 8px 22px rgba(58, 44, 83, .06);
+}
+
+.v2-level-urgent { border: 2px solid var(--v5-danger); }
+.v2-level-support { background: color-mix(in srgb, var(--v5-peach) 16%, var(--v5-surface)); }
+.v2-level-unknown { background: var(--v5-surface-soft); }
+
+.v2-chat-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+.v2-chat-action {
+  display: inline-flex;
+  min-height: 38px !important;
+  padding: 7px 13px;
+  align-items: center;
+  color: var(--v5-brand-dark);
+  background: var(--v5-brand-soft);
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.v2-chat-action-urgent { color: #fff; background: var(--v5-danger); }
+
+.v2-chat-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.v2-chat-chips::-webkit-scrollbar { display: none; }
+.v2-chat-chips button {
+  flex: none;
+  min-height: 38px !important;
+  padding: 7px 13px;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.v2-chat-form { display: flex; gap: 8px; }
+.v2-chat-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 14px;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 16px;
+  font: inherit;
+}
+
+.v2-chat-form .v5-primary { flex: none; min-height: 48px; }
+.v2-chat-disclaimer { margin: 0; color: var(--v5-muted); font-size: 12px; line-height: 1.4; }

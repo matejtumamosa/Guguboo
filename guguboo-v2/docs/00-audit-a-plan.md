@@ -1,5 +1,33 @@
 # GUGUBOO MASTER V2 – audit a produktový plán (A–L)
 
+> ## ✅ Rozhodnutia Samuela (28. 9. 2026) – majú prednosť pred textom nižšie
+> 1. **Názov asistenta: GuguChat** (nie „GugU“). V celom dokumente čítaj GugU = GuguChat.
+> 2. **Beta bez ukladania dát a bez servera.** Testerka otvorí appku, vyplní ju a pozerá. Po zatvorení
+>    sa dáta zahodia (sessionStorage); pri ďalšom otvorení je appka prázdna. Server, účty, synchronizácia
+>    a notifikácie mimo appky nie sú súčasťou bety.
+> 3. **Zdroje:** len voľne dostupné oficiálne/overené stránky (slovensko.sk, socpoist.sk, employment.gov.sk…),
+>    vždy so zdrojom a dátumom overenia.
+> 4. **V2 = samostatná aplikácia, len náhľad** (vetva `v2`), nenasadzuje sa na guguboo.com.
+> 5. **Matejov PR #3** – dobré zmeny (6 kľúčových krokov prípravy, hodnotové texty) preniesť do V2.
+> 6. **Odstrániť:** falošnú „AI“ (nahradí GuguChat), predajnú stránku plagát/video/fotokniha (možno neskôr).
+>    **Hlavný emocionálny moment: 100 dní spolu.**
+> 7. **Onboarding ponechá dátum narodenia rodiča** (vek prvorodičky ovplyvňuje odporúčania, napr. pohyb)
+>    **aj polohu** (lokálne služby a B2B partneri: plávanie s bábätkom, pediatri, fyzioterapeuti).
+>    → V2 musí pri oboch povedať prečo sa pýta; z polohy uchová len mesto/región, nie súradnice.
+> 8. **Spodné vysúvacie menu ostáva** (4 obľúbené + zásuvka), opraví sa výber obľúbených.
+>    **Do stredu lišty pribudne okrúhle tlačidlo GuguChat** (ako spúšť fotoaparátu v iPhone).
+>    → nahrádza návrh „3 záložky Domov/GugU/Moje“ z kap. E.
+> 9. **Kruh pohody:** 3 časti podľa fázy; **pracovné/organizačné povinnosti oddeliť od psychickej
+>    pohody matky** (Kruh = len pohoda; povinnosti = plán). Obsah Kruhu treba ešte vypracovať – V2 dá návrh.
+> 10. **GuguChat najprv bez AI** (overené odpovede + akcie) – OK.
+> 11. **Tehotenstvo:** týždenne krátko Bábätko + Ty; zdravie/príprava/úrady podľa míľnikov – OK.
+> 12. **Platobný model** sa rieši až keď bude appka hotová (kap. K/O sú len podklad).
+>
+> **Dôsledok pre techniku (mení kap. C2):** keďže sa ponecháva väčšina súčasných vzorov (menu, Kruh,
+> moduly) a beta nič neukladá, V2 sa stavia **postupným upgradom východiskovej kópie** v `guguboo-v2/`
+> (brief bod 6 „UPGRADE, NIE REDESIGN“), nie novou kostrou. Nové časti pribúdajú ako samostatné súbory
+> (Journey Engine, GuguChat, obsah týždňov, znalostná báza); mŕtve vrstvy sa odstraňujú postupne s testom.
+
 Verzia 1.0 · 28. 9. 2026 · pripravené na schválenie pred implementáciou (brief, bod 43)
 
 Základ auditu: produkčná verzia **V7.6** (GitHub `main`, commit `09468b5`, zhodná s guguboo.com),
