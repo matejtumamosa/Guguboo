@@ -470,3 +470,31 @@ body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v
 
 /* Odkaz na zdroj: globálne pravidlo .view a {min-height:44px} ho inak natiahne a čiara odskočí od textu. */
 .v2-source { min-height: 0 !important; padding: 2px 0; border-bottom: 0; text-decoration: underline dotted; text-underline-offset: 3px; line-height: 1.4; }
+
+/* ——— Úchytka zásuvky (bez textu) – nad stredom lišty, nad tlačidlom GuguChat ——— */
+body.v5-active #v5BottomBar.v2-bottom-bar .v2-chat-shutter { margin-top: -6px; }
+.v2-bar-grip {
+  position: absolute;
+  z-index: 4;
+  top: -22px;
+  left: 50%;
+  display: grid;
+  width: 64px;
+  min-height: 20px !important;
+  height: 20px;
+  padding: 0;
+  place-items: center;
+  transform: translateX(-50%);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.v2-bar-grip span {
+  width: 40px;
+  height: 5px;
+  background: color-mix(in srgb, var(--v5-muted) 45%, transparent);
+  border-radius: 999px;
+  transition: width .15s ease, background .15s ease;
+}
+.v2-bar-grip:hover span, .v2-bar-grip:focus-visible span { width: 52px; background: var(--v5-brand); }
+.v2-bar-grip:focus-visible { outline: 2px solid var(--v5-brand); outline-offset: 2px; border-radius: 999px; }

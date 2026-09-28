@@ -700,7 +700,8 @@
     byId("v5BottomBar").classList.add("v2-bottom-bar");
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
     // Pre čítačky obrazovky ostáva neviditeľné tlačidlo.
-    byId("v5BottomBar").innerHTML = "<button class='v5-sr-only' type='button' data-v5-open-drawer>Ďalšie aplikácie</button>" +
+    // Nenápadná úchytka (čiarka bez textu) – na počítači sa na ňu klikne, na mobile sa lišta potiahne.
+    byId("v5BottomBar").innerHTML = "<button class='v2-bar-grip' type='button' data-v5-open-drawer aria-label='Ďalšie aplikácie' title='Ďalšie aplikácie'><span aria-hidden='true'></span></button>" +
       favorites.slice(0, 2).join("") + chatButton + favorites.slice(2).join("");
   }
 
@@ -3630,6 +3631,10 @@
     if (drawerPointerStart && drawerPointerStart.y - event.clientY > 38 && Math.abs(drawerPointerStart.x - event.clientX) < 90) openDrawer();
     drawerPointerStart = null;
   });
+  // Na počítači: otočenie kolieskom myši nahor nad lištou otvorí zásuvku (ako potiahnutie prstom).
+  byId("v5BottomBar").addEventListener("wheel", event => {
+    if (event.deltaY < -15) openDrawer();
+  }, { passive: true });
 
   byId("v5Drawer").addEventListener("pointerdown", event => {
     drawerPanelStart = { y: event.clientY, scrollTop: byId("v5DrawerScroll").scrollTop };
