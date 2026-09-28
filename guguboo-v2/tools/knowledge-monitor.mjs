@@ -116,8 +116,8 @@ function sentenceDiff(before, after) {
   const split = text => new Set(text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 12));
   const a = split(before), b = split(after);
   return {
-    removed: [...a].filter(s => !b.has(s)).slice(0, 15),
-    added: [...b].filter(s => !a.has(s)).slice(0, 15)
+    removed: [...a].filter(s => !b.has(s)).slice(0, 6),
+    added: [...b].filter(s => !a.has(s)).slice(0, 6)
   };
 }
 
@@ -165,13 +165,14 @@ async function main() {
   };
   const byRef = new Map();
   const unreachable = new Set(failures.map(failure => failure.url));
+  const unverifiable = new Set(); // citáty, ktorých zdroj sa nedal načítať – hlásia sa ako nedostupný zdroj
   for (const entry of evidence) {
-    if (unreachable.has(entry.url)) continue; // nedostupný zdroj sa hlási zvlášť, nie ako chýbajúci citát
     const key = entry.ref + "|" + entry.quote;
+    if (unreachable.has(entry.url)) { unverifiable.add(key); continue; }
     const found = (await snapshot(entry.url)).includes(loose(entry.quote));
     byRef.set(key, (byRef.get(key) || false) || found);
   }
-  const missingEvidence = [...byRef.entries()].filter(([, found]) => !found).map(([key]) => key.split("|"));
+  const missingEvidence = [...byRef.entries()].filter(([key, found]) => !found && !unverifiable.has(key)).map(([key]) => key.split("|"));
   if (missingEvidence.length) {
     mismatches.push(...missingEvidence.slice(0, 40).map(([ref, quote]) => ({ id: ref, title: "citát", missing: ["„" + quote.slice(0, 120) + "“"] })));
   }

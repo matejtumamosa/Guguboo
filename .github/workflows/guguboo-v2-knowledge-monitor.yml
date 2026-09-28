@@ -67,5 +67,7 @@ jobs:
           git push origin v2
           TITLE="Zmena v oficiálnych zdrojoch $(date +%F)"
           if [ "$CRITICAL" = "true" ]; then TITLE="CRITICAL CHANGE DETECTED – $TITLE"; fi
+          # GitHub prijme max. 65 536 znakov – celý report ostáva v repe (content/changes/).
+          { head -c 60000 "$REPORT"; printf "\n\n…celý report: %s\n" "$REPORT"; } > /tmp/issue-body.md
           EXISTING=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
-          if [ -n "$EXISTING" ]; then gh issue comment "$EXISTING" --body-file "$REPORT"; else gh issue create --title "$TITLE" --body-file "$REPORT"; fi
+          if [ -n "$EXISTING" ]; then gh issue comment "$EXISTING" --body-file /tmp/issue-body.md; else gh issue create --title "$TITLE" --body-file /tmp/issue-body.md; fi
