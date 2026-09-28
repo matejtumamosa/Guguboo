@@ -85,7 +85,7 @@ function collectEvidence(content) {
 }
 
 // Tolerantné porovnanie (entity, úvodzovky, medzery, veľkosť písmen) – obsah musí sedieť, nie formátovanie.
-const loose = text => String(text).normalize("NFC").toLowerCase().replace(/&[a-z#0-9]+;/g, " ").replace(/[^\p{L}\p{N}%€,.]+/gu, " ").replace(/\s+/g, " ").trim();
+const loose = text => String(text).normalize("NFC").toLowerCase().replace(/&[a-z#0-9]+;/g, " ").replace(/[^\p{L}\p{N},]+/gu, " ").replace(/\s+/g, " ").trim();
 
 // Peňažné sumy a čísla s desatinnou čiarkou z položky (napr. „829,86 €“, „2 254,70“).
 function moneyValues(item) {
@@ -98,8 +98,7 @@ function normalize(html) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<(nav|footer|header)[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
+   .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&#\d+;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -165,7 +164,9 @@ async function main() {
     return snapshotCache.get(url);
   };
   const byRef = new Map();
+  const unreachable = new Set(failures.map(failure => failure.url));
   for (const entry of evidence) {
+    if (unreachable.has(entry.url)) continue; // nedostupný zdroj sa hlási zvlášť, nie ako chýbajúci citát
     const key = entry.ref + "|" + entry.quote;
     const found = (await snapshot(entry.url)).includes(loose(entry.quote));
     byRef.set(key, (byRef.get(key) || false) || found);

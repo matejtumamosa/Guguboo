@@ -19,7 +19,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  issues: write
 
 concurrency:
   group: guguboo-v2-knowledge-monitor
@@ -51,20 +51,21 @@ jobs:
           git commit -m "Monitoring zdrojov $(date +%F): bez zmeny pravidiel (aktualizovaný dátum kontroly)"
           git push origin v2
 
-      - name: Otvoriť PR na kontrolu zmeny
+      # Zmena zdroja nemení obsah appky – uloží sa len snímok a report a otvorí sa úloha (issue)
+      # na kontrolu človekom. (Actions v tomto repe nesmie zakladať PR; issue povolenie nepotrebuje.)
+      - name: Nahlásiť zmenu na kontrolu (issue)
         if: steps.monitor.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPORT: ${{ steps.monitor.outputs.report }}
           CRITICAL: ${{ steps.monitor.outputs.critical }}
         run: |
-          BRANCH="knowledge/$(date +%F)"
           git config user.name "guguboo-knowledge-bot"
           git config user.email "guguboo-knowledge-bot@users.noreply.github.com"
-          git checkout -b "$BRANCH"
           git add guguboo-v2/content/snapshots guguboo-v2/content/changes
-          git commit -m "Monitoring zdrojov $(date +%F): zistená zmena – čaká na kontrolu"
-          git push -f origin "$BRANCH"
+          git diff --cached --quiet || git commit -m "Monitoring zdrojov $(date +%F): zistená zmena – čaká na kontrolu"
+          git push origin v2
           TITLE="Zmena v oficiálnych zdrojoch $(date +%F)"
           if [ "$CRITICAL" = "true" ]; then TITLE="CRITICAL CHANGE DETECTED – $TITLE"; fi
-          gh pr create --base v2 --head "$BRANCH" --title "$TITLE" --body-file "$REPORT" || gh pr edit "$BRANCH" --body-file "$REPORT"
+          EXISTING=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then gh issue comment "$EXISTING" --body-file "$REPORT"; else gh issue create --title "$TITLE" --body-file "$REPORT"; fi
