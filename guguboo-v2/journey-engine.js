@@ -52,7 +52,7 @@
       id: "preg.sleep-place", stage: "pregnancy", type: "task", priority: 65,
       window: { anchor: "week", from: 28, to: 38 }, soonLeadDays: 14,
       title: "Priprav miesto na spanie bábätka",
-      why: "Doma pripravené, kým ešte máte na to silu.",
+      why: "Doma pripravené, kým ešte máš na to silu.",
       feature: "beforeBirth", prep: "equipment", checkAny: ["equip-sleep-bed", "v5-home-sleep"]
     },
     {

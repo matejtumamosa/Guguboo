@@ -160,7 +160,7 @@
       weekHtml(ctx),
       "<section class='v2-journey' aria-label='Tvoj plán'>",
       "<header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
-      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je všetko podstatné hotové. Užívajte si to ❤️</p>",
+      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je všetko podstatné hotové. Užívaj si to ❤️</p>",
       soon.length ? [
         "<div class='v2-journey-soon'><h3>Čoskoro</h3>",
         soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
@@ -298,7 +298,7 @@
 
     // 1. Bezpečnosť má vždy prednosť.
     if (has(t, ["nedycha", "bezvedom", "nereaguje", "modrie", "modra ", "krc", "dusi sa", "opuch jazyka", "opuch pier", "vazny uraz"])) {
-      return { level: "urgent", text: "Pri tomto je najlepšie hneď sa spojiť s odborníkom.\n\nZavolaj 155 – operátor ťa pokojne prevedie tým, čo robiť. Priprav si adresu, kde ste.", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
+      return { level: "urgent", text: "Pri tomto je najlepšie hneď sa spojiť s odborníkom.\n\nZavolaj 155 – operátor ťa pokojne prevedie tým, čo robiť. Priprav si adresu, kde si.", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
     }
     if (has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "kontrakci"])) {
       return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
