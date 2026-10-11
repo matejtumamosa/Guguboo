@@ -678,3 +678,10 @@ body.v5-active.night .v2-o-label rect { fill: rgba(30, 27, 40, .9); }
 body.v5-active.night .v2-summary-stats div { background: rgba(255, 255, 255, .05); }
 .v2-summary-block h3 svg { fill: none; stroke: var(--v5-brand-dark, #5b4ca3); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .v2-summary-time select { width: auto; min-width: 96px; }
+
+/* ——— Onboarding: krajina – jeden výber, poloha len ako voliteľná skratka ——— */
+.v2-location-card { display: grid; gap: 10px; }
+.v2-location-card #welcomeLocateBtn { min-height: 36px; font-size: 13px; }
+.v2-location-card #welcomeLocateBtn::before { content: "⌖ "; text-decoration: none; }
+.v2-location-card .welcome-location-status { margin: 0; padding-top: 10px; border-top: 1px solid var(--v5-line, rgba(101, 87, 132, .12)); font-size: 12px; }
+.v2-location-card .welcome-location-status:empty { display: none; }

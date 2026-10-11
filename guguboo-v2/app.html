@@ -3100,7 +3100,7 @@
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.4.0">
+  <link rel="stylesheet" href="v2.css?v=2.4.2">
 </head>
 <body>
   <div class="app" id="app">
@@ -3215,13 +3215,11 @@
 
             <div class="welcome-step welcome-story-step" data-welcome-step="3">
               <div class="welcome-location-step">
-                <h2><span data-welcome-personal-name>Ahoj</span>. Pokračujeme miestom.</h2>
-                <p class="welcome-story-lead">Stačí krajina — zvyšok appka doladí sama.</p>
-                <aside class="welcome-location-card" aria-label="Nastavenie polohy alebo krajiny">
-                  <button class="secondary" type="button" id="welcomeLocateBtn">Povoliť polohu</button>
-                  <button class="welcome-text-button" type="button" id="welcomeManualCountryBtn" aria-expanded="false" aria-controls="welcomeManualCountry">Vybrať krajinu ručne</button>
-                  <div class="welcome-manual-country hidden" id="welcomeManualCountry">
-                    <label>Krajina pobytu
+                <h2><span data-welcome-personal-name>Ahoj</span>. Kde žiješ?</h2>
+                <p class="welcome-story-lead">Podľa krajiny ti ukážeme správne úrady, príspevky a kontakty na pomoc.</p>
+                <aside class="welcome-location-card v2-location-card" aria-label="Krajina, kde žiješ">
+                  <div class="welcome-manual-country" id="welcomeManualCountry">
+                    <label><span class="v5-sr-only">Krajina</span>
                       <select id="welcomeCountry" autocomplete="country">
                         <option value="AT">Rakúsko</option><option value="BE">Belgicko</option><option value="BG">Bulharsko</option>
                         <option value="HR">Chorvátsko</option><option value="CY">Cyprus</option><option value="CZ">Česko</option>
@@ -3235,7 +3233,8 @@
                       </select>
                     </label>
                   </div>
-                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"><span aria-hidden="true">✓</span><span><b>Slovensko.</b> Prispôsobíme dôležité kontakty, miestne zdroje aj cestovanie.</span></p>
+                  <button class="welcome-text-button" type="button" id="welcomeLocateBtn">Zistiť podľa polohy</button>
+                  <p class="welcome-location-status" id="countrySetupSummary" role="status" aria-live="polite"></p>
                   <p class="welcome-location-source hidden" id="welcomeLocationSource">Určenie krajiny: © OpenStreetMap contributors</p>
                   <p class="hidden" id="countryCopy"></p>
                 </aside>
@@ -7930,10 +7929,10 @@ Otázky:
       if ($("babyCountry")) $("babyCountry").value = country;
       if ($("babyCountryDisplay")) $("babyCountryDisplay").textContent = `${copy.countryName} · lokalizácia sa nastavila pri prvom spustení`;
       if ($("countrySetupSummary")) {
-        const ready = country === "SK" || country === "CZ";
+        const ready = country === "SK"; // overený obsah (úrady, príspevky) je zatiaľ len pre SK
         $("countrySetupSummary").innerHTML = ready
-          ? `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Prispôsobíme dôležité kontakty, miestne zdroje aj cestovanie.</span>`
-          : `<span aria-hidden="true">✓</span><span><b>${countryName}.</b> Použijeme európsky základ; miestny obsah budeme postupne dopĺňať.</span>`;
+          ? `<span aria-hidden="true">✓</span><span>Úrady, príspevky aj kontakty na pomoc máme pre ${countryName} overené.</span>`
+          : `<span aria-hidden="true">✓</span><span>${countryName}: zatiaľ ukážeme európsky základ, miestny obsah dopĺňame.</span>`;
       }
       if ($("countryCopy")) {
         $("countryCopy").textContent = `Vyberiem štát → Guguboo sa nastaví podľa miesta, kde žijem. Zvolená krajina: ${countryName}.`;
@@ -8020,7 +8019,7 @@ Otázky:
         } finally {
           if (button) {
             button.disabled = false;
-            button.textContent = "Povoliť polohu";
+            button.textContent = "Zistiť podľa polohy";
           }
         }
       }, error => {
@@ -8030,7 +8029,7 @@ Otázky:
         showWelcomeManualCountry(message);
         if (button) {
           button.disabled = false;
-          button.textContent = "Povoliť polohu";
+          button.textContent = "Zistiť podľa polohy";
         }
       }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 });
     }
@@ -9682,7 +9681,7 @@ Otázky:
   <script src="v4-upgrade.js?v=6.10"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
   <script src="v5-mobile.js?v=2.4.1"></script>
-  <script src="guguchat.js?v=2.3.1"></script>
+  <script src="guguchat.js?v=2.4.2"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>
   <script src="activities-data.js?v=1"></script>

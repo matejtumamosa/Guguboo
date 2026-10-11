@@ -84,6 +84,15 @@
   // doslovným citátom zo zdroja a citát prešiel automatickou kontrolou (verification_status "evidence-verified").
   const evidenceVerified = module => module?.meta?.verification_status === "evidence-verified";
 
+  // Porovnanie veľkosti ukazujeme iba s okrúhlym ovocím a zeleninou (rozhodol Samuel 11. 10.).
+  // Podlhovasté porovnania zo zdroja (banán, uhorka…) sa vynechajú a ostane len overená dĺžka –
+  // nič sa nenahrádza vymysleným ovocím.
+  const NOT_ROUND = ["banán", "mrkv", "batat", "mango", "kukuričn", "cuket", "uhork", "baklažán", "butternut", "zeler", "rímsk", "pór", "rebarbor", "avokád", "ananás"];
+  function roundOnlySize(text) {
+    return String(text || "").replace(/\s*\(([^)]*)\)/, (match, inside) =>
+      NOT_ROUND.some(word => inside.toLowerCase().includes(word)) ? "" : match).trim();
+  }
+
   // Týždeň z overeného obsahu (každá veta má citát v `evidence`) → jednoduchý tvar pre UI.
   function pregnancyWeek(weekNumber) {
     const module = content().pregnancyWeeks;
@@ -92,7 +101,7 @@
     const raw = module.weeks?.[week];
     if (!raw) return null;
     const text = value => Array.isArray(value) ? value.map(item => item?.sk).filter(Boolean).join(" ") : value?.sk || "";
-    const entry = { week, size: text(raw.size), baby: text(raw.baby), you: text(raw.you), tip: text(raw.tip), milestone: text(raw.milestone), source_urls: raw.source_url ? [raw.source_url] : [] };
+    const entry = { week, size: roundOnlySize(text(raw.size)), baby: text(raw.baby), you: text(raw.you), tip: text(raw.tip), milestone: text(raw.milestone), source_urls: raw.source_url ? [raw.source_url] : [] };
     return entry.baby || entry.you ? entry : null;
   }
 
