@@ -953,10 +953,10 @@
       centerButton,
       completedSteps ? "<span class='v5-o-celebration' aria-hidden='true'>✦</span>" : "",
       "</div><div class='v5-o-legend'>",
-      sections.map(section => {
+      sections.map((section, index) => {
         const value = progress[section.id];
         return [
-          "<button class='v5-o-legend-item v5-o-", section.id, "' type='button' ", wellbeing ? "data-v5-o-section" : "data-v5-org-section", "='", section.id, "'>",
+          "<button class='v5-o-legend-item v2-o-legend-", index + 1, " v5-o-", section.id, "' type='button' ", wellbeing ? "data-v5-o-section" : "data-v5-org-section", "='", section.id, "'>",
           "<span class='v5-o-dot' aria-hidden='true'></span><span><strong>", escapeHtml(section.shortLabel), "</strong><small>", wellbeing ? escapeHtml(section.period) + " · " : "", value.done, " z ", value.total, "</small></span><b aria-label='", value.done, " z ", value.total, "'>", value.done ? value.done + "/" + value.total : "›", "</b></button>"
         ].join("");
       }).join(""),
