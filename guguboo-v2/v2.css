@@ -498,3 +498,42 @@ body.v5-active #v5BottomBar.v2-bottom-bar .v2-chat-shutter { margin-top: -6px; }
 }
 .v2-bar-grip:hover span, .v2-bar-grip:focus-visible span { width: 52px; background: var(--v5-brand); }
 .v2-bar-grip:focus-visible { outline: 2px solid var(--v5-brand); outline-offset: 2px; border-radius: 999px; }
+
+/* ——— Číslo týždňa namiesto ovocného obrázka (pred narodením; po narodení je tu fotka dieťaťa) ——— */
+.v2-week-badge {
+  display: inline-grid !important;
+  place-content: center;
+  gap: 1px;
+  line-height: 1 !important;
+  color: var(--v5-brand-dark, #5b4ca3);
+  background: linear-gradient(145deg, #f3eeff, #fff1ea) !important;
+  background-image: linear-gradient(145deg, #f3eeff, #fff1ea) !important;
+  text-align: center;
+}
+.v2-week-badge b { font: 900 22px/1 Nunito, sans-serif; letter-spacing: -.02em; }
+.v2-week-badge small { font: 800 8px/1 Nunito, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted, #7a7383); }
+.welcome-fruit-avatar-image.v2-week-badge b { font-size: 26px; }
+.fruit-icon.v2-week-badge { width: 88px; height: 88px; margin-inline: auto; border-radius: 28px; box-shadow: 0 12px 28px rgba(72, 55, 100, .12); }
+.fruit-icon.v2-week-badge b { font-size: 34px; }
+.baby-growth-fruit.v2-week-badge { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; }
+.baby-growth-fruit.v2-week-badge b { font-size: 12px; }
+.baby-growth-fruit.v2-week-badge small { display: none; }
+
+/* Tehotenská knižka: veľkosť z NHS priamo v hlavičke (bez obrázka ovocia). */
+.v5-book-hero { grid-template-columns: minmax(0, 1fr); }
+.v2-book-size {
+  display: grid;
+  gap: 3px;
+  width: fit-content;
+  margin-top: 12px !important;
+  padding: 9px 12px;
+  color: var(--v5-ink) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.3;
+  background: rgba(255, 255, 255, .72);
+  border-radius: 14px 14px 14px 5px;
+}
+.v2-book-size span { color: var(--v5-brand-dark, #5b4ca3); font-size: 9px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+/* Okienko po ťuknutí na týždeň: bez druhého odznaku (ten istý je hneď nad ním). */
+.v5-avatar-popover { grid-template-columns: minmax(0, 1fr); }

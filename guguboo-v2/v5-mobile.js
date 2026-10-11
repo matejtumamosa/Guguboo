@@ -980,18 +980,20 @@
       text: todayMemory ? "Dnešný moment je uložený. Môžeš si ho pozrieť alebo pridať ďalší." : "Pridaj jednu fotku alebo krátku vetu."
     };
     const phaseLine = "";
-    const pregnancyAvatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, label: "mango", position: "0% 100%" };
+    // Pred narodením číslo týždňa (nie ovocie – nesedelo s presnou veľkosťou z NHS), po narodení fotka dieťaťa.
+    const pregnancyAvatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, size: "" };
+    const weekBadgeInner = "<b>" + escapeHtml(pregnancyAvatar.week || "?") + "</b><small>týždeň</small>";
     const babyAvatar = expecting
       ? [
-          "<button class='v5-baby-avatar v5-fruit-avatar' type='button' data-v5-pregnancy-avatar aria-expanded='false' aria-controls='v5AvatarPopover' aria-label='Pozrieť veľkosť bábätka' style='background-position:", pregnancyAvatar.position, "'><span class='v5-sr-only'>Ovocný avatar</span></button>"
+          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-pregnancy-avatar aria-expanded='false' aria-controls='v5AvatarPopover' aria-label='Pozrieť veľkosť bábätka'>", weekBadgeInner, "</button>"
         ].join("")
       : state.profile.photo
         ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
         : "<button class='v5-baby-avatar v5-empty-avatar' type='button' data-v5-child-avatar aria-label='Nahrať fotografiu dieťaťa'>" + icon("baby") + "<span class='v5-sr-only'>Nahrať fotografiu</span></button>";
     const avatarPopover = expecting ? [
       "<div class='v5-avatar-popover' id='v5AvatarPopover' hidden>",
-      "<span class='v5-avatar-popover-photo v5-fruit-avatar' role='img' aria-label='", escapeHtml(pregnancyAvatar.label), "' style='background-position:", pregnancyAvatar.position, "'></span>",
-      "<div><small>", pregnancyAvatar.week ? escapeHtml(pregnancyAvatar.week + ". týždeň") : "Ovocný avatar", "</small><strong>", escapeHtml(name), " je veľký približne ako ", escapeHtml(pregnancyAvatar.label), ".</strong>",
+      "<div><small>", pregnancyAvatar.week ? escapeHtml(pregnancyAvatar.week + ". týždeň") : "Týždeň tehotenstva", "</small><strong>",
+      pregnancyAvatar.size ? escapeHtml(name + " meria " + pregnancyAvatar.size + ".") : pregnancyAvatar.week ? escapeHtml(name + " rastie vlastným tempom.") : "Doplň termín pôrodu a ukážeme veľkosť bábätka.", "</strong>",
       "<button type='button' data-v5-feature='pregnancy'>Pozrieť rast bábätka <span aria-hidden='true'>→</span></button></div></div>"
     ].join("") : "";
     const pregnancyWeek = Number(pregnancyAvatar.week || 0);
@@ -2564,7 +2566,7 @@
   function renderPregnancyBook() {
     const target = byId("v5PregnancyBookContent");
     if (!target) return;
-    const avatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, label: "bábätko", position: "0% 100%" };
+    const avatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, size: "" };
     const week = Number(avatar.week || 0);
     const section = state.v5.pregnancyBookSection || "home";
     const data = pregnancyBookData(week);
@@ -2576,8 +2578,9 @@
         .filter(item => new Date(item.date).getTime() >= Date.now())
         .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
       target.innerHTML = [
-        "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplň termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p></div>",
-        "<span class='v5-book-fruit v5-fruit-avatar' role='img' aria-label='Orientačná veľkosť: ", escapeHtml(avatar.label), "' style='background-position:", escapeHtml(avatar.position), "'></span></section>",
+        "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplň termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p>",
+        avatar.size ? "<p class='v2-book-size'><span>Veľkosť bábätka</span>" + escapeHtml(avatar.size) + "</p>" : "",
+        "</div></section>",
         "<div class='v5-book-main-grid'>",
         "<button type='button' data-v5-book-section='baby'><span class='v5-icon'>", icon("baby"), "</span><strong>Bábätko</strong><small>Vývoj v tomto období</small></button>",
         "<button type='button' data-v5-book-section='mother'><span class='v5-icon'>", icon("health"), "</span><strong>Mama</strong><small>Zmeny a pohoda</small></button>",

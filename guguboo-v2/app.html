@@ -3100,7 +3100,7 @@
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.2.1">
+  <link rel="stylesheet" href="v2.css?v=2.2.2">
 </head>
 <body>
   <div class="app" id="app">
@@ -3277,10 +3277,10 @@
                 </label>
               </div>
               <button class="welcome-fruit-avatar-card expecting-field active" id="welcomeFruitAvatarChoice" type="button" aria-pressed="true">
-                <span class="pregnancy-fruit-photo welcome-fruit-avatar-image" id="welcomeFruitAvatarImage" role="img" aria-label="Ovocný avatar bábätka"></span>
+                <span class="v2-week-badge welcome-fruit-avatar-image" id="welcomeFruitAvatarImage" role="img" aria-label="Týždeň tehotenstva"><b>?</b><small>týždeň</small></span>
                 <span class="welcome-fruit-avatar-copy">
-                  <small id="welcomeFruitAvatarWeek">Ovocný avatar</small>
-                  <strong id="welcomeFruitAvatarName">Bábätko rastie spolu s avatarom</strong>
+                  <small id="welcomeFruitAvatarWeek">Týždeň tehotenstva</small>
+                  <strong id="welcomeFruitAvatarName">Bábätko rastie týždeň po týždni</strong>
                   <span id="welcomeFruitAvatarHint">Podľa termínu ukážeme jeho približnú veľkosť.</span>
                 </span>
                 <span class="welcome-fruit-avatar-check" aria-hidden="true">✓</span>
@@ -3309,10 +3309,10 @@
 
               <section class="v5-home-hero welcome-finish-preview" aria-labelledby="welcomeFinishBabyName">
                 <div class="v5-home-person">
-                  <span class="v5-baby-avatar v5-fruit-avatar" id="welcomeFinishAvatar" role="img" aria-label="Ovocný avatar bábätka"></span>
+                  <span class="v5-baby-avatar v2-week-badge" id="welcomeFinishAvatar" role="img" aria-label="Týždeň tehotenstva"></span>
                   <div>
                     <h3 id="welcomeFinishBabyName">Bábätko</h3>
-                    <p id="welcomeFinishBabyMeta">Ovocný avatar</p>
+                    <p id="welcomeFinishBabyMeta">Týždeň tehotenstva</p>
                   </div>
                 </div>
                 <dl class="v5-glance-strip">
@@ -6493,39 +6493,42 @@
       return Math.max(1, Math.min(42, 40 - Math.floor(dueDays / 7)));
     }
 
-    const pregnancyOvalSizes = [
-      [6, "oliva", 0, "Začiatok veľkej cesty."],
-      [10, "slivka", 1, "Prvé praktické poznámky začínajú dávať zmysel."],
-      [14, "kiwi", 2, "Čas pomaly ukladať kontakty a dôležité miesta."],
-      [18, "citrón", 3, "Výbavu môžeš skladať pokojne a bez nákupnej paniky."],
-      [22, "mango", 4, "Polovica cesty je vhodná na jemné upratanie plánov."],
-      [28, "papája", 5, "Tretí trimester sa blíži. Plán je dôležitejší než tlak."],
-      [34, "oválny melón", 6, "Kontakty, taška a cesta domov už môžu mať svoje miesto."],
-      [42, "vodný melón", 7, "Bábätko je blízko. Teraz je najdôležitejší pokoj a opora."]
+    // V2: ovocný obrázok (8 obrázkov na celé tehotenstvo) nahradilo číslo týždňa – obrázok nesedel
+    // s presnou veľkosťou z NHS („citrón“ hore, „paprika“ v texte). Veľkosť sa berie len z overeného obsahu.
+    const pregnancyPhaseMessages = [
+      [6, "Začiatok veľkej cesty."],
+      [10, "Prvé praktické poznámky začínajú dávať zmysel."],
+      [14, "Čas pomaly ukladať kontakty a dôležité miesta."],
+      [18, "Výbavu môžeš skladať pokojne a bez nákupnej paniky."],
+      [22, "Polovica cesty je vhodná na jemné upratanie plánov."],
+      [28, "Tretí trimester sa blíži. Plán je dôležitejší než tlak."],
+      [34, "Kontakty, taška a cesta domov už môžu mať svoje miesto."],
+      [42, "Bábätko je blízko. Teraz je najdôležitejší pokoj a opora."]
     ];
 
-    function pregnancySizeData(week) {
-      const sizes = pregnancyOvalSizes;
-      return sizes.find(([maxWeek]) => week <= maxWeek) || sizes[sizes.length - 1];
+    function pregnancyPhaseMessage(week) {
+      const messages = pregnancyPhaseMessages;
+      return (messages.find(([maxWeek]) => week <= maxWeek) || messages[messages.length - 1])[1];
     }
 
-    function pregnancyFruitPosition(index) {
-      return ["0% 0%", "33.333% 0%", "66.667% 0%", "100% 0%", "0% 100%", "33.333% 100%", "66.667% 100%", "100% 100%"][index] || "0% 0%";
+    // Presná veľkosť pre týždeň zo zdroja NHS, napr. „približne 14,2 cm (ako paprika)“.
+    function pregnancySizeText(week) {
+      return week ? window.GugubooV2?.pregnancyWeek?.(week)?.size || "" : "";
     }
 
-    function applyPregnancyFruit(element, size) {
+    function applyPregnancyWeekBadge(element, week) {
       if (!element) return;
-      element.textContent = "";
-      element.classList.add("pregnancy-fruit-photo");
-      element.style.backgroundPosition = pregnancyFruitPosition(size ? size[2] : 4);
+      element.classList.remove("pregnancy-fruit-photo", "v5-fruit-avatar");
+      element.classList.add("v2-week-badge");
+      element.style.backgroundPosition = "";
+      element.innerHTML = week ? `<b>${week}</b><small>týždeň</small>` : `<b>?</b><small>týždeň</small>`;
       element.setAttribute("role", "img");
-      element.setAttribute("aria-label", size ? `Ovocný avatar: ${size[1]}` : "Ovocný avatar bábätka");
+      element.setAttribute("aria-label", week ? `${week}. týždeň tehotenstva` : "Týždeň tehotenstva");
     }
 
     function currentPregnancyAvatar(dueValue) {
       const week = pregnancyWeek(dueValue === undefined ? state.profile.due : dueValue);
-      const size = pregnancySizeData(week || 20);
-      return { week, label: size[1], index: size[2], position: pregnancyFruitPosition(size[2]), message: size[3] };
+      return { week, size: pregnancySizeText(week), message: pregnancyPhaseMessage(week || 20) };
     }
 
     window.GugubooPregnancyAvatar = { current: currentPregnancyAvatar };
@@ -6872,8 +6875,8 @@
       const expecting = state.profile.status === "expecting";
       const sexText = state.profile.sex === "girl" ? "dievčatko" : state.profile.sex === "boy" ? "chlapček" : "";
       const week = expecting ? pregnancyWeek() : null;
-      const size = week ? pregnancySizeData(week) : null;
-      const growthLine = expecting && size ? `${name} je veľký ako ${size[1]} a stále rastie :)` : "";
+      const sizeText = pregnancySizeText(week);
+      const growthLine = expecting && week ? `${week}. týždeň${sizeText ? ` · ${name} meria ${sizeText}` : ""}` : "";
       document.body.classList.toggle("theme-boy", state.profile.sex === "boy");
       document.body.classList.toggle("theme-girl", state.profile.sex === "girl");
       document.body.classList.toggle("theme-neutral", state.profile.sex !== "boy" && state.profile.sex !== "girl");
@@ -6888,10 +6891,10 @@
         ? [sexText, dueDays === null ? "čakáme na termín" : (dueDays >= 0 ? `${dueDays} dní do termínu` : `${Math.abs(dueDays)} dní po termíne`)].filter(Boolean).join(" · ")
         : [sexText, days === null ? "nastav dátum narodenia" : `${days}. deň života`, state.profile.birthPlace || ""].filter(Boolean).join(" · ");
       if ($("homeBabyGrowthLine")) $("homeBabyGrowthLine").classList.toggle("hidden", !growthLine);
-      applyPregnancyFruit($("homeBabyGrowthFruit"), size);
+      if (week) applyPregnancyWeekBadge($("homeBabyGrowthFruit"), week);
       if ($("homeBabyGrowthText")) $("homeBabyGrowthText").textContent = growthLine;
       if ($("sideBabyGrowthLine")) $("sideBabyGrowthLine").classList.toggle("hidden", !growthLine);
-      applyPregnancyFruit($("sideBabyGrowthFruit"), size);
+      if (week) applyPregnancyWeekBadge($("sideBabyGrowthFruit"), week);
       if ($("sideBabyGrowthText")) $("sideBabyGrowthText").textContent = growthLine;
       const card = expecting
         ? ["Pripravujeme príchod", "Dnes stačí jeden praktický krok: uložiť kontakt na pôrodnicu, skontrolovať tašku alebo pripraviť otázku pre poradňu."]
@@ -6977,13 +6980,13 @@
       if ($("growthCount")) $("growthCount").textContent = state.growth.length;
       const dueLeft = daysUntilDue();
       if ($("pregnancyWeekPill")) $("pregnancyWeekPill").textContent = week ? `${week}. týždeň tehotenstva` : "Nastav termín pôrodu";
-      if ($("pregnancyGrowthTitle")) $("pregnancyGrowthTitle").textContent = week ? `Tvoje bábätko je veľké ako ${size[1]}.` : "Bábätko rastie vlastným tempom.";
+      if ($("pregnancyGrowthTitle")) $("pregnancyGrowthTitle").textContent = week && sizeText ? `Tvoje bábätko meria ${sizeText}.` : "Bábätko rastie vlastným tempom.";
       if ($("pregnancyGrowthText")) $("pregnancyGrowthText").textContent = week
-        ? `${size[3]} Toto prirovnanie je hravé a orientačné, nie lekárske meranie.`
-        : "Keď zadáš termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a hravé prirovnanie veľkosti.";
-      applyPregnancyFruit($("pregnancyFruitIcon"), size);
-      if ($("pregnancyFruit")) $("pregnancyFruit").textContent = size ? `Veľké ako ${size[1]}` : "-";
-      if ($("pregnancyFruitText")) $("pregnancyFruitText").textContent = size ? "a stále rastie :)" : "zadáš termín a ukážem ti prirovnanie";
+        ? `${pregnancyPhaseMessage(week)} Veľkosť je orientačná (zdroj NHS), nie lekárske meranie.`
+        : "Keď zadáš termín pôrodu, Guguboo ukáže približný týždeň tehotenstva a veľkosť bábätka.";
+      applyPregnancyWeekBadge($("pregnancyFruitIcon"), week);
+      if ($("pregnancyFruit")) $("pregnancyFruit").textContent = sizeText || "-";
+      if ($("pregnancyFruitText")) $("pregnancyFruitText").textContent = week ? "a stále rastie :)" : "zadáš termín a ukážem ti veľkosť";
       if ($("pregnancyTrimester")) $("pregnancyTrimester").textContent = !week ? "-" : (week < 13 ? "1. trimester" : week < 28 ? "2. trimester" : "3. trimester");
       if ($("pregnancyDaysLeft")) $("pregnancyDaysLeft").textContent = dueLeft === null ? "-" : (dueLeft >= 0 ? `${dueLeft} dní` : `${Math.abs(dueLeft)} dní po termíne`);
       if ($("pregnancyGrowthAdvice")) {
@@ -8058,11 +8061,8 @@ Otázky:
         const due = $("welcomeDue")?.value || "";
         const dueDays = calcDueDays(due);
         const fruit = currentPregnancyAvatar(due);
-        avatar.textContent = "";
-        avatar.classList.add("v5-fruit-avatar");
-        avatar.style.backgroundPosition = fruit.position;
-        avatar.setAttribute("aria-label", `Ovocný avatar: ${fruit.label}`);
-        setText("welcomeFinishBabyMeta", fruit.week ? `${fruit.week}. týždeň · veľké približne ako ${fruit.label}` : "Ovocný avatar");
+        applyPregnancyWeekBadge(avatar, fruit.week);
+        setText("welcomeFinishBabyMeta", fruit.week ? `${fruit.week}. týždeň${fruit.size ? ` · meria ${fruit.size}` : ""}` : "Doplň termín pôrodu");
         setText("welcomeFinishLead", dueDays === null || dueDays < 0
           ? "Každý deň ti ponúkneme jeden malý krok. Nič netreba riešiť naraz."
           : dueDays === 0
@@ -8079,7 +8079,7 @@ Otázky:
       } else {
         const birth = $("welcomeBirth")?.value || "";
         const ageLabel = welcomeChildAgeLabel(birth);
-        avatar.classList.remove("v5-fruit-avatar");
+        avatar.classList.remove("v5-fruit-avatar", "v2-week-badge");
         avatar.style.backgroundPosition = "";
         avatar.textContent = babyName.charAt(0).toUpperCase();
         avatar.setAttribute("aria-label", `Profil: ${babyName}`);
@@ -8109,10 +8109,10 @@ Otázky:
       if (!card) return;
       const avatar = currentPregnancyAvatar($("welcomeDue")?.value || "");
       const selected = (state.welcomeDraft?.avatarType || state.profile.avatarType || "fruit") === "fruit";
-      applyPregnancyFruit($("welcomeFruitAvatarImage"), pregnancySizeData(avatar.week || 20));
-      if ($("welcomeFruitAvatarWeek")) $("welcomeFruitAvatarWeek").textContent = avatar.week ? `${avatar.week}. týždeň · ovocný avatar` : "Ovocný avatar";
-      if ($("welcomeFruitAvatarName")) $("welcomeFruitAvatarName").textContent = avatar.week ? `Bábätko je veľké približne ako ${avatar.label}` : "Bábätko rastie spolu s avatarom";
-      if ($("welcomeFruitAvatarHint")) $("welcomeFruitAvatarHint").textContent = selected ? "Tento pokojný avatar použijeme v aplikácii." : "Ťukni a pridaj ho do profilu bábätka.";
+      applyPregnancyWeekBadge($("welcomeFruitAvatarImage"), avatar.week);
+      if ($("welcomeFruitAvatarWeek")) $("welcomeFruitAvatarWeek").textContent = avatar.week ? `${avatar.week}. týždeň tehotenstva` : "Týždeň tehotenstva";
+      if ($("welcomeFruitAvatarName")) $("welcomeFruitAvatarName").textContent = avatar.week && avatar.size ? `Bábätko meria ${avatar.size}` : "Bábätko rastie týždeň po týždni";
+      if ($("welcomeFruitAvatarHint")) $("welcomeFruitAvatarHint").textContent = selected ? "Po narodení tu bude fotka bábätka." : "Ťukni a pridaj ho do profilu bábätka.";
       card.classList.toggle("active", selected);
       card.setAttribute("aria-pressed", String(selected));
     }
@@ -8348,7 +8348,7 @@ Otázky:
       state.welcomeDraft = { ...(state.welcomeDraft || {}), avatarType: "fruit" };
       updateWelcomeFruitAvatar();
       saveWelcomeDraft();
-      showToast("Ovocný avatar je pripravený");
+      showToast("Týždeň tehotenstva je nastavený");
     });
     if ($("welcomeLocateBtn")) $("welcomeLocateBtn").addEventListener("click", detectWelcomeCountry);
     if ($("welcomeManualCountryBtn")) $("welcomeManualCountryBtn").addEventListener("click", () => {
@@ -9643,7 +9643,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.9"></script>
   <script src="journey-engine.js?v=2.2.0"></script>
-  <script src="v5-mobile.js?v=2.2.1"></script>
+  <script src="v5-mobile.js?v=2.2.2"></script>
   <script src="guguchat.js?v=2.2.0"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>
