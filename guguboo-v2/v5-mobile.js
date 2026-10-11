@@ -2426,6 +2426,7 @@
     }
     target.innerHTML = flowHead("Profily rodiny", "Údaje stačí zadať raz.", "Guguboo ich použije iba tam, kde sú potrebné. Rodina má jeden spoločný pohľad.", 0, 1) +
       "<nav class='v5-profile-tabs' aria-label='Profily'>" + tabs + "</nav>" + content;
+    window.GugubooParentBirth?.limit(byId("v5MotherBirth"));
   }
 
   function renderTravel() {
@@ -2990,6 +2991,8 @@
 
   function saveMotherProfile() {
     const mother = state.v5.motherProfile;
+    const birthError = window.GugubooParentBirth?.error(byId("v5MotherBirth").value);
+    if (birthError) return announce(birthError);
     mother.name = byId("v5MotherName").value.trim();
     mother.preferredName = byId("v5MotherPreferred").value.trim();
     mother.birthDate = byId("v5MotherBirth").value;

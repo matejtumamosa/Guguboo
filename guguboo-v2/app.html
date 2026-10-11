@@ -6840,6 +6840,27 @@
       return new Date(now.getTime() - offset).toISOString().slice(0, 10);
     }
 
+    // Dátum narodenia rodiča: rozumný vek 12–80 rokov. Dolná hranica je zámerne nízka,
+    // aby appku mohli používať aj veľmi mladé mamy; zachytí preklepy ako „narodená včera“.
+    const PARENT_MIN_AGE = 12;
+    const PARENT_MAX_AGE = 80;
+    function yearsAgo(years) {
+      const [y, m, d] = dateInputToday().split("-");
+      return `${Number(y) - years}-${m}-${d}`;
+    }
+    function parentBirthError(value) {
+      if (!value) return "";
+      if (value > yearsAgo(PARENT_MIN_AGE)) return `Skontroluj prosím dátum narodenia – vychádza menej ako ${PARENT_MIN_AGE} rokov.`;
+      if (value < yearsAgo(PARENT_MAX_AGE)) return "Skontroluj prosím rok narodenia.";
+      return "";
+    }
+    function limitParentBirthInput(input) {
+      if (!input) return;
+      input.min = yearsAgo(PARENT_MAX_AGE);
+      input.max = yearsAgo(PARENT_MIN_AGE);
+    }
+    window.GugubooParentBirth = { error: parentBirthError, limit: limitParentBirthInput };
+
     function diaryDayFromDate(value) {
       if (!value || !state.profile.birth) return null;
       const birth = new Date(state.profile.birth + "T00:00:00");
@@ -8170,7 +8191,7 @@ Otázky:
       if (step === 2) {
         if (!$("welcomeUserName").value.trim()) return "Napíš prosím, ako ťa môžeme oslovovať.";
         if (!$("welcomeUserBirth").value) return "Doplň prosím dátum narodenia.";
-        if ($("welcomeUserBirth").value > dateInputToday()) return "Skontroluj prosím dátum narodenia.";
+        if (parentBirthError($("welcomeUserBirth").value)) return parentBirthError($("welcomeUserBirth").value);
       }
       if (step === 4 && !state.welcomeStatus) return "Vyber prosím, v ktorej fáze sa nachádzaš.";
       if (step === 5) {
@@ -8190,7 +8211,7 @@ Otázky:
 
       if (!$("welcomeUserName").value.trim()) missing.push("tvoje meno");
       if (!$("welcomeUserBirth").value) missing.push("tvoj dátum narodenia");
-      if ($("welcomeUserBirth").value && $("welcomeUserBirth").value > today) return "Skontroluj prosím dátum narodenia.";
+      if (parentBirthError($("welcomeUserBirth").value)) return parentBirthError($("welcomeUserBirth").value);
       if (!$("welcomeName").value.trim()) missing.push("meno alebo pracovné meno dieťaťa");
 
       if (status === "expecting") {
@@ -9631,6 +9652,7 @@ Otázky:
     if ($("welcomeCountry")) $("welcomeCountry").value = state.profile.country || "SK";
     $("welcomeUserName").value = state.welcomeDraft?.userName || state.user.name || "";
     $("welcomeUserBirth").value = state.welcomeDraft?.userBirth || state.user.birthDate || "";
+    limitParentBirthInput($("welcomeUserBirth"));
     $("welcomeEmail").value = state.user.email || "";
     $("welcomePhone").value = state.user.phone || "";
     $("welcomePartnerEmail").value = state.welcomeDraft?.partnerEmail || state.partnerInvite.email || "";
@@ -9659,7 +9681,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.10"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.4.0"></script>
+  <script src="v5-mobile.js?v=2.4.1"></script>
   <script src="guguchat.js?v=2.3.1"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>
