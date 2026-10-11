@@ -938,11 +938,16 @@
           value.percentage > 0 ? "<path class='v5-o-gloss' d='" + adaptiveOGlossPath(section.start, visualPercentage) + "' aria-hidden='true'/>" : ""
         ].join("");
       }).join(""),
-      // Názov priamo na segmente, aby sa časti dali rozlíšiť aj bez legendy (pripomienka #9).
+      // Názov segmentu ide po oblúku kruhu (pripomienka #9). V dolnej polovici sa oblúk kreslí
+      // opačným smerom, aby text nebol hore nohami.
       sections.map((section, index) => {
-        const point = adaptiveOPoint(section.start + 60, 112);
-        const width = Math.max(64, section.shortLabel.length * 10.5 + 24);
-        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'><rect x='" + (point.x - width / 2).toFixed(1) + "' y='" + (point.y - 16).toFixed(1) + "' width='" + width + "' height='32' rx='16'/><text x='" + point.x.toFixed(1) + "' y='" + (point.y + 6).toFixed(1) + "' text-anchor='middle'>" + escapeHtml(section.shortLabel) + "</text></g>";
+        const mid = section.start + 60;
+        const lower = Math.sin(mid * Math.PI / 180) > 0.2;
+        const from = adaptiveOPoint(mid + (lower ? 45 : -45), 112);
+        const to = adaptiveOPoint(mid + (lower ? -45 : 45), 112);
+        const id = "v2OArc" + (index + 1);
+        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'><path id='" + id + "' fill='none' stroke='none' d='M " + from.x.toFixed(1) + " " + from.y.toFixed(1) + " A 112 112 0 0 " + (lower ? 0 : 1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1) + "'/>" +
+          "<text dy='6'><textPath href='#" + id + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(section.shortLabel.toUpperCase()) + "</textPath></text></g>";
       }).join(""),
       "</svg>",
       centerButton,

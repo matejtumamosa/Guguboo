@@ -685,3 +685,10 @@ body.v5-active.night .v2-summary-stats div { background: rgba(255, 255, 255, .05
 .v2-location-card #welcomeLocateBtn::before { content: "⌖ "; text-decoration: none; }
 .v2-location-card .welcome-location-status { margin: 0; padding-top: 10px; border-top: 1px solid var(--v5-line, rgba(101, 87, 132, .12)); font-size: 12px; }
 .v2-location-card .welcome-location-status:empty { display: none; }
+
+/* Názvy segmentov po oblúku kruhu – bez rámčekov. */
+.v2-o-label text { font: 900 18px/1 Nunito, sans-serif; letter-spacing: .12em; }
+.v2-o-label-1 text { fill: #b14d70; }
+.v2-o-label-2 text { fill: #a3602a; }
+.v2-o-label-3 text { fill: #4560b0; }
+body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .82); }
