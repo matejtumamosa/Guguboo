@@ -93,6 +93,36 @@
       NOT_ROUND.some(word => inside.toLowerCase().includes(word)) ? "" : match).trim();
   }
 
+  // Miniaplikácia „Aké veľké je bábätko“: dĺžka zo zdroja NHS + hravé okrúhle prirovnanie.
+  // Kde NHS uvádza okrúhly plod, použije sa ten. Pri podlhovastých (banán, uhorka…) je tu
+  // približné okrúhle prirovnanie podľa hmotnosti – v UI vždy označené ako orientačné
+  // (Samuel 11. 10.: „môže to byť približne, nie presné“).
+  const APPROX_ROUND = {
+    16: "pomaranč", 20: "grapefruit", 21: "veľký grapefruit", 22: "pomelo", 23: "veľké pomelo",
+    24: "hlávka ľadového šalátu", 25: "hlávka ľadového šalátu", 26: "malý karfiol", 28: "veľký karfiol",
+    29: "tekvica hokkaido", 32: "tekvica hokkaido", 33: "malý melón", 36: "veľký medový melón",
+    37: "malý vodový melón", 38: "malý vodový melón"
+  };
+  const FRUIT_EMOJI = [
+    ["mak", "•"], ["sezam", "•"], ["hrášok", "🫛"], ["hrozn", "🍇"], ["malin", "🫐"], ["jahod", "🍓"],
+    ["marhuľ", "🍑"], ["fig", "🟣"], ["slivk", "🟣"], ["broskyň", "🍑"], ["kiwi", "🥝"], ["granát", "🍎"],
+    ["jablk", "🍎"], ["pomaranč", "🍊"], ["grapefruit", "🍊"], ["pomel", "🍈"], ["paprik", "🫑"],
+    ["paradajk", "🍅"], ["šalát", "🥬"], ["karfiol", "🥦"], ["kapust", "🥬"], ["kokos", "🥥"],
+    ["hokkaido", "🎃"], ["vodový melón", "🍉"], ["melón", "🍈"], ["tekvic", "🎃"]
+  ];
+  function babySize(weekNumber) {
+    const entry = pregnancyWeek(weekNumber);
+    if (!entry) return null;
+    const raw = content().pregnancyWeeks.weeks[entry.week];
+    const rawSize = (Array.isArray(raw.size) ? raw.size[0]?.sk : raw.size?.sk) || "";
+    const inside = (rawSize.match(/\(([^)]*)\)/) || [])[1] || "";
+    const nhsRound = inside && !NOT_ROUND.some(word => inside.toLowerCase().includes(word));
+    const comparison = nhsRound ? inside.replace(/^(veľkosťou aj váhou\s+)?ako\s+/, "") : APPROX_ROUND[entry.week] || "";
+    const length = rawSize.replace(/\s*\([^)]*\)/, "").replace(/,\s*odteraz.*$/, "").trim();
+    const emoji = (FRUIT_EMOJI.find(([key]) => comparison.toLowerCase().includes(key)) || [, "🌱"])[1];
+    return { week: entry.week, length, comparison, emoji, approximate: !nhsRound && Boolean(comparison), baby: entry.baby, source: entry.source_urls[0] || "" };
+  }
+
   // Týždeň z overeného obsahu (každá veta má citát v `evidence`) → jednoduchý tvar pre UI.
   function pregnancyWeek(weekNumber) {
     const module = content().pregnancyWeeks;
@@ -555,7 +585,7 @@
   });
 
   window.GugubooChat = { render, ask, answer, open: openChat };
-  window.GugubooV2 = { homeJourneyHtml, betaFooterHtml, openItem, track, pregnancyWeek };
+  window.GugubooV2 = { homeJourneyHtml, betaFooterHtml, openItem, track, pregnancyWeek, babySize };
   refreshHome();
   loadContent().then(() => {
     refreshHome();

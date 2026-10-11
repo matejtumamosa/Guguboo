@@ -56,7 +56,8 @@
   const randomBytes = length => crypto.getRandomValues(new Uint8Array(length));
   const createId = () => crypto.randomUUID ? crypto.randomUUID() : bytesToBase64(randomBytes(18)).replace(/[+/=]/g, "");
   const isActive = () => view.classList.contains("active");
-  const isPostpartum = () => typeof state !== "undefined" && state.profile?.status === "born";
+  // Môj priestor je pre mamu v tehotenstve aj po pôrode (predtým sa v tehotenstve hneď zavrel).
+  const isPostpartum = () => typeof state !== "undefined" && ["born", "expecting"].includes(state.profile?.status);
   const formatDate = value => new Intl.DateTimeFormat("sk-SK", {
     dateStyle: "medium", timeStyle: "short"
   }).format(new Date(value));

@@ -105,6 +105,7 @@
     privateSpace: { label: "Môj priestor", description: "Súkromné zápisy chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
+    babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady", description: "Lokálne kroky a podpora", icon: "book", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
@@ -304,7 +305,7 @@
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "babySize", "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -312,7 +313,7 @@
     ? [...prenatalDrawerFeatures]
     : ["privateSpace", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
-    ? ["beforeBirth", "contacts", "shopping", "travel"]
+    ? ["beforeBirth", "babySize", "contacts", "shopping"]
     : ["privateSpace", "memories", "activities", "shopping"];
   const legacyCareFeatures = new Set(["health", "urgent", "guide", "night"]);
   const normalizeFavorites = (favorites, phase) => {
@@ -457,6 +458,7 @@
     "<section class='view' id='v5Checklists'><div class='v5-flow' id='v5ChecklistsContent'></div></section>",
     "<section class='view' id='v5Prenatal'><div class='v5-flow' id='v5PrenatalContent'></div></section>",
     "<section class='view' id='v5PregnancyBook'><div class='v5-flow' id='v5PregnancyBookContent'></div></section>",
+    "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
     "<section class='view' id='v5Utility'><div class='v5-flow' id='v5UtilityContent'></div></section>",
@@ -524,6 +526,7 @@
     v5Checklists: ["Praktické zoznamy", "Kategórie podľa situácie"],
     v5Prenatal: ["Moja príprava", "Pôrodnica, taška a domov"],
     v5PregnancyBook: ["Tehotenská knižka", "Bábätko, mama a aktuálny týždeň"],
+    v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
     v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
     v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
     v5Utility: ["Rodinné nástroje", "Jednoducho a bez duplicitných obrazoviek"],
@@ -1063,8 +1066,8 @@
     const avatarPopover = expecting ? [
       "<div class='v5-avatar-popover' id='v5AvatarPopover' hidden>",
       "<div><small>", pregnancyAvatar.week ? escapeHtml(pregnancyAvatar.week + ". týždeň") : "Týždeň tehotenstva", "</small><strong>",
-      pregnancyAvatar.size ? escapeHtml(name + " meria " + pregnancyAvatar.size + ".") : pregnancyAvatar.week ? escapeHtml(name + " rastie vlastným tempom.") : "Doplň termín pôrodu a ukážeme veľkosť bábätka.", "</strong>",
-      "<button type='button' data-v5-feature='pregnancy'>Pozrieť rast bábätka <span aria-hidden='true'>→</span></button></div></div>"
+      pregnancyAvatar.size ? escapeHtml(name + " meria " + pregnancyAvatar.size + (window.GugubooV2?.babySize?.(pregnancyAvatar.week)?.approximate ? " · veľké asi ako " + window.GugubooV2.babySize(pregnancyAvatar.week).comparison : "") + ".") : pregnancyAvatar.week ? escapeHtml(name + " rastie vlastným tempom.") : "Doplň termín pôrodu a ukážeme veľkosť bábätka.", "</strong>",
+      "<button type='button' data-v5-feature='babySize'>Aké veľké je bábätko <span aria-hidden='true'>→</span></button></div></div>"
     ].join("") : "";
     const pregnancyWeek = Number(pregnancyAvatar.week || 0);
     const dueDateLabel = state.profile.due
@@ -1749,7 +1752,7 @@
     const feature = features[key];
     if (!feature) return;
     if (["teeth", "activities"].includes(key) && state.profile.status === "expecting") return;
-    if (["beforeBirth", "pregnancy"].includes(key) && state.profile.status !== "expecting") return;
+    if (["beforeBirth", "pregnancy", "babySize"].includes(key) && state.profile.status !== "expecting") return;
     closeDrawer();
     closeQuickRecord();
     closeAdaptiveOMenu();
@@ -1803,6 +1806,11 @@
       persist();
       routeTo("v5Prenatal");
       renderPrenatal();
+      return;
+    }
+    if (feature.view === "v5BabySize") {
+      routeTo("v5BabySize");
+      renderBabySize();
       return;
     }
     if (feature.view === "v5PregnancyBook") {
@@ -2817,6 +2825,34 @@
     };
   }
 
+  // Miniaplikácia „Aké veľké je bábätko“: okrúhle ovocie/zelenina, dĺžka (NHS) a čo sa práve vyvíja.
+  let babySizeWeek = 0;
+  function renderBabySize() {
+    const target = byId("v5BabySizeContent");
+    if (!target) return;
+    const currentWeek = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    if (!babySizeWeek) babySizeWeek = Math.max(4, currentWeek || 20);
+    const data = window.GugubooV2?.babySize?.(babySizeWeek);
+    if (!data) {
+      target.innerHTML = "<div class='v5-empty'>Doplň termín pôrodu v profile a ukážeme ti, aké veľké je bábätko.</div>";
+      return;
+    }
+    const sentences = String(data.baby || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
+    target.innerHTML = [
+      "<div class='v2-size-nav'><button type='button' data-v2-size-week='", data.week - 1, "' aria-label='Predchádzajúci týždeň'", data.week <= 4 ? " disabled" : "", ">‹</button>",
+      "<strong>", data.week, ". týždeň", data.week === currentWeek ? " · teraz" : "", "</strong>",
+      "<button type='button' data-v2-size-week='", data.week + 1, "' aria-label='Nasledujúci týždeň'", data.week >= 41 ? " disabled" : "", ">›</button></div>",
+      "<section class='v2-size-hero'><span class='v2-size-emoji' aria-hidden='true'>", data.emoji, "</span>",
+      data.comparison ? "<h2>Veľké asi ako " + escapeHtml(data.comparison) + "</h2>" : "<h2>Bábätko rastie</h2>",
+      data.length ? "<p>" + escapeHtml(data.length.charAt(0).toUpperCase() + data.length.slice(1)) + "</p>" : "",
+      data.approximate ? "<small>Prirovnanie je orientačné, dĺžka je podľa NHS.</small>" : "<small>Podľa NHS, orientačne.</small>",
+      "</section>",
+      sentences.length ? "<section class='v2-size-dev'><h3>Čo sa práve vyvíja</h3>" + sentences.map(sentence => "<p>" + escapeHtml(sentence) + "</p>").join("") + "</section>" : "",
+      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : "",
+      "<button class='v5-secondary' type='button' data-v5-feature='pregnancy'>Celý týždeň v Tehotenskej knižke</button>"
+    ].join("");
+  }
+
   function renderPregnancyBook() {
     const target = byId("v5PregnancyBookContent");
     if (!target) return;
@@ -2833,7 +2869,7 @@
         .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
       target.innerHTML = [
         "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplň termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p>",
-        avatar.size ? "<p class='v2-book-size'><span>Veľkosť bábätka</span>" + escapeHtml(avatar.size) + "</p>" : "",
+        avatar.size ? "<button type='button' class='v2-book-size' data-v5-feature='babySize'><span>Aké veľké je bábätko →</span>" + escapeHtml(avatar.size) + (window.GugubooV2?.babySize?.(week)?.approximate ? " · asi ako " + escapeHtml(window.GugubooV2.babySize(week).comparison) : "") + "</button>" : "",
         "</div></section>",
         "<div class='v5-book-main-grid'>",
         "<button type='button' data-v5-book-section='baby'><span class='v5-icon'>", icon("baby"), "</span><strong>Bábätko</strong><small>Vývoj v tomto období</small></button>",
@@ -2924,6 +2960,7 @@
     if (currentView() === "v5Checklists") renderChecklists();
     if (currentView() === "v5Prenatal") renderPrenatal();
     if (currentView() === "v5PregnancyBook") renderPregnancyBook();
+    if (currentView() === "v5BabySize") renderBabySize();
     if (currentView() === "v5Sounds") renderSounds();
     if (currentView() === "v5Care") renderCare();
     if (currentView() === "v5Utility") renderUtility();
@@ -3107,6 +3144,12 @@
       return announce("Hotovo. Zobrazuje sa ďalšia úloha.");
     }
     if (event.target.closest("[data-v2-summary-open]")) return openDaySummary(0);
+    const sizeWeek = event.target.closest("[data-v2-size-week]");
+    if (sizeWeek) {
+      babySizeWeek = Math.max(4, Math.min(41, Number(sizeWeek.dataset.v2SizeWeek) || 20));
+      renderBabySize();
+      return;
+    }
     const summaryDay = event.target.closest("[data-v2-summary-day]");
     if (summaryDay) {
       byId("v5OMenuBody").innerHTML = daySummaryHtml(Math.max(0, Math.min(SUMMARY_DAYS_BACK, Number(summaryDay.dataset.v2SummaryDay) || 0)));
