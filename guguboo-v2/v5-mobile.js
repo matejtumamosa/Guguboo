@@ -947,7 +947,7 @@
         const to = adaptiveOPoint(mid + (lower ? -45 : 45), 112);
         const id = "v2OArc" + (index + 1);
         return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'><path id='" + id + "' fill='none' stroke='none' d='M " + from.x.toFixed(1) + " " + from.y.toFixed(1) + " A 112 112 0 0 " + (lower ? 0 : 1) + " " + to.x.toFixed(1) + " " + to.y.toFixed(1) + "'/>" +
-          "<text dy='6'><textPath href='#" + id + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(section.shortLabel.toUpperCase()) + "</textPath></text></g>";
+          "<text dy='6'><textPath href='#" + id + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(section.shortLabel) + "</textPath></text></g>";
       }).join(""),
       "</svg>",
       centerButton,

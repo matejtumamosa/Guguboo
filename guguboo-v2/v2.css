@@ -703,3 +703,9 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .82); }
 body.v5-active.night .v5-o-legend-item.v2-o-legend-1 { background: rgba(233, 138, 168, .12); }
 body.v5-active.night .v5-o-legend-item.v2-o-legend-2 { background: rgba(238, 159, 95, .12); }
 body.v5-active.night .v5-o-legend-item.v2-o-legend-3 { background: rgba(125, 148, 220, .12); }
+
+/* Názvy v kruhu: písmo appky (Montserrat), jemnejšie a svetlejšie. */
+.v2-o-label text { font: 600 17px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .04em; }
+.v2-o-label-1 text { fill: #cf7d98; }
+.v2-o-label-2 text { fill: #cf8a4f; }
+.v2-o-label-3 text { fill: #7088cf; }
