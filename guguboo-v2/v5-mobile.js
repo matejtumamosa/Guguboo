@@ -370,6 +370,19 @@
     notes: "",
     emergencyContact: ""
   };
+  // Profil rodiča vzniká pri spustení, často ešte pred dokončením úvodu – prázdne polia
+  // doplníme z údajov, ktoré rodič zadal v úvode (meno, dátum narodenia, krajina…).
+  function syncMotherProfileFromUser() {
+    const mother = state.v5.motherProfile;
+    const user = state.user || {};
+    if (!mother.name && user.name) mother.name = user.name;
+    if (!mother.preferredName && user.name) mother.preferredName = user.name;
+    if (!mother.birthDate && user.birthDate) mother.birthDate = user.birthDate;
+    if (!mother.phone && user.phone) mother.phone = user.phone;
+    if (!mother.email && user.email) mother.email = user.email;
+    if (state.profile.country) mother.country = state.profile.country;
+    if (!mother.hospital && state.prenatal?.hospital) mother.hospital = state.prenatal.hospital;
+  }
   state.v5.familyMembers ||= [];
   state.v5.medicines ||= [];
   state.v5.doctorVisits ||= [];
@@ -2344,12 +2357,13 @@
     const target = byId("v5ProfilesContent");
     if (!target) return;
     const tab = state.v5.profileTab || "mother";
+    syncMotherProfileFromUser();
     const mother = state.v5.motherProfile;
     const countries = typeof euCountries !== "undefined"
       ? Object.entries(euCountries).map(item => "<option value='" + item[0] + "'" + (item[0] === mother.country ? " selected" : "") + ">" + escapeHtml(item[1]) + "</option>").join("")
       : "<option value='SK'>Slovensko</option>";
     const tabs = [
-      ["mother", "Mama"],
+      ["mother", state.parentRole === "otec" ? "Otec" : "Mama"],
       ["child", "Dieťa"],
       ["family", "Rodina"],
       ["settings", "Nastavenia"]
@@ -2367,7 +2381,7 @@
         "<label>Poisťovňa — nepovinné<input id='v5MotherInsurance' value='", escapeHtml(mother.insurance), "'></label>",
         "<label>Kontaktná osoba — nepovinné<input id='v5MotherEmergency' value='", escapeHtml(mother.emergencyContact), "'></label>",
         "<label>Dôležité poznámky — nepovinné<textarea id='v5MotherNotes'>", escapeHtml(mother.notes), "</textarea></label></div>",
-        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-mother-profile'>Uložiť profil mamy</button></div>"
+        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-mother-profile'>Uložiť môj profil</button></div>"
       ].join("");
     } else if (tab === "child") {
       content = [
