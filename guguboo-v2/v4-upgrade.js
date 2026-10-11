@@ -891,6 +891,7 @@
     document.getElementById("v4OpenBirthCard")?.addEventListener("click", () => { v4CloseSheets(); v4Navigate("birthCard"); });
     document.getElementById("v4OpenDiary")?.addEventListener("click", () => { v4CloseSheets(); v4Navigate("diary"); });
     document.getElementById("saveWelcome")?.addEventListener("click", () => setTimeout(v4SaveGestationFromWelcome, 0));
+    document.getElementById("saveWelcomeBirthCard")?.addEventListener("click", () => setTimeout(v4SaveGestationFromWelcome, 0));
     document.getElementById("babyStatus")?.addEventListener("change", () => setTimeout(v4RelaxDateConstraints, 0));
     document.getElementById("welcomeBirth")?.addEventListener("change", v4RelaxDateConstraints);
     document.getElementById("profileBtn")?.addEventListener("click", () => setTimeout(() => {

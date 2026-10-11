@@ -246,45 +246,48 @@
     }
   };
 
+  // Úloha kruhu: [id, názov, ikona, prečo (krátko), akcia v appke, overené položky Úrady a doklady].
+  // Akcia: { feature, label, done } – done = úloha sa po vykonaní odfajkne sama (pripomienka #19).
+  // Pri úlohách s overenou položkou sa „prečo“ berie z nej (zdroj úradu), nič sa nevymýšľa (#16).
   const prenatalOrganizationSections = [
     { id: "home", label: "Domov", shortLabel: "Domov", description: "Základ pripravený bez zbytočných nákupov.", icon: "home", start: -90, tasks: [
-      ["v5-home-sleep", "Bezpečné miesto na spánok", "baby"],
-      ["v5-home-changing", "Miesto na prebaľovanie", "diaper"],
-      ["v5-home-clothes", "Základné oblečenie", "products"],
-      ["v5-prenatal-car-seat", "Autosedačka na cestu domov", "travel"]
+      ["v5-home-sleep", "Bezpečné miesto na spánok", "baby", "Jedno pripravené miesto, kde bude bábätko spávať prvé týždne."],
+      ["v5-home-changing", "Miesto na prebaľovanie", "diaper", "Plienky, obrúsky a čisté oblečenie na jednom mieste po ruke."],
+      ["v5-home-clothes", "Základné oblečenie", "products", "Pár kúskov na prvé dni stačí, ďalšie dokúpiš podľa potreby."],
+      ["v5-prenatal-car-seat", "Autosedačka na cestu domov", "travel", "Ak pôjdete z pôrodnice autom, priprav si autosedačku vopred."]
     ] },
     { id: "hospital", label: "Pôrodnica", shortLabel: "Taška", description: "Taška po malých častiach.", icon: "checklist", start: 30, tasks: [
-      ["v5-bag-mother", "Veci pre mamu", "profile"],
-      ["v5-bag-baby", "Veci pre bábätko", "baby"],
-      ["v5-bag-hygiene", "Hygiena a praktické potreby", "bath"],
-      ["v5-bag-home", "Oblečenie na odchod domov", "home"]
+      ["v5-bag-mother", "Veci pre mamu", "profile", "Veci pre seba na pobyt v pôrodnici. Podrobný zoznam máš v Príprave.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
+      ["v5-bag-baby", "Veci pre bábätko", "baby", "Oblečenie a potreby pre bábätko na prvé dni v pôrodnici.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
+      ["v5-bag-hygiene", "Hygiena a praktické potreby", "bath", "Drogéria a drobnosti, ktoré sa v pôrodnici zídu.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
+      ["v5-bag-home", "Oblečenie na odchod domov", "home", "Oblečenie pre teba aj bábätko na cestu domov.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }]
     ] },
     { id: "admin", label: "Vybaviť", shortLabel: "Vybaviť", description: "Kontakty a doklady, ktoré chceš mať poruke.", icon: "book", start: 150, tasks: [
-      ["v5-health-pediatrician", "Vybrať pediatra", "health"],
-      ["v5-doc-id", "Skontrolovať doklady rodiča", "book"],
-      ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu", "contacts"],
-      ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov", "family"]
+      ["v5-health-pediatrician", "Vybrať pediatra", "health", "", null, ["sk.process.vyber_pediatra"]],
+      ["v5-doc-id", "Skontrolovať doklady rodiča", "book", "Over si, že máš platné doklady, ktoré budeš potrebovať v pôrodnici a na úradoch."],
+      ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu", "contacts", "", null, ["sk.process.zdravotne_poistenie_novorodenca"]],
+      ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov", "family", "Dohodni si vopred, kto ti pomôže s nákupom, varením alebo domácnosťou."]
     ] }
   ];
 
   const postpartumOrganizationSections = [
     { id: "return", label: "Doma", shortLabel: "Doma", description: "Pokojný návrat a praktický základ.", icon: "home", start: -90, tasks: [
-      ["v5-post-safe-sleep", "Skontrolovať bezpečné miesto na spánok", "moon"],
-      ["v5-post-diapers-stock", "Doplniť plienky a hygienu", "diaper"],
-      ["v5-post-pharmacy", "Uložiť kontakt na lekáreň", "contacts"],
-      ["v5-post-help-plan", "Dohodnúť, kto dnes pomôže", "family"]
+      ["v5-post-safe-sleep", "Skontrolovať bezpečné miesto na spánok", "moon", "Jedno pripravené miesto, kde bábätko spinká."],
+      ["v5-post-diapers-stock", "Doplniť plienky a hygienu", "diaper", "Aby ti plienky a obrúsky nedošli v noci alebo cez víkend."],
+      ["v5-post-pharmacy", "Uložiť kontakt na lekáreň", "contacts", "Kontakt na najbližšiu lekáreň sa hodí, keď niečo treba rýchlo.", { feature: "contacts", label: "Otvoriť kontakty" }],
+      ["v5-post-help-plan", "Dohodnúť, kto dnes pomôže", "family", "Povedz nahlas, s čím ti dnes niekto môže pomôcť."]
     ] },
     { id: "documents", label: "Doklady", shortLabel: "Doklady", description: "Povinnosti po narodení na jednom mieste.", icon: "book", start: 30, tasks: [
-      ["v5-admin-birth", "Rodný list", "book"],
-      ["v5-admin-insurance", "Zdravotná poisťovňa dieťaťa", "health"],
-      ["v5-admin-pediatrician", "Pediater", "contacts"],
-      ["v5-admin-benefits", "Príspevky a rodičovské dávky", "shopping"]
+      ["v5-admin-birth", "Rodný list", "book", "", null, ["sk.document.rodny_list"]],
+      ["v5-admin-insurance", "Zdravotná poisťovňa dieťaťa", "health", "", null, ["sk.process.zdravotne_poistenie_novorodenca"]],
+      ["v5-admin-pediatrician", "Pediater", "contacts", "", null, ["sk.process.prihlasenie_k_pediatrovi"]],
+      ["v5-admin-benefits", "Príspevky a rodičovské dávky", "shopping", "Na čo máš nárok po narodení – každú dávku si rozklikni.", null, ["sk.benefit.prispevok_pri_narodeni", "sk.benefit.pridavok_na_dieta", "sk.benefit.rodicovsky_prispevok", "sk.benefit.danovy_bonus"]]
     ] },
     { id: "family", label: "Rodina", shortLabel: "Rodina", description: "Rozdelenie úloh bez chaosu.", icon: "family", start: 150, tasks: [
-      ["v5-post-night-plan", "Dohodnúť nočné striedanie", "moon"],
-      ["v5-post-shopping", "Spoločný nákupný zoznam", "shopping", "Jeden zoznam pre teba aj partnera, aby ste vedeli, čo už je kúpené, a nekupovali to isté dvakrát.", "shopping"],
-      ["v5-post-contacts", "Uložiť dôležité kontakty", "contacts"],
-      ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar"]
+      ["v5-post-night-plan", "Dohodnúť nočné striedanie", "moon", "Keď sa v noci striedate, obaja si aspoň trochu oddýchnete."],
+      ["v5-post-shopping", "Spoločný nákupný zoznam", "shopping", "Jeden zoznam pre teba aj partnera, aby ste vedeli, čo už je kúpené, a nekupovali to isté dvakrát.", { feature: "shopping", label: "Vytvoriť zoznam", done: true, invite: true }],
+      ["v5-post-contacts", "Uložiť dôležité kontakty", "contacts", "Pediater, pôrodnica a blízki na jednom mieste, keď ich budeš potrebovať.", { feature: "contacts", label: "Otvoriť kontakty" }],
+      ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar", "Termín kontroly v kalendári – nič netreba držať v hlave.", { feature: "calendar", label: "Zapísať do kalendára" }]
     ] }
   ];
 
@@ -1077,6 +1080,7 @@
     const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
       journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      daySummaryCard(),
       calendarCard,
       window.GugubooV2?.betaFooterHtml?.() || ""
     ].join("");
@@ -1234,6 +1238,34 @@
       }).join("") + "</div><button class='v5-check-categories-button' type='button' data-v5-o-back>" + icon("back") + " Späť ku kruhu</button>";
   }
 
+  // Overené položky „Úrady a doklady“ prepojené s úlohou (content/life-admin-sk.js cez v2-admin.js).
+  function organizationTaskAdminItems(task) {
+    const items = window.GugubooAdmin?.items?.() || [];
+    return (task[5] || []).map(id => items.find(item => item.id === id)).filter(Boolean);
+  }
+
+  function organizationTaskWhy(task) {
+    return task[3] || organizationTaskAdminItems(task)[0]?.why || "";
+  }
+
+  // #16: rozkliknutie → čo to je, prečo, kde a ako, dokedy, čo so sebou, pripomienka a „Už mám vybavené“.
+  function organizationTaskAdminLinks(task) {
+    const items = organizationTaskAdminItems(task);
+    if (!items.length) return "";
+    if (items.length === 1) return "<button class='v5-org-info' type='button' data-v2-admin-open='" + escapeHtml(items[0].id) + "'>Čo to je a ako to vybaviť <span aria-hidden='true'>→</span></button>";
+    return "<div class='v5-org-info-list'>" + items.map(item => "<button class='v5-org-info' type='button' data-v2-admin-open='" + escapeHtml(item.id) + "'>" + escapeHtml(item.title) + " <span aria-hidden='true'>→</span></button>").join("") + "</div>";
+  }
+
+  // #19: úloha, ktorá je akciou v appke, sa tlačidlom rovno vykoná (a pri done: true odfajkne sama).
+  function organizationTaskButtons(task) {
+    const action = task[4];
+    const complete = "<button class='" + (action ? "v5-secondary" : "v5-primary") + "' type='button' data-v5-org-complete='" + task[0] + "'>" + (task[5]?.length ? "✓ Už mám vybavené" : "Označiť ako hotové") + "</button>";
+    if (!action) return complete;
+    return "<button class='v5-primary' type='button' data-v5-org-action='" + task[0] + "'>" + escapeHtml(action.label) + "</button>" +
+      (action.done ? "" : complete) +
+      (action.invite ? "<button class='v5-secondary' type='button' data-v5-org-invite>Pozvať partnera</button>" : "");
+  }
+
   function renderOrganizationMenu(sectionId) {
     const section = organizationSections().find(item => item.id === sectionId) || organizationSections()[0];
     const progress = organizationProgress(section);
@@ -1248,15 +1280,117 @@
     byId("v5OMenuBody").innerHTML = nextTask ? [
       "<div class='v5-org-progress'><span style='--progress:", progress.percentage, "%'></span></div>",
       "<div class='v5-org-next-card'><small>Ďalšia úloha</small><span class='v5-icon'>", icon(nextTask[2]), "</span><h3>", escapeHtml(nextTask[1]), "</h3>",
-      nextTask[3] ? "<p class='v5-org-next-why'>" + escapeHtml(nextTask[3]) + "</p>" : "",
-      // Úloha, ktorá je akciou v appke (5. prvok = funkcia), sa tlačidlom rovno vykoná a odfajkne sama.
-      nextTask[4]
-        ? "<button class='v5-primary' type='button' data-v5-org-action='" + nextTask[0] + "'>Vytvoriť zoznam</button>" +
-          (nextTask[4] === "shopping" ? "<button class='v5-secondary' type='button' data-v5-org-invite>Pozvať partnera</button>" : "")
-        : "<button class='v5-primary' type='button' data-v5-org-complete='" + nextTask[0] + "'>Označiť ako hotové</button>",
+      organizationTaskWhy(nextTask) ? "<p class='v5-org-next-why'>" + escapeHtml(organizationTaskWhy(nextTask)) + "</p>" : "",
+      organizationTaskAdminLinks(nextTask),
+      organizationTaskButtons(nextTask),
       "</div>",
       completed.length ? "<details class='v5-org-completed'><summary>Hotové · " + completed.length + "</summary>" + completed.map(task => "<div><span>✓</span>" + escapeHtml(task[1]) + "</div>").join("") + "</details>" : ""
     ].join("") : "<div class='v5-o-modal-confirm' data-v5-org-done><span>✓</span><h3>Táto časť je hotová</h3><p>Môžeš pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button><button class='v5-secondary' type='button' data-v5-org-list>Zobraziť položky</button></div>";
+  }
+
+  // ——— Denný súhrn (pripomienka #13) ———
+  // Beta nemá server ani notifikácie: súhrn je v appke vždy dostupný a od zvoleného času (predvolene 20:00,
+  // dá sa zmeniť) sa na domove zvýrazní. Počíta sa iba z toho, čo rodina v appke zaznamenala.
+  const SUMMARY_DAYS_BACK = 6;
+  function summaryTime() {
+    return state.v5.summaryTime || "20:00";
+  }
+  function summaryReady() {
+    const [hours, minutes] = summaryTime().split(":").map(Number);
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes() >= hours * 60 + minutes;
+  }
+  function summaryDayKey(offset) {
+    return adaptiveOLocalDate(new Date(Date.now() - offset * 86400000));
+  }
+
+  function daySummaryData(dayKey) {
+    const onDay = value => adaptiveOLocalDate(value) === dayKey;
+    const events = (state.events || []).filter(event => onDay(event.created || event.date));
+    const isType = (event, part) => normalized(event.type).includes(part);
+    const sleeps = events.filter(event => isType(event, "span") && event.start && event.end)
+      .map(event => Math.max(0, new Date(event.end) - new Date(event.start)));
+    const diapers = events.filter(event => isType(event, "plien"));
+    const completed = Object.entries(state.v5.adaptiveO?.completed || {})
+      .filter(([key, done]) => done && key.startsWith("mother:") && key.endsWith(":" + dayKey));
+    return {
+      sleepTotal: sleeps.reduce((sum, value) => sum + value, 0),
+      sleepLongest: sleeps.length ? Math.max(...sleeps) : 0,
+      sleepCount: events.filter(event => isType(event, "span")).length,
+      feedings: events.filter(event => isType(event, "krm")).length,
+      diapers: diapers.length,
+      poops: diapers.filter(event => ["dirty", "both"].includes(event.diaper?.type)).length,
+      moments: (state.diary || []).filter(item => (item.date || "") === dayKey || onDay(item.created)).length,
+      photos: (state.diary || []).filter(item => item.photo && ((item.date || "") === dayKey || onDay(item.created))).length,
+      firsts: (state.v5.firstMoments || []).filter(item => onDay(item.date)).map(item => item.label),
+      water: dayKey === todayKey() ? waterToday().count : (state.v5.waterLog || {})[dayKey] || 0,
+      recovery: completed.filter(([key]) => key.split(":")[1] === "care").length,
+      wellbeing: completed.length
+    };
+  }
+
+  function daySummaryHtml(offset) {
+    const dayKey = summaryDayKey(offset);
+    const data = daySummaryData(dayKey);
+    const male = state.parentRole === "otec";
+    const dayLabel = offset === 0 ? "Dnes" : offset === 1 ? "Včera" : new Date(dayKey + "T12:00:00").toLocaleDateString("sk-SK", { weekday: "long", day: "numeric", month: "numeric" });
+    const stat = (value, label) => "<div><b>" + escapeHtml(String(value)) + "</b><span>" + escapeHtml(label) + "</span></div>";
+    const encouragements = male
+      ? ["Dnes si to zvládol skvele.", "Každý malý krok sa počíta. Dobrú noc.", "Si pre svoju rodinu presne taký, akého potrebuje."]
+      : ["Dnes si to zvládla skvele.", "Každý malý krok sa počíta. Dobrú noc.", "Si pre svoju rodinu presne taká, akú potrebuje."];
+    const anything = data.sleepCount || data.feedings || data.diapers || data.moments || data.firsts.length || data.water || data.wellbeing;
+    return [
+      "<div class='v2-summary-nav'>",
+      "<button type='button' data-v2-summary-day='", offset + 1, "' aria-label='Predchádzajúci deň'", offset >= SUMMARY_DAYS_BACK ? " disabled" : "", ">‹</button>",
+      "<strong>", escapeHtml(dayLabel), "</strong>",
+      "<button type='button' data-v2-summary-day='", offset - 1, "' aria-label='Nasledujúci deň'", offset <= 0 ? " disabled" : "", ">›</button></div>",
+      anything ? "" : "<p class='v2-summary-empty'>Za tento deň zatiaľ nie je nič zaznamenané. Stačí ťuknúť na Spánok, Kŕmenie alebo Prebalenie na domove.</p>",
+      "<section class='v2-summary-block'><h3>", icon("baby"), " Bábätko</h3><div class='v2-summary-stats'>",
+      stat(data.sleepTotal ? formatDuration(data.sleepTotal) : data.sleepCount ? data.sleepCount + "×" : "—", "spánok spolu"),
+      stat(data.sleepLongest ? formatDuration(data.sleepLongest) : "—", "najdlhší úsek"),
+      stat(data.feedings, "kŕmení"),
+      stat(data.diapers, "prebalení"),
+      stat(data.poops, "kakanie"),
+      "</div></section>",
+      "<section class='v2-summary-block'><h3>", icon("memory"), " Spomienky</h3><div class='v2-summary-stats'>",
+      stat(data.moments, "momentov"),
+      stat(data.photos, "fotiek"),
+      stat(data.firsts.length, "prvých razov"),
+      "</div>", data.firsts.length ? "<p>" + escapeHtml(data.firsts.join(" · ")) + "</p>" : "", "</section>",
+      "<section class='v2-summary-block'><h3>", icon("health"), " Ty", "</h3><div class='v2-summary-stats'>",
+      stat(data.water, "pohárov tekutín"),
+      stat(data.recovery, "zotavenie"),
+      stat(data.wellbeing, "krokov pohody"),
+      "</div></section>",
+      "<p class='v2-summary-cheer'>", escapeHtml(encouragements[Number(dayKey.slice(-2)) % encouragements.length]), "</p>",
+      "<label class='v2-summary-time'>Súhrn mi priprav o<select data-v2-summary-time>",
+      ["18:00", "19:00", "20:00", "21:00", "22:00"].map(time => "<option value='" + time + "'" + (time === summaryTime() ? " selected" : "") + ">" + time + "</option>").join(""),
+      "</select></label>",
+      "<p class='v2-summary-note'>Súhrn vidíš iba ty. Upozornenie na mobil pribudne po spustení účtov, zatiaľ ťa súhrn čaká na domove.</p>"
+    ].join("");
+  }
+
+  function openDaySummary(offset = 0) {
+    closeDrawer();
+    closeQuickRecord();
+    state.v5.adaptiveO.modalSource = "summary";
+    byId("v5OMenuTitle").textContent = "Súhrn dňa";
+    byId("v5OMenuSubtitle").textContent = "Bábätko, spomienky a tvoja pohoda";
+    byId("v5OMenuBack").hidden = true;
+    byId("v5OMenuBody").innerHTML = daySummaryHtml(offset);
+    const overlay = byId("v5OOverlay");
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
+    document.body.style.overflow = "hidden";
+  }
+
+  function daySummaryCard() {
+    if (state.profile.status === "expecting") return "";
+    const ready = summaryReady();
+    return "<button class='v5-row-card v2-summary-card" + (ready ? " is-ready" : "") + "' type='button' data-v2-summary-open><span class='v5-icon'>" + icon("sparkle") + "</span><div><strong>" +
+      (ready ? "Dnešný súhrn je pripravený" : "Súhrn dňa") + "</strong><span>" +
+      (ready ? "Spánok, kŕmenie, spomienky aj tvoja pohoda" : "Pripravený bude o " + escapeHtml(summaryTime()) + " · pozrieť priebežne") + "</span></div><span class='v5-row-arrow'>›</span></button>";
   }
 
   function openOrganizationMenu(sectionId) {
@@ -2949,15 +3083,37 @@
       renderOrganizationMenu(state.v5.organizationSection);
       return announce("Hotovo. Zobrazuje sa ďalšia úloha.");
     }
+    if (event.target.closest("[data-v2-summary-open]")) return openDaySummary(0);
+    const summaryDay = event.target.closest("[data-v2-summary-day]");
+    if (summaryDay) {
+      byId("v5OMenuBody").innerHTML = daySummaryHtml(Math.max(0, Math.min(SUMMARY_DAYS_BACK, Number(summaryDay.dataset.v2SummaryDay) || 0)));
+      return;
+    }
     const organizationAction = event.target.closest("[data-v5-org-action]");
     if (organizationAction) {
       const task = organizationSections().flatMap(section => section.tasks).find(item => item[0] === organizationAction.dataset.v5OrgAction);
-      if (!task) return;
-      state.checks[task[0]] = true;
+      if (!task?.[4]) return;
+      if (task[4].done) state.checks[task[0]] = true;
       persist();
       renderHome();
-      openFeature(task[4]);
-      return announce("Úloha je splnená.");
+      if (task[4].feature === "calendar") {
+        closeAdaptiveOMenu();
+        openCalendarModal();
+      } else {
+        openFeature(task[4].feature);
+      }
+      return task[4].done ? announce("Úloha je splnená.") : undefined;
+    }
+    // „Už mám vybavené“ v detaile dokladu odfajkne aj úlohu v kruhu, ku ktorej doklad patrí.
+    const adminDone = event.target.closest("[data-v2-admin-done]");
+    if (adminDone) {
+      const linked = organizationSections().flatMap(section => section.tasks)
+        .filter(task => (task[5] || []).length === 1 && task[5][0] === adminDone.dataset.v2AdminDone);
+      linked.forEach(task => { state.checks[task[0]] = true; });
+      if (linked.length) {
+        persist();
+        if (byId("v5OOverlay")?.classList.contains("open") && state.v5.adaptiveO.modalSource === "organization") renderOrganizationMenu(state.v5.organizationSection);
+      }
     }
     if (event.target.closest("[data-v5-org-invite]")) {
       state.v5.profileTab = "family";
@@ -3036,6 +3192,7 @@
       const water = waterToday();
       const wasDone = water.count >= water.goal;
       water.count = Math.max(0, water.count + (waterAdd ? 1 : -1));
+      (state.v5.waterLog ||= {})[todayKey()] = water.count;
       persist();
       renderHome();
       renderAdaptiveOMenu();
@@ -3675,6 +3832,13 @@
   });
 
   document.addEventListener("change", event => {
+    const summaryTimeSelect = event.target.closest("[data-v2-summary-time]");
+    if (summaryTimeSelect) {
+      state.v5.summaryTime = summaryTimeSelect.value;
+      persist();
+      renderHome();
+      return announce("Súhrn bude pripravený o " + summaryTimeSelect.value + ".");
+    }
     const waterSetting = event.target.closest("[data-v5-water-goal], [data-v5-water-glass]");
     if (waterSetting) {
       const water = waterToday();

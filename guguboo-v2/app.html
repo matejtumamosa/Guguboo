@@ -3100,7 +3100,7 @@
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.3.0">
+  <link rel="stylesheet" href="v2.css?v=2.4.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -3321,7 +3321,7 @@
                 </dl>
               </section>
 
-              <div class="v5-today-card welcome-finish-first-step">
+              <div class="v5-today-card welcome-finish-first-step" id="welcomeFinishFirstStep">
                 <span class="v5-icon" aria-hidden="true"><svg id="welcomeFinishIconChecklist" viewBox="0 0 24 24"><path d="M9 5h10M9 12h10M9 19h10"/><path d="m3.5 5 1.5 1.5L7.5 4M3.5 12l1.5 1.5L7.5 11M3.5 19l1.5 1.5L7.5 18"/></svg><svg id="welcomeFinishIconMoment" class="hidden" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>
                 <div>
                   <small>Prvý krok na domove</small>
@@ -3336,7 +3336,7 @@
               </ul>
 
               <button class="welcome-finish-edit" type="button" id="welcomeChapterEditSettings">Upraviť údaje o bábätku</button>
-              <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
+              <div class="actions welcome-story-actions welcome-finish-actions"><button class="ghost" type="button" data-welcome-prev id="welcomeFinishBack">Späť</button><button class="primary hidden" type="button" id="saveWelcomeBirthCard">Vytvoriť kartičku narodenia</button><button class="primary" type="button" id="saveWelcome">Otvoriť môj Guguboo <span aria-hidden="true">→</span></button></div>
             </div>
 
             <div class="welcome-legacy-fields hidden" aria-hidden="true">
@@ -8054,8 +8054,18 @@ Otázky:
       const avatar = $("welcomeFinishAvatar");
       setText("welcomeFinishBabyName", babyName);
       const parentName = $("welcomeUserName")?.value.trim() || state.user.name || "";
-      setText("welcomeFinishTitle", parentName ? `${parentName}, všetko je pripravené.` : "Všetko je pripravené.");
+      const readyLine = parentName ? `${parentName}, všetko je pripravené.` : "Všetko je pripravené.";
+      // Pri narodenom dieťati je to jediná záverečná obrazovka (spojená s „Vitaj na svete“, pripomienka #8).
+      setText("welcomeFinishTitle", expecting ? readyLine : `Vitaj na svete, ${babyName === "Bábätko" ? "bábätko" : babyName}.`);
       setText("welcomeBabyStepTitle", expecting ? "Koho spolu privítame?" : "Predstav nám svoje bábätko");
+      $("welcomeFinishFirstStep")?.classList.toggle("hidden", !expecting);
+      $("welcomeFinishCountry")?.classList.toggle("hidden", !expecting);
+      $("welcomeFinishBack")?.classList.toggle("hidden", !expecting);
+      $("saveWelcomeBirthCard")?.classList.toggle("hidden", expecting);
+      if ($("saveWelcome")) {
+        $("saveWelcome").className = expecting ? "primary" : "ghost";
+        $("saveWelcome").innerHTML = expecting ? `Otvoriť môj Guguboo <span aria-hidden="true">→</span>` : "Pokračovať do aplikácie";
+      }
       $("welcomeFinishIconChecklist")?.classList.toggle("hidden", !expecting);
       $("welcomeFinishIconMoment")?.classList.toggle("hidden", expecting);
 
@@ -8087,7 +8097,7 @@ Otázky:
         avatar.setAttribute("aria-label", `Profil: ${babyName}`);
         // Vek je už v okienku VEK – pod menom ho neopakujeme.
         setText("welcomeFinishBabyMeta", "");
-        setText("welcomeFinishLead", "Kŕmenie, prebalenie, spánok aj všetko ostatné nájdeš po otvorení tvojho Guguboo.");
+        setText("welcomeFinishLead", `${readyLine} Kŕmenie, spánok, pripomienky aj spomienky nájdeš v Guguboo.`);
         setText("welcomeFinishGlanceLabel1", "Vek");
         setText("welcomeFinishGlanceValue1", ageLabel || "—");
         setText("welcomeFinishGlanceLabel2", "Narodenie");
@@ -8195,7 +8205,7 @@ Otázky:
       return missing.length ? `Doplň prosím: ${missing.join(", ")}.` : "";
     }
 
-    function completeWelcome() {
+    function completeWelcome(target = "home") {
       const status = state.welcomeStatus || "expecting";
       const insurance = $("welcomeInsurance").value === "other" ? $("welcomeInsuranceOther").value.trim() : $("welcomeInsurance").value;
       const validationError = validateWelcome();
@@ -8237,7 +8247,9 @@ Otázky:
       updateCountryUI(state.profile.country || "SK");
       if (status === "expecting" && state.checkTab === "prenatalDeep") state.checkTab = "admin";
       save();
-      switchView(status === "expecting" ? "home" : "birthIntro");
+      // Samostatná obrazovka „Vitaj na svete“ už nie je – rovno domov alebo ku kartičke narodenia.
+      if (status === "born" && target === "birthCard") openBirthCardView();
+      else switchView("home");
       showToast("Začiatok uložený");
     }
 
@@ -9064,7 +9076,8 @@ Otázky:
     }));
     $("welcomeName").addEventListener("blur", () => maybeGuessSex("welcomeName", "welcomeSex"));
     $("babyName").addEventListener("blur", () => maybeGuessSex("babyName", "babySex"));
-    $("saveWelcome").addEventListener("click", completeWelcome);
+    $("saveWelcome").addEventListener("click", () => completeWelcome("home"));
+    $("saveWelcomeBirthCard")?.addEventListener("click", () => completeWelcome("birthCard"));
     $("welcomeChapterEditSettings").addEventListener("click", () => setWelcomeStep(5));
     document.querySelectorAll("[data-open-birth-card]").forEach(btn => btn.addEventListener("click", openBirthCardView));
     $("openBirthCardFromIntro").addEventListener("click", openBirthCardView);
@@ -9644,9 +9657,9 @@ Otázky:
     switchView(previewStartsAtWelcome ? "welcome" : state.onboarded ? "home" : "welcome");
     setTimeout(() => playBrandVoice(true), 450);
   </script>
-  <script src="v4-upgrade.js?v=6.9"></script>
+  <script src="v4-upgrade.js?v=6.10"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.3.0"></script>
+  <script src="v5-mobile.js?v=2.4.0"></script>
   <script src="guguchat.js?v=2.3.1"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>
