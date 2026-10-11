@@ -313,7 +313,7 @@
     ? [...prenatalDrawerFeatures]
     : ["privateSpace", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
-    ? ["beforeBirth", "babySize", "contacts", "shopping"]
+    ? ["beforeBirth", "contacts", "shopping", "travel"]
     : ["privateSpace", "memories", "activities", "shopping"];
   const legacyCareFeatures = new Set(["health", "urgent", "guide", "night"]);
   const normalizeFavorites = (favorites, phase) => {
@@ -1074,7 +1074,13 @@
       ? new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })
       : "Doplniť termín";
     const statusCards = expecting ? [
-      ["Týždeň", pregnancyWeek ? pregnancyWeek + ". týždeň" : "Doplniť termín", "pregnancy"],
+      // Týždeň je už v krúžku pri mene – tu radšej veľkosť bábätka (otvorí miniaplikáciu).
+      (() => {
+        const size = pregnancyWeek ? window.GugubooV2?.babySize?.(pregnancyWeek) : null;
+        return size?.comparison
+          ? ["Veľkosť", size.emoji + " ako " + size.comparison, "babySize"]
+          : ["Týždeň", pregnancyWeek ? pregnancyWeek + ". týždeň" : "Doplniť termín", pregnancyWeek ? "babySize" : "pregnancy"];
+      })(),
       ["Termín pôrodu", dueDateLabel, "pregnancy"],
       ["Tehotenská knižka", "Otvoriť", "pregnancy"]
     ] : [
