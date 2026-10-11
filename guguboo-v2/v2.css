@@ -510,8 +510,8 @@ body.v5-active #v5BottomBar.v2-bottom-bar .v2-chat-shutter { margin-top: -6px; }
   background-image: linear-gradient(145deg, #f3eeff, #fff1ea) !important;
   text-align: center;
 }
-.v2-week-badge b { font: 900 22px/1 Nunito, sans-serif; letter-spacing: -.02em; }
-.v2-week-badge small { font: 800 8px/1 Nunito, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted, #7a7383); }
+.v2-week-badge b { font: 900 22px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: -.02em; }
+.v2-week-badge small { font: 800 8px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted, #7a7383); }
 .welcome-fruit-avatar-image.v2-week-badge b { font-size: 26px; }
 .fruit-icon.v2-week-badge { width: 88px; height: 88px; margin-inline: auto; border-radius: 28px; box-shadow: 0 12px 28px rgba(72, 55, 100, .12); }
 .fruit-icon.v2-week-badge b { font-size: 34px; }
@@ -578,7 +578,7 @@ body.v5-active #v5BottomBar.v2-bottom-bar .v2-chat-shutter { margin-top: -6px; }
 .v5-o-sector-base-3 { fill: #dbe3fa; opacity: 1; }
 .v2-o-label { pointer-events: none; }
 .v2-o-label rect { fill: rgba(255, 255, 255, .92); stroke-width: 1.5; }
-.v2-o-label text { font: 900 17px/1 Nunito, sans-serif; letter-spacing: .01em; }
+.v2-o-label text { font: 900 17px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .01em; }
 .v2-o-label-1 rect { stroke: #e9a0b6; } .v2-o-label-1 text { fill: #a8486a; }
 .v2-o-label-2 rect { stroke: #eeb07a; } .v2-o-label-2 text { fill: #9a5a22; }
 .v2-o-label-3 rect { stroke: #98abe6; } .v2-o-label-3 text { fill: #3f57a8; }
@@ -687,7 +687,7 @@ body.v5-active.night .v2-summary-stats div { background: rgba(255, 255, 255, .05
 .v2-location-card .welcome-location-status:empty { display: none; }
 
 /* Názvy segmentov po oblúku kruhu – bez rámčekov. */
-.v2-o-label text { font: 900 18px/1 Nunito, sans-serif; letter-spacing: .12em; }
+.v2-o-label text { font: 900 18px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .12em; }
 .v2-o-label-1 text { fill: #b14d70; }
 .v2-o-label-2 text { fill: #a3602a; }
 .v2-o-label-3 text { fill: #4560b0; }
@@ -709,3 +709,68 @@ body.v5-active.night .v5-o-legend-item.v2-o-legend-3 { background: rgba(125, 148
 .v2-o-label-1 text { fill: #cf7d98; }
 .v2-o-label-2 text { fill: #cf8a4f; }
 .v2-o-label-3 text { fill: #7088cf; }
+
+/* ——— Jednotný vzhľad okien (Samuel 11. 10.) ———
+   Celostránkové okná (profily, nákup, cestovanie, GuguChat, staré obrazovky…) dostanú rovnakú
+   hlavičku ako moderné okná (Kalendár, Súhrn dňa): veľký názov vľavo, okrúhle tlačidlá späť a ×,
+   bez nálepky „Aplikácia“, bez zdvojeného obrovského nadpisu a bez pruhu pri jednokrokových oknách. */
+body.v5-active .v5-universal-window-head {
+  min-height: 68px;
+  margin: 0 -14px 6px;
+  padding: 12px 14px 8px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 12px;
+  border-bottom: 0;
+}
+body.v5-active .v5-universal-window-head > div { text-align: left; }
+body.v5-active .v5-universal-window-head small { display: none; }
+body.v5-active .v5-universal-window-head strong {
+  margin: 0;
+  color: var(--v5-ink);
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+}
+body.v5-active .v5-universal-back,
+body.v5-active .v5-universal-cancel {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+}
+body.v5-active .v5-universal-back span { display: none; }
+body.v5-active .v5-universal-back svg { width: 18px; height: 18px; }
+body.v5-active .v5-universal-cancel { font-size: 22px; }
+
+/* Obsah okna: názov je už v hlavičke – nálepku skryť, nadpis zmenšiť na podnadpis. */
+body.v5-app-window-open .view.active .v5-flow-head .v5-eyebrow { display: none; }
+body.v5-app-window-open .view.active .v5-flow-head { margin-top: 2px; }
+body.v5-app-window-open .view.active .v5-flow-head h1 { margin: 0 0 4px; font-size: 20px; line-height: 1.22; letter-spacing: -.005em; }
+body.v5-app-window-open .view.active .v5-flow-head p { margin: 0; font-size: 13px; line-height: 1.45; }
+/* Pruh priebehu má zmysel len pri viacerých krokoch. */
+body.v5-app-window-open .view.active .v5-flow-progress[style="--steps:1"] { display: none; }
+/* Staré obrazovky v okne: nadpisy panelov v rovnakej veľkosti ako v nových oknách. */
+body.v5-app-window-open .view.active .panel h3 { margin-bottom: 6px; font-size: 19px; line-height: 1.25; letter-spacing: -.005em; }
+body.v5-app-window-open .view.active .panel h3 + .muted,
+body.v5-app-window-open .view.active .panel h3 + p { font-size: 13px; }
+/* Staré „karty s číslom“ (Aktuálne údaje a pod.) – kompaktne po dvoch, ako dlaždice na domove. */
+body.v5-app-window-open .view.active .age-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+body.v5-app-window-open .view.active .age-card { min-height: 0; padding: 10px 12px; border-radius: 14px; }
+body.v5-app-window-open .view.active .age-card b { font-size: 18px; line-height: 1.2; }
+body.v5-app-window-open .view.active .age-card span { font-size: 11px; }
+/* GuguChat v okne: názov je už v hlavičke okna – pod ňou len krátky popis. */
+body.v5-app-window-open .view.active .v2-chat-head img,
+body.v5-app-window-open .view.active .v2-chat-head strong { display: none; }
+body.v5-app-window-open .view.active .v2-chat-head { padding-top: 0; }
+body.v5-app-window-open .view.active .v2-chat-head small { font-size: 13px; }
+/* Dlhý názov okna sa zalomí na dva riadky namiesto „Pomoc a staro…“. */
+body.v5-active .v5-universal-window-head strong {
+  display: -webkit-box;
+  font-size: 22px;
+  white-space: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

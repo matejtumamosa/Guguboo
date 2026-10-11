@@ -560,10 +560,11 @@
 
   function universalWindowTitle(view) {
     if (view === "v5Utility") return features[state.v5.utilitySection]?.label || "Rodinné nástroje";
+    if (view === "v5Flow" && state.v5.flow?.type === "teeth-intro") return features.teeth.label;
     if (view === "v5Flow") return features[state.v5.flow?.type]?.label || (state.v5.flow?.type === "note" ? "Poznámka" : "Záznam");
     if (view === "v5First100") return "Naše chvíle";
     if (view === "v5Checklists" && state.profile.status === "expecting") return "Moja príprava";
-    return viewTitles[view]?.[0] || "Guguboo";
+    return viewTitles[view]?.[0] || Object.values(features).find(feature => feature.view === view)?.label || "Guguboo";
   }
 
   function syncUniversalWindow() {
@@ -1838,7 +1839,7 @@
     if (!target) return;
     target.innerHTML = [
       // V2: pokoj a kľud – bez trvalého červeného pásu s tiesňovými číslami (Samuel 28. 9.).
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Jedno miesto</span><h1>Pomoc a starostlivosť</h1><p>Vyber, čo práve riešiš.</p></header>",
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Jedno miesto</span><h1>Čo práve riešiš?</h1><p>Vyber jednu možnosť, pomôžem ti ďalej.</p></header>",
       "<div class='v5-care-grid'>",
       "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("health") + "</span><span><strong>Návšteva lekára</strong><small>Pokyny domov, nákup a ďalšia kontrola</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Bábätko niečo trápi</strong><small>Pomôžem ti usporiadať, čo pozoruješ</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",

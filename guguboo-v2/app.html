@@ -235,7 +235,7 @@
       font-size: 22px;
       letter-spacing: 0;
       line-height: 1;
-      font-family: Nunito, Inter, sans-serif;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
     }
 
     .brand-badge {
@@ -489,7 +489,7 @@
       font-size: clamp(24px, 3vw, 34px);
       letter-spacing: 0;
       color: #14251f;
-      font-family: Nunito, Inter, sans-serif;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
     }
 
     .topbar p {
@@ -539,7 +539,7 @@
       margin: 0 0 10px;
       font-size: 17px;
       color: #17261f;
-      font-family: Nunito, Inter, sans-serif;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
     }
 
     .panel.hero-panel {
@@ -1114,7 +1114,7 @@
       font-size: clamp(30px, 5vw, 56px);
       line-height: 1.02;
       margin: 10px 0 12px;
-      font-family: Nunito, Inter, sans-serif;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
     }
 
     .welcome-options {
@@ -2100,7 +2100,7 @@
     .birth-card-name {
       margin: 8px 0 18px;
       color: #176f68;
-      font-family: "Nunito", sans-serif;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
       font-size: clamp(42px, 10vw, 76px);
       font-weight: 900;
       line-height: 1;
@@ -2523,7 +2523,7 @@
     .birth-font-option strong { font-size: 22px; line-height: 1; }
     .birth-font-option[data-birth-font="elegant"] strong { font-family: "Playfair Display", Georgia, serif; font-style: italic; }
     .birth-font-option[data-birth-font="hand"] strong { font-family: "Caveat", cursive; }
-    .birth-font-option[data-birth-font="modern"] strong { font-family: "Nunito", sans-serif; }
+    .birth-font-option[data-birth-font="modern"] strong { font-family: Montserrat, ui-sans-serif, system-ui, sans-serif; }
     .birth-font-option.active,
     .birth-font-option[aria-pressed="true"] { border-color: var(--brand); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--accent-soft); }
 
@@ -2556,7 +2556,7 @@
     .birth-card-paper { padding: clamp(24px, 4.4vw, 42px) clamp(24px, 5vw, 50px) 18px; }
     .birth-card-name { margin: 8px 0 7px; font-family: "Playfair Display", Georgia, serif; font-style: italic; font-size: clamp(47px, 10vw, 82px); line-height: 1; }
     .birth-card-preview.name-font-hand .birth-card-name { font-family: "Caveat", "Segoe Print", cursive; font-style: normal; font-size: clamp(58px, 12vw, 96px); }
-    .birth-card-preview.name-font-modern .birth-card-name { font-family: "Nunito", sans-serif; font-style: normal; font-size: clamp(42px, 8.8vw, 72px); letter-spacing: -.045em; }
+    .birth-card-preview.name-font-modern .birth-card-name { font-family: Montserrat, ui-sans-serif, system-ui, sans-serif; font-style: normal; font-size: clamp(42px, 8.8vw, 72px); letter-spacing: -.045em; }
     .birth-card-preview.name-font-elegant .birth-card-name { font-family: "Playfair Display", Georgia, serif; font-style: italic; }
 
     .birth-card-photo-shell {
@@ -3096,11 +3096,11 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <link rel="stylesheet" href="v5-mobile.css?v=7.3">
+  <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.4.5">
+  <link rel="stylesheet" href="v2.css?v=2.5.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -6294,7 +6294,7 @@
       const nameFont = data.font === "hand"
         ? `700 ${nameSize}px Caveat, Segoe Print, cursive`
         : data.font === "modern"
-          ? `900 ${nameSize}px Nunito, sans-serif`
+          ? `900 ${nameSize}px Montserrat, ui-sans-serif, system-ui, sans-serif`
           : `italic 700 ${nameSize}px Playfair Display, Georgia, serif`;
       ctx.font = nameFont;
       ctx.fillText(data.name, 600, 245);
@@ -9680,7 +9680,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.10"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.4.5"></script>
+  <script src="v5-mobile.js?v=2.5.0"></script>
   <script src="guguchat.js?v=2.4.2"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>

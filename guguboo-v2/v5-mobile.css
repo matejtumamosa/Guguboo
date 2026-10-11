@@ -2457,7 +2457,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 #v5Header[data-home="true"] .v5-header-title { display: none; }
 
 .v5-header-title strong {
-  font-family: Nunito, Inter, sans-serif;
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
   font-size: 16px;
   font-weight: 900;
 }
@@ -2527,7 +2527,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
   border: 2px solid rgba(255,255,255,.9);
   border-radius: 19px 19px 19px 7px;
   box-shadow: 0 9px 22px rgba(97, 77, 153, .13);
-  font: 900 25px/1 Nunito, sans-serif;
+  font: 900 25px/1 Montserrat, ui-sans-serif, system-ui, sans-serif;
 }
 
 .pregnancy-fruit-photo,
@@ -2567,7 +2567,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
   border: 2px solid rgba(255, 255, 255, .94);
   border-radius: 19px 19px 19px 7px;
   box-shadow: 0 9px 22px rgba(97, 77, 153, .16);
-  font: 900 24px/1 Nunito, sans-serif;
+  font: 900 24px/1 Montserrat, ui-sans-serif, system-ui, sans-serif;
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
@@ -2690,7 +2690,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 .v5-home-person h1 {
   margin: 0;
   color: var(--v5-ink);
-  font: 900 25px/1.05 Nunito, Inter, sans-serif;
+  font: 900 25px/1.05 Montserrat, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -.025em;
 }
 
@@ -2852,7 +2852,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 .v5-compact-head h2 {
   margin: 0;
   color: var(--v5-ink);
-  font: 900 18px/1.1 Nunito, Inter, sans-serif;
+  font: 900 18px/1.1 Montserrat, ui-sans-serif, system-ui, sans-serif;
 }
 
 .v5-compact-head p {
@@ -2966,7 +2966,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 .v5-drawer-head h2,
 .v5-memory-card h2,
 .v5-card-preview h2 {
-  font-family: Nunito, Inter, sans-serif;
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: -.025em;
 }
@@ -4191,7 +4191,7 @@ body.intro-only #v5AudioDock {
   margin: 0;
   overflow: hidden;
   color: var(--v5-ink);
-  font: 900 23px/1.05 Nunito, Inter, sans-serif;
+  font: 900 23px/1.05 Montserrat, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -.025em;
   text-overflow: ellipsis;
   white-space: nowrap;
