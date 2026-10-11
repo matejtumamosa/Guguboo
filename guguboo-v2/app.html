@@ -3100,7 +3100,7 @@
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.2.2">
+  <link rel="stylesheet" href="v2.css?v=2.3.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -3219,7 +3219,6 @@
                 <p class="welcome-story-lead">Stačí krajina — zvyšok appka doladí sama.</p>
                 <aside class="welcome-location-card" aria-label="Nastavenie polohy alebo krajiny">
                   <button class="secondary" type="button" id="welcomeLocateBtn">Povoliť polohu</button>
-                  <p class="welcome-location-benefit">Zistíme len krajinu, súradnice si neukladáme.</p>
                   <button class="welcome-text-button" type="button" id="welcomeManualCountryBtn" aria-expanded="false" aria-controls="welcomeManualCountry">Vybrať krajinu ručne</button>
                   <div class="welcome-manual-country hidden" id="welcomeManualCountry">
                     <label>Krajina pobytu
@@ -3263,7 +3262,7 @@
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="5">
-              <h2>Koho spolu privítame?</h2>
+              <h2 id="welcomeBabyStepTitle">Koho spolu privítame?</h2>
               <p class="welcome-story-lead">Teraz stačia dve drobnosti. Zvyšok počká v profile.</p>
               <div class="welcome-baby-card">
                 <label class="welcome-friendly-field">Meno alebo pracovné meno
@@ -3293,8 +3292,8 @@
               <h2>Chceš tu mať blízku osobu?</h2>
               <p class="welcome-story-lead">Partnera, druhého rodiča alebo niekoho, komu dôveruješ. Je to úplne na tebe.</p>
               <div class="welcome-options welcome-story-choices">
-                <button class="choice-card" type="button" data-partner-choice="yes"><span class="welcome-choice-icon" aria-hidden="true">＋</span><strong>Áno, pripravme pozvanie</strong><span>Spoločný priestor môžeš nastaviť aj neskôr.</span></button>
-                <button class="choice-card active" type="button" data-partner-choice="no"><span class="welcome-choice-icon" aria-hidden="true">♡</span><strong>Zatiaľ nie</strong><span>Guguboo je tu rovnako aj pre teba.</span></button>
+                <button class="choice-card" type="button" data-partner-choice="yes"><span class="welcome-choice-icon" aria-hidden="true">＋</span><strong>Áno, pripravme pozvanie</strong><span>Blízku osobu môžeš pozvať kedykoľvek neskôr.</span></button>
+                <button class="choice-card active" type="button" data-partner-choice="no"><span class="welcome-choice-icon" aria-hidden="true">♡</span><strong>Zatiaľ nie</strong><span>Pokračuj sám/sama, nič ti nebude chýbať.</span></button>
               </div>
               <label id="welcomePartnerEmailWrap" class="welcome-friendly-field hidden">E-mail blízkej osoby
                 <input id="welcomePartnerEmail" type="email" autocomplete="email" placeholder="blizka.osoba@email.sk">
@@ -3304,7 +3303,7 @@
             </div>
 
             <div class="welcome-step welcome-story-step welcome-finish-step" data-welcome-step="7">
-              <h2><span data-welcome-personal-name>Ahoj</span>.<span class="welcome-finish-title-line">Všetko je pripravené.</span></h2>
+              <h2 id="welcomeFinishTitle">Všetko je pripravené.</h2>
               <p class="welcome-story-lead" id="welcomeFinishLead">Každý deň ti ponúkneme jeden malý krok. Nič netreba riešiť naraz.</p>
 
               <section class="v5-home-hero welcome-finish-preview" aria-labelledby="welcomeFinishBabyName">
@@ -6904,7 +6903,7 @@
       if ($("birthIntroTitle")) {
         $("birthIntroTitle").textContent = `Vitaj na svete, ${name}.`;
         const bornAt = [state.profile.birthTime, state.profile.birthPlace].filter(Boolean).join(" · ");
-        $("birthIntroText").textContent = `Vitaj na svete, ${name}.${bornAt ? " " + bornAt + "." : ""} Guguboo teraz pripraví rodine praktický prehľad podľa tvojho veku a potrieb.`;
+        $("birthIntroText").textContent = `${bornAt ? bornAt + ". " : ""}Guguboo ti teraz pripraví praktický prehľad podľa veku bábätka a potrieb rodiny.`;
       }
       const journey = $("journeyRing").closest(".journey");
       journey.classList.toggle("expecting-home", expecting);
@@ -8054,6 +8053,9 @@ Otázky:
       const dateLabel = (value, options) => value ? new Date(value + "T12:00:00").toLocaleDateString("sk-SK", options) : "—";
       const avatar = $("welcomeFinishAvatar");
       setText("welcomeFinishBabyName", babyName);
+      const parentName = $("welcomeUserName")?.value.trim() || state.user.name || "";
+      setText("welcomeFinishTitle", parentName ? `${parentName}, všetko je pripravené.` : "Všetko je pripravené.");
+      setText("welcomeBabyStepTitle", expecting ? "Koho spolu privítame?" : "Predstav nám svoje bábätko");
       $("welcomeFinishIconChecklist")?.classList.toggle("hidden", !expecting);
       $("welcomeFinishIconMoment")?.classList.toggle("hidden", expecting);
 
@@ -8083,7 +8085,8 @@ Otázky:
         avatar.style.backgroundPosition = "";
         avatar.textContent = babyName.charAt(0).toUpperCase();
         avatar.setAttribute("aria-label", `Profil: ${babyName}`);
-        setText("welcomeFinishBabyMeta", ageLabel || "Vitaj na svete");
+        // Vek je už v okienku VEK – pod menom ho neopakujeme.
+        setText("welcomeFinishBabyMeta", "");
         setText("welcomeFinishLead", "Kŕmenie, prebalenie, spánok aj všetko ostatné nájdeš po otvorení tvojho Guguboo.");
         setText("welcomeFinishGlanceLabel1", "Vek");
         setText("welcomeFinishGlanceValue1", ageLabel || "—");
@@ -9643,7 +9646,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.9"></script>
   <script src="journey-engine.js?v=2.2.0"></script>
-  <script src="v5-mobile.js?v=2.2.2"></script>
+  <script src="v5-mobile.js?v=2.3.0"></script>
   <script src="guguchat.js?v=2.2.0"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=2"></script>

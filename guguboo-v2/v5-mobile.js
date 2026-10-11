@@ -180,16 +180,57 @@
       health: ["Opora", "Ako sa máš a kto je pri tebe.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     }
   };
+  // Po narodení: vzduch a pretiahnutie patria k Zotaveniu, nie k Výžive (pripomienka #11).
+  const circleGoalsByStage = {
+    expecting: { care: ["rest", "nap", "handover", "quiet"], movement: ["water", "meal", "fresh-air", "stretch"] },
+    born: { care: ["rest", "nap", "handover", "quiet", "fresh-air", "stretch"], movement: ["water", "meal"] }
+  };
+  const allCircleGoals = Object.fromEntries(Object.values(adaptiveOGoals).flat().map(goal => [goal.id, goal]));
+  // Texty v prvej osobe podľa rodiča: Otec → mužský rod, inak ženský (kruh je predovšetkým pohoda mamy).
+  const maleGoalTitles = {
+    "Zdriemla som si": "Zdriemol som si", "Zdriemla som si, keď spinkalo bábätko": "Zdriemol som si, keď spinkalo bábätko",
+    "Oddýchla som si": "Oddýchol som si", "Napila som sa": "Napil som sa", "Najedla som sa": "Najedol som sa",
+    "Bola som na vzduchu": "Bol som na vzduchu", "Ozvala som sa blízkemu": "Ozval som sa blízkemu",
+    "Porozprávala som sa s blízkym": "Porozprával som sa s blízkym"
+  };
   function applyStageToCircle() {
-    const stage = circleByStage[state.profile.status === "born" ? "born" : "expecting"];
+    const stageKey = state.profile.status === "born" ? "born" : "expecting";
+    const stage = circleByStage[stageKey];
+    const male = state.parentRole === "otec";
+    Object.entries(circleGoalsByStage[stageKey]).forEach(([sectionId, ids]) => {
+      adaptiveOGoals[sectionId] = ids.map(id => allCircleGoals[id]).filter(Boolean);
+    });
     adaptiveOSections.forEach(section => {
       const [label, description, titles] = stage[section.id] || [];
       if (!label) return;
       section.label = label;
       section.shortLabel = label;
       section.description = description;
-      (adaptiveOGoals[section.id] || []).forEach(goal => { if (titles[goal.id]) goal.title = titles[goal.id]; });
+      Object.values(stage).forEach(([, , stageTitles]) => {
+        (adaptiveOGoals[section.id] || []).forEach(goal => {
+          const title = titles[goal.id] || stageTitles[goal.id];
+          if (title) goal.title = male ? maleGoalTitles[title] || title : title;
+        });
+      });
     });
+    if (allCircleGoals.water) allCircleGoals.water.title = "Pitný režim";
+  }
+
+  // Pitný režim (pripomienka #12): denné počítadlo pohárov, o polnoci sa vynuluje.
+  // Predvolený cieľ 8 pohárov = horná hranica NHS „6 to 8 cups or glasses of fluid a day“;
+  // NHS uvádza, že v tehotenstve a pri dojčení môže byť potrebné viac, konkrétne číslo nedáva.
+  const WATER_SOURCE_URL = "https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/water-drinks-nutrition/";
+  function waterToday() {
+    const water = state.v5.water ||= { date: "", count: 0, goal: 8, glassMl: 250 };
+    if (water.date !== todayKey()) { water.date = todayKey(); water.count = 0; }
+    return water;
+  }
+  function waterLiters(glasses) {
+    return (glasses * (waterToday().glassMl || 250) / 1000).toLocaleString("sk-SK", { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + " l";
+  }
+  function waterProgressText() {
+    const water = waterToday();
+    return water.count + " / " + water.goal + " pohárov · " + waterLiters(water.count);
   }
 
   const adaptiveODefaults = {
@@ -241,7 +282,7 @@
     ] },
     { id: "family", label: "Rodina", shortLabel: "Rodina", description: "Rozdelenie úloh bez chaosu.", icon: "family", start: 150, tasks: [
       ["v5-post-night-plan", "Dohodnúť nočné striedanie", "moon"],
-      ["v5-post-shopping", "Vytvoriť spoločný nákup", "shopping"],
+      ["v5-post-shopping", "Spoločný nákupný zoznam", "shopping", "Jeden zoznam pre teba aj partnera, aby ste vedeli, čo už je kúpené, a nekupovali to isté dvakrát.", "shopping"],
       ["v5-post-contacts", "Uložiť dôležité kontakty", "contacts"],
       ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar"]
     ] }
@@ -780,6 +821,7 @@
 
   function adaptiveOGoalDone(role, sectionId, goal) {
     if (goal.auto) return adaptiveOAutoDone(goal);
+    if (goal.id === "water") return waterToday().count >= waterToday().goal;
     return Boolean(state.v5.adaptiveO.completed[adaptiveOCompletionKey(role, sectionId, goal)]);
   }
 
@@ -877,8 +919,8 @@
       "<svg class='v5-o-ring' viewBox='0 0 420 420' role='group' aria-label='Tri oblasti denných cieľov'>",
       "<defs>",
       "<linearGradient id='v5OPink' x1='210' y1='54' x2='345' y2='288' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='#f9d5df'/><stop offset='.30' stop-color='#f3bdcd'/><stop offset='.72' stop-color='#eca5ba'/><stop offset='1' stop-color='#df91aa'/></linearGradient>",
-      "<linearGradient id='v5OLilac' x1='345' y1='288' x2='75' y2='288' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='#efd8eb'/><stop offset='.32' stop-color='#dfc2df'/><stop offset='.72' stop-color='#cfabd4'/><stop offset='1' stop-color='#bd96c6'/></linearGradient>",
-      "<linearGradient id='v5OPurple' x1='75' y1='288' x2='210' y2='54' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='#ddd3f4'/><stop offset='.30' stop-color='#c7b7eb'/><stop offset='.72' stop-color='#ad99df'/><stop offset='1' stop-color='#967ed0'/></linearGradient>",
+      "<linearGradient id='v5OLilac' x1='345' y1='288' x2='75' y2='288' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='#fde0c4'/><stop offset='.32' stop-color='#f8c79b'/><stop offset='.72' stop-color='#f1ac74'/><stop offset='1' stop-color='#e6955a'/></linearGradient>",
+      "<linearGradient id='v5OPurple' x1='75' y1='288' x2='210' y2='54' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='#d6e0fa'/><stop offset='.30' stop-color='#b5c5f2'/><stop offset='.72' stop-color='#93a8e6'/><stop offset='1' stop-color='#768fd8'/></linearGradient>",
       "<radialGradient id='v5ONeutral' cx='210' cy='190' r='190' gradientUnits='userSpaceOnUse'><stop offset='.42' stop-color='#e4dfe8'/><stop offset='.55' stop-color='#fff'/><stop offset='.78' stop-color='#f4f0f6'/><stop offset='1' stop-color='#d9d3dd'/></radialGradient>",
       "<filter id='v5ODepth' x='-40%' y='-40%' width='180%' height='180%'><feGaussianBlur in='SourceAlpha' stdDeviation='6' result='alpha'/><feOffset in='alpha' dx='1' dy='9' result='offset'/><feFlood flood-color='#684a78' flood-opacity='.10' result='shadowColour'/><feComposite in='shadowColour' in2='offset' operator='in' result='shadow'/><feSpecularLighting in='alpha' surfaceScale='4' specularConstant='.10' specularExponent='22' lighting-color='#fff9fc' result='light'><fePointLight x='125' y='25' z='175'/></feSpecularLighting><feComposite in='light' in2='SourceAlpha' operator='in' result='clippedLight'/><feMerge><feMergeNode in='shadow'/><feMergeNode in='SourceGraphic'/><feMergeNode in='clippedLight'/></feMerge></filter>",
       "</defs>",
@@ -892,6 +934,12 @@
           value.percentage > 0 ? "<path class='v5-o-value-shape v5-o-value-" + (index + 1) + "' d='" + adaptiveOSegmentPath(section.start, visualPercentage) + "' aria-hidden='true'/>" : "",
           value.percentage > 0 ? "<path class='v5-o-gloss' d='" + adaptiveOGlossPath(section.start, visualPercentage) + "' aria-hidden='true'/>" : ""
         ].join("");
+      }).join(""),
+      // Názov priamo na segmente, aby sa časti dali rozlíšiť aj bez legendy (pripomienka #9).
+      sections.map((section, index) => {
+        const point = adaptiveOPoint(section.start + 60, 112);
+        const width = Math.max(64, section.shortLabel.length * 10.5 + 24);
+        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'><rect x='" + (point.x - width / 2).toFixed(1) + "' y='" + (point.y - 16).toFixed(1) + "' width='" + width + "' height='32' rx='16'/><text x='" + point.x.toFixed(1) + "' y='" + (point.y + 6).toFixed(1) + "' text-anchor='middle'>" + escapeHtml(section.shortLabel) + "</text></g>";
       }).join(""),
       "</svg>",
       centerButton,
@@ -1005,9 +1053,9 @@
       ["Termín pôrodu", dueDateLabel, "pregnancy"],
       ["Tehotenská knižka", "Otvoriť", "pregnancy"]
     ] : [
-      ["Spánok", state.sleepTimer?.active ? "Beží od " + formatClock(state.sleepTimer.start) : sleep ? formatClock(sleep.created) + " · " + (sleep.value || "uložené") : "Bez záznamu"],
-      ["Kŕmenie", state.v5.feedingTimer.active ? "Prebieha" : feeding ? formatClock(feeding.created) + " · " + (feeding.value || "uložené") : "Bez záznamu"],
-      ["Prebalenie", diaper ? formatClock(diaper.created) + " · " + (diaper.value || "uložené") : "Bez záznamu"],
+      ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
+      ["Kŕmenie", state.v5.feedingTimer.active ? "Prebieha" : feeding ? (String(feeding.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", !state.v5.feedingTimer.active && feeding ? "o " + formatClock(feeding.created) : ""],
+      ["Prebalenie", diaper ? (String(diaper.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", diaper ? "o " + formatClock(diaper.created) : ""],
       ["Výška", currentHeight],
       ["Váha", currentWeight],
       ["Vek", age?.label || "—"]
@@ -1038,7 +1086,7 @@
       statusCards.slice(0, 6).map((item, index) => expecting
         ? "<button class='v5-glance v5-glance-action v5-prenatal-glance' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
         : index < 3
-          ? "<button class='v5-glance v5-glance-action' type='button' data-v5-quick-feature='" + ["sleep", "feeding", "diaper"][index] + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
+          ? "<button class='v5-glance v5-glance-action' type='button' data-v5-quick-feature='" + ["sleep", "feeding", "diaper"][index] + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong>" + (item[3] ? "<small class='v2-glance-time'>" + escapeHtml(item[3]) + "</small>" : "") + "</button>"
           : index < 5
             ? "<button class='v5-glance v5-glance-action v5-glance-growth' type='button' data-v5-growth-open='" + ["height", "weight"][index - 3] + "' aria-label='Zapísať " + escapeHtml(item[0].toLowerCase()) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
             : "<button class='v5-glance v5-glance-action v5-glance-age' type='button' data-v5-feature='profiles' aria-label='Otvoriť profil dieťaťa'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>").join(""),
@@ -1124,6 +1172,7 @@
   }
 
   function renderAdaptiveOMenu() {
+    applyStageToCircle();
     const section = adaptiveOSections.find(item => item.id === state.v5.adaptiveO.section) || adaptiveOSections[0];
     const body = byId("v5OMenuBody");
     const title = byId("v5OMenuTitle");
@@ -1137,11 +1186,52 @@
     back.hidden = true;
     body.innerHTML = "<p class='v5-o-summary-copy'>" + escapeHtml(section.description) + "</p><div class='v5-quick-record-grid v5-o-status-grid" + (goals.length === 2 ? " is-two" : "") + "' id='v5OMenuGrid'>" + goals.map(goal => {
       const done = adaptiveOGoalDone("mother", section.id, goal);
+      if (goal.id === "water") {
+        const water = waterToday();
+        return [
+          "<button class='v5-quick-tile v5-o-day-row v2-water-tile", done ? " is-done" : "", "' type='button' data-v5-water-add aria-label='Pridať pohár. Dnes ", escapeHtml(waterProgressText()), "'>",
+          "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong><small>", escapeHtml(waterProgressText()), "</small>",
+          "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span>",
+          "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+        ].join("");
+      }
       return [
         "<button class='v5-quick-tile v5-o-day-row", done ? " is-done" : "", "' type='button' data-v5-o-complete='", goal.id, "' aria-pressed='", String(done), "'>",
-        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong><small>", done ? "Dnes hotovo" : goal.id === "ask-help" ? "Vybrať pomoc" : "Jedným kliknutím", "</small><b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : "", "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
       ].join("");
-    }).join("") + "</div>";
+    }).join("") + "</div>" + (goals.some(goal => goal.id === "water") ? waterSettingsHtml() : "");
+  }
+
+  function waterSettingsHtml() {
+    const water = waterToday();
+    return [
+      "<section class='v2-water-panel' aria-label='Pitný režim'>",
+      "<div class='v2-water-count'><button type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">−</button>",
+      "<strong>", water.count, " / ", water.goal, "<small>pohárov · ", escapeHtml(waterLiters(water.count)), " z ", escapeHtml(waterLiters(water.goal)), "</small></strong>",
+      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
+      "<div class='v2-water-settings'><label>Denný cieľ<select data-v5-water-goal>",
+      [6, 7, 8, 9, 10, 11, 12, 14].map(n => "<option value='" + n + "'" + (n === water.goal ? " selected" : "") + ">" + n + " pohárov</option>").join(""),
+      "</select></label><label>Pohár<select data-v5-water-glass>",
+      [200, 250, 300, 330, 500].map(n => "<option value='" + n + "'" + (n === water.glassMl ? " selected" : "") + ">" + n + " ml</option>").join(""),
+      "</select></label></div>",
+      "<p>NHS odporúča 6 až 8 pohárov tekutín denne; v tehotenstve a pri dojčení môžeš potrebovať viac. Počíta sa voda, mlieko so zníženým obsahom tuku aj nápoje s nízkym obsahom cukru vrátane čaju a kávy. Počítadlo sa o polnoci vynuluje.</p>",
+      "<a class='v2-source' href='", WATER_SOURCE_URL, "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené 11. 10. 2026 ↗</a>",
+      "</section>"
+    ].join("");
+  }
+
+  // Zoznam všetkých položiek segmentu – fajku sa dá zrušiť aj po dokončení celej časti.
+  function renderOrganizationTaskList(sectionId) {
+    const section = organizationSections().find(item => item.id === sectionId) || organizationSections()[0];
+    const progress = organizationProgress(section);
+    byId("v5OMenuTitle").textContent = section.label;
+    byId("v5OMenuSubtitle").textContent = progress.done + " z " + progress.total + " hotové";
+    byId("v5OMenuBack").hidden = false;
+    byId("v5OMenuBody").innerHTML = "<div class='v5-org-progress'><span style='--progress:" + progress.percentage + "%'></span></div><div class='v5-org-task-list'>" +
+      section.tasks.map(task => {
+        const done = Boolean(state.checks[task[0]]);
+        return "<button type='button' class='" + (done ? "is-done" : "") + "' data-v5-org-toggle='" + task[0] + "' aria-pressed='" + String(done) + "'><span class='v5-icon'>" + icon(task[2]) + "</span><strong>" + escapeHtml(task[1]) + "</strong><b aria-hidden='true'>" + (done ? "✓" : "") + "</b><span class='v5-sr-only'>" + (done ? "Hotové – ťuknutím zrušíš" : "Nehotové – ťuknutím označíš") + "</span></button>";
+      }).join("") + "</div><button class='v5-check-categories-button' type='button' data-v5-o-back>" + icon("back") + " Späť ku kruhu</button>";
   }
 
   function renderOrganizationMenu(sectionId) {
@@ -1158,9 +1248,15 @@
     byId("v5OMenuBody").innerHTML = nextTask ? [
       "<div class='v5-org-progress'><span style='--progress:", progress.percentage, "%'></span></div>",
       "<div class='v5-org-next-card'><small>Ďalšia úloha</small><span class='v5-icon'>", icon(nextTask[2]), "</span><h3>", escapeHtml(nextTask[1]), "</h3>",
-      "<button class='v5-primary' type='button' data-v5-org-complete='", nextTask[0], "'>Označiť ako hotové</button></div>",
+      nextTask[3] ? "<p class='v5-org-next-why'>" + escapeHtml(nextTask[3]) + "</p>" : "",
+      // Úloha, ktorá je akciou v appke (5. prvok = funkcia), sa tlačidlom rovno vykoná a odfajkne sama.
+      nextTask[4]
+        ? "<button class='v5-primary' type='button' data-v5-org-action='" + nextTask[0] + "'>Vytvoriť zoznam</button>" +
+          (nextTask[4] === "shopping" ? "<button class='v5-secondary' type='button' data-v5-org-invite>Pozvať partnera</button>" : "")
+        : "<button class='v5-primary' type='button' data-v5-org-complete='" + nextTask[0] + "'>Označiť ako hotové</button>",
+      "</div>",
       completed.length ? "<details class='v5-org-completed'><summary>Hotové · " + completed.length + "</summary>" + completed.map(task => "<div><span>✓</span>" + escapeHtml(task[1]) + "</div>").join("") + "</details>" : ""
-    ].join("") : "<div class='v5-o-modal-confirm'><span>✓</span><h3>Táto časť je hotová</h3><p>Môžeš pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button></div>";
+    ].join("") : "<div class='v5-o-modal-confirm' data-v5-org-done><span>✓</span><h3>Táto časť je hotová</h3><p>Môžeš pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button><button class='v5-secondary' type='button' data-v5-org-list>Zobraziť položky</button></div>";
   }
 
   function openOrganizationMenu(sectionId) {
@@ -1267,12 +1363,13 @@
     body.innerHTML = "<div class='v5-empty'>Táto funkcia sa pripravuje.</div>";
   }
 
-  function completeAdaptiveOModal(title, copy = "Uložené v dnešnom prehľade.") {
+  // secondary = vlastné vedľajšie tlačidlo, ktoré súvisí s uloženou vecou (inak „Ďalší krok“).
+  function completeAdaptiveOModal(title, copy = "Uložené v dnešnom prehľade.", secondary = "<button class='v5-secondary' type='button' data-v5-o-back>Ďalší krok</button>") {
     const body = byId("v5OMenuBody");
     const subtitle = byId("v5OMenuSubtitle");
     if (!body) return;
-    if (subtitle) subtitle.textContent = "Hotovo";
-    body.innerHTML = "<div class='v5-o-modal-confirm'><span>✓</span><h3>" + escapeHtml(title) + "</h3><p>" + escapeHtml(copy) + "</p><div><button class='v5-secondary' type='button' data-v5-o-back>Ďalší krok</button><button class='v5-primary' type='button' data-v5-close-o>Hotovo</button></div></div>";
+    if (subtitle) subtitle.textContent = "";
+    body.innerHTML = "<div class='v5-o-modal-confirm'><span>✓</span><h3>" + escapeHtml(title) + "</h3>" + (copy ? "<p>" + escapeHtml(copy) + "</p>" : "") + "<div>" + secondary + "<button class='v5-primary' type='button' data-v5-close-o>Hotovo</button></div></div>";
     renderHome();
   }
 
@@ -1458,7 +1555,9 @@
     if (head) state.profile.headCircumference = head;
     persist();
     renderHome();
-    completeAdaptiveOModal("Meranie je uložené.", "Aktuálne údaje v profile dieťaťa sú aktualizované.");
+    // Prekresliť aj pôvodnú obrazovku „Rast a váha“, aby história hneď obsahovala nové meranie.
+    if (typeof window.render === "function") window.render();
+    completeAdaptiveOModal("Meranie je uložené.", "", "<button class='v5-secondary' type='button' data-v5-feature='growth'>Zobraziť históriu rastu</button>");
     announce("Meranie bolo uložené.");
   }
 
@@ -2137,7 +2236,7 @@
         state.profile.status === "expecting" ? "" : [
           "<div class='v5-child-photo-card'>",
           state.profile.photo ? "<img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'>" : "<span aria-hidden='true'>" + icon("baby") + "</span>",
-          "<div><strong>Fotografia dieťaťa</strong><small>Môže nahradiť ovocný avatar, keď je bábätko na svete.</small><label class='v5-photo-picker'>", state.profile.photo ? "Zmeniť fotografiu" : "Nahrať fotografiu", "<input id='v5ChildPhoto' type='file' accept='image/*'></label></div></div>"
+          "<div><strong>Fotografia dieťaťa</strong><small>Po narodení sa zobrazí na domove v krúžku pri mene.</small><label class='v5-photo-picker'>", state.profile.photo ? "Zmeniť fotografiu" : "Nahrať fotografiu", "<input id='v5ChildPhoto' type='file' accept='image/*'></label></div></div>"
         ].join("") ,
         "<label>Meno<input id='v5ChildName' value='", escapeHtml(state.profile.name || ""), "'></label>",
         "<label>Obdobie<select id='v5ChildStatus'><option value='expecting'", state.profile.status === "expecting" ? " selected" : "", ">Čakáme bábätko</option><option value='born'", state.profile.status !== "expecting" ? " selected" : "", ">Bábätko je na svete</option></select></label>",
@@ -2850,6 +2949,35 @@
       renderOrganizationMenu(state.v5.organizationSection);
       return announce("Hotovo. Zobrazuje sa ďalšia úloha.");
     }
+    const organizationAction = event.target.closest("[data-v5-org-action]");
+    if (organizationAction) {
+      const task = organizationSections().flatMap(section => section.tasks).find(item => item[0] === organizationAction.dataset.v5OrgAction);
+      if (!task) return;
+      state.checks[task[0]] = true;
+      persist();
+      renderHome();
+      openFeature(task[4]);
+      return announce("Úloha je splnená.");
+    }
+    if (event.target.closest("[data-v5-org-invite]")) {
+      state.v5.profileTab = "family";
+      persist();
+      openFeature("profiles");
+      return;
+    }
+    if (event.target.closest("[data-v5-org-list]")) {
+      renderOrganizationTaskList(state.v5.organizationSection);
+      return;
+    }
+    const organizationToggle = event.target.closest("[data-v5-org-toggle]");
+    if (organizationToggle) {
+      const id = organizationToggle.dataset.v5OrgToggle;
+      state.checks[id] = !state.checks[id];
+      persist();
+      renderHome();
+      renderOrganizationTaskList(state.v5.organizationSection);
+      return announce(state.checks[id] ? "Označené ako hotové." : "Fajka je zrušená.");
+    }
     const pregnancyAvatarButton = event.target.closest("[data-v5-pregnancy-avatar]");
     if (pregnancyAvatarButton) {
       const popover = byId("v5AvatarPopover");
@@ -2902,6 +3030,17 @@
       renderHome();
       return announce(selected.includes(goalId) ? "Cieľ už nesleduješ." : "Cieľ je pridaný do tvojho O.");
     }
+    const waterAdd = event.target.closest("[data-v5-water-add]");
+    const waterRemove = event.target.closest("[data-v5-water-remove]");
+    if (waterAdd || waterRemove) {
+      const water = waterToday();
+      const wasDone = water.count >= water.goal;
+      water.count = Math.max(0, water.count + (waterAdd ? 1 : -1));
+      persist();
+      renderHome();
+      renderAdaptiveOMenu();
+      return announce(!wasDone && water.count >= water.goal ? "Denný cieľ pitia je splnený." : waterProgressText());
+    }
     const adaptiveComplete = event.target.closest("[data-v5-o-complete]");
     if (adaptiveComplete) {
       const sectionId = state.v5.adaptiveO.section;
@@ -2938,6 +3077,11 @@
     const adaptiveSave = event.target.closest("[data-v5-o-save]");
     if (adaptiveSave) return saveAdaptiveOFeature(adaptiveSave.dataset.v5OSave);
     if (event.target.closest("[data-v5-o-back]")) {
+      // Šípka späť z obrazovky „Táto časť je hotová“ vráti na zoznam položiek (nie rovno ku kruhu).
+      if (event.target.closest("#v5OMenuBack") && byId("v5OMenuBody")?.querySelector("[data-v5-org-done]")) {
+        renderOrganizationTaskList(state.v5.organizationSection);
+        return;
+      }
       state.v5.flow = { type: "", step: 0, data: {} };
       if (state.v5.adaptiveO.modalParent === "sleep") {
         state.v5.adaptiveO.modalParent = "";
@@ -3531,6 +3675,16 @@
   });
 
   document.addEventListener("change", event => {
+    const waterSetting = event.target.closest("[data-v5-water-goal], [data-v5-water-glass]");
+    if (waterSetting) {
+      const water = waterToday();
+      if (waterSetting.matches("[data-v5-water-goal]")) water.goal = Number(waterSetting.value) || 8;
+      else water.glassMl = Number(waterSetting.value) || 250;
+      persist();
+      renderHome();
+      renderAdaptiveOMenu();
+      return announce("Uložené. " + waterProgressText());
+    }
     const favoriteSelect = event.target.closest("[data-v5-favorite-select]");
     if (favoriteSelect) {
       const index = Number(favoriteSelect.dataset.v5FavoriteSelect);
