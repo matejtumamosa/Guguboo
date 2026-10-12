@@ -823,3 +823,19 @@ button.v2-book-size { border: 0; text-align: left; cursor: pointer; }
 .v2-cal-home-today { border-color: rgba(123, 107, 200, .35); background: linear-gradient(135deg, #f3eeff, #fff); }
 .v2-cal-item { position: relative; padding-right: 40px; }
 .v2-cal-actions .v2-cal-delete { position: absolute; top: 6px; right: 6px; width: 32px; margin: 0; padding: 0; }
+
+/* ——— Súkromný denník: otázka na dnes, listy pre bábätko, filter ——— */
+.private-prompt-card { background: linear-gradient(145deg, #f3eeff, #fff4ec); }
+.private-prompt-card > small { color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.private-prompt-card h2 { margin: 6px 0 12px !important; font-size: 18px !important; line-height: 1.35; }
+.private-prompt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.private-prompt-actions button { padding: 9px 16px; border: 1px solid var(--private-line, var(--v5-line)); border-radius: 999px; background: #fff; color: var(--v5-ink); font-weight: 800; }
+.private-prompt-actions .private-primary { border: 0; color: #fff; background: var(--private-accent, var(--v5-brand)); }
+.private-letter-button { width: 100%; margin-top: 12px; padding: 12px 14px; color: #8a4f66; background: rgba(255, 255, 255, .85); border: 1px dashed rgba(207, 125, 152, .55); border-radius: 14px; font-weight: 800; text-align: left; }
+.private-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.private-filter button { padding: 7px 13px; color: var(--v5-ink); background: #fff; border: 1px solid var(--private-line, var(--v5-line)); border-radius: 999px; font-size: 13px; font-weight: 700; }
+.private-filter button[aria-pressed="true"] { color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border-color: var(--v5-brand, #7b6bc8); }
+.private-letter { border-color: rgba(207, 125, 152, .4); background: #fff9fb; }
+.private-entry-prompt { display: block; margin-bottom: 6px; color: var(--v5-muted); font-size: 13px; }
+.private-muted { color: var(--v5-muted); }
+.v2-summary-diary { width: 100%; margin-top: 10px; }

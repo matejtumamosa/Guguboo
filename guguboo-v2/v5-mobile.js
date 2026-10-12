@@ -844,6 +844,8 @@
   function adaptiveOGoalDone(role, sectionId, goal) {
     if (goal.auto) return adaptiveOAutoDone(goal);
     if (goal.id === "water") return waterToday().count >= waterToday().goal;
+    // „Ako sa dnes cítim“ = zápis v súkromnom denníku dnes (denník ukladá len dátum, nie obsah).
+    if (goal.id === "check-in") return state.v5.diaryLastEntry === todayKey();
     return Boolean(state.v5.adaptiveO.completed[adaptiveOCompletionKey(role, sectionId, goal)]);
   }
 
@@ -1229,7 +1231,7 @@
       }
       return [
         "<button class='v5-quick-tile v5-o-day-row", done ? " is-done" : "", "' type='button' data-v5-o-complete='", goal.id, "' aria-pressed='", String(done), "'>",
-        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : "", "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "check-in" ? "<small>Zapísať do denníka</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : "", "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
       ].join("");
     }).join("") + "</div>" + (goals.some(goal => goal.id === "water") ? waterSettingsHtml() : "");
   }
@@ -1391,6 +1393,7 @@
       stat(data.wellbeing, "krokov pohody"),
       "</div></section>",
       "<p class='v2-summary-cheer'>", escapeHtml(encouragements[Number(dayKey.slice(-2)) % encouragements.length]), "</p>",
+      offset === 0 ? "<button class='v5-secondary v2-summary-diary' type='button' data-v5-feature='privateSpace'>✎ Zapísať jednu vetu do denníka</button>" : "",
       "<label class='v2-summary-time'>Súhrn mi priprav o<select data-v2-summary-time>",
       ["18:00", "19:00", "20:00", "21:00", "22:00"].map(time => "<option value='" + time + "'" + (time === summaryTime() ? " selected" : "") + ">" + time + "</option>").join(""),
       "</select></label>",
@@ -3444,6 +3447,7 @@
       const role = "mother";
       const goal = (adaptiveOGoals[sectionId] || []).find(item => item.id === adaptiveComplete.dataset.v5OComplete);
       if (!goal || goal.auto) return;
+      if (goal.id === "check-in") { closeAdaptiveOMenu(); return openFeature("privateSpace"); }
       if (goal.id === "ask-help" && !adaptiveOGoalDone(role, sectionId, goal)) {
         renderPartnerRequestMenu();
         return;

@@ -177,25 +177,88 @@
     ["very-low", "😞", "Veľmi ťažko"], ["low", "🙁", "Skôr ťažko"],
     ["neutral", "😐", "Neutrálne"], ["good", "🙂", "Celkom dobre"], ["very-good", "😊", "Veľmi dobre"]
   ];
-  const types = ["Myšlienka", "Otázka", "Potrebujem"];
+  // Typy zápisov. „List“ = list pre bábätko (zobrazuje sa s jeho menom), „Nálada“ = rýchly zápis jedným ťuknutím.
+  const LETTER = "List";
+  const MOOD_ONLY = "Nálada";
+  const types = ["Myšlienka", "Vďaka", "Potrebujem", LETTER];
+  const babyName = () => (typeof state !== "undefined" && state.profile?.name) || "bábätko";
+  // „pre“ + akuzatív: Oliver → Olivera, Ema → Emu, Marko → Marka (jednoduché pravidlo, pri iných tvaroch ostane meno).
+  const babyNameAcc = () => {
+    const name = babyName();
+    if (name === "bábätko") return name;
+    if (/a$/i.test(name)) return name.slice(0, -1) + "u";
+    if (/o$/i.test(name)) return name.slice(0, -1) + "a";
+    if (/[bcčdďfghjklľmnňprsštťvzž]$/i.test(name)) return name + "a";
+    return name;
+  };
+  const typeLabel = type => type === LETTER ? "List pre " + babyNameAcc() : type;
+  const localDayKey = value => { const date = value ? new Date(value) : new Date(); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+
+  // Otázka na dnes – krátka, podľa obdobia; každý deň iná, dá sa vymeniť. Nehodnotí, len pozýva.
+  const PROMPTS = {
+    expecting: [
+      "Na čo sa najviac tešíš, keď bude bábätko na svete?",
+      "Čo ti dnes urobilo radosť?",
+      "Čo cítiš, keď sa bábätko pohne?",
+      "Čo by si chcela bábätku raz povedať o tomto období?",
+      "Čo ťa dnes trochu znepokojilo – a čo by ti pomohlo?",
+      "Za čo si dnes na sebe vďačná?",
+      "Čo potrebuješ od svojich blízkych tento týždeň?",
+      "Aké meno, pieseň alebo miesto ti dnes prišlo na myseľ pri bábätku?",
+      "Čo si chceš zapamätať z dnešného dňa?",
+      "Čo ti dnes pomohlo oddýchnuť si?"
+    ],
+    born: [
+      "Čo ťa dnes na bábätku prekvapilo?",
+      "Čo ti dnes pomohlo?",
+      "Za čo si dnes na sebe vďačná?",
+      "Ktorá chvíľa dnes bola najkrajšia?",
+      "Čo bolo dnes najťažšie – a ako si to zvládla?",
+      "Čo potrebuješ zajtra trochu viac?",
+      "Čo by si chcela bábätku raz povedať o tomto dni?",
+      "Kto ti dnes urobil radosť alebo pomohol?",
+      "Čo si chceš zapamätať, kým je bábätko takéto malé?",
+      "Čo môžeš dnes pustiť a nemusíš to riešiť?"
+    ]
+  };
+  let promptShift = 0;
+  let answeringPrompt = "";
+  let listFilter = "all";
+  function todayPrompt() {
+    const list = PROMPTS[(typeof state !== "undefined" && state.profile?.status === "born") ? "born" : "expecting"];
+    const day = Math.floor(Date.now() / 86400000);
+    return list[(day + promptShift) % list.length];
+  }
+  // Pre kruh Pohoda: „Ako sa dnes cítim“ sa odfajkne, keď je dnes v denníku zápis (ukladá sa len dátum, nie obsah).
+  function markDiaryToday() {
+    if (typeof state === "undefined") return;
+    state.v5 ||= {};
+    state.v5.diaryLastEntry = localDayKey();
+    window.GugubooV5?.persist?.();
+    window.GugubooV5?.renderHome?.();
+  }
 
   function renderEntries() {
     const list = root.querySelector("[data-private-list]");
     if (!list || !privateData) return;
-    const entries = privateData.entries.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const entries = privateData.entries
+      .filter(entry => listFilter === "letters" ? entry.type === LETTER : true)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (!entries.length) {
-      list.innerHTML = `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Keď budeš chcieť, môžeš si sem uložiť prvú súkromnú myšlienku.</p></div>`;
+      list.innerHTML = listFilter === "letters"
+        ? `<div class="private-empty"><span aria-hidden="true">✉</span><strong>Zatiaľ žiadny list</strong><p>Napíš pár viet o tom, čo práve prežívaš. Raz si ich spolu prečítate.</p></div>`
+        : `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Stačí ťuknúť na náladu alebo odpovedať na otázku na dnes.</p></div>`;
       return;
     }
     list.innerHTML = entries.map(entry => {
       const mood = moods.find(item => item[0] === entry.mood);
       const isOpen = openedId === entry.id;
-      const meta = [entry.type, mood?.[1]].filter(Boolean).join(" · ");
-      return `<article class="private-entry">
+      const meta = [entry.type ? typeLabel(entry.type) : "", mood?.[1]].filter(Boolean).join(" · ");
+      return `<article class="private-entry${entry.type === LETTER ? " private-letter" : ""}">
         <button class="private-entry-head" type="button" data-private-open="${escapeHtml(entry.id)}" aria-expanded="${isOpen}">
           <span><strong>${escapeHtml(meta || "Súkromný zápis")}</strong><small>${escapeHtml(formatDate(entry.createdAt))}</small></span><span aria-hidden="true">${isOpen ? "⌃" : "⌄"}</span>
         </button>
-        ${isOpen ? `<div class="private-entry-body"><p>${escapeHtml(entry.text).replace(/\n/g, "<br>")}</p>
+        ${isOpen ? `<div class="private-entry-body">${entry.prompt ? `<em class="private-entry-prompt">${escapeHtml(entry.prompt)}</em>` : ""}${entry.text ? `<p>${escapeHtml(entry.text).replace(/\n/g, "<br>")}</p>` : `<p class="private-muted">Len nálada: ${escapeHtml(mood?.[2] || "")}</p>`}
           ${entry.updatedAt !== entry.createdAt ? `<small>Upravené ${escapeHtml(formatDate(entry.updatedAt))}</small>` : ""}
           <div class="private-entry-actions"><button type="button" data-private-edit="${escapeHtml(entry.id)}">Upraviť</button><button class="private-danger" type="button" data-private-delete="${escapeHtml(entry.id)}">Vymazať</button></div></div>` : ""}
       </article>`;
@@ -203,26 +266,36 @@
   }
 
   function renderUnlocked() {
+    const todayMood = privateData.entries.find(entry => entry.type === MOOD_ONLY && localDayKey(entry.createdAt) === localDayKey())?.mood || "";
+    const letterCount = privateData.entries.filter(entry => entry.type === LETTER).length;
+    const name = escapeHtml(babyName());
+    const editorTitle = editingId ? "Upraviť zápis" : answeringPrompt ? escapeHtml(answeringPrompt) : selectedType === LETTER ? "List pre " + escapeHtml(babyNameAcc()) : "Nový zápis";
     root.innerHTML = `<div class="private-shell private-unlocked">
-      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj súkromný denník</h1><p>Súkromné zápisy na tomto zariadení</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
+      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj súkromný denník</h1><p>Len pre teba – nikto iný ho nevidí</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
       <main class="private-content">
-        <section class="private-card" aria-labelledby="privateMoodTitle"><h2 id="privateMoodTitle">Ako mi dnes je?</h2><p>Výber je nepovinný.</p>
-          <div class="private-moods" role="group" aria-label="Nálada">${moods.map(([value, emoji, label]) => `<button type="button" data-private-mood="${value}" aria-label="${label}" aria-pressed="${selectedMood === value}"><span aria-hidden="true">${emoji}</span><small>${label}</small></button>`).join("")}</div>
+        <section class="private-card" aria-labelledby="privateMoodTitle"><h2 id="privateMoodTitle">Ako sa dnes máš?</h2><p>Stačí ťuknúť – uloží sa hneď.</p>
+          <div class="private-moods" role="group" aria-label="Nálada">${moods.map(([value, emoji, label]) => `<button type="button" data-private-mood="${value}" aria-label="${label}" aria-pressed="${todayMood === value}"><span aria-hidden="true">${emoji}</span><small>${label}</small></button>`).join("")}</div>
         </section>
-        <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editingId ? "Upraviť súkromný zápis" : "Nový súkromný zápis"}</h2>
-          <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${type}</button>`).join("")}</div></fieldset>
-            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="Napíš, čo si chceš nechať pre seba."></textarea>
+        <section class="private-card private-prompt-card" aria-labelledby="privatePromptTitle"><small>Otázka na dnes</small><h2 id="privatePromptTitle">${escapeHtml(todayPrompt())}</h2>
+          <div class="private-prompt-actions"><button class="private-primary" type="button" data-private-answer>Odpovedať</button><button type="button" data-private-next-prompt>Iná otázka</button></div>
+          <button class="private-letter-button" type="button" data-private-letter>✉ Napísať list pre ${escapeHtml(babyNameAcc())}</button>
+        </section>
+        <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editorTitle}</h2>
+          <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${escapeHtml(typeLabel(type))}</button>`).join("")}</div></fieldset>
+            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="${selectedType === LETTER ? "Ahoj " + name + ", …" : "Stačí jedna veta."}"></textarea>
             <p class="private-message" data-private-message role="status" aria-live="polite"></p>
-            <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId ? `<button type="button" data-private-cancel-edit>Zrušiť úpravu</button>` : ""}</div>
+            <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId || answeringPrompt ? `<button type="button" data-private-cancel-edit>Zrušiť</button>` : ""}</div>
           </form>
         </section>
-        <section class="private-card private-list-card" aria-labelledby="privateListTitle"><h2 id="privateListTitle">Moje súkromné zápisy</h2><div class="private-list" data-private-list></div></section>
-        <p class="private-limit-note">PIN chráni šifrované dáta uložené v tomto prehliadači. Bez používateľského účtu ich ochrana závisí aj od zabezpečenia zariadenia a prehliadača.</p>
+        <section class="private-card private-list-card" aria-labelledby="privateListTitle"><h2 id="privateListTitle">Moje zápisy</h2>
+          <div class="private-filter" role="group" aria-label="Filter zápisov"><button type="button" data-private-filter="all" aria-pressed="${listFilter === "all"}">Všetko</button><button type="button" data-private-filter="letters" aria-pressed="${listFilter === "letters"}">Listy pre ${escapeHtml(babyNameAcc())}${letterCount ? " · " + letterCount : ""}</button></div>
+          <div class="private-list" data-private-list></div></section>
+        <p class="private-limit-note">PIN chráni šifrované zápisy v tomto prehliadači. V beta verzii sa po zatvorení appky vymažú.</p>
       </main>
     </div>`;
     renderEntries();
     resetInactivityTimer();
-    focusSoon(editingId ? "#privateEntryText" : "[data-private-mood]");
+    if (editingId || answeringPrompt || selectedType === LETTER) focusSoon("#privateEntryText");
   }
 
   function clearEditor() {
@@ -230,6 +303,7 @@
     selectedType = "";
     editingId = "";
     openedId = "";
+    answeringPrompt = "";
   }
 
   function lock() {
@@ -355,11 +429,12 @@
     } else {
       privateData.entries.push({
         id: createId(), createdAt: now, updatedAt: now,
-        mood: selectedMood || null, type: selectedType || null, text
+        mood: selectedMood || null, type: selectedType || null, text, prompt: answeringPrompt || null
       });
     }
     try {
       await persistPrivateData();
+      markDiaryToday();
       clearEditor();
       renderUnlocked();
       setMessage("Súkromný zápis je uložený.");
@@ -383,9 +458,48 @@
   root.addEventListener("click", async event => {
     if (privateData) resetInactivityTimer();
     const mood = event.target.closest("[data-private-mood]");
-    if (mood) {
-      selectedMood = selectedMood === mood.dataset.privateMood ? "" : mood.dataset.privateMood;
-      root.querySelectorAll("[data-private-mood]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.privateMood === selectedMood)));
+    if (mood && privateData) {
+      // Nálada jedným ťuknutím = zápis hneď (jeden za deň, ďalšie ťuknutie ho len zmení).
+      const now = new Date().toISOString();
+      const existing = privateData.entries.find(entry => entry.type === MOOD_ONLY && localDayKey(entry.createdAt) === localDayKey());
+      if (existing) { existing.mood = mood.dataset.privateMood; existing.updatedAt = now; }
+      else privateData.entries.push({ id: createId(), createdAt: now, updatedAt: now, mood: mood.dataset.privateMood, type: MOOD_ONLY, text: "" });
+      selectedMood = mood.dataset.privateMood;
+      try {
+        await persistPrivateData();
+        markDiaryToday();
+        renderUnlocked();
+        setMessage("Nálada je uložená. Ak chceš, pridaj k nej jednu vetu.");
+      } catch (_) {
+        setMessage("Náladu sa nepodarilo uložiť. Skús to znova.", "error");
+      }
+      return;
+    }
+    if (event.target.closest("[data-private-answer]")) {
+      answeringPrompt = todayPrompt();
+      editingId = "";
+      renderUnlocked();
+      return;
+    }
+    if (event.target.closest("[data-private-next-prompt]")) {
+      promptShift += 1;
+      if (answeringPrompt) answeringPrompt = todayPrompt();
+      renderUnlocked();
+      return;
+    }
+    if (event.target.closest("[data-private-letter]")) {
+      selectedType = LETTER;
+      answeringPrompt = "";
+      editingId = "";
+      renderUnlocked();
+      return;
+    }
+    const filter = event.target.closest("[data-private-filter]");
+    if (filter) {
+      listFilter = filter.dataset.privateFilter;
+      openedId = "";
+      root.querySelectorAll("[data-private-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.privateFilter === listFilter)));
+      renderEntries();
       return;
     }
     const type = event.target.closest("[data-private-type]");
