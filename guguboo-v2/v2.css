@@ -791,3 +791,35 @@ body.v5-active .v5-universal-window-head strong {
 .v2-size-dev p::before { content: ""; position: absolute; top: 8px; left: 2px; width: 6px; height: 6px; background: var(--v5-brand, #7b6bc8); border-radius: 50%; }
 #v5BabySizeContent > .v5-secondary { width: 100%; margin-top: 12px; }
 button.v2-book-size { border: 0; text-align: left; cursor: pointer; }
+
+/* ——— Kalendár: jedno miesto pre všetky termíny a pripomienky ——— */
+.v2-cal-tabs { margin: 4px auto 0; }
+.v2-cal-add { width: 100%; margin-top: 12px; }
+.v2-cal-group { margin-top: 16px; }
+.v2-cal-group h3 { margin: 0 0 8px; color: var(--v5-ink); font-size: 15px; text-transform: none; }
+.v2-cal-group h3::first-letter { text-transform: uppercase; }
+.v2-cal-group > p { margin: -4px 0 8px; color: var(--v5-muted); font-size: 12px; }
+.v2-cal-item { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 11px; align-items: start; margin-bottom: 8px; padding: 11px 12px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-cal-item .v5-icon { width: 40px; height: 40px; border-radius: 13px; }
+.v2-cal-item strong { display: block; color: var(--v5-ink); font-size: 14px; line-height: 1.3; }
+.v2-cal-item small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12px; }
+.v2-cal-item.is-done strong { color: var(--v5-muted); text-decoration: line-through; }
+.v2-cal-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.v2-cal-actions button { min-height: 32px !important; padding: 5px 11px; color: var(--v5-brand-dark, #5b4ca3); background: #f3f0ff; border: 0; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.v2-cal-actions .v2-cal-delete { margin-left: auto; color: var(--v5-muted); background: transparent; font-size: 18px; }
+.v2-cal-done { margin-top: 16px; padding: 4px 12px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-cal-done summary { padding: 10px 0; color: var(--v5-muted); font-size: 13px; font-weight: 800; cursor: pointer; }
+.v2-cal-note { margin: 16px 4px 0; color: var(--v5-muted); font-size: 11px; line-height: 1.45; text-align: center; }
+.v2-cal-month-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-top: 14px; text-align: center; }
+.v2-cal-month-head strong { color: var(--v5-ink); font-size: 16px; text-transform: capitalize; }
+.v2-cal-month-head button { width: 44px; height: 44px; color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border: 0; border-radius: 50%; font-size: 22px; font-weight: 900; }
+.v2-cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 10px; text-align: center; }
+.v2-cal-grid b { padding: 4px 0; color: var(--v5-muted); font-size: 11px; }
+.v2-cal-grid button { position: relative; min-height: 40px !important; aspect-ratio: 1; padding: 0; color: var(--v5-ink); background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 12px; font-size: 13px; font-weight: 700; }
+.v2-cal-grid button i { position: absolute; bottom: 5px; left: 50%; width: 6px; height: 6px; transform: translateX(-50%); background: var(--v5-brand, #7b6bc8); border-radius: 50%; }
+.v2-cal-grid button.is-today { border-color: var(--v5-brand, #7b6bc8); }
+.v2-cal-grid button.is-selected { color: #fff; background: var(--v5-brand, #7b6bc8); }
+.v2-cal-grid button.is-selected i { background: #fff; }
+.v2-cal-home-today { border-color: rgba(123, 107, 200, .35); background: linear-gradient(135deg, #f3eeff, #fff); }
+.v2-cal-item { position: relative; padding-right: 40px; }
+.v2-cal-actions .v2-cal-delete { position: absolute; top: 6px; right: 6px; width: 32px; margin: 0; padding: 0; }

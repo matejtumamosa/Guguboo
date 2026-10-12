@@ -67,7 +67,7 @@
   const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
-    script.src = src + "?v=2.2.0";
+    script.src = src + "?v=2.7.0";
     script.onload = resolve;
     script.onerror = resolve; // chýbajúci modul appku nezastaví – GuguChat povie, že obsah pripravujeme
     document.head.appendChild(script);

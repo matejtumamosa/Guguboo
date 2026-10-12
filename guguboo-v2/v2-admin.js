@@ -209,7 +209,7 @@
       const date = new Date(Date.now() + 7 * 86400000);
       date.setHours(9, 0, 0, 0);
       state.reminders ||= [];
-      state.reminders.push({ id: "v2-admin-" + item.id + "-" + Date.now(), title: item.title, date: date.toISOString(), type: "Úrady", source: "life-admin" });
+      state.reminders.push({ id: "v2-admin-" + item.id + "-" + Date.now(), adminId: item.id, title: item.title, date: date.toISOString(), type: "Úrady", source: "life-admin" });
       V5.persist();
       close();
       V5.renderHome();

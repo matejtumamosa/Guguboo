@@ -86,7 +86,7 @@
     tracker: { label: "Denné záznamy", description: "Starostlivosť na jednom mieste", icon: "sparkle", tier: "free", view: "tracker" },
     temperature: { label: "Teplota", description: "Uložiť meranie bez ďalších polí", icon: "temperature", tier: "free", flow: "temperature" },
     weather: { label: "Počasie", description: "Oblečenie podľa situácie", icon: "weather", tier: "free", flow: "weather" },
-    calendar: { label: "Kalendár", description: "Termíny a rodinné udalosti", icon: "calendar", tier: "premium", view: "calendar" },
+    calendar: { label: "Kalendár", description: "Všetky termíny a pripomienky", icon: "calendar", tier: "free", view: "v5Calendar" },
     shopping: { label: "Nákup", description: "Spoločný nákupný zoznam", icon: "shopping", tier: "premium", view: "v5Utility" },
     contacts: { label: "Kontakty", description: "Pediater, rodina a pomoc", icon: "contacts", tier: "free", view: "v5Utility" },
     travel: { label: "Cestovanie", description: "Príprava a pomoc v okolí", icon: "travel", tier: "free", view: "v5Travel" },
@@ -459,6 +459,7 @@
     "<section class='view' id='v5Prenatal'><div class='v5-flow' id='v5PrenatalContent'></div></section>",
     "<section class='view' id='v5PregnancyBook'><div class='v5-flow' id='v5PregnancyBookContent'></div></section>",
     "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
+    "<section class='view' id='v5Calendar'><div class='v5-flow' id='v5CalendarContent'></div></section>",
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
     "<section class='view' id='v5Utility'><div class='v5-flow' id='v5UtilityContent'></div></section>",
@@ -527,6 +528,7 @@
     v5Prenatal: ["Moja príprava", "Pôrodnica, taška a domov"],
     v5PregnancyBook: ["Tehotenská knižka", "Bábätko, mama a aktuálny týždeň"],
     v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
+    v5Calendar: ["Kalendár", "Všetky termíny a pripomienky"],
     v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
     v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
     v5Utility: ["Rodinné nástroje", "Jednoducho a bez duplicitných obrazoviek"],
@@ -1092,10 +1094,14 @@
         : "Dnešný malý moment";
     const recommendationAction = expecting ? "hospital" : state.sleepTimer?.active ? "sleep" : "memories";
     const recommendationLabel = expecting ? "Otvoriť checklist Taška do pôrodnice" : state.sleepTimer?.active ? "Otvoriť prebiehajúci spánok" : momentCard.text;
+    // Kalendár na domove: koľko vecí je dnes (aj nestihnutých), inak najbližšia udalosť.
+    const openCalendar = calendarItems().filter(item => !item.completedAt && !item.virtual);
+    const dueToday = openCalendar.filter(item => calendarDayKey(item.date) <= today).length;
+    const nextOpen = openCalendar.find(item => new Date(item.date).getTime() >= Date.now());
     const calendarCard = [
-      "<button class='v5-row-card' type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"),
-      "</span><div><strong>", nextReminder ? escapeHtml(nextReminder.title) : "Najbližšia udalosť",
-      "</strong><span>", nextReminder ? escapeHtml(new Date(nextReminder.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })) : "Pridať do kalendára",
+      "<button class='v5-row-card", dueToday ? " v2-cal-home-today" : "", "' type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"),
+      "</span><div><strong>", dueToday ? "Dnes máš v kalendári " + dueToday + (dueToday === 1 ? " vec" : dueToday < 5 ? " veci" : " vecí") : nextOpen ? escapeHtml(nextOpen.title) : "Kalendár",
+      "</strong><span>", dueToday ? "Pozrieť a odškrtnúť" : nextOpen ? escapeHtml(calendarHasTime(nextOpen.date) ? new Date(nextOpen.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : new Date(nextOpen.date + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long" })) : "Všetky termíny a pripomienky na jednom mieste",
       "</span></div><span class='v5-row-arrow'>›</span></button>"
     ].join("");
     // V2: namiesto jednej pevnej karty „Dnes“ ukáže Journey Engine TERAZ / ČOSKORO (max 3 + 2).
@@ -1588,6 +1594,113 @@
     return local.toISOString().slice(0, 16);
   }
 
+  // ——— Kalendár: jedno miesto pre všetko s dátumom (pripomienky z Úradov, GuguChatu, kontroly,
+  // zúbky, kartička narodenia, vlastné udalosti a termín pôrodu). Dáta = state.reminders. ———
+  const CALENDAR_TYPE_ICONS = { "Úrady": "book", "Zdravie": "health", "Zúbky": "tooth", "Zubár": "tooth", "Kartička narodenia": "cards", "Pripomienka": "sparkle", "Rodina": "family", "Termín pôrodu": "baby" };
+  function calendarDayKey(value) {
+    const text = String(value || "");
+    return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : adaptiveOLocalDate(value);
+  }
+  function calendarHasTime(value) {
+    return !/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+  }
+  function calendarItems() {
+    let changed = false;
+    (state.reminders ||= []).forEach(item => { if (!item.id) { item.id = createId(); changed = true; } });
+    if (changed) persist();
+    const items = state.reminders.filter(item => item.date && Number.isFinite(new Date(item.date).getTime()));
+    if (state.profile.status === "expecting" && state.profile.due) {
+      items.push({ id: "due-date", title: "Termín pôrodu", date: state.profile.due, type: "Termín pôrodu", virtual: true });
+    }
+    return items.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+  function calendarAdminId(item) {
+    const match = String(item.id || "").match(/^v2-admin-(.+)-\d+$/);
+    return item.adminId || (match ? match[1] : "");
+  }
+  function calendarItemHtml(item) {
+    const done = Boolean(item.completedAt);
+    const when = calendarHasTime(item.date)
+      ? new Date(item.date).toLocaleString("sk-SK", { weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })
+      : new Date(item.date + "T12:00:00").toLocaleDateString("sk-SK", { weekday: "short", day: "numeric", month: "numeric" });
+    const adminId = calendarAdminId(item);
+    return [
+      "<article class='v2-cal-item", done ? " is-done" : "", "'>",
+      "<span class='v5-icon'>", icon(CALENDAR_TYPE_ICONS[item.type] || "calendar"), "</span>",
+      "<div><strong>", escapeHtml(item.title || "Udalosť"), "</strong><small>", escapeHtml(when), item.type ? " · " + escapeHtml(item.type) : "", "</small>",
+      item.virtual ? "" : [
+        "<div class='v2-cal-actions'>",
+        "<button type='button' data-v2-cal-done='", escapeHtml(item.id), "'>", done ? "Vrátiť" : "✓ Hotové", "</button>",
+        done ? "" : "<button type='button' data-v2-cal-move='" + escapeHtml(item.id) + "' data-days='1'>O deň</button><button type='button' data-v2-cal-move='" + escapeHtml(item.id) + "' data-days='7'>O týždeň</button>",
+        adminId ? "<button type='button' data-v2-admin-open='" + escapeHtml(adminId) + "'>Detail</button>" : "",
+        "<button type='button' class='v2-cal-delete' data-v2-cal-delete='", escapeHtml(item.id), "' aria-label='Vymazať'>×</button>",
+        "</div>"
+      ].join(""),
+      "</div></article>"
+    ].join("");
+  }
+  function calendarGroup(title, items, note) {
+    if (!items.length) return "";
+    return "<section class='v2-cal-group'><h3>" + escapeHtml(title) + "</h3>" + (note ? "<p>" + escapeHtml(note) + "</p>" : "") + items.map(calendarItemHtml).join("") + "</section>";
+  }
+  function renderCalendar() {
+    const target = byId("v5CalendarContent");
+    if (!target) return;
+    const mode = state.v5.calendarMode || "list";
+    const items = calendarItems();
+    const today = todayKey();
+    const weekEnd = adaptiveOLocalDate(new Date(Date.now() + 7 * 86400000));
+    const open = items.filter(item => !item.completedAt);
+    const head = [
+      "<div class='v2-circle-tabs v2-cal-tabs' role='tablist' aria-label='Zobrazenie kalendára'>",
+      "<button type='button' role='tab' data-v2-cal-mode='list' aria-selected='", String(mode === "list"), "' class='", mode === "list" ? "active" : "", "'>Zoznam</button>",
+      "<button type='button' role='tab' data-v2-cal-mode='month' aria-selected='", String(mode === "month"), "' class='", mode === "month" ? "active" : "", "'>Mesiac</button></div>",
+      "<button class='v5-primary v2-cal-add' type='button' data-v2-cal-add>＋ Pridať udalosť</button>"
+    ].join("");
+    if (mode === "month") {
+      const month = state.v5.calendarMonth || today.slice(0, 7);
+      const [year, monthIndex] = month.split("-").map(Number);
+      const first = new Date(year, monthIndex - 1, 1);
+      const daysInMonth = new Date(year, monthIndex, 0).getDate();
+      const offset = (first.getDay() + 6) % 7;
+      const selected = state.v5.calendarDay || today;
+      const byDay = {};
+      items.forEach(item => { (byDay[calendarDayKey(item.date)] ||= []).push(item); });
+      const shift = delta => { const d = new Date(year, monthIndex - 1 + delta, 1); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+      const cells = [];
+      for (let i = 0; i < offset; i++) cells.push("<span></span>");
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = month + "-" + String(day).padStart(2, "0");
+        const count = (byDay[key] || []).filter(item => !item.completedAt).length;
+        cells.push("<button type='button' data-v2-cal-day='" + key + "' class='" + [key === today ? "is-today" : "", key === selected ? "is-selected" : ""].join(" ") + "'>" + day + (count ? "<i aria-label='" + count + " udalosti'></i>" : "") + "</button>");
+      }
+      const dayItems = byDay[selected] || [];
+      target.innerHTML = head + [
+        "<div class='v2-cal-month-head'><button type='button' data-v2-cal-month='", shift(-1), "' aria-label='Predchádzajúci mesiac'>‹</button><strong>",
+        escapeHtml(first.toLocaleDateString("sk-SK", { month: "long", year: "numeric" })),
+        "</strong><button type='button' data-v2-cal-month='", shift(1), "' aria-label='Nasledujúci mesiac'>›</button></div>",
+        "<div class='v2-cal-grid'>", ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"].map(d => "<b>" + d + "</b>").join(""), cells.join(""), "</div>",
+        "<section class='v2-cal-group'><h3>", escapeHtml(new Date(selected + "T12:00:00").toLocaleDateString("sk-SK", { weekday: "long", day: "numeric", month: "long" })), "</h3>",
+        dayItems.length ? dayItems.map(calendarItemHtml).join("") : "<p>V tento deň nič nemáš.</p>", "</section>"
+      ].join("");
+      return;
+    }
+    const overdue = open.filter(item => !item.virtual && calendarDayKey(item.date) < today);
+    const todayItems = open.filter(item => calendarDayKey(item.date) === today);
+    const week = open.filter(item => calendarDayKey(item.date) > today && calendarDayKey(item.date) <= weekEnd);
+    const later = open.filter(item => calendarDayKey(item.date) > weekEnd);
+    const done = items.filter(item => item.completedAt);
+    target.innerHTML = head + [
+      open.length ? "" : "<div class='v5-empty'>Zatiaľ tu nič nie je. Keď si niekde v appke dáš „Pripomeň mi“ alebo pridáš udalosť, objaví sa tu.</div>",
+      calendarGroup("Nestihnuté", overdue, "Presuň alebo označ ako hotové – bez stresu."),
+      calendarGroup("Dnes", todayItems),
+      calendarGroup("Tento týždeň", week),
+      calendarGroup("Neskôr", later),
+      done.length ? "<details class='v2-cal-done'><summary>Hotové · " + done.length + "</summary>" + done.slice().reverse().map(calendarItemHtml).join("") + "</details>" : "",
+      "<p class='v2-cal-note'>Upozornenia na mobil pribudnú po spustení účtov. Zatiaľ ťa na dnešné veci upozorní domov.</p>"
+    ].join("");
+  }
+
   function openCalendarModal() {
     closeDrawer();
     closeQuickRecord();
@@ -1600,7 +1713,10 @@
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .slice(0, 5);
     byId("v5OMenuTitle").textContent = "Kalendár";
-    byId("v5OMenuSubtitle").textContent = upcoming.length ? "Najbližšie udalosti" : "Nová udalosť a pripomienka";
+    // Zoznam všetkých udalostí je v okne Kalendár – toto okno slúži už len na pridanie novej.
+    upcoming.length = 0;
+    byId("v5OMenuTitle").textContent = "Nová udalosť";
+    byId("v5OMenuSubtitle").textContent = "Uloží sa do Kalendára";
     byId("v5OMenuBack").hidden = true;
     byId("v5OMenuBody").innerHTML = [
       upcoming.length ? "<div class='v5-calendar-upcoming'>" + upcoming.map(item =>
@@ -1636,7 +1752,8 @@
       created: new Date().toISOString()
     });
     persist();
-    completeAdaptiveOModal("Udalosť je uložená.", sharedWithPartner ? "Zobrazí sa aj partnerovi v spoločnom kalendári." : "Pripomenieme ju v zvolenom čase.");
+    renderCalendar();
+    completeAdaptiveOModal("Udalosť je uložená v Kalendári.", "", "<button class='v5-secondary' type='button' data-v2-cal-add>Pridať ďalšiu</button>");
     announce("Udalosť bola uložená.");
   }
 
@@ -1806,6 +1923,11 @@
       persist();
       routeTo("v5Prenatal");
       renderPrenatal();
+      return;
+    }
+    if (feature.view === "v5Calendar") {
+      routeTo("v5Calendar");
+      renderCalendar();
       return;
     }
     if (feature.view === "v5BabySize") {
@@ -2961,6 +3083,7 @@
     if (currentView() === "v5Prenatal") renderPrenatal();
     if (currentView() === "v5PregnancyBook") renderPregnancyBook();
     if (currentView() === "v5BabySize") renderBabySize();
+    if (currentView() === "v5Calendar") renderCalendar();
     if (currentView() === "v5Sounds") renderSounds();
     if (currentView() === "v5Care") renderCare();
     if (currentView() === "v5Utility") renderUtility();
@@ -3144,6 +3267,57 @@
       return announce("Hotovo. Zobrazuje sa ďalšia úloha.");
     }
     if (event.target.closest("[data-v2-summary-open]")) return openDaySummary(0);
+    // ——— Kalendár ———
+    const calMode = event.target.closest("[data-v2-cal-mode]");
+    if (calMode) {
+      state.v5.calendarMode = calMode.dataset.v2CalMode;
+      persist();
+      return renderCalendar();
+    }
+    if (event.target.closest("[data-v2-cal-add]")) return openCalendarModal();
+    const calDay = event.target.closest("[data-v2-cal-day]");
+    if (calDay) {
+      state.v5.calendarDay = calDay.dataset.v2CalDay;
+      return renderCalendar();
+    }
+    const calMonth = event.target.closest("[data-v2-cal-month]");
+    if (calMonth) {
+      state.v5.calendarMonth = calMonth.dataset.v2CalMonth;
+      state.v5.calendarDay = calMonth.dataset.v2CalMonth + "-01";
+      return renderCalendar();
+    }
+    const calItemAction = event.target.closest("[data-v2-cal-done], [data-v2-cal-move], [data-v2-cal-delete]");
+    if (calItemAction) {
+      const id = calItemAction.dataset.v2CalDone || calItemAction.dataset.v2CalMove || calItemAction.dataset.v2CalDelete;
+      const item = (state.reminders || []).find(reminder => String(reminder.id) === String(id));
+      if (!item) return;
+      let message = "";
+      if (calItemAction.dataset.v2CalDone) {
+        item.completedAt = item.completedAt ? "" : new Date().toISOString();
+        message = item.completedAt ? "Hotové." : "Udalosť je opäť otvorená.";
+      } else if (calItemAction.dataset.v2CalMove) {
+        const days = Number(calItemAction.dataset.days) || 1;
+        // Presun od dneška (nestihnuté) alebo od pôvodného dátumu (budúce); čas sa zachová.
+        const original = new Date(calendarHasTime(item.date) ? item.date : item.date + "T12:00:00");
+        const startOfToday = new Date(todayKey() + "T00:00:00");
+        const base = original < startOfToday
+          ? new Date(startOfToday.getFullYear(), startOfToday.getMonth(), startOfToday.getDate(), original.getHours(), original.getMinutes())
+          : original;
+        const moved = new Date(base.getTime() + days * 86400000);
+        item.date = calendarHasTime(item.date)
+          ? new Date(moved.getTime() - moved.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+          : adaptiveOLocalDate(moved);
+        message = days === 1 ? "Presunuté o deň." : "Presunuté o týždeň.";
+      } else {
+        if (!window.confirm("Naozaj chceš túto udalosť vymazať?")) return;
+        state.reminders = state.reminders.filter(reminder => String(reminder.id) !== String(id));
+        message = "Udalosť je vymazaná.";
+      }
+      persist();
+      renderHome();
+      renderCalendar();
+      return announce(message);
+    }
     const sizeWeek = event.target.closest("[data-v2-size-week]");
     if (sizeWeek) {
       babySizeWeek = Math.max(4, Math.min(42, Number(sizeWeek.dataset.v2SizeWeek) || 20));
@@ -3492,7 +3666,7 @@
     }
     const featureButtonElement = event.target.closest("[data-v5-feature]");
     if (featureButtonElement) {
-      if (featureButtonElement.dataset.v5Feature === "calendar") return openCalendarModal();
+      // Kalendár sa otvára ako okno so zoznamom; pridanie udalosti je tlačidlo v ňom.
       openFeature(featureButtonElement.dataset.v5Feature);
       return;
     }
