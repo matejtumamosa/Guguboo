@@ -102,7 +102,7 @@
     first100: { label: "Náš príbeh", description: "Výstup 100 dní a prvého roka", icon: "baby", tier: "premium", view: "v5First100" },
     activities: { label: "Aktivity", description: "Krátke spoločné chvíle podľa veku", icon: "activity", tier: "free", view: "activities" },
     diary: { label: "Rodinný denník", description: "Chronologický príbeh rodiny", icon: "book", tier: "premium", view: "diary" },
-    privateSpace: { label: "Môj priestor", description: "Súkromné zápisy chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
+    privateSpace: { label: "Môj súkromný denník", description: "Len pre teba, chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
     babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
@@ -551,7 +551,7 @@
     products: ["Výbava a produkty", "Používané veci"],
     family: ["Rodina", "Úlohy a spoločné informácie"],
     diary: ["Momenty", "Jedna fotka alebo krátka veta"],
-    privateSpace: ["Môj priestor", "Súkromné zápisy na tomto zariadení"],
+    privateSpace: ["Môj súkromný denník", "Len pre teba, chránené PIN-om"],
     memoryOutput: ["Kronika", "Výstupy z uložených chvíľ"],
     birthCard: ["Kartička narodenia", "Údaje dieťaťa na jednom mieste"],
     firstYear: ["Obsah podľa veku", "Aktuálne obdobie dieťaťa"],
@@ -739,7 +739,7 @@
     const visibleFavorites = state.v5.favorites.filter(key => state.profile.status !== "expecting" || !["teeth", "activities"].includes(key));
     // V2: krátke popisy, aby sa v lište nič neorezávalo („Moja prí…“). Celý názov ostáva v aria-label.
     const shortLabels = {
-      beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Priestor", memories: "Chvíle",
+      beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Denník", memories: "Chvíle",
       travel: "Cesty", administration: "Úrady", products: "Výbava", checklists: "Zoznamy",
       care: "Pomoc", profiles: "Profily", calendar: "Kalendár"
     };
@@ -2449,7 +2449,7 @@
         ["Udalosti", (state.reminders || []).length]
       ];
       content = "<div class='v5-list'>" + summary.map(item => "<div class='v5-row-card'><span class='v5-icon'>" + icon("checklist") + "</span><div><strong>" + item[0] + "</strong><span>" + item[1] + " uložených položiek</span></div></div>").join("") + "</div>" +
-        "<div class='v5-info-box'><strong>Súkromie</strong><br>Údaje tejto prototypovej verzie zostávajú v tomto prehliadači. Môj priestor je navyše chránený vlastným PIN-om.</div>" +
+        "<div class='v5-info-box'><strong>Súkromie</strong><br>Údaje tejto prototypovej verzie zostávajú v tomto prehliadači. Môj súkromný denník je navyše chránený vlastným PIN-om.</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť Môj priestor</button></div>";
     }
     target.innerHTML = flowHead("Profily rodiny", "Údaje stačí zadať raz.", "Guguboo ich použije iba tam, kde sú potrebné. Rodina má jeden spoločný pohľad.", 0, 1) +

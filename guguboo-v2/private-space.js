@@ -14,7 +14,7 @@
   if (!root || !view) return;
   if (!window.crypto?.subtle) {
     const secureUrl = "https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash;
-    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvor aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
+    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvor aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
     return;
   }
 
@@ -147,7 +147,7 @@
 
   function renderSetup() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Nastav si prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Nastav si prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-setup novalidate>
         ${pinInput("privatePinNew", "Zadaj presne štyri číslice", "new-password")}
         ${pinInput("privatePinConfirm", "Zopakuj prístupový kód", "new-password")}
@@ -161,7 +161,7 @@
 
   function renderLocked() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Zadaj svoj prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-unlock novalidate>
         ${pinInput("privatePinUnlock", "Prístupový kód", "current-password")}
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
@@ -204,7 +204,7 @@
 
   function renderUnlocked() {
     root.innerHTML = `<div class="private-shell private-unlocked">
-      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj priestor</h1><p>Súkromné zápisy na tomto zariadení</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
+      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj súkromný denník</h1><p>Súkromné zápisy na tomto zariadení</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
       <main class="private-content">
         <section class="private-card" aria-labelledby="privateMoodTitle"><h2 id="privateMoodTitle">Ako mi dnes je?</h2><p>Výber je nepovinný.</p>
           <div class="private-moods" role="group" aria-label="Nálada">${moods.map(([value, emoji, label]) => `<button type="button" data-private-mood="${value}" aria-label="${label}" aria-pressed="${selectedMood === value}"><span aria-hidden="true">${emoji}</span><small>${label}</small></button>`).join("")}</div>
@@ -247,7 +247,7 @@
     window.clearTimeout(inactivityTimer);
     inactivityTimer = window.setTimeout(() => {
       lock();
-      setMessage("Priestor bol uzamknutý po neaktivite.");
+      setMessage("Denník bol uzamknutý po neaktivite.");
     }, INACTIVITY_MS);
   }
 
@@ -437,12 +437,12 @@
       return;
     }
     if (event.target.closest("[data-private-forgot]")) {
-      const confirmed = window.confirm("Reset kódu natrvalo vymaže iba všetky dáta Môjho priestoru. Ostatné údaje aplikácie zostanú zachované. Pokračovať?");
+      const confirmed = window.confirm("Reset kódu natrvalo vymaže iba všetky zápisy v súkromnom denníku. Ostatné údaje aplikácie zostanú zachované. Pokračovať?");
       if (!confirmed) return;
       privateStore.clear();
       clearAuthState();
       lock();
-      setMessage("Môj priestor bol vymazaný. Môžeš nastaviť nový kód.");
+      setMessage("Súkromný denník bol vymazaný. Môžeš nastaviť nový kód.");
     }
   });
 
