@@ -87,7 +87,7 @@
   // Porovnanie veľkosti ukazujeme iba s okrúhlym ovocím a zeleninou (rozhodol Samuel 11. 10.).
   // Podlhovasté porovnania zo zdroja (banán, uhorka…) sa vynechajú a ostane len overená dĺžka –
   // nič sa nenahrádza vymysleným ovocím.
-  const NOT_ROUND = ["banán", "mrkv", "batat", "mango", "kukuričn", "cuket", "uhork", "baklažán", "butternut", "zeler", "rímsk", "pór", "rebarbor", "avokád", "ananás"];
+  const NOT_ROUND = ["banán", "mrkv", "batat", "mango", "kukuričn", "cuket", "uhork", "baklažán", "butternut", "zeler", "rímsk", "pór", "rebarbor", "avokád", "ananás", "makov", "sezam"]; // makové zrnko a sezam nie sú ovocie ani zelenina
   function roundOnlySize(text) {
     return String(text || "").replace(/\s*\(([^)]*)\)/, (match, inside) =>
       NOT_ROUND.some(word => inside.toLowerCase().includes(word)) ? "" : match).trim();
@@ -98,10 +98,10 @@
   // približné okrúhle prirovnanie podľa hmotnosti – v UI vždy označené ako orientačné
   // (Samuel 11. 10.: „môže to byť približne, nie presné“).
   const APPROX_ROUND = {
-    16: "pomaranč", 20: "grapefruit", 21: "veľký grapefruit", 22: "pomelo", 23: "veľké pomelo",
+    4: "hrášok", 5: "hrášok", 16: "pomaranč", 20: "grapefruit", 21: "veľký grapefruit", 22: "pomelo", 23: "veľké pomelo",
     24: "hlávka ľadového šalátu", 25: "hlávka ľadového šalátu", 26: "malý karfiol", 28: "veľký karfiol",
     29: "tekvica hokkaido", 32: "tekvica hokkaido", 33: "malý melón", 36: "veľký medový melón",
-    37: "malý vodový melón", 38: "malý vodový melón"
+    37: "malý vodový melón", 38: "malý vodový melón", 42: "vodový melón"
   };
   const FRUIT_EMOJI = [
     ["mak", "•"], ["sezam", "•"], ["hrášok", "🫛"], ["hrozn", "🍇"], ["malin", "🫐"], ["jahod", "🍓"],
@@ -118,7 +118,8 @@
     const inside = (rawSize.match(/\(([^)]*)\)/) || [])[1] || "";
     const nhsRound = inside && !NOT_ROUND.some(word => inside.toLowerCase().includes(word));
     const comparison = nhsRound ? inside.replace(/^(veľkosťou aj váhou\s+)?ako\s+/, "") : APPROX_ROUND[entry.week] || "";
-    const length = rawSize.replace(/\s*\([^)]*\)/, "").replace(/,\s*odteraz.*$/, "").trim();
+    // 42. týždeň nemá v NHS dĺžku (len „Tehotenstvo zvyčajne trvá…“) – vtedy bez dĺžky.
+    const length = /\d\s*(mm|cm|kg)/.test(rawSize) ? rawSize.replace(/\s*\([^)]*\)/, "").replace(/,\s*odteraz.*$/, "").trim() : "";
     const emoji = (FRUIT_EMOJI.find(([key]) => comparison.toLowerCase().includes(key)) || [, "🌱"])[1];
     return { week: entry.week, length, comparison, emoji, approximate: !nhsRound && Boolean(comparison), baby: entry.baby, source: entry.source_urls[0] || "" };
   }

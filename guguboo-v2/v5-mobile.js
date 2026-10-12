@@ -305,7 +305,7 @@
   ];
 
   const prenatalDrawerFeatures = [
-    "babySize", "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -1058,30 +1058,24 @@
     const weekBadgeInner = "<b>" + escapeHtml(pregnancyAvatar.week || "?") + "</b><small>týždeň</small>";
     const babyAvatar = expecting
       ? [
-          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-pregnancy-avatar aria-expanded='false' aria-controls='v5AvatarPopover' aria-label='Pozrieť veľkosť bábätka'>", weekBadgeInner, "</button>"
+          // Ťuknutie na týždeň rovno otvorí miniaplikáciu „Aké veľké je bábätko“.
+          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-feature='babySize' aria-label='Aké veľké je bábätko'>", weekBadgeInner, "</button>"
         ].join("")
       : state.profile.photo
         ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
         : "<button class='v5-baby-avatar v5-empty-avatar' type='button' data-v5-child-avatar aria-label='Nahrať fotografiu dieťaťa'>" + icon("baby") + "<span class='v5-sr-only'>Nahrať fotografiu</span></button>";
-    const avatarPopover = expecting ? [
-      "<div class='v5-avatar-popover' id='v5AvatarPopover' hidden>",
-      "<div><small>", pregnancyAvatar.week ? escapeHtml(pregnancyAvatar.week + ". týždeň") : "Týždeň tehotenstva", "</small><strong>",
-      pregnancyAvatar.size ? escapeHtml(name + " meria " + pregnancyAvatar.size + (window.GugubooV2?.babySize?.(pregnancyAvatar.week)?.approximate ? " · veľké asi ako " + window.GugubooV2.babySize(pregnancyAvatar.week).comparison : "") + ".") : pregnancyAvatar.week ? escapeHtml(name + " rastie vlastným tempom.") : "Doplň termín pôrodu a ukážeme veľkosť bábätka.", "</strong>",
-      "<button type='button' data-v5-feature='babySize'>Aké veľké je bábätko <span aria-hidden='true'>→</span></button></div></div>"
-    ].join("") : "";
+    const avatarPopover = "";
     const pregnancyWeek = Number(pregnancyAvatar.week || 0);
     const dueDateLabel = state.profile.due
       ? new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })
       : "Doplniť termín";
     const statusCards = expecting ? [
-      // Týždeň je už v krúžku pri mene – tu radšej veľkosť bábätka (otvorí miniaplikáciu).
-      (() => {
-        const size = pregnancyWeek ? window.GugubooV2?.babySize?.(pregnancyWeek) : null;
-        return size?.comparison
-          ? ["Veľkosť", size.emoji + " ako " + size.comparison, "babySize"]
-          : ["Týždeň", pregnancyWeek ? pregnancyWeek + ". týždeň" : "Doplniť termín", pregnancyWeek ? "babySize" : "pregnancy"];
-      })(),
+      // Týždeň aj veľkosť bábätka sú v krúžku pri mene (ťuknutie otvorí miniaplikáciu) – tu bez opakovania.
       ["Termín pôrodu", dueDateLabel, "pregnancy"],
+      (() => {
+        const days = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
+        return ["Do termínu", days === null ? "Doplniť termín" : days > 0 ? days + (days === 1 ? " deň" : days < 5 ? " dni" : " dní") : days === 0 ? "Dnes" : "Po termíne", "pregnancy"];
+      })(),
       ["Tehotenská knižka", "Otvoriť", "pregnancy"]
     ] : [
       ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
@@ -2847,7 +2841,7 @@
     target.innerHTML = [
       "<div class='v2-size-nav'><button type='button' data-v2-size-week='", data.week - 1, "' aria-label='Predchádzajúci týždeň'", data.week <= 4 ? " disabled" : "", ">‹</button>",
       "<strong>", data.week, ". týždeň", data.week === currentWeek ? " · teraz" : "", "</strong>",
-      "<button type='button' data-v2-size-week='", data.week + 1, "' aria-label='Nasledujúci týždeň'", data.week >= 41 ? " disabled" : "", ">›</button></div>",
+      "<button type='button' data-v2-size-week='", data.week + 1, "' aria-label='Nasledujúci týždeň'", data.week >= 42 ? " disabled" : "", ">›</button></div>",
       "<section class='v2-size-hero'><span class='v2-size-emoji' aria-hidden='true'>", data.emoji, "</span>",
       data.comparison ? "<h2>Veľké asi ako " + escapeHtml(data.comparison) + "</h2>" : "<h2>Bábätko rastie</h2>",
       data.length ? "<p>" + escapeHtml(data.length.charAt(0).toUpperCase() + data.length.slice(1)) + "</p>" : "",
@@ -3152,7 +3146,7 @@
     if (event.target.closest("[data-v2-summary-open]")) return openDaySummary(0);
     const sizeWeek = event.target.closest("[data-v2-size-week]");
     if (sizeWeek) {
-      babySizeWeek = Math.max(4, Math.min(41, Number(sizeWeek.dataset.v2SizeWeek) || 20));
+      babySizeWeek = Math.max(4, Math.min(42, Number(sizeWeek.dataset.v2SizeWeek) || 20));
       renderBabySize();
       return;
     }
