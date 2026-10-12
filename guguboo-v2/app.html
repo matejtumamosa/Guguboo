@@ -3096,7 +3096,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.8.1";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.8.2";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
@@ -3405,7 +3405,7 @@
                 <p class="muted" id="journeyText">Každý deň jedna malá rada, jeden praktický krok a možnosť uložiť spomienku.</p>
                 <div class="memory-strip" id="journeyMemoryActions">
                   <button class="primary" id="quickMemoryBtn" type="button">📷 Pridať okamih</button>
-                  <button class="ghost" id="openDiaryBtn" type="button">Rodinný denník</button>
+                  <button class="ghost" id="openDiaryBtn" type="button">Naše momenty</button>
                 </div>
                 <div class="day-path" id="dayPath"></div>
                 <div class="milestones">
@@ -4998,7 +4998,7 @@
       <section class="view" id="diary">
         <div class="topbar">
           <div>
-            <h2>Momenty</h2>
+            <h2>Naše momenty</h2>
             <p>Fotky, prvé razy a príbeh toho, ako dieťa rastie.</p>
           </div>
         </div>
@@ -6936,7 +6936,7 @@
       $("journeyRing").style.setProperty("--progress", `${progress}%`);
       $("journeyDay").textContent = journeyDay;
       if ($("journeyUnit")) $("journeyUnit").textContent = "z prvého roka";
-      if ($("openDiaryBtn")) $("openDiaryBtn").textContent = "Otvoriť Momenty";
+      if ($("openDiaryBtn")) $("openDiaryBtn").textContent = "Otvoriť Naše momenty";
       const nextMilestone = journeyDay < 30
         ? "prvý mesačný prehľad"
         : journeyDay < 180
@@ -9679,9 +9679,9 @@ Otázky:
     switchView(previewStartsAtWelcome ? "welcome" : state.onboarded ? "home" : "welcome");
     setTimeout(() => playBrandVoice(true), 450);
   </script>
-  <script src="v4-upgrade.js?v=6.10"></script>
+  <script src="v4-upgrade.js?v=6.11"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.8.1"></script>
+  <script src="v5-mobile.js?v=2.8.2"></script>
   <script src="guguchat.js?v=2.7.0"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="private-space.js?v=5"></script>

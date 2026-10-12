@@ -98,10 +98,11 @@
     growth: { label: "Rast a váha", description: "Hmotnosť, výška a obvod hlavy", icon: "growth", tier: "premium", view: "growth" },
     urgent: { label: "Urgentná pomoc", description: "Varovné signály a kontakty", icon: "alert", tier: "free", view: "urgent" },
     checklists: { label: "Praktické zoznamy", description: "Lekár, choroba a cestovanie", icon: "checklist", tier: "free", view: "v5Checklists" },
-    memories: { label: "Naše chvíle", description: "Moment, prvé razy a spoločný príbeh", icon: "memory", tier: "premium", view: "v5First100" },
+    memories: { label: "Naše momenty", description: "Rodinný denník – fotky, prvé razy a spoločný príbeh", icon: "memory", tier: "premium", view: "v5First100" },
     first100: { label: "Náš príbeh", description: "Výstup 100 dní a prvého roka", icon: "baby", tier: "premium", view: "v5First100" },
     activities: { label: "Aktivity", description: "Krátke spoločné chvíle podľa veku", icon: "activity", tier: "free", view: "activities" },
-    diary: { label: "Rodinný denník", description: "Chronologický príbeh rodiny", icon: "book", tier: "premium", view: "diary" },
+    // Starý „Rodinný denník“ = to isté čo Naše momenty – jedna aplikácia, jeden názov.
+    diary: { label: "Naše momenty", description: "Rodinný denník – fotky, prvé razy a spoločný príbeh", icon: "memory", tier: "premium", view: "v5First100" },
     privateSpace: { label: "Môj súkromný denník", description: "Len pre teba, chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
@@ -522,7 +523,7 @@
     v5Flow: ["Rýchly záznam", "Jedna úloha po krokoch"],
     v5Profiles: ["Profily rodiny", "Údaje stačí zadať raz"],
     v5Travel: ["Cestovanie", "Príprava a pomoc podľa miesta"],
-    v5First100: ["Naše chvíle", "Moment, prvé razy a spoločný príbeh"],
+    v5First100: ["Naše momenty", "Rodinný denník – fotky, prvé razy a spoločný príbeh"],
     v5Cards: ["Kartička narodenia", "Jednorazový výstup z profilu dieťaťa"],
     v5Checklists: ["Praktické zoznamy", "Kategórie podľa situácie"],
     v5Prenatal: ["Moja príprava", "Pôrodnica, taška a domov"],
@@ -552,7 +553,7 @@
     stateSupport: ["Úrady", "Lokálne kroky a podpora"],
     products: ["Výbava a produkty", "Používané veci"],
     family: ["Rodina", "Úlohy a spoločné informácie"],
-    diary: ["Momenty", "Jedna fotka alebo krátka veta"],
+    diary: ["Naše momenty", "Rodinný denník"],
     privateSpace: ["Môj súkromný denník", "Len pre teba, chránené PIN-om"],
     memoryOutput: ["Kronika", "Výstupy z uložených chvíľ"],
     birthCard: ["Kartička narodenia", "Údaje dieťaťa na jednom mieste"],
@@ -567,7 +568,7 @@
     if (view === "v5Utility") return features[state.v5.utilitySection]?.label || "Rodinné nástroje";
     if (view === "v5Flow" && state.v5.flow?.type === "teeth-intro") return features.teeth.label;
     if (view === "v5Flow") return features[state.v5.flow?.type]?.label || (state.v5.flow?.type === "note" ? "Poznámka" : "Záznam");
-    if (view === "v5First100") return "Naše chvíle";
+    if (view === "v5First100") return "Naše momenty";
     if (view === "v5Checklists" && state.profile.status === "expecting") return "Moja príprava";
     return viewTitles[view]?.[0] || Object.values(features).find(feature => feature.view === view)?.label || "Guguboo";
   }
@@ -741,7 +742,7 @@
     const visibleFavorites = state.v5.favorites.filter(key => state.profile.status !== "expecting" || !["teeth", "activities"].includes(key));
     // V2: krátke popisy, aby sa v lište nič neorezávalo („Moja prí…“). Celý názov ostáva v aria-label.
     const shortLabels = {
-      beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Denník", memories: "Chvíle",
+      beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Denník", memories: "Momenty",
       travel: "Cesty", administration: "Úrady", products: "Výbava", checklists: "Zoznamy",
       care: "Pomoc", profiles: "Profily", calendar: "Kalendár"
     };
@@ -1171,7 +1172,7 @@
     ensureFavoritePhase();
     if (state.profile.status !== "expecting") {
       scroll.innerHTML = [
-        "<button class='v5-drawer-emotional-card' type='button' data-v5-feature='memories'><span class='v5-icon'>", icon("memory"), "</span><span><small>Spoločný príbeh</small><strong>Naše chvíle</strong><em>Dnešný moment · prvé razy · 100 dní a prvý rok</em></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+        "<button class='v5-drawer-emotional-card' type='button' data-v5-feature='memories'><span class='v5-icon'>", icon("memory"), "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>Dnešný moment · prvé razy · 100 dní a prvý rok</em></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
         "<div class='v5-drawer-grid v5-drawer-flat'>",
         postpartumDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
         "</div>",
@@ -2713,7 +2714,7 @@
       ["tooth", "Prvý zúbok", "tooth"]
     ];
     if (section === "home") {
-      target.innerHTML = flowHead("Naše chvíle", "Malé okamihy, jeden príbeh", "Bez albumov a triedenia. Guguboo z uložených chvíľ pripraví spoločný výstup.", 0, 1) +
+      target.innerHTML = flowHead("Naše momenty", "Malé okamihy, jeden príbeh", "Bez albumov a triedenia. Guguboo z uložených chvíľ pripraví spoločný výstup.", 0, 1) +
         "<div class='v5-moments-hub'>" +
         "<button type='button' data-v5-moments-section='today'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Dnešný malý moment</strong><small>Jedna fotografia alebo krátka veta</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='firsts'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Prvé razy</strong><small>" + state.v5.firstMoments.length + " zachytených míľnikov</small></span><b>›</b></button>" +
@@ -2721,7 +2722,7 @@
       return;
     }
     if (section === "today") {
-      target.innerHTML = flowHead("Naše chvíle", day && day > 0 && day <= 100 ? day + ". deň spolu" : "Dnešný malý moment", "Stačí fotografia alebo jedna veta.", 0, 1) +
+      target.innerHTML = flowHead("Naše momenty", day && day > 0 && day <= 100 ? day + ". deň spolu" : "Dnešný malý moment", "Stačí fotografia alebo jedna veta.", 0, 1) +
         "<div class='v5-form-card'><label>Dátum<input id='v5First100Date' type='date' value='" + escapeHtml(existing?.date || date) + "'></label>" +
         "<label>Krátka veta<textarea id='v5First100Text' placeholder='Moment, ktorý si chceš zapamätať'>" + escapeHtml(existing?.text || "") + "</textarea></label>" +
         "<label>Fotografia — nepovinné<input id='v5First100Photo' type='file' accept='image/*'></label>" +
@@ -2730,7 +2731,7 @@
       return;
     }
     if (section === "firsts") {
-      target.innerHTML = flowHead("Naše chvíle", "Prvé razy", "Klepni iba na okamih, ktorý sa dnes stal.", 0, 1) +
+      target.innerHTML = flowHead("Naše momenty", "Prvé razy", "Klepni iba na okamih, ktorý sa dnes stal.", 0, 1) +
         "<div class='v5-first-moments-grid'>" + firstOptions.map(item => {
           const saved = state.v5.firstMoments.find(entry => entry.key === item[0]);
           return "<button type='button' class='" + (saved ? "is-saved" : "") + "' data-v5-first-moment='" + item[0] + "' data-v5-first-label='" + escapeHtml(item[1]) + "'><span class='v5-icon'>" + icon(item[2]) + "</span><strong>" + escapeHtml(item[1]) + "</strong><small>" + (saved ? new Date(saved.date).toLocaleDateString("sk-SK") : "Zachytiť dnes") + "</small></button>";
@@ -2739,7 +2740,7 @@
     }
     const days = new Set(allMoments.map(item => item.date || todayKey(item.created))).size;
     const photos = allMoments.filter(item => item.photo).length;
-    target.innerHTML = flowHead("Naše chvíle", "Náš príbeh", "Guguboo pripraví výstup automaticky. Nemusíš vytvárať ani triediť albumy.", 0, 1) +
+    target.innerHTML = flowHead("Naše momenty", "Náš príbeh", "Guguboo pripraví výstup automaticky. Nemusíš vytvárať ani triediť albumy.", 0, 1) +
       "<div class='v5-story-output-grid'><section><span>100</span><div><strong>Prvých 100 dní spolu</strong><small>" + days + " dní · " + photos + " fotografií · " + state.v5.firstMoments.length + " prvých razov</small></div></section>" +
       "<section><span>1</span><div><strong>Prvý rok spolu</strong><small>Príbeh bude priebežne rásť z rovnakých momentov.</small></div></section></div>" +
       "<div class='v5-info-box'>Výstup si pred uložením alebo tlačou skontroluješ. Chýbajúci deň nevadí.</div>" +

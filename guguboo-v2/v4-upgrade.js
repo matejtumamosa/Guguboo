@@ -82,7 +82,7 @@
         ["📅", "Rodinný kalendár", "Poradne, termíny a spoločné pripomienky.", "calendar"],
         ["🛒", "Spoločný nákup", "Produkty, značka, veľkosť a alternatíva pre druhého rodiča.", "shopping"],
         ["🤝", "Rodinný prehľad", "Úlohy, rutiny a informácie pri zastúpení druhého rodiča.", "family"],
-        ["💛", "Fotky a spomienky", "Rodinný denník, fotografie a časová os.", "diary"],
+        ["💛", "Fotky a spomienky", "Naše momenty – rodinný denník, fotografie a časová os.", "diary"],
         ["👶", "Kartička narodenia", "Zdieľaná kartička pripravená z údajov dieťaťa.", "birthCard"],
         ["🌱", "Obsah podľa veku", "Odporúčania podľa aktuálneho obdobia dieťaťa.", "firstYear"],
         ["🧴", "Používané produkty", "Čo dieťa používa a čo treba doplniť.", "products"]
