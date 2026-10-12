@@ -301,18 +301,18 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "privateSpace", "care", "activities", "teeth", "family", "shopping",
+    "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
   const favoriteOptions = phase => phase === "expecting"
     ? [...prenatalDrawerFeatures]
-    : ["privateSpace", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
+    : ["privateSpace", "calendar", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
     ? ["beforeBirth", "contacts", "shopping", "travel"]
     : ["privateSpace", "memories", "activities", "shopping"];
@@ -1104,15 +1104,15 @@
     const calendarCard = [
       "<button class='v5-row-card", dueToday ? " v2-cal-home-today" : "", "' type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"),
       "</span><div><strong>", dueToday ? "Dnes máš v kalendári " + dueToday + (dueToday === 1 ? " vec" : dueToday < 5 ? " veci" : " vecí") : nextOpen ? escapeHtml(nextOpen.title) : "Kalendár",
-      "</strong><span>", dueToday ? "Pozrieť a odškrtnúť" : nextOpen ? escapeHtml(calendarHasTime(nextOpen.date) ? new Date(nextOpen.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : new Date(nextOpen.date + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long" })) : "Všetky termíny a pripomienky na jednom mieste",
+      "</strong><span>", dueToday ? "Kalendár · pozrieť a odškrtnúť" : nextOpen ? "Kalendár · " + escapeHtml(calendarHasTime(nextOpen.date) ? new Date(nextOpen.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : new Date(nextOpen.date + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long" })) : "Všetky termíny a pripomienky na jednom mieste",
       "</span></div><span class='v5-row-arrow'>›</span></button>"
     ].join("");
     // V2: namiesto jednej pevnej karty „Dnes“ ukáže Journey Engine TERAZ / ČOSKORO (max 3 + 2).
     const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
+      calendarCard,
       journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       daySummaryCard(),
-      calendarCard,
       window.GugubooV2?.betaFooterHtml?.() || ""
     ].join("");
     target.innerHTML = [
