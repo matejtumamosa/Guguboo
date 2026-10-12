@@ -839,3 +839,15 @@ button.v2-book-size { border: 0; text-align: left; cursor: pointer; }
 .private-entry-prompt { display: block; margin-bottom: 6px; color: var(--v5-muted); font-size: 13px; }
 .private-muted { color: var(--v5-muted); }
 .v2-summary-diary { width: 100%; margin-top: 10px; }
+
+/* ——— Zoznamy Prípravy: skupiny a zdroj ——— */
+.v2-check-lead { margin: 4px 2px 0; color: var(--v5-muted); font-size: 13px; }
+.v2-check-group { display: flex; justify-content: space-between; align-items: baseline; margin: 14px 2px 2px; color: var(--v5-ink); font-size: 15px; }
+.v2-check-group:first-child { margin-top: 4px; }
+.v2-check-group small { color: var(--v5-muted); font-size: 12px; font-weight: 800; }
+.v5-checklist-detail > .v2-source { display: block; margin: 10px 2px 0; }
+/* Dlhé zoznamy: kompaktné riadky namiesto veľkých kartičiek. */
+body.v5-active .v5-check-items { gap: 6px; }
+body.v5-active .v5-check-item-card { min-height: 0 !important; padding: 10px 12px !important; gap: 12px; border-radius: 14px; }
+body.v5-active .v5-check-item-card strong { font-size: 14px; font-weight: 600; line-height: 1.35; }
+body.v5-active .v5-check-item-card .v5-check-toggle { width: 26px; height: 26px; min-width: 26px; border-radius: 8px; }

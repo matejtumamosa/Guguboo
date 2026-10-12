@@ -2802,18 +2802,86 @@
       ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu"],
       ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov"]
     ]],
-    ["hospital", "Taška do pôrodnice", "Veci rozdelené podľa osoby", [
-      ["v5-bag-mother", "Veci pre mamu"],
-      ["v5-bag-baby", "Veci pre bábätko"],
-      ["v5-bag-hygiene", "Hygiena a praktické potreby"],
-      ["v5-bag-home", "Odchod domov"]
-    ]],
-    ["home", "Domov pre bábätko", "Pripraviť iba to, čo využiješ", [
-      ["v5-home-sleep", "Bezpečné miesto na spánok"],
-      ["v5-home-changing", "Miesto na prebaľovanie"],
-      ["v5-home-clothes", "Základné oblečenie"],
-      ["v5-prenatal-car-seat", "Autosedačka na cestu domov"]
-    ]],
+    // Konkrétne zoznamy podľa NHS (Pack your bag for labour, What to buy for your newborn baby), doklady podľa
+    // slovensko.sk (dohoda o mene dieťaťa). Riadok „#id“ = nadpis skupiny; ak id patrí úlohe v kruhu Príprava,
+    // úloha sa odfajkne, keď je celá skupina hotová.
+    ["hospital", "Taška do pôrodnice", "Čo si zbaliť – po skupinách", [
+      ["#v5-bag-mother", "Pre teba"],
+      ["bag-id", "Občiansky preukaz (prípadne pas)"],
+      ["bag-marriage", "Sobášny list, prípadne zápisnica o určení otcovstva – kvôli dohode o mene dieťaťa"],
+      ["bag-notes", "Tehotenská dokumentácia a pôrodný plán"],
+      ["bag-labour-clothes", "Voľné pohodlné oblečenie na pôrod"],
+      ["bag-gown", "Župan a šľapky alebo žabky (aj do sprchy)"],
+      ["bag-nightwear", "Nočná košeľa – na zapínanie vpredu, ak budeš dojčiť"],
+      ["bag-clothes", "3 sady pohodlného oblečenia a ponožky"],
+      ["bag-knickers", "5–6 nohavičiek (hodia sa aj jednorazové)"],
+      ["bag-bras", "2–3 pohodlné podprsenky, ak plánuješ dojčiť, tak na dojčenie"],
+      ["bag-breastpads", "Vložky do podprsenky"],
+      ["bag-maternity-pads", "2 balenia veľmi savých popôrodných vložiek"],
+      ["bag-meds", "Lieky, ktoré užívaš"],
+      ["bag-glasses", "Náhradné okuliare alebo šošovky"],
+      ["#v5-bag-hygiene", "Hygiena a drobnosti"],
+      ["bag-washbag", "Toaletná taška: kefka, pasta, hrebeň, mydlo, balzam na pery, deodorant, gumičky, dezinfekcia na ruky"],
+      ["bag-towels", "Uteráky"],
+      ["bag-pillow", "Vlastný vankúš"],
+      ["bag-eyemask", "Maska na oči na spanie"],
+      ["bag-snacks", "Zdravé jedlo na zahryznutie, nápoje a fľaša na vodu (so slamkou)"],
+      ["bag-fan", "Vejár alebo sprej s vodou na osvieženie"],
+      ["bag-phone", "Telefón, nabíjačka a dlhý kábel alebo powerbanka"],
+      ["bag-relax", "Knihy, podcasty, hudba – na oddych"],
+      ["bag-laundry", "Vrecko na špinavú bielizeň"],
+      ["#v5-bag-baby", "Pre bábätko"],
+      ["bag-baby-clothes", "Body, košieľky a overaly na spanie"],
+      ["bag-baby-hat", "Čiapočka, rukavičky proti škriabaniu, ponožky alebo papučky"],
+      ["bag-baby-nappies", "Plienky"],
+      ["bag-baby-wipes", "Vata alebo vlhčené obrúsky"],
+      ["bag-baby-muslins", "Látkové plienky (mušelínky)"],
+      ["bag-baby-blanket", "Deka alebo zavinovačka"],
+      ["#v5-bag-home", "Na cestu domov"],
+      ["bag-home-outfit", "Oblečenie pre bábätko na cestu domov"],
+      ["bag-home-snowsuit", "Kombinéza, ak je chladno"],
+      ["bag-home-carseat", "Autosedačka na cestu domov"],
+      ["#bag-partner", "Pre sprievod (partner, blízka osoba)"],
+      ["bag-partner-clothes", "Náhradné oblečenie"],
+      ["bag-partner-hygiene", "Zubná kefka, pasta a deodorant"],
+      ["bag-partner-phone", "Telefón a nabíjačka"],
+      ["bag-partner-snacks", "Jedlo a pitie"],
+      ["bag-partner-meds", "Lieky, ktoré užíva"],
+      ["bag-partner-coins", "Drobné na parkovanie a automat"]
+    ], [["NHS – Pack your bag for labour", "https://www.nhs.uk/pregnancy/labour-and-birth/preparing-for-the-birth/pack-your-bag-for-labour/"], ["slovensko.sk – doklady k dohode o mene", "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/"]]],
+    ["home", "Domov pre bábätko", "Netreba všetko nové – nový má byť matrac a autosedačka.", [
+      ["#v5-home-sleep", "Spánok"],
+      ["home-crib", "Postieľka, prenosná postieľka alebo košík"],
+      ["home-mattress", "Pevný rovný matrac, ktorý presne sedí – bez medzier (nový)"],
+      ["home-cover", "Nepremokavý chránič matraca"],
+      ["home-sheets", "Aspoň 4 napínacie plachty"],
+      ["home-sleepbags", "2 spacie vaky alebo plachty a deka – bez periny a vankúša (riziko udusenia)"],
+      ["#v5-home-changing", "Prebaľovanie a kúpanie"],
+      ["home-nappies", "Niekoľko balení plienok pre novorodenca"],
+      ["home-wipes", "Vata alebo jemné obrúsky bez parfumu a alkoholu"],
+      ["home-mat", "Prebaľovacia podložka alebo uterák"],
+      ["home-cream", "Ochranný krém proti zapareninám"],
+      ["home-bath", "Vanička (stačí aj lavór)"],
+      ["home-towels", "Uteráky"],
+      ["#v5-home-clothes", "Oblečenie"],
+      ["home-sleepsuits", "Aspoň 6 overalov na spanie"],
+      ["home-bodies", "4–6 body s cvočkami pod plienkou"],
+      ["home-cardigans", "2 svetríky z vlny alebo bavlny"],
+      ["home-mittens", "Rukavičky proti škriabaniu, ponožky alebo papučky"],
+      ["home-hat", "Čiapka podľa ročného obdobia"],
+      ["home-snowsuit", "Kombinéza, ak je chladno"],
+      ["#v5-prenatal-car-seat", "Von a na cesty"],
+      ["home-carseat", "Autosedačka pre novorodenca, proti smeru jazdy (nová)"],
+      ["home-pram", "Kočík s úplne sklopiteľným sedadlom, aby bábätko ležalo"],
+      ["home-blanket", "Deka alebo zavinovačka"],
+      ["home-bag", "Taška na plienky a potrebné veci"],
+      ["#home-feeding", "Kŕmenie"],
+      ["home-nursing-bras", "Podprsenky na dojčenie – zmeraj sa okolo 36.–38. týždňa"],
+      ["home-breastpads", "Vložky do podprsenky a krém na bradavky"],
+      ["home-pump", "Odsávačka"],
+      ["home-muslins", "Mušelínky na odgrgnutie"],
+      ["home-formula", "Pri umelom mlieku: fľaše s cumlíkmi, sterilizátor, kefky a mlieko"]
+    ], [["NHS – What to buy for your newborn baby", "https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/what-to-buy-for-your-newborn-baby/"]]],
     ["health", "Zdravie a kontakty", "Pediater, poisťovňa a lekáreň", [
       ["v5-health-pediatrician", "Vybraný pediater"],
       ["v5-health-pharmacy", "Najbližšia lekáreň"],
@@ -2850,6 +2918,25 @@
     travel: ["travel", "Cesta"]
   };
 
+  // Položky jednej skupiny (od nadpisu „#id“ po ďalší nadpis).
+  function checklistGroupItems(rows, headingId) {
+    const start = rows.findIndex(row => row[0] === headingId);
+    const items = [];
+    for (let index = start + 1; index < rows.length && !rows[index][0].startsWith("#"); index++) items.push(rows[index]);
+    return items;
+  }
+  // Úloha v kruhu Príprava (napr. „Veci pre mamu“) sa odfajkne, keď je hotová celá jej skupina v zozname.
+  function syncChecklistGroupTasks() {
+    const taskIds = new Set(prenatalOrganizationSections.flatMap(section => section.tasks.map(task => task[0])));
+    checklistCategories.forEach(category => category[3].forEach(row => {
+      const taskId = row[0].slice(1);
+      if (!row[0].startsWith("#") || !taskIds.has(taskId)) return;
+      const group = checklistGroupItems(category[3], row[0]);
+      // Len odfajkne (ručne odfajknutú úlohu nikdy neodškrtne späť).
+      if (group.length && group.every(item => state.checks[item[0]])) state.checks[taskId] = true;
+    }));
+  }
+
   function renderChecklists() {
     const target = byId("v5ChecklistsContent");
     if (!target) return;
@@ -2864,7 +2951,7 @@
       target.innerHTML = "<section class='v5-checklist-shell'><header class='v5-checklist-intro'><span>" + (expecting ? "Moja príprava" : "Praktické zoznamy") + "</span><h1>Vyber oblasť</h1></header>" +
         "<div class='v5-checklist-grid'>" + visibleCategories.map(category => {
           const custom = state.v5.checklistCustom.filter(item => item.category === category[0]);
-          const all = category[3].concat(custom.map(item => [item.id, item.label]));
+          const all = category[3].filter(item => !item[0].startsWith("#")).concat(custom.map(item => [item.id, item.label]));
           const done = all.filter(item => state.checks[item[0]]).length;
           const percentage = all.length ? Math.round(done / all.length * 100) : 0;
           const visual = checklistVisuals[category[0]] || ["checklist", "Zoznam"];
@@ -2873,19 +2960,27 @@
       return;
     }
     const custom = state.v5.checklistCustom.filter(item => item.category === selected[0]);
-    const items = selected[3].concat(custom.map(item => [item.id, item.label]));
+    const rows = selected[3].concat(custom.length ? [["#custom", "Moje položky"]] : [], custom.map(item => [item.id, item.label]));
+    const items = rows.filter(item => !item[0].startsWith("#"));
     const done = items.filter(item => state.checks[item[0]]).length;
     const percentage = items.length ? Math.round(done / items.length * 100) : 0;
     const visual = checklistVisuals[selected[0]] || ["checklist", "Zoznam"];
     target.innerHTML = [
       "<section class='v5-checklist-shell v5-checklist-detail'>",
       "<header class='v5-checklist-detail-head is-", selected[0], "'><span class='v5-icon'>", icon(visual[0]), "</span><div><small>", escapeHtml(visual[1]), "</small><h1>", escapeHtml(selected[1]), "</h1></div><strong>", done, "/", items.length, "</strong><span class='v5-check-progress'><i style='--progress:", percentage, "%'></i></span></header>",
+      selected[2] ? "<p class='v2-check-lead'>" + escapeHtml(selected[2]) + "</p>" : "",
       "<div class='v5-check-items'>",
-      items.map(item => {
+      rows.map(item => {
+        if (item[0].startsWith("#")) {
+          const group = checklistGroupItems(rows, item[0]);
+          const groupDone = group.filter(entry => state.checks[entry[0]]).length;
+          return "<h3 class='v2-check-group'>" + escapeHtml(item[1]) + "<small>" + groupDone + "/" + group.length + "</small></h3>";
+        }
         const checked = Boolean(state.checks[item[0]]);
         return "<label class='v5-check-item-card" + (checked ? " is-done" : "") + "'><input type='checkbox' data-v5-check-item='" + item[0] + "'" + (checked ? " checked" : "") + "><span class='v5-check-toggle' aria-hidden='true'>" + (checked ? "✓" : "") + "</span><strong>" + escapeHtml(item[1]) + "</strong></label>";
       }).join(""),
       "</div>",
+      (selected[4] || []).map(source => "<a class='v2-source' href='" + escapeHtml(source[1]) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + escapeHtml(source[0]) + " ↗</a>").join(""),
       "<div class='v5-check-add'><input id='v5ChecklistCustom' maxlength='80' placeholder='Vlastná položka'><button type='button' data-v5-action='add-checklist-custom' aria-label='Pridať vlastnú položku'>＋</button></div>",
       "<button class='v5-check-categories-button' type='button' data-v5-check-home>", icon("back"), expecting ? " Moja príprava" : " Všetky zoznamy", "</button>",
       "</section>"
@@ -4118,6 +4213,7 @@
     }
     if (event.target.matches("[data-v5-check-item]")) {
       state.checks[event.target.dataset.v5CheckItem] = event.target.checked;
+      syncChecklistGroupTasks();
       persist();
       renderChecklists();
       return announce(event.target.checked ? "Položka je hotová." : "Položka bola označená ako nesplnená.");
