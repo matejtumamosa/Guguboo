@@ -2450,7 +2450,7 @@
       ];
       content = "<div class='v5-list'>" + summary.map(item => "<div class='v5-row-card'><span class='v5-icon'>" + icon("checklist") + "</span><div><strong>" + item[0] + "</strong><span>" + item[1] + " uložených položiek</span></div></div>").join("") + "</div>" +
         "<div class='v5-info-box'><strong>Súkromie</strong><br>Údaje tejto prototypovej verzie zostávajú v tomto prehliadači. Môj súkromný denník je navyše chránený vlastným PIN-om.</div>" +
-        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť Môj priestor</button></div>";
+        "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť súkromný denník</button></div>";
     }
     target.innerHTML = flowHead("Profily rodiny", "Údaje stačí zadať raz.", "Guguboo ich použije iba tam, kde sú potrebné. Rodina má jeden spoločný pohľad.", 0, 1) +
       "<nav class='v5-profile-tabs' aria-label='Profily'>" + tabs + "</nav>" + content;
