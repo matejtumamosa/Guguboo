@@ -978,3 +978,16 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-account-apple { color: #fff; background: #111; border-color: #111; }
 .v2-account-guest { min-height: 44px; padding: 8px; color: var(--v5-brand-dark, #5b4ca3); background: none; border: 0; font: inherit; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .v2-account-note { margin: 2px 0 0; color: #7a7383; font-size: 11px; line-height: 1.4; text-align: center; }
+
+/* ——— Okienká po úvode (upozornenia, Zoznám sa): ikona, tlačidlá pod sebou ——— */
+.v2-tour-icon:empty { display: none; }
+.v2-tour-icon { display: grid; width: 56px; height: 56px; margin: 0 auto 10px; place-items: center; color: var(--v5-brand-dark, #5b4ca3); background: linear-gradient(145deg, #f1ebff, #ffeef3); border-radius: 18px; box-shadow: 0 8px 20px rgba(123, 107, 200, .16); }
+.v2-tour-icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.v2-tour.is-intro .v2-tour-card { padding: 22px 20px 16px; }
+.v2-tour.is-intro .v2-tour-card p { font-size: 14px; }
+.v2-tour-note:empty { display: none; }
+.v2-tour-note { display: block; margin-top: 8px; color: var(--v5-muted); font-size: 11px !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+.v2-tour.is-intro .v2-tour-actions { flex-direction: column-reverse; align-items: stretch; gap: 4px; margin-top: 16px; }
+.v2-tour.is-intro .v2-tour-actions .v5-primary { width: 100%; min-height: 50px; }
+.v2-tour.is-intro .v2-tour-skip { min-height: 40px !important; }
+.v2-tour-card .v2-tour-note { color: var(--v5-muted) !important; text-transform: none; }

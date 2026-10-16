@@ -26,8 +26,10 @@
         setup: true,
         target: () => null,
         kicker: "Upozornenia",
-        title: "Máme ti pripomínať dôležité veci?",
-        text: "Kontroly a termíny z Kalendára – vrátane úradov. Žiadna reklama, len to, čo sa ťa týka. V beta verzii prídu upozornenia, len keď máš appku otvorenú.",
+        title: "Pripomenieme ti dôležité veci",
+        icon: "bell",
+        text: "Kontroly, termíny a úrady – len to, čo sa ťa týka. Žiadne reklamy.",
+        note: "V beta verzii prídu upozornenia, len keď máš appku otvorenú.",
         nextLabel: "Povoliť upozornenia",
         skipLabel: "Neskôr",
         onNext: async () => {
@@ -50,6 +52,7 @@
         intro: true,
         target: () => null,
         title: "Zoznám sa s aplikáciou",
+        icon: "spark",
         text: "Ukážem ti 4 miesta, ktoré budeš používať najčastejšie. Trvá to pol minúty."
       },
       {
@@ -95,7 +98,7 @@
       document.body.insertAdjacentHTML("beforeend", [
         "<div id='v2Tour' class='v2-tour' role='dialog' aria-modal='true' aria-labelledby='v2TourTitle'>",
         "<div class='v2-tour-spot' aria-hidden='true'></div>",
-        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>×</button><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p>",
+        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>×</button><span class='v2-tour-icon' id='v2TourIcon' aria-hidden='true'></span><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p><small class='v2-tour-note' id='v2TourNote'></small>",
         "<div class='v2-tour-actions'><button type='button' class='v2-tour-skip' data-v2-tour-skip>Preskočiť</button>",
         "<button type='button' class='v5-primary' data-v2-tour-next>Ďalej</button></div></section></div>"
       ].join(""));
@@ -121,6 +124,9 @@
     root.querySelector("[data-v2-tour-next]").textContent = step.nextLabel || (step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej");
     root.querySelector(".v2-tour-skip").textContent = step.skipLabel || (step.intro ? "Teraz nie" : "Preskočiť");
     root.classList.toggle("is-intro", Boolean(step.intro || step.setup));
+    const icons = { bell: "<svg viewBox='0 0 24 24'><path d='M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z'/><path d='M10 20a2 2 0 0 0 4 0'/></svg>", spark: "<svg viewBox='0 0 24 24'><path d='M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z'/><path d='M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z'/></svg>" };
+    byId("v2TourIcon").innerHTML = icons[step.icon] || "";
+    byId("v2TourNote").textContent = step.note || "";
     if (!visible(target)) { spot.style.display = "none"; card.style.top = "32%"; return; }
     const rect = target.getBoundingClientRect();
     const pad = 8;
