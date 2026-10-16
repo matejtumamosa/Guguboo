@@ -1,7 +1,7 @@
 {
   "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/": {
     "hash": "2489a5878d12e16c12717acf3acb06eb6d3567a11441f208a1b3acc441bb5225",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.obligation.oznamenie_tehotenstva_zamestnavatelovi",
@@ -25,7 +25,7 @@
   },
   "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie": {
     "hash": "9470f034e162b2019b78582340ac5db8c523b9435560ca20641af710b6a50e00",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.obligation.oznamenie_tehotenstva_zamestnavatelovi",
@@ -34,7 +34,7 @@
   },
   "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/tehotenske/dalsie-informacie-tehotenske": {
     "hash": "0b2947e368c6dcd550ef9e7363ebf7e7895d7f3cdf4b767b24468e355f9d5abb",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.tehotenske",
@@ -43,7 +43,7 @@
   },
   "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-tehotenske": {
     "hash": "d602c031a27092d8ac5b16ee6262b91f5f851698cbcf84a4c034b5682e0f7060",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.tehotenske"
@@ -51,7 +51,7 @@
   },
   "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske": {
     "hash": "145d2d2d3c1a8f8d55e19375d2d5c1c87e6964d5260019439b93b186889d82b9",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.tehotenske",
@@ -63,7 +63,7 @@
   },
   "https://socpoist.sk/news/digitalna-revolucia-v-socialnej-poistovni-prinasame-36-zlepseni-obcan-si-vybavi-viac-zivotnych": {
     "hash": "76e040d5aeb138e84cbd7cc2f4beeb3979387085e263e8394998e6f64c0995b1",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.tehotenske"
@@ -71,7 +71,7 @@
   },
   "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_rodny-list/": {
     "hash": "ca65ce766190fb008f9ef95c9ca7842111f77727cb4bc4143e24743e0d62a812",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.document.dohoda_o_mene",
@@ -84,7 +84,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/": {
     "hash": "0c4d5af8bcb776e3cfd2c81011fb07840307ccf94b71a38209a5ef34c5e5148e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.process.vyber_pediatra",
@@ -95,7 +95,7 @@
   },
   "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-materske": {
     "hash": "2a3920f73143cfc06787472c99d2c6ab3ce76b08a4861dd2b384799a0289ed9d",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.materske",
@@ -105,7 +105,7 @@
   },
   "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/materske/dalsie-informacie-materske": {
     "hash": "5b3c2c2c6060a1d5abfba0effa528ca18199b2dfee94b1a22317f692f0d8321e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.tehotenske",
@@ -116,8 +116,8 @@
     ]
   },
   "https://www.vszp.sk/poistenci/pre-mamicky/ako-poistit-dieta.html": {
-    "hash": "e992dc1496535968e4bd00b8a178f3b632cb1481e01e32931d74183574f29965",
-    "last_checked": "2026-09-28",
+    "hash": "1910bf12406bc0eaaa4c437d5db955f3866fd5178698961a57fe9751f9a4f108",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.process.trvaly_pobyt_dietata",
@@ -127,7 +127,7 @@
   },
   "https://www.dovera.sk/poistenec/potrebujem-poradit/ako-sa-poistit-prava-a-povinnosti/poistenie-novorodenca": {
     "hash": "3e11ee1e3f44a61837c13bbc4b25d42b32922c0a420757e2602cc577a38d2a84",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.process.trvaly_pobyt_dietata",
@@ -136,7 +136,7 @@
   },
   "https://www.socpoist.sk/zivotne-situacie/tehotenstvo-materstvo/ako-poziadat-o-otcovske": {
     "hash": "ddb14661c9cae27ac520023f9a1879c3f7d0c2de1538812018871a9f53ac2163",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.otcovske",
@@ -146,7 +146,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/nova-web-stranka.html": {
     "hash": "4440a94fc266313887f94902249a65bd5a87b2973dd4d4335e2a3f4caecf945e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.prispevok_pri_narodeni"
@@ -154,7 +154,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/vyplata-prispevku.html": {
     "hash": "9e36db97c0015d305d883e9a8d2b6d28c0763cd71a43186d932be4acfb74b19c",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.prispevok_pri_narodeni"
@@ -162,7 +162,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/sumy-prispevkov-pre-rodicov.html": {
     "hash": "1f13114d73b6409abc815ed986974a598a2fa7b2a053bf361d8ff9a86564e668",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.materske",
@@ -173,7 +173,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/pridavok-dieta/": {
     "hash": "e8b7c8d3b7bd5fb3b355d7e86cb749e5dc61ef6b80c40525bcd003656643d06f",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.pridavok_na_dieta",
@@ -182,7 +182,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/pridavok-dieta/vyska-pridavku.html": {
     "hash": "09bb6f1dbaa8561ab3e03760c0555e29953a9384600355e745a81fefbbb63b67",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.pridavok_na_dieta"
@@ -190,7 +190,7 @@
   },
   "https://podpora.financnasprava.sk/215354-Da%C5%88ov%C3%BD-bonus-na-die%C5%A5a-v-roku-2026": {
     "hash": "8b427bbc666ba3687e72bc0fe86390d5968f3263c76e72da71357712da583dee",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.pridavok_na_dieta",
@@ -200,7 +200,7 @@
   },
   "https://podpora.financnasprava.sk/549090-Da%C5%88ov%C3%BD-bonus-na-vy%C5%BEivovan%C3%A9-die%C5%A5a-v-roku-2026": {
     "hash": "d9fd1024ef7d8ecf99d6361267f852dea054702eae907fdeabb3018eb72dac4f",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.danovy_bonus"
@@ -208,7 +208,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/rodicovsky-prispevok/": {
     "hash": "cd95eccac02d753438379b07dfb33f8031d71790a59b79a49ca6f3e040043804",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.rodicovsky_prispevok",
@@ -217,7 +217,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/rodicovsky-prispevok/vyska-prispevku.html": {
     "hash": "26af0240c71f569d2505a6d75fc0bbe28ce5ba4d3ba71f763d46feb9b2b1ce57",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.rodicovsky_prispevok"
@@ -225,7 +225,7 @@
   },
   "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-rodicom-ktorym-sucasne-narodili-tri-deti/": {
     "hash": "2582c65691687098d5d6f99861e068ffff81fdae47229ea55dcaad61e2e64472",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.prispevok_viac_sucasne_narodenych_deti",
@@ -234,7 +234,7 @@
   },
   "https://socpoist.sk/kto-som/zivnostnik-szco/poziadat-o-davku/ako-poziadat-o-osetrovne": {
     "hash": "2241403df286295592768fbcdd476609bc780e8cd80e33d92732a4c58da88114",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "lifeAdmin.SK:sk.benefit.osetrovne",
@@ -243,7 +243,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-4/": {
     "hash": "bc79910eef9fcc2135b7604175e1a3d88275fb5e4cc62e2d9b5e8518cc5af1c3",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-4"
@@ -251,7 +251,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-5/": {
     "hash": "795ad4d39f1344ad48ea442bbd26961e51aaf7d586923c643414c85c48d06b80",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-5"
@@ -259,7 +259,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-6/": {
     "hash": "fecdc5dd168ccd9ca3168920bad3e5405e9bbe4d18b64279bf6c3beedd7418d2",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-6"
@@ -267,7 +267,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-7/": {
     "hash": "34f52926e63f5e1f3471eface61a97482ec56782406050d0d7b8ad9e04ff0f78",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-7"
@@ -275,7 +275,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-8/": {
     "hash": "c8354d44910ea67377fc36198e6287aff65d30c8b3f3275de73cb42961f323de",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-8"
@@ -283,7 +283,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-9/": {
     "hash": "8e020130966ebacb73248895d6ba63a5cc82a92f7f5c7498fdbe29261f96fcd9",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-9"
@@ -291,7 +291,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-10/": {
     "hash": "c8108a2e4a1e1c6cd7d02d5f485597a1726a60aa69e40daf4a6b11f5ffd4deb7",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-10"
@@ -299,7 +299,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-11/": {
     "hash": "e6ac14c383a8de253b4fe1f2f0bfd6edd503bfcc40286375f2ebadd6a2f09b9e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-11"
@@ -307,7 +307,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/1st-trimester/week-12/": {
     "hash": "2b8f77777756f93b251205ca2f7a8df75ca48e5741ae779ec64c97f4a3f2c5e6",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-12"
@@ -315,7 +315,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-13/": {
     "hash": "b5940b88bf7faa932dc2a738bcd434bad7d8b2d1b8309e286ebf66c6658aa763",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-13"
@@ -323,7 +323,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-14/": {
     "hash": "0927b365eaa93e9191ad80ad690d061c1e45b26a627759155287c5d3ef2aa312",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-14"
@@ -331,7 +331,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-15/": {
     "hash": "cb137a7c397ebe3ada25866006103fa144d5ea742ee0ab041d908d97b70415f3",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-15"
@@ -339,7 +339,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-16/": {
     "hash": "6d87ba328191bd502a8c7af1cf0a4db18b1f726f1e96283a2d8941cb9dccba3c",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-16"
@@ -347,7 +347,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-17/": {
     "hash": "0ef60413b26d242c384bd93dce47f32f421034856fcf068a925cb54b8db4121d",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-17"
@@ -355,7 +355,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-18/": {
     "hash": "19e321c1c4a6c27a1f1cd04638b6c34a58b38b82c6186c80cb3bec9cb4ee76be",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-18"
@@ -363,7 +363,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-19/": {
     "hash": "f715a55cf10c018ce781802ddf38aaa0a5a88a97640121a42f7dfc29febd3726",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-19"
@@ -371,7 +371,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-20/": {
     "hash": "394065883d14fff7a4d83db67497995f3d67e33e606f6e81f2405e083099abb8",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-20"
@@ -379,7 +379,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-21/": {
     "hash": "d4e9e96716a1e42c61ad59bf1b5bcefc07d8a4a31c27ff10ac21408793426e21",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-21"
@@ -387,7 +387,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-22/": {
     "hash": "80577368b3594a875ff0d404924bbed1b671e55a17ee7cc26c3241869a6c4f44",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-22"
@@ -395,7 +395,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-23/": {
     "hash": "cd9ee3bd75726031fbc11bc08463a2f6b5165abe1bdd1c609dca1120b7394f2d",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-23"
@@ -403,7 +403,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-24/": {
     "hash": "e6932a5e57375c04b68e2cf6bff4002e65348071b967700f95daab5b56e9e061",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-24"
@@ -411,7 +411,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-25/": {
     "hash": "053b1f713641b2bd3bdb522c08a8084d224ddf96a0cd4730b49a304de35d485a",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-25"
@@ -419,7 +419,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-26/": {
     "hash": "dc8063261d8c0b9f9e6bf6d4e9221b2f306cee82ee9a3eeb70c17dbbd05b0306",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-26"
@@ -427,7 +427,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/2nd-trimester/week-27/": {
     "hash": "33fec86baa4392b6e2c11c3b516bec533e67b5bd8bb16b7fe6e3c416f6953c69",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-27"
@@ -435,7 +435,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-28/": {
     "hash": "1ce9e2726bf4ba71c4dcd235f7167498972023218095ea7c68c61bb3c50ff366",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-28"
@@ -443,7 +443,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-29/": {
     "hash": "85ba5964e344061cf82d6e9bf7417e47c5f72b93187d111367114bc822924257",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-29"
@@ -451,7 +451,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-30/": {
     "hash": "3a30c2b2b4e4aed7a93cb8d500c77a22e47c85128d794d756dfe0f5e9bc8d165",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-30"
@@ -459,7 +459,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-31/": {
     "hash": "0746e990eb78a5ca57862e7bcdef6163b359649b2666585f6872ec5f138efd85",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-31"
@@ -467,7 +467,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-32/": {
     "hash": "d25c67266b34195feb7e5d6ba58b740e62ccc63c9bc0ea0243adec68a7753f62",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-32"
@@ -475,7 +475,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-33/": {
     "hash": "2eefd31654c13b6022b215c6871f4a8510fafe356ac4cfd02b41fb82b8508884",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-33"
@@ -483,7 +483,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-34/": {
     "hash": "2b07110b8462a62784f771c6826be03696695885455a793946b391b9f0e00235",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-34"
@@ -491,7 +491,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-35/": {
     "hash": "414add3863b0cdfdaeef5c968a03a6a89784b9108d46fbeff434417c98c6a415",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-35"
@@ -499,7 +499,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-36/": {
     "hash": "f5f11dc6a1855359e366b6f1e7c0c14e37b350678e96740d296e35609181c626",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-36"
@@ -507,7 +507,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-37/": {
     "hash": "36cdc722bf563a14607e9fcd735f5f0e864ef177f1dad34af4963d52e9f2a39e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-37"
@@ -515,7 +515,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-38/": {
     "hash": "d45518439cb921ea1a0eae396d5ccd126ad8b7da0c373d7f606100be3082496a",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-38"
@@ -523,7 +523,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-39/": {
     "hash": "56e723a891a0b89481632724bc476fd95e05341dc5251c58edaeb02d0e6594c2",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-39"
@@ -531,7 +531,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-40/": {
     "hash": "092e83831d659bb2f825becd941026030685024bf36b2740008afc293638ee03",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-40"
@@ -539,7 +539,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/week-by-week-guide-to-pregnancy/3rd-trimester/week-41/": {
     "hash": "0776e8ceb0654dc328526325e7a96cd9c6f3426542031092639680bcab34665e",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-41"
@@ -555,7 +555,7 @@
   },
   "https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/overdue-have-you-gone-past-your-due-date/": {
     "hash": "8ec653c313aa6c8e04128da3e298e33775a20d0f18972d71015acd105df7b631",
-    "last_checked": "2026-09-28",
+    "last_checked": "2026-10-16",
     "first_seen": "2026-09-28",
     "refs": [
       "pregnancyWeeks:week-42"
