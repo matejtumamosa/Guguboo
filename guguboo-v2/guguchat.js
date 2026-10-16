@@ -108,7 +108,7 @@
     ["marhuľ", "🍑"], ["fig", "🟣"], ["slivk", "🟣"], ["broskyň", "🍑"], ["kiwi", "🥝"], ["granát", "🍎"],
     ["jablk", "🍎"], ["pomaranč", "🍊"], ["grapefruit", "🍊"], ["pomel", "🍈"], ["paprik", "🫑"],
     ["paradajk", "🍅"], ["šalát", "🥬"], ["karfiol", "🥦"], ["kapust", "🥬"], ["kokos", "🥥"],
-    ["hokkaido", "🎃"], ["vodový melón", "🍉"], ["melón", "🍈"], ["tekvic", "🎃"]
+    ["hokkaido", "🟠"], ["vodový melón", "🍉"], ["melón", "🍈"], ["tekvic", "🟠"]
   ];
   function babySize(weekNumber) {
     const entry = pregnancyWeek(weekNumber);
@@ -121,7 +121,7 @@
     // 42. týždeň nemá v NHS dĺžku (len „Tehotenstvo zvyčajne trvá…“) – vtedy bez dĺžky.
     const length = /\d\s*(mm|cm|kg)/.test(rawSize) ? rawSize.replace(/\s*\([^)]*\)/, "").replace(/,\s*odteraz.*$/, "").trim() : "";
     const emoji = (FRUIT_EMOJI.find(([key]) => comparison.toLowerCase().includes(key)) || [, "🌱"])[1];
-    return { week: entry.week, length, comparison, emoji, approximate: !nhsRound && Boolean(comparison), baby: entry.baby, source: entry.source_urls[0] || "" };
+    return { week: entry.week, length, comparison, emoji, approximate: !nhsRound && Boolean(comparison), baby: entry.baby, you: entry.you, tip: entry.tip, milestone: entry.milestone, source: entry.source_urls[0] || "" };
   }
 
   // Týždeň z overeného obsahu (každá veta má citát v `evidence`) → jednoduchý tvar pre UI.

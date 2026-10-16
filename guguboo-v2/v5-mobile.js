@@ -1937,6 +1937,7 @@
       return;
     }
     if (feature.view === "v5BabySize") {
+      babySizeWeek = 0; // vždy otvoriť aktuálny týždeň
       routeTo("v5BabySize");
       renderBabySize();
       return;
@@ -3060,20 +3061,35 @@
       target.innerHTML = "<div class='v5-empty'>Doplň termín pôrodu v profile a ukážeme ti, aké veľké je bábätko.</div>";
       return;
     }
-    const sentences = String(data.baby || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
+    const split = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
+    const list = items => items.map(sentence => "<p>" + escapeHtml(sentence) + "</p>").join("");
+    const baby = split(data.baby);
+    const mom = split(data.you);
+    const tip = split(data.tip);
+    // Pás týždňov (4.–42.) namiesto šípok: ovocie + číslo, vyznačený aktuálny aj vybraný týždeň.
+    const strip = Array.from({ length: 39 }, (_, index) => index + 4).map(week => {
+      const size = window.GugubooV2.babySize(week);
+      const cls = [week === data.week ? "is-selected" : "", week === currentWeek ? "is-current" : ""].filter(Boolean).join(" ");
+      return "<button type='button' class='" + cls + "' data-v2-size-week='" + week + "' aria-label='" + week + ". týždeň" + (week === currentWeek ? ", teraz" : "") + "' aria-pressed='" + String(week === data.week) + "'><span aria-hidden='true'>" + (size?.emoji || "🌱") + "</span><b>" + week + "</b><small>" + (week === currentWeek ? "teraz" : "týž.") + "</small></button>";
+    }).join("");
     target.innerHTML = [
-      "<div class='v2-size-nav'><button type='button' data-v2-size-week='", data.week - 1, "' aria-label='Predchádzajúci týždeň'", data.week <= 4 ? " disabled" : "", ">‹</button>",
-      "<strong>", data.week, ". týždeň", data.week === currentWeek ? " · teraz" : "", "</strong>",
-      "<button type='button' data-v2-size-week='", data.week + 1, "' aria-label='Nasledujúci týždeň'", data.week >= 42 ? " disabled" : "", ">›</button></div>",
-      "<section class='v2-size-hero'><span class='v2-size-emoji' aria-hidden='true'>", data.emoji, "</span>",
+      "<div class='v2-week-strip' role='group' aria-label='Vyber týždeň'>", strip, "</div>",
+      data.week !== currentWeek && currentWeek ? "<button type='button' class='v2-week-today' data-v2-size-week='" + Math.max(4, currentWeek) + "'>← Späť na aktuálny " + currentWeek + ". týždeň</button>" : "",
+      currentWeek && currentWeek < 4 ? "<p class='v2-size-note'>Si v " + currentWeek + ". týždni. Prehľad podľa NHS začína 4. týždňom.</p>" : "",
+      "<section class='v2-size-hero'><small class='v2-size-kicker'>", data.week, ". týždeň", data.week === currentWeek ? " · teraz" : "", "</small>",
+      "<span class='v2-size-emoji' aria-hidden='true'>", data.emoji, "</span>",
       data.comparison ? "<h2>Veľké asi ako " + escapeHtml(data.comparison) + "</h2>" : "<h2>Bábätko rastie</h2>",
       data.length ? "<p>" + escapeHtml(data.length.charAt(0).toUpperCase() + data.length.slice(1)) + "</p>" : "",
-      data.approximate ? "<small>Prirovnanie je orientačné, dĺžka je podľa NHS.</small>" : "<small>Podľa NHS, orientačne.</small>",
+      "<small>", data.approximate ? "Prirovnanie je orientačné, dĺžka je podľa NHS." : "Podľa NHS, orientačne.", "</small>",
       "</section>",
-      sentences.length ? "<section class='v2-size-dev'><h3>Čo sa práve vyvíja</h3>" + sentences.map(sentence => "<p>" + escapeHtml(sentence) + "</p>").join("") + "</section>" : "",
-      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : "",
-      "<button class='v5-secondary' type='button' data-v5-feature='pregnancy'>Celý týždeň v Tehotenskej knižke</button>"
+      baby.length ? "<section class='v2-size-dev'><h3><span aria-hidden='true'>👶</span> Bábätko</h3>" + list(baby) + "</section>" : "",
+      mom.length ? "<section class='v2-size-dev v2-size-mom'><h3><span aria-hidden='true'>🤰</span> Tvoje telo</h3>" + list(mom) + "</section>" : "",
+      tip.length ? "<section class='v2-size-dev v2-size-tip'><h3><span aria-hidden='true'>💡</span> Tip na tento týždeň</h3>" + list(tip) + "</section>" : "",
+      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : ""
     ].join("");
+    // Vybraný týždeň do stredu pásu.
+    const selected = target.querySelector(".v2-week-strip .is-selected");
+    if (selected) selected.parentElement.scrollLeft = selected.offsetLeft - selected.parentElement.clientWidth / 2 + selected.offsetWidth / 2;
   }
 
   function renderPregnancyBook() {

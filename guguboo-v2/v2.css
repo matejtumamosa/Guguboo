@@ -1026,3 +1026,35 @@ body.v5-active #home.view { padding-top: 14px !important; }
 #welcomeCard .welcome-friendly-field select:focus { border-color: #8171ce; outline: 3px solid rgba(129, 113, 206, .16); }
 .v2-due-result { margin: 4px 2px 0; padding: 12px 14px; color: #40394c; background: linear-gradient(135deg, #f3eeff, #fff4ee); border: 1px solid rgba(123, 107, 200, .18); border-radius: 15px; font-size: 13px; line-height: 1.45; text-align: left; }
 .v2-due-result b { color: var(--v5-brand-dark, #5b4ca3); }
+
+/* ——— Aké veľké je bábätko: pás týždňov, bábätko + tvoje telo ——— */
+.v2-week-strip { display: flex; gap: 8px; margin: 4px -16px 0; padding: 6px 16px 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.v2-week-strip::-webkit-scrollbar { display: none; }
+.v2-week-strip button {
+  display: grid;
+  flex: 0 0 54px;
+  justify-items: center;
+  gap: 1px;
+  min-height: 74px !important;
+  padding: 7px 4px;
+  color: var(--v5-ink);
+  background: var(--v5-surface, #fff);
+  border: 1px solid var(--v5-line);
+  border-radius: 16px;
+  scroll-snap-align: center;
+}
+.v2-week-strip button span { font-size: 18px; line-height: 1.1; }
+.v2-week-strip button b { font-size: 16px; line-height: 1.1; }
+.v2-week-strip button small { color: var(--v5-muted); font-size: 9px; font-weight: 800; text-transform: uppercase; }
+.v2-week-strip button.is-current { border-color: var(--v5-brand, #7b6bc8); }
+.v2-week-strip button.is-current small { color: var(--v5-brand-dark, #5b4ca3); }
+.v2-week-strip button.is-selected { color: #fff; background: linear-gradient(145deg, #8b7bd6, #6c5bc4); border-color: transparent; box-shadow: 0 8px 18px rgba(108, 91, 196, .3); }
+.v2-week-strip button.is-selected small { color: rgba(255, 255, 255, .85); }
+.v2-week-today { display: block; min-height: 32px !important; margin: 0 auto 2px; padding: 4px 10px; color: var(--v5-brand-dark, #5b4ca3); background: none; border: 0; font-size: 13px; font-weight: 800; }
+.v2-size-note { margin: 4px 2px 0; color: var(--v5-muted); font-size: 12px; }
+.v2-size-kicker { color: var(--v5-brand-dark, #5b4ca3) !important; font-size: 11px !important; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.v2-size-dev h3 { display: flex; align-items: center; gap: 6px; }
+.v2-size-mom { background: linear-gradient(145deg, #fff6f9, #fff); border-color: rgba(233, 138, 168, .3); }
+.v2-size-mom p::before { background: #e98aa8 !important; }
+.v2-size-tip { background: #fffaf0; border-color: rgba(238, 159, 95, .3); }
+.v2-size-tip p::before { background: #ee9f5f !important; }
