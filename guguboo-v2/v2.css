@@ -948,3 +948,9 @@ body.v5-active #v5Header[data-home="true"] .v5-header-title span { text-align: l
 body.v5-active #v5Header[data-home="true"] .v5-header-title::before { content: none !important; display: none !important; }
 /* Viac miesta nad rámčekom pozdravu. */
 body.v5-active #v5Header[data-home="true"] { padding-top: max(22px, calc(env(safe-area-inset-top) + 14px)) !important; }
+
+/* ——— Domov: rovnaká medzera (14 px) medzi všetkými kartami, aj pod rámčekom pozdravu ——— */
+body.v5-active #v5Home { row-gap: 14px !important; gap: 14px !important; }
+body.v5-active #v5Home > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+body.v5-active #v5Header[data-home="true"] { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
+body.v5-active #home.view { padding-top: 14px !important; }
