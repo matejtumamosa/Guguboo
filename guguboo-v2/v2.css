@@ -1157,3 +1157,9 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-mama-water-open { display: grid; gap: 3px; min-width: 0; width: auto; height: auto; padding: 0; box-shadow: none; color: inherit; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
 #v5MamaContent > .v2-source { display: block; width: fit-content; margin: 12px 4px 0; }
 #v2TourText { white-space: pre-line; }
+
+/* 2.17.1: okienka Tehotenská knižka / Mama / Dieťa – len ikona a názov, bez popisu */
+.v5-glance.v2-glance-named { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 92px; }
+.v5-glance.v2-glance-named .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v5-glance.v2-glance-named .v5-icon svg { width: 19px; height: 19px; }
+.v5-glance.v2-glance-named strong { font-size: 14.5px; line-height: 1.2; color: var(--v5-ink); hyphens: none; }

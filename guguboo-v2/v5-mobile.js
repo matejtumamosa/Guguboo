@@ -1089,11 +1089,10 @@
       ? new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })
       : "Doplniť termín";
     const statusCards = expecting ? [
-      // Tehotenská knižka / Mama / Dieťa (Samuel 16. 10.) – obsah okienok Mama a Dieťa ešte dodefinujeme.
-      ["Knižka", (() => { const d = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null; return d > 0 ? d + (d === 1 ? " deň" : d < 5 ? " dni" : " dní") + " do pôrodu" : "Otvoriť"; })(), "pregnancy"],
-      // Popis musí povedať, čo v okienku je (Samuel 16. 10.) – nie všeobecná otázka.
-      ["Mama", "Telo, ťažkosti, pitie", "mama"],
-      (() => { const size = pregnancyWeek ? window.GugubooV2?.babySize?.(pregnancyWeek) : null; return ["Dieťa", size?.comparison ? size.emoji + " ako " + size.comparison : "Ako rastie", "babySize"]; })()
+      // Len názvy okienok, bez popisu (Samuel 16. 10.) – obsah je jasný z názvu a ikony.
+      ["Tehotenská knižka", "", "pregnancy", "book"],
+      ["Mama", "", "mama", "health"],
+      ["Dieťa", "", "babySize", "baby"]
     ] : [
       ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
       ["Kŕmenie", state.v5.feedingTimer.active ? "Prebieha" : feeding ? (String(feeding.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", !state.v5.feedingTimer.active && feeding ? "o " + formatClock(feeding.created) : ""],
@@ -1132,7 +1131,7 @@
       // Profil a nastavenia sú v menu (☰) hore vedľa nočného režimu.
       "</div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 6).map((item, index) => expecting
-        ? "<button class='v5-glance v5-glance-action v5-prenatal-glance' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
+        ? "<button class='v5-glance v5-glance-action v5-prenatal-glance v2-glance-named' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span class='v5-icon' aria-hidden='true'>" + icon(item[3]) + "</span><strong>" + escapeHtml(item[0]) + "</strong></button>"
         : index < 3
           ? "<button class='v5-glance v5-glance-action' type='button' data-v5-quick-feature='" + ["sleep", "feeding", "diaper"][index] + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong>" + (item[3] ? "<small class='v2-glance-time'>" + escapeHtml(item[3]) + "</small>" : "") + "</button>"
           : index < 5
