@@ -872,3 +872,10 @@ body.v5-active.night .v2-tour-card { background: #2a2536; }
 .v2-tour-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; min-height: 36px !important; padding: 0; color: var(--v5-muted); background: transparent; border: 0; border-radius: 50%; font-size: 22px; line-height: 1; }
 .v2-tour-card small, .v2-tour-card h2 { padding-right: 28px; }
 .v2-tour.is-intro .v2-tour-card small, .v2-tour.is-intro .v2-tour-card h2 { padding: 0 28px; }
+
+/* ——— Domov: pozdrav namiesto loga, iniciály rodiča namiesto ikony ——— */
+body.v5-active #v5Header[data-home="true"] .v5-header-logo { display: none; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title { display: block; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 24px; font-weight: 900; line-height: 1.15; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 3px; color: var(--v5-muted); font-size: 14px; font-weight: 600; }
+.v2-initials { display: grid; width: 100%; height: 100%; place-items: center; color: var(--v5-brand-dark, #5b4ca3); font-size: 17px; font-weight: 900; letter-spacing: .02em; line-height: 1; }

@@ -1117,7 +1117,7 @@
     ].join("");
     target.innerHTML = [
       "<section class='v5-home-hero'><div class='v5-home-person'>", babyAvatar, "<div><h1>", escapeHtml(name), "</h1>", phaseLine ? "<p>" + phaseLine + "</p>" : "", "</div><button class='v5-mini-profile' type='button' data-v5-feature='profiles' aria-label='Otvoriť profil'>",
-      icon("user"), "</button></div>", avatarPopover, "<div class='v5-glance-strip'>",
+      parentInitials() ? "<span class='v2-initials'>" + escapeHtml(parentInitials()) + "</span>" : icon("user"), "</button></div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 6).map((item, index) => expecting
         ? "<button class='v5-glance v5-glance-action v5-prenatal-glance' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
         : index < 3
@@ -3153,6 +3153,26 @@
       "<div class='v5-info-box'>Zvuk má byť iba jemným pozadím. Telefón ani reproduktor nedávaj k hlave dieťaťa.</div>";
   }
 
+  function parentDisplayName() {
+    return (state.v5.motherProfile?.preferredName || state.user?.name || state.v5.motherProfile?.name || "").trim();
+  }
+  function parentInitials() {
+    const parts = parentDisplayName().split(/\s+/).filter(Boolean);
+    return parts.length ? (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase() : "";
+  }
+  function homeGreeting() {
+    const hour = new Date().getHours();
+    const hello = hour >= 4 && hour < 10 ? "Dobré ráno" : hour >= 10 && hour < 18 ? "Dobrý deň" : "Dobrý večer";
+    const name = parentDisplayName().split(/\s+/)[0] || "";
+    let line = "Čo dnes spolu pripravíme?";
+    if (state.profile.status !== "expecting") {
+      const birth = state.profile.birth ? new Date(state.profile.birth + "T00:00:00") : null;
+      const day = birth ? Math.floor((new Date(todayKey() + "T00:00:00") - birth) / 86400000) + 1 : 0;
+      line = day > 0 ? "Dnes je to " + day + ". deň spolu" : "Vitaj doma";
+    }
+    return [hello + (name ? ", " + name : ""), line];
+  }
+
   function updateHeader() {
     const view = currentView();
     const title = view === "v5Flow" && state.v5.flow?.type === "teeth-intro"
@@ -3161,8 +3181,10 @@
         ? ["Moja príprava", "Taška, domov a vybavenie"]
       : viewTitles[view] || ["Guguboo", "Rodinný pomocník"];
     byId("v5Header").dataset.home = String(view === "home");
-    byId("v5HeaderTitle").textContent = title[0];
-    byId("v5HeaderSubtitle").textContent = title[1];
+    // Domov: namiesto loga pozdrav podľa času a oslovenie mamy, pod ním krátka veta podľa obdobia.
+    const greeting = view === "home" ? homeGreeting() : null;
+    byId("v5HeaderTitle").textContent = greeting ? greeting[0] : title[0];
+    byId("v5HeaderSubtitle").textContent = greeting ? greeting[1] : title[1];
     byId("v5Header").querySelector("[data-v5-night]")?.setAttribute("aria-pressed", String(document.body.classList.contains("night")));
     renderBottomBar();
     syncUniversalWindow();
