@@ -939,3 +939,8 @@ body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(
 body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 4px; color: var(--v5-muted); font-size: 13px; font-weight: 600; white-space: normal; }
 body.v5-active #v5Header[data-home="true"] .v5-header-actions { justify-content: space-between; }
 body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: linear-gradient(135deg, #2b2638, #2a2440); border-color: rgba(255, 255, 255, .08); }
+/* Pozdrav zarovnaný vľavo (Samuel 16. 10.). */
+body.v5-active #v5Header[data-home="true"] .v5-header-brand { align-items: flex-start !important; text-align: left !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title,
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { text-align: left !important; }
