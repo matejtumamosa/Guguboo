@@ -3092,33 +3092,41 @@
     if (selected) selected.parentElement.scrollLeft = selected.offsetLeft - selected.parentElement.clientWidth / 2 + selected.offsetWidth / 2;
   }
 
+  // Tehotenská knižka (Samuel 16. 10.): hore týždeň, dni do pôrodu, trimester a veľkosť bábätka;
+  // nástroje: Zápisy z kontrol, Kontroly a termíny, Otázky pre lekára. Vývoj bábätka a mamy je v „Aké veľké je bábätko“.
   function renderPregnancyBook() {
     const target = byId("v5PregnancyBookContent");
     if (!target) return;
     const avatar = window.GugubooPregnancyAvatar?.current?.() || { week: null, size: "" };
     const week = Number(avatar.week || 0);
-    const section = state.v5.pregnancyBookSection || "home";
-    const data = pregnancyBookData(week);
-    const due = state.profile.due
-      ? new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })
-      : "Termín zatiaľ nie je nastavený";
+    let section = state.v5.pregnancyBookSection || "home";
+    if (!["home", "questions", "visits", "visit-new"].includes(section)) section = "home";
+    state.v5.prenatalVisits ||= [];
+    const visits = state.v5.prenatalVisits;
+    const back = "<button class='v5-check-categories-button' type='button' data-v5-book-home>" + icon("back") + " Tehotenská knižka</button>";
+    const dateLabel = value => new Date(value + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" });
     if (section === "home") {
-      const next = state.reminders
-        .filter(item => new Date(item.date).getTime() >= Date.now())
-        .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+      const daysLeft = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
+      const trimester = !week ? "" : week < 13 ? "1." : week < 28 ? "2." : "3.";
+      const size = week ? window.GugubooV2?.babySize?.(week) : null;
+      const next = calendarItems().find(item => !item.completedAt && !item.virtual && new Date(item.date).getTime() >= Date.now());
+      const lastVisit = visits.slice().sort((a, b) => b.date.localeCompare(a.date))[0];
       target.innerHTML = [
-        "<section class='v5-book-hero'><div><small>Tehotenská knižka</small><h1>", week ? week + ". týždeň" : "Doplň termín", "</h1><p>Termín pôrodu · ", escapeHtml(due), "</p>",
-        avatar.size ? "<button type='button' class='v2-book-size' data-v5-feature='babySize'><span>Aké veľké je bábätko →</span>" + escapeHtml(avatar.size) + (window.GugubooV2?.babySize?.(week)?.approximate ? " · asi ako " + escapeHtml(window.GugubooV2.babySize(week).comparison) : "") + "</button>" : "",
-        "</div></section>",
-        "<div class='v5-book-main-grid'>",
-        "<button type='button' data-v5-book-section='baby'><span class='v5-icon'>", icon("baby"), "</span><strong>Bábätko</strong><small>Vývoj v tomto období</small></button>",
-        "<button type='button' data-v5-book-section='mother'><span class='v5-icon'>", icon("health"), "</span><strong>Mama</strong><small>Zmeny a pohoda</small></button>",
-        "<button type='button' data-v5-book-section='week'><span class='v5-icon'>", icon("calendar"), "</span><strong>Tento týždeň</strong><small>Čo má zmysel teraz</small></button>",
+        "<section class='v2-book-hero'>",
+
+        "<h1>", week ? week + ". týždeň" : "Doplň termín pôrodu", "</h1>",
+        "<div class='v2-book-facts'>",
+        "<div><b>", daysLeft === null ? "—" : daysLeft > 0 ? daysLeft : daysLeft === 0 ? "Dnes" : "Po termíne", "</b><span>", daysLeft > 0 ? "dní do pôrodu" : "termín", "</span></div>",
+        "<div><b>", state.profile.due ? escapeHtml(new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" })) : "—", "</b><span>termín", state.profile.due ? " " + state.profile.due.slice(0, 4) : "", "</span></div>",
+        "<div><b>", escapeHtml(trimester || "—"), "</b><span>trimester</span></div>",
         "</div>",
-        "<div class='v5-book-tools'>",
-        "<button type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"), "</span><span><strong>Kontroly</strong><small>", next ? escapeHtml(next.title + " · " + formatClock(next.date)) : "Pridať termín", "</small></span></button>",
-        "<button type='button' data-v5-book-section='questions'><span class='v5-icon'>", icon("book"), "</span><span><strong>Otázky pre lekára</strong><small>", state.v5.pregnancyQuestions.length ? state.v5.pregnancyQuestions.length + " uložených" : "Nič nezabudnúť", "</small></span></button>",
-        "</div><p class='v5-book-note'>Orientačný sprievodca. Nenahrádza tehotenskú dokumentáciu ani zdravotníka.</p>"
+        size ? "<button type='button' class='v2-book-size-card' data-v5-feature='babySize'><span class='v2-book-size-emoji' aria-hidden='true'>" + size.emoji + "</span><span><small>Aké veľké je bábätko</small><strong>" + escapeHtml(size.comparison ? "Asi ako " + size.comparison : "Bábätko rastie") + "</strong><em>" + escapeHtml(size.length || "") + " · bábätko aj tvoje telo</em></span><b aria-hidden='true'>›</b></button>" : "",
+        "</section>",
+        "<div class='v2-book-tools'>",
+        "<button type='button' data-v5-book-section='visits'><span class='v5-icon'>", icon("health"), "</span><span><strong>Zápisy z kontrol</strong><small>", lastVisit ? "Posledná " + escapeHtml(dateLabel(lastVisit.date)) + " · spolu " + visits.length : "Zapíš si, čo ti povedali na kontrole", "</small></span><b aria-hidden='true'>›</b></button>",
+        "<button type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"), "</span><span><strong>Kontroly a termíny</strong><small>", next ? escapeHtml(next.title) + " · " + escapeHtml(calendarHasTime(next.date) ? new Date(next.date).toLocaleString("sk-SK", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : dateLabel(next.date)) : "Pridať termín do Kalendára", "</small></span><b aria-hidden='true'>›</b></button>",
+        "<button type='button' data-v5-book-section='questions'><span class='v5-icon'>", icon("book"), "</span><span><strong>Otázky pre lekára</strong><small>", state.v5.pregnancyQuestions.length ? state.v5.pregnancyQuestions.length + " pripravených na kontrolu" : "Nič nezabudnúť", "</small></span><b aria-hidden='true'>›</b></button>",
+        "</div><p class='v5-book-note'>Tvoj osobný prehľad. Nenahrádza oficiálnu tehotenskú knižku ani lekára.</p>"
       ].join("");
       return;
     }
@@ -3127,18 +3135,39 @@
         flowHead("Tehotenská knižka", "Otázky pre lekára", "Krátky zoznam na najbližšiu kontrolu.", 0, 1),
         "<div class='v5-book-question-add'><input id='v5PregnancyQuestion' maxlength='120' placeholder='Čo sa chcem opýtať?'><button type='button' data-v5-book-add-question aria-label='Pridať otázku'>＋</button></div>",
         state.v5.pregnancyQuestions.length ? "<div class='v5-book-question-list'>" + state.v5.pregnancyQuestions.map((question, index) => "<div><span>" + escapeHtml(question) + "</span><button type='button' data-v5-book-remove-question='" + index + "' aria-label='Odstrániť otázku'>×</button></div>").join("") + "</div>" : "<div class='v5-empty'>Zatiaľ nemáš uloženú otázku.</div>",
-        "<button class='v5-check-categories-button' type='button' data-v5-book-home>", icon("back"), " Tehotenská knižka</button>"
+        back
       ].join("");
       return;
     }
-    const labels = { baby: ["Bábätko", "baby"], mother: ["Mama", "health"], week: ["Tento týždeň", "calendar"] };
-    const selected = labels[section] || labels.week;
+    if (section === "visit-new") {
+      target.innerHTML = [
+        flowHead("Tehotenská knižka", "Nový zápis z kontroly", "Vyplň len to, čo vieš. Všetko je nepovinné okrem dátumu.", 0, 1),
+        "<div class='v5-form-card v2-visit-form'>",
+        "<label>Dátum kontroly<input id='v2VisitDate' type='date' value='", todayKey(), "' max='", todayKey(), "'></label>",
+        "<label>Kde a u koho<input id='v2VisitPlace' maxlength='80' placeholder='napr. gynekológ, poradňa, ultrazvuk'></label>",
+        "<div class='v2-visit-row'><label>Hmotnosť (kg)<input id='v2VisitWeight' inputmode='decimal' maxlength='6' placeholder='napr. 64,5'></label>",
+        "<label>Tlak<input id='v2VisitPressure' maxlength='9' placeholder='napr. 120/80'></label></div>",
+        "<label>Čo mi povedali / výsledky<textarea id='v2VisitNote' rows='4' placeholder='Ultrazvuk, odbery, odporúčania…'></textarea></label>",
+        "<label>Ďalšia kontrola — nepovinné<input id='v2VisitNext' type='datetime-local'></label>",
+        "<p class='v2-visit-hint'>Ďalšiu kontrolu ti zapíšeme aj do Kalendára.</p>",
+        "</div>",
+        "<div class='v5-actions'><button class='v5-primary' type='button' data-v2-visit-save>Uložiť zápis</button><button class='v5-text-action' type='button' data-v5-book-section='visits'>Zrušiť</button></div>"
+      ].join("");
+      return;
+    }
+    // section === "visits"
+    const sorted = visits.slice().sort((a, b) => b.date.localeCompare(a.date));
     target.innerHTML = [
-      flowHead("Tehotenská knižka", selected[0], week ? week + ". týždeň" : "Aktuálne obdobie", 0, 1),
-      "<div class='v5-book-detail-list'>", data[section].map(item => "<div><span class='v5-icon'>" + icon(selected[1]) + "</span><strong>" + escapeHtml(item) + "</strong></div>").join(""), "</div>",
-      section === "week" ? "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-feature='calendar'>Otvoriť kontroly</button><button class='v5-secondary' type='button' data-v5-book-section='questions'>Pridať otázku</button></div>" : "",
-      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : "",
-      "<button class='v5-check-categories-button' type='button' data-v5-book-home>", icon("back"), " Tehotenská knižka</button>"
+      flowHead("Tehotenská knižka", "Zápisy z kontrol", "Všetko z kontrol na jednom mieste – aj na ukázanie lekárovi.", 0, 1),
+      "<button class='v5-primary v2-visit-add' type='button' data-v5-book-section='visit-new'>＋ Nový zápis z kontroly</button>",
+      sorted.length ? "<div class='v2-visit-list'>" + sorted.map(visit => [
+        "<article class='v2-visit-card'><header><strong>", escapeHtml(dateLabel(visit.date)), "</strong><span>", visit.week ? visit.week + ". týždeň" : "", visit.place ? " · " + escapeHtml(visit.place) : "", "</span>",
+        "<button type='button' data-v2-visit-delete='", escapeHtml(visit.id), "' aria-label='Vymazať zápis'>×</button></header>",
+        visit.weight || visit.pressure ? "<div class='v2-visit-values'>" + (visit.weight ? "<span><b>" + escapeHtml(visit.weight) + " kg</b>hmotnosť</span>" : "") + (visit.pressure ? "<span><b>" + escapeHtml(visit.pressure) + "</b>tlak</span>" : "") + "</div>" : "",
+        visit.note ? "<p>" + escapeHtml(visit.note).replace(/\n/g, "<br>") + "</p>" : "",
+        "</article>"
+      ].join("")).join("") + "</div>" : "<div class='v5-empty'>Zatiaľ žiadny zápis. Po najbližšej kontrole si sem zapíš, čo ti povedali.</div>",
+      back
     ].join("");
   }
 
@@ -3896,6 +3925,36 @@
       state.v5.pregnancyBookSection = "home";
       persist();
       return renderPregnancyBook();
+    }
+    // Zápis z kontroly (Tehotenská knižka).
+    if (event.target.closest("[data-v2-visit-save]")) {
+      const date = byId("v2VisitDate")?.value || todayKey();
+      const due = state.profile.due ? new Date(state.profile.due + "T00:00:00") : null;
+      const visitWeek = due ? Math.max(1, Math.min(42, 40 - Math.floor(Math.ceil((due - new Date(date + "T00:00:00")) / 86400000) / 7))) : null;
+      const nextDate = byId("v2VisitNext")?.value || "";
+      state.v5.prenatalVisits ||= [];
+      state.v5.prenatalVisits.push({
+        id: createId(), date, week: visitWeek,
+        place: byId("v2VisitPlace")?.value.trim() || "",
+        weight: byId("v2VisitWeight")?.value.trim().replace(".", ",") || "",
+        pressure: byId("v2VisitPressure")?.value.trim() || "",
+        note: byId("v2VisitNote")?.value.trim() || "",
+        created: new Date().toISOString()
+      });
+      if (nextDate) state.reminders.push({ id: createId(), title: "Kontrola v tehotenstve", date: nextDate, type: "Zdravie", source: "prenatal-visit", created: new Date().toISOString() });
+      state.v5.pregnancyBookSection = "visits";
+      persist();
+      renderHome();
+      renderPregnancyBook();
+      return announce(nextDate ? "Zápis je uložený a ďalšia kontrola je v Kalendári." : "Zápis z kontroly je uložený.");
+    }
+    const visitDelete = event.target.closest("[data-v2-visit-delete]");
+    if (visitDelete) {
+      if (!window.confirm("Naozaj chceš tento zápis vymazať?")) return;
+      state.v5.prenatalVisits = (state.v5.prenatalVisits || []).filter(visit => visit.id !== visitDelete.dataset.v2VisitDelete);
+      persist();
+      renderPregnancyBook();
+      return announce("Zápis je vymazaný.");
     }
     if (event.target.closest("[data-v5-book-add-question]")) {
       const value = byId("v5PregnancyQuestion")?.value.trim() || "";

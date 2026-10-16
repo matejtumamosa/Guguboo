@@ -1058,3 +1058,38 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-size-mom p::before { background: #e98aa8 !important; }
 .v2-size-tip { background: #fffaf0; border-color: rgba(238, 159, 95, .3); }
 .v2-size-tip p::before { background: #ee9f5f !important; }
+
+/* ——— Tehotenská knižka: hlavička s faktami, veľkosť, nástroje, zápisy z kontrol ——— */
+.v2-book-hero { display: grid; gap: 12px; padding: 18px 16px; background: linear-gradient(145deg, #f0eaff, #fff2ed); border: 1px solid var(--v5-line); border-radius: 26px; }
+.v2-book-hero > small { color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.v2-book-hero h1 { margin: -6px 0 0; color: var(--v5-ink); font-size: 28px; line-height: 1.1; }
+.v2-book-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.v2-book-facts div { display: grid; gap: 2px; padding: 10px 8px; background: rgba(255, 255, 255, .8); border-radius: 14px; }
+.v2-book-facts b { color: var(--v5-ink); font-size: 16px; line-height: 1.2; }
+.v2-book-facts span { color: var(--v5-muted); font-size: 10px; font-weight: 800; }
+.v2-book-size-card { display: grid; grid-template-columns: 52px minmax(0, 1fr) 16px; gap: 12px; align-items: center; width: 100%; padding: 10px 12px; color: var(--v5-ink); text-align: left; background: #fff; border: 1px solid var(--v5-line); border-radius: 18px; box-shadow: 0 8px 20px rgba(72, 55, 100, .06); }
+.v2-book-size-emoji { display: grid; width: 52px; height: 52px; place-items: center; font-size: 30px; background: #faf7ff; border-radius: 16px; }
+.v2-book-size-card small { display: block; color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.v2-book-size-card strong { display: block; font-size: 15px; }
+.v2-book-size-card em { display: block; color: var(--v5-muted); font-size: 12px; font-style: normal; }
+.v2-book-size-card b, .v2-book-tools b { color: var(--v5-muted); font-size: 20px; }
+.v2-book-tools { display: grid; gap: 8px; margin-top: 12px; }
+.v2-book-tools button { display: grid; grid-template-columns: 40px minmax(0, 1fr) 16px; gap: 12px; align-items: center; width: 100%; min-height: 64px; padding: 10px 12px; color: var(--v5-ink); text-align: left; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 18px; }
+.v2-book-tools .v5-icon { width: 40px; height: 40px; border-radius: 13px; }
+.v2-book-tools strong { display: block; font-size: 14px; }
+.v2-book-tools small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-add { width: 100%; margin-top: 4px; }
+.v2-visit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.v2-visit-hint { margin: -2px 2px 0; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-list { display: grid; gap: 10px; margin-top: 12px; }
+.v2-visit-card { padding: 12px 14px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 18px; }
+.v2-visit-card header { display: grid; grid-template-columns: minmax(0, 1fr) 32px; column-gap: 8px; align-items: center; }
+.v2-visit-card header strong { color: var(--v5-ink); font-size: 15px; }
+.v2-visit-card header span { grid-column: 1; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-card header button { grid-column: 2; grid-row: 1 / span 2; width: 32px; height: 32px; min-height: 32px !important; padding: 0; color: var(--v5-muted); background: none; border: 0; font-size: 18px; }
+.v2-visit-values { display: flex; gap: 8px; margin-top: 10px; }
+.v2-visit-values span { display: grid; padding: 6px 10px; color: var(--v5-muted); background: #faf7ff; border-radius: 12px; font-size: 10px; font-weight: 800; }
+.v2-visit-values b { color: var(--v5-ink); font-size: 15px; }
+.v2-visit-card p { margin: 10px 0 0; color: var(--v5-ink); font-size: 14px; line-height: 1.45; }
+.v2-book-hero h1 { margin: 0; }
+.v2-book-facts b { font-size: 17px; white-space: nowrap; }
