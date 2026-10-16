@@ -3089,7 +3089,7 @@
     if (selected) selected.parentElement.scrollLeft = selected.offsetLeft - selected.parentElement.clientWidth / 2 + selected.offsetWidth / 2;
   }
 
-  // Tehotenská knižka (Samuel 16. 10.): hore týždeň, dni do pôrodu, trimester a veľkosť bábätka;
+  // Tehotenská knižka (Samuel 16. 10.): hore týždeň, dni do pôrodu, trimester (veľkosť bábätka je v okienku Dieťa, nie tu – Samuel 16. 10.);
   // nástroje: Zápisy z kontrol, Kontroly a termíny, Otázky pre lekára. Vývoj bábätka a mamy je v „Aké veľké je bábätko“.
   function renderPregnancyBook() {
     const target = byId("v5PregnancyBookContent");
@@ -3108,7 +3108,6 @@
     if (section === "home") {
       const daysLeft = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
       const trimester = !week ? "" : week < 13 ? "1." : week < 28 ? "2." : "3.";
-      const size = week ? window.GugubooV2?.babySize?.(week) : null;
       const next = calendarItems().find(item => !item.completedAt && !item.virtual && new Date(item.date).getTime() >= Date.now());
       const lastVisit = visits.slice().sort((a, b) => b.date.localeCompare(a.date))[0];
       target.innerHTML = [
@@ -3120,7 +3119,6 @@
         "<div><b>", state.profile.due ? escapeHtml(new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" })) : "—", "</b><span>termín", state.profile.due ? " " + state.profile.due.slice(0, 4) : "", "</span></div>",
         "<div><b>", escapeHtml(trimester || "—"), "</b><span>trimester</span></div>",
         "</div>",
-        size ? "<button type='button' class='v2-book-size-card' data-v5-feature='babySize'><span class='v2-book-size-emoji' aria-hidden='true'>" + size.emoji + "</span><span><small>Aké veľké je bábätko</small><strong>" + escapeHtml(size.comparison ? "Asi ako " + size.comparison : "Bábätko rastie") + "</strong><em>" + escapeHtml(size.length || "") + " · bábätko aj tvoje telo</em></span><b aria-hidden='true'>›</b></button>" : "",
         "</section>",
         "<h2 class='v2-book-group'>Moje zdravie</h2>",
         "<div class='v2-book-tools'>",
