@@ -19,7 +19,15 @@
     const expecting = state.profile?.status === "expecting";
     const home = homeEl();
     return [
+      // Úvodné okienko (bez zvýraznenia) – dá sa zavrieť krížikom alebo „Teraz nie“.
       {
+        intro: true,
+        target: () => null,
+        title: "Zoznám sa s aplikáciou",
+        text: "Ukážem ti 4 miesta, ktoré budeš používať najčastejšie. Trvá to pol minúty."
+      },
+      {
+        scroll: true,
         target: () => home?.querySelector(".v5-home-hero .v5-baby-avatar"),
         title: expecting ? "Aké veľké je bábätko" : "Profil bábätka",
         text: expecting
@@ -27,6 +35,7 @@
           : "Ťukni na krúžok a pridaj fotku bábätka. Vek a merania nájdeš v jeho profile."
       },
       {
+        scroll: true,
         target: () => home?.querySelector(".v5-o-ring-wrap") || home?.querySelector(".v5-o-card"),
         title: expecting ? "Príprava a Pohoda" : "Organizácia a Pohoda",
         text: expecting
@@ -60,7 +69,7 @@
       document.body.insertAdjacentHTML("beforeend", [
         "<div id='v2Tour' class='v2-tour' role='dialog' aria-modal='true' aria-labelledby='v2TourTitle'>",
         "<div class='v2-tour-spot' aria-hidden='true'></div>",
-        "<section class='v2-tour-card'><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p>",
+        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>×</button><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p>",
         "<div class='v2-tour-actions'><button type='button' class='v2-tour-skip' data-v2-tour-skip>Preskočiť</button>",
         "<button type='button' class='v5-primary' data-v2-tour-next>Ďalej</button></div></section></div>"
       ].join(""));
@@ -77,11 +86,14 @@
     const target = step.target();
     const spot = root.querySelector(".v2-tour-spot");
     const card = root.querySelector(".v2-tour-card");
-    byId("v2TourCount").textContent = (stepIndex + 1) + " / " + list.length;
+    const realSteps = list.filter(item => !item.intro).length;
+    byId("v2TourCount").textContent = step.intro ? "Vitaj v Guguboo" : stepIndex + " / " + realSteps;
     byId("v2TourTitle").textContent = step.title;
     byId("v2TourText").textContent = step.text;
-    root.querySelector("[data-v2-tour-next]").textContent = stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej";
-    if (!visible(target)) { spot.style.display = "none"; card.style.top = "30%"; return; }
+    root.querySelector("[data-v2-tour-next]").textContent = step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej";
+    root.querySelector(".v2-tour-skip").textContent = step.intro ? "Teraz nie" : "Preskočiť";
+    root.classList.toggle("is-intro", Boolean(step.intro));
+    if (!visible(target)) { spot.style.display = "none"; card.style.top = "32%"; return; }
     const rect = target.getBoundingClientRect();
     const pad = 8;
     spot.style.display = "block";
@@ -96,9 +108,10 @@
   }
 
   function show() {
-    const target = steps()[stepIndex].target();
+    const step = steps()[stepIndex];
+    const target = step.target();
     // Cieľ v strede obrazovky (spodná lišta je pevná, netreba posúvať).
-    if (target && stepIndex < 2) target.scrollIntoView({ block: "center", behavior: "instant" });
+    if (target && step.scroll) target.scrollIntoView({ block: "center", behavior: "instant" });
     place();
     window.requestAnimationFrame(place);
   }

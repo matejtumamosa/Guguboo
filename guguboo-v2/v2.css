@@ -865,3 +865,10 @@ body.v5-active .v5-check-item-card .v5-check-toggle { width: 26px; height: 26px;
 .v2-tour-actions .v5-primary { min-width: 120px; }
 body.v2-tour-open { overflow: hidden; }
 body.v5-active.night .v2-tour-card { background: #2a2536; }
+/* Úvodné okienko prehliadky: stmavené pozadie, × na zavretie. */
+.v2-tour.is-intro { background: rgba(26, 20, 40, .62); }
+.v2-tour.is-intro .v2-tour-card { padding-top: 20px; text-align: center; }
+.v2-tour.is-intro .v2-tour-card h2 { font-size: 22px; }
+.v2-tour-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; min-height: 36px !important; padding: 0; color: var(--v5-muted); background: transparent; border: 0; border-radius: 50%; font-size: 22px; line-height: 1; }
+.v2-tour-card small, .v2-tour-card h2 { padding-right: 28px; }
+.v2-tour.is-intro .v2-tour-card small, .v2-tour.is-intro .v2-tour-card h2 { padding: 0 28px; }
