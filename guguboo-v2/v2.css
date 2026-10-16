@@ -1156,3 +1156,4 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-size-mama-link b { color: var(--v5-muted); }
 .v2-mama-water-open { display: grid; gap: 3px; min-width: 0; width: auto; height: auto; padding: 0; box-shadow: none; color: inherit; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
 #v5MamaContent > .v2-source { display: block; width: fit-content; margin: 12px 4px 0; }
+#v2TourText { white-space: pre-line; }

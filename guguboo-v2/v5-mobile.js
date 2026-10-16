@@ -303,7 +303,7 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
+    "mama", "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
@@ -686,8 +686,18 @@
       renderPrenatal();
       return;
     }
+    // Mama: z podsekcie späť na zoznam Mama; ak prišla odkazom z inej obrazovky (napr. Aké veľké je bábätko), späť tam.
+    if (view === "v5Mama" && mamaSection !== "home" && !mamaFromLink) {
+      mamaSection = "home";
+      renderMama();
+      if (byId("v5Mama")) byId("v5Mama").scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+    // Knižka: z formulára späť na jeho zoznam (nový zápis → Zápisy z kontrol), inak na úvod knižky.
     if (view === "v5PregnancyBook" && state.v5.pregnancyBookSection !== "home") {
-      state.v5.pregnancyBookSection = "home";
+      const parent = { "visit-new": "visits", "result-new": "results" }[state.v5.pregnancyBookSection];
+      state.v5.pregnancyBookSection = parent || "home";
       persist();
       renderPregnancyBook();
       return;
@@ -1081,7 +1091,8 @@
     const statusCards = expecting ? [
       // Tehotenská knižka / Mama / Dieťa (Samuel 16. 10.) – obsah okienok Mama a Dieťa ešte dodefinujeme.
       ["Knižka", (() => { const d = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null; return d > 0 ? d + (d === 1 ? " deň" : d < 5 ? " dni" : " dní") + " do pôrodu" : "Otvoriť"; })(), "pregnancy"],
-      ["Mama", waterToday().count ? "💧 " + waterToday().count + " / " + waterToday().goal + " pohárov" : "Ako sa máš?", "mama"],
+      // Popis musí povedať, čo v okienku je (Samuel 16. 10.) – nie všeobecná otázka.
+      ["Mama", "Telo, ťažkosti, pitie", "mama"],
       (() => { const size = pregnancyWeek ? window.GugubooV2?.babySize?.(pregnancyWeek) : null; return ["Dieťa", size?.comparison ? size.emoji + " ako " + size.comparison : "Ako rastie", "babySize"]; })()
     ] : [
       ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
@@ -1938,6 +1949,7 @@
     }
     if (feature.view === "v5Mama") {
       mamaSection = "home";
+      mamaFromLink = false;
       routeTo("v5Mama");
       renderMama();
       return;
@@ -3100,20 +3112,53 @@
 
   // Okienko Mama (Samuel 16. 10.): ako sa máš TY – telo tento týždeň, bežné ťažkosti, jedlo a pohyb,
   // pitný režim a nálada. Obsah len z content/mama-tehotenstvo.js a pregnancy-weeks.js (NHS, so zdrojom).
-  // Po pôrode zatiaľ len pitie a nálada; šestonedelie doplníme po schválení obsahu.
+  // Po pôrode: telo v šestonedelí, kontrola po pôrode, nálada a spánok (content/mama-po-porode.js, NHS).
   let mamaSection = "home";
   let mamaWeek = 0;
+  let mamaFromLink = false; // podsekcia otvorená odkazom z inej obrazovky → šípka späť vráti tam
   function renderMama() {
     const target = byId("v5MamaContent");
     if (!target) return;
-    const content = window.GugubooContent?.mamaPregnancy;
     const expecting = state.profile.status === "expecting";
+    const content = expecting ? window.GugubooContent?.mamaPregnancy : window.GugubooContent?.mamaPostpartum;
     const currentWeek = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
     const back = "<button class='v5-check-categories-button' type='button' data-v2-mama-section='home'>" + icon("back") + " Mama</button>";
     const source = (url, reviewed) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(content?.checked || "") + " ↗</a>";
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
-    let section = expecting || mamaSection === "water" ? mamaSection : "home";
-    if (!content && ["troubles", "food"].includes(section)) section = "home";
+    const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "water"];
+    let section = allowed.includes(mamaSection) ? mamaSection : "home";
+    if (!content && section !== "water") section = "home";
+    // Po pôrode: koľký deň / týždeň (šestonedelie = prvých 6 týždňov).
+    const birthDays = !expecting && state.profile.birth ? Math.floor((new Date(todayKey() + "T12:00:00") - new Date(state.profile.birth + "T12:00:00")) / 86400000) : null;
+    const afterBirth = birthDays === null || birthDays < 0 ? "Po pôrode" : birthDays < 42 ? (birthDays + 1) + ". deň po pôrode · šestonedelie" : Math.floor(birthDays / 7) + 1 + ". týždeň po pôrode";
+
+    if (section === "check") {
+      const check = content.check;
+      const checkDate = state.profile.birth ? new Date(new Date(state.profile.birth + "T09:00:00").getTime() + 42 * 86400000) : null;
+      const planned = (state.reminders || []).some(item => item.source === "postnatal-check");
+      target.innerHTML = [
+        flowHead("Mama", "Kontrola po pôrode", "Kedy býva a čo sa na nej preberá.", 0, 1),
+        "<section class='v2-mama-card'><p>", escapeHtml(check.when), "</p><h4>Čo sa zvyčajne preberá</h4>", bullets(check.items), source(check.source, check.reviewed), "</section>",
+        checkDate ? "<div class='v5-actions'><button class='v5-primary' type='button' data-v2-mama-check-remind" + (planned ? " disabled" : "") + ">" + (planned ? "✓ Pripomienka je v Kalendári" : "Pripomenúť dohodnúť termín") + "</button></div>" : "",
+        checkDate && !planned ? "<p class='v2-visit-hint'>Pripomienku dáme do Kalendára na " + escapeHtml(checkDate.toLocaleDateString("sk-SK", { day: "numeric", month: "long" })) + " (6 týždňov po pôrode). Presunúť ju môžeš v Kalendári.</p>" : "",
+        back
+      ].join("");
+      return;
+    }
+    if (section === "mood") {
+      const mood = content.mood;
+      target.innerHTML = [
+        flowHead("Mama", "Nálada a spánok", "Čo je po pôrode bežné a kedy si povedať o pomoc.", 0, 1),
+        "<section class='v2-mama-card'><h3>Baby blues</h3><p>", escapeHtml(mood.blues), "</p></section>",
+        "<div class='v2-calm-box'><strong>", escapeHtml(mood.signsIntro), "</strong>", bullets(mood.signs), "<p>", escapeHtml(mood.help), "</p>",
+        "<button type='button' class='v5-text-action' data-v5-urgent>Kontakty na pomoc</button></div>",
+        source(mood.source, mood.reviewed),
+        "<section class='v2-mama-card'><h3>Spánok a únava</h3>", bullets(mood.sleep), source(mood.sleepSource, mood.sleepReviewed), "</section>",
+        "<div class='v2-book-tools'><button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Zapísať náladu</strong><small>Jedným ťuknutím v Mojom súkromnom denníku</small></span><b aria-hidden='true'>›</b></button></div>",
+        back
+      ].join("");
+      return;
+    }
 
     if (section === "body") {
       const week = Math.max(4, mamaWeek || currentWeek || 4);
@@ -3132,12 +3177,12 @@
     }
     if (section === "troubles") {
       target.innerHTML = [
-        flowHead("Mama", "Bežné ťažkosti", "Čo zvyčajne pomáha a kedy sa ozvať lekárovi.", 0, 1),
+        flowHead("Mama", expecting ? "Bežné ťažkosti" : "Telo po pôrode", "Čo zvyčajne pomáha a kedy sa ozvať lekárovi.", 0, 1),
         "<div class='v2-mama-troubles'>",
         content.troubles.map(item => [
           "<details class='v2-mama-trouble'><summary><span aria-hidden='true'>", item.emoji, "</span><strong>", escapeHtml(item.title), "</strong><b aria-hidden='true'>›</b></summary>",
           "<h4>Čo môže pomôcť</h4>", bullets(item.tips),
-          item.doctor.length ? "<div class='v2-calm-box'><strong>" + escapeHtml(item.doctorIntro) + "</strong>" + bullets(item.doctor) + (item.doctorNote ? "<p>" + escapeHtml(item.doctorNote) + "</p>" : "") + "</div>" : "",
+          item.doctor.length ? "<div class='v2-calm-box'><strong>" + escapeHtml(item.doctorIntro) + "</strong>" + bullets(item.doctor) + (item.doctorNote ? "<p>" + escapeHtml(item.doctorNote) + "</p>" : "") + (item.emergency ? "<p>" + escapeHtml(item.emergency) + "</p>" : "") + "</div>" : "",
           source(item.source, item.reviewed),
           "</details>"
         ].join("")).join(""),
@@ -3167,16 +3212,19 @@
     const size = expecting && currentWeek ? window.GugubooV2?.babySize?.(Math.max(4, currentWeek)) : null;
     const row = (sectionId, iconName, title, sub) => "<button type='button' data-v2-mama-section='" + sectionId + "'><span class='v5-icon'>" + icon(iconName) + "</span><span><strong>" + escapeHtml(title) + "</strong><small>" + escapeHtml(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
     target.innerHTML = [
-      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(parentDisplayName() || "Mama"), "</h1><p>", expecting ? (currentWeek ? currentWeek + ". týždeň · " : "") + "tvoje telo, pitie a nálada" : "Obdobie po pôrode · obsah pre šestonedelie pripravujeme", "</p></section>",
+      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(parentDisplayName() || "Mama"), "</h1><p>", expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth), "</p></section>",
       "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) + " · nastaviť", "</small>",
       "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span></button>",
       "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
       "<div class='v2-book-tools'>",
-      expecting && size?.you ? row("body", "baby", "Tvoje telo tento týždeň", "Čo sa s tebou môže diať v " + currentWeek + ". týždni") : "",
+      expecting && size?.you ? row("body", "baby", "Tvoje telo tento týždeň", "Čo sa s tebou môže diať v " + Math.max(4, currentWeek) + ". týždni") : "",
       expecting && content ? row("troubles", "health", "Bežné ťažkosti", "Nevoľnosť, pálenie záhy, kŕče, opuchy, únava…") : "",
       expecting && content ? row("food", "meal", "Jedlo a pohyb", "Čomu sa vyhnúť, vitamíny, bezpečný pohyb") : "",
-      "<button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Ako sa dnes máš?</strong><small>",
-      state.v5.diaryLastEntry === todayKey() ? "Dnes zapísané v Mojom súkromnom denníku" : "Nálada jedným ťuknutím v Mojom súkromnom denníku", "</small></span><b aria-hidden='true'>›</b></button>",
+      !expecting && content ? row("troubles", "health", "Telo po pôrode", "Krvácanie, stehy, cisársky rez, prsia, panvové dno") : "",
+      !expecting && content ? row("check", "calendar", "Kontrola po pôrode", "Okolo 6. – 8. týždňa · čo sa na nej preberá") : "",
+      !expecting && content ? row("mood", "sparkle", "Nálada a spánok", "Baby blues, kedy si povedať o pomoc, oddych") : "",
+      "<button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Môj súkromný denník</strong><small>",
+      state.v5.diaryLastEntry === todayKey() ? "Dnes už zapísané · chránené PIN-om" : "Nálada jedným ťuknutím alebo myšlienka · s PIN-om", "</small></span><b aria-hidden='true'>›</b></button>",
       "</div>",
       "<p class='v5-book-note'>Rady sú všeobecné, z NHS. Nenahrádzajú lekára ani pôrodnú asistentku.</p>"
     ].join("");
@@ -3691,13 +3739,26 @@
       renderCalendar();
       return announce(message);
     }
+    if (event.target.closest("[data-v2-mama-check-remind]") && state.profile.birth) {
+      state.reminders ||= [];
+      if (!state.reminders.some(item => item.source === "postnatal-check")) {
+        const date = new Date(new Date(state.profile.birth + "T09:00:00").getTime() + 42 * 86400000);
+        state.reminders.push({ id: createId(), title: "Dohodnúť kontrolu po pôrode u gynekológa", date: date.toISOString(), type: "Zdravie", source: "postnatal-check", created: new Date().toISOString() });
+        persist();
+      }
+      renderMama();
+      renderHome();
+      return announce("Pripomienka je v Kalendári.");
+    }
     const mamaNav = event.target.closest("[data-v2-mama-section]");
     if (mamaNav) {
       mamaSection = mamaNav.dataset.v2MamaSection || "home";
       mamaWeek = Number(mamaNav.dataset.v2MamaWeek) || 0;
+      mamaFromLink = currentView() !== "v5Mama";
       if (currentView() !== "v5Mama") routeTo("v5Mama");
       renderMama();
       if (byId("v5Mama")) byId("v5Mama").scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: "instant" });
       return;
     }
     const sizeWeek = event.target.closest("[data-v2-size-week]");

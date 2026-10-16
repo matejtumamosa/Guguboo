@@ -55,13 +55,17 @@
         icon: "spark",
         text: "Ukážem ti 4 miesta, ktoré budeš používať najčastejšie. Trvá to pol minúty."
       },
-      {
+      // Pred pôrodom: tri okienka na domove – každé s jasnou funkciou (Samuel 16. 10.).
+      expecting ? {
+        scroll: true,
+        target: () => home?.querySelector(".v5-glance-strip"),
+        title: "Knižka, Mama a Dieťa",
+        text: "📖 Knižka – zápisy z kontrol, výsledky a termíny.\n🤰 Mama – tvoje telo, bežné ťažkosti, pitie a nálada.\n👶 Dieťa – aké veľké je bábätko a čo sa práve vyvíja."
+      } : {
         scroll: true,
         target: () => home?.querySelector(".v5-home-hero .v5-baby-avatar"),
-        title: expecting ? "Aké veľké je bábätko" : "Profil bábätka",
-        text: expecting
-          ? "Ťukni na krúžok s týždňom a uvidíš, aké veľké je bábätko a čo sa práve vyvíja."
-          : "Ťukni na krúžok a pridaj fotku bábätka. Vek a merania nájdeš v jeho profile."
+        title: "Profil bábätka",
+        text: "Ťukni na krúžok a pridaj fotku bábätka. Vek a merania nájdeš v jeho profile."
       },
       {
         scroll: true,
@@ -79,7 +83,9 @@
       {
         target: () => byId("v5BottomBar"),
         title: "Všetky aplikácie",
-        text: "Potiahni lištu nahor a uvidíš všetko: Kalendár, Denník, Momenty, Nákup… Obľúbené si dáš sem dole."
+        text: expecting
+          ? "Potiahni lištu nahor a uvidíš všetko: Kalendár, Denník, Nákup, Kontakty… Obľúbené si dáš sem dole."
+          : "Potiahni lištu nahor a uvidíš všetko: Mama (tvoje telo po pôrode a nálada), Kalendár, Denník, Nákup… Obľúbené si dáš sem dole."
       }
     ];
   }
