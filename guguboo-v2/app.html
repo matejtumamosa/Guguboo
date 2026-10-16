@@ -8085,7 +8085,8 @@ Otázky:
       setText("welcomeFinishTitle", expecting ? readyLine : `Vitaj na svete, ${babyName === "Bábätko" ? "bábätko" : babyName}.`);
       setText("welcomeBabyStepTitle", expecting ? "Koho spolu privítame?" : "Predstav nám svoje bábätko");
       $("welcomeFinishFirstStep")?.classList.toggle("hidden", !expecting);
-      $("welcomeFinishCountry")?.classList.toggle("hidden", !expecting);
+      // „Miestny obsah: …“ sa už nezobrazuje (Samuel 16. 10.) – krajina je zvolená v úvode.
+      $("welcomeFinishCountry")?.classList.add("hidden");
       $("welcomeFinishBack")?.classList.toggle("hidden", !expecting);
       $("saveWelcomeBirthCard")?.classList.toggle("hidden", expecting);
       if ($("saveWelcome")) {
