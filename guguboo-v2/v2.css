@@ -901,3 +901,41 @@ body.v5-active #v5Header[data-home="true"] .v5-header-title span { font-size: 13
 body.v5-active #v5Header[data-home="true"] .v5-header-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
 body.v5-active #v5Header[data-home="true"] [data-v5-feature="profiles"] { display: inline-flex !important; }
 body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: rgba(255, 255, 255, .06); }
+
+/* ——— Pozdrav na domove – doladený rámček (prebíja predchádzajúce pravidlá) ——— */
+body.v5-active #v5Header[data-home="true"] .v5-header-brand {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: 14px 18px !important;
+  overflow: hidden;
+  text-align: center !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f6f1ff 58%, #fff3ec 100%);
+  border: 1px solid rgba(123, 107, 200, .16);
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(72, 55, 100, .08);
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-brand::after {
+  content: "";
+  position: absolute;
+  top: -34px;
+  right: -26px;
+  width: 96px;
+  height: 96px;
+  background: radial-gradient(circle, rgba(244, 170, 190, .28), transparent 70%);
+  pointer-events: none;
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-title { position: relative; z-index: 1; display: block !important; width: 100%; margin: 0 auto; text-align: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title::before { display: block; margin-bottom: 3px; font-size: 18px; line-height: 1; }
+body.v5-active #v5Header[data-home="true"][data-daypart="morning"] .v5-header-title::before { content: "☀"; color: #e8a33b; }
+body.v5-active #v5Header[data-home="true"][data-daypart="day"] .v5-header-title::before { content: "🌤"; }
+body.v5-active #v5Header[data-home="true"][data-daypart="evening"] .v5-header-title::before { content: "☾"; color: #7b6bc8; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { display: block; width: 100%; text-align: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 20px; font-weight: 900; line-height: 1.2; letter-spacing: -.01em; overflow-wrap: anywhere; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 4px; color: var(--v5-muted); font-size: 13px; font-weight: 600; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { justify-content: space-between; }
+body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: linear-gradient(135deg, #2b2638, #2a2440); border-color: rgba(255, 255, 255, .08); }

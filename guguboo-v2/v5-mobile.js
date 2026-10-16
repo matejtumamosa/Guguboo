@@ -3185,6 +3185,8 @@
     byId("v5Header").dataset.home = String(view === "home");
     // Domov: namiesto loga pozdrav podľa času a oslovenie mamy, pod ním krátka veta podľa obdobia.
     const greeting = view === "home" ? homeGreeting() : null;
+    const hourNow = new Date().getHours();
+    byId("v5Header").dataset.daypart = hourNow >= 4 && hourNow < 10 ? "morning" : hourNow >= 10 && hourNow < 18 ? "day" : "evening";
     byId("v5HeaderTitle").textContent = greeting ? greeting[0] : title[0];
     byId("v5HeaderSubtitle").textContent = greeting ? greeting[1] : title[1];
     byId("v5Header").querySelector("[data-v5-night]")?.setAttribute("aria-pressed", String(document.body.classList.contains("night")));
