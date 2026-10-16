@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.8.3";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.9.0";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.8.1">
+  <link rel="stylesheet" href="v2.css?v=2.9.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -8101,12 +8101,13 @@ Otázky:
           : dueDays === 0
             ? "Termín je dnes. Všetko dôležité máš na jednom mieste."
             : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň ti ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
-        setText("welcomeFinishGlanceLabel1", "Týždeň");
-        setText("welcomeFinishGlanceValue1", fruit.week ? `${fruit.week}. týždeň` : "—");
-        setText("welcomeFinishGlanceLabel2", "Termín");
-        setText("welcomeFinishGlanceValue2", dateLabel(due, { day: "numeric", month: "long" }));
-        setText("welcomeFinishGlanceLabel3", "Do termínu");
-        setText("welcomeFinishGlanceValue3", dueDays === null || dueDays < 0 ? "—" : dueDays === 0 ? "Dnes" : slovakDays(dueDays));
+        // Rovnaké okienka ako na domove: Termín pôrodu · Do termínu · Tehotenská knižka (týždeň je v krúžku).
+        setText("welcomeFinishGlanceLabel1", "Termín pôrodu");
+        setText("welcomeFinishGlanceValue1", dateLabel(due, { day: "numeric", month: "long" }));
+        setText("welcomeFinishGlanceLabel2", "Do termínu");
+        setText("welcomeFinishGlanceValue2", dueDays === null || dueDays < 0 ? "—" : dueDays === 0 ? "Dnes" : slovakDays(dueDays));
+        setText("welcomeFinishGlanceLabel3", "Tehotenská knižka");
+        setText("welcomeFinishGlanceValue3", "Otvoriť");
         setText("welcomeFinishStepTitle", "Priprav dnes jednu vec do pôrodnice.");
         setText("welcomeFinishStepHint", "Checklist Taška do pôrodnice nájdeš po otvorení tvojho Guguboo.");
       } else {
@@ -9682,8 +9683,9 @@ Otázky:
   <script src="v4-upgrade.js?v=6.11"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
   <script src="v5-mobile.js?v=2.8.3"></script>
-  <script src="guguchat.js?v=2.7.0"></script>
+  <script src="guguchat.js?v=2.9.0"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
+  <script src="v2-tour.js?v=2.9.0"></script>
   <script src="private-space.js?v=5"></script>
   <script src="activities-data.js?v=1"></script>
   <script src="teeth.js?v=1"></script>

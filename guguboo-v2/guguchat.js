@@ -214,7 +214,7 @@
   }
 
   function betaFooterHtml() {
-    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sa po zatvorení okna vymažú</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button><button type='button' data-v2-reset>Začať odznova</button></span></aside>";
+    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sa po zatvorení okna vymažú</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button><button type='button' data-v2-tour-restart>Ukázať prehliadku</button><button type='button' data-v2-reset>Začať odznova</button></span></aside>";
   }
 
   // ——— Spätná väzba z bety (brief body 38–40) ———
