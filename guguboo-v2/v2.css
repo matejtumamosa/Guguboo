@@ -991,3 +991,19 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-tour.is-intro .v2-tour-actions .v5-primary { width: 100%; min-height: 50px; }
 .v2-tour.is-intro .v2-tour-skip { min-height: 40px !important; }
 .v2-tour-card .v2-tour-note { color: var(--v5-muted) !important; text-transform: none; }
+
+/* ——— Úvodná obrazovka: nič sa neprekrýva (Samuel 16. 10.) ———
+   Kruhy za logom sa riadia výškou svojej plochy (nepretečú na nápis), hviezdička mimo nálepky „Plán“. */
+@media (max-width: 960px) {
+  .welcome-first-visual { overflow: visible; }
+  .welcome-first-halo-a { width: auto !important; height: min(100%, 270px); max-width: 82%; aspect-ratio: 1; }
+  .welcome-first-halo-b { width: auto !important; height: min(78%, 210px); max-width: 65%; aspect-ratio: 1; }
+  .welcome-first-logo-cloud { max-height: 78%; }
+  .welcome-first-spark-a { top: auto !important; right: auto !important; bottom: 6% !important; left: 8% !important; font-size: 22px !important; }
+  .welcome-first-spark-b { bottom: auto !important; left: auto !important; top: 4% !important; right: 30% !important; }
+}
+.welcome-first-copy { position: relative; z-index: 2; }
+@media (max-width: 480px) {
+  .welcome-first-logo-cloud { width: min(210px, 60%) !important; padding: 16px 14px !important; }
+  .welcome-first-orbit-c { bottom: -8% !important; right: 0 !important; }
+}
