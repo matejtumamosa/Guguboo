@@ -42,6 +42,7 @@
     home: "<path d='M3 11.5 12 4l9 7.5'/><path d='M5.5 10.5V20h13v-9.5'/><path d='M9 20v-6h6v6'/>",
     back: "<path d='m15 18-6-6 6-6'/>",
     user: "<circle cx='12' cy='8' r='4'/><path d='M4.5 21a7.5 7.5 0 0 1 15 0'/>",
+    menu: "<path d='M4 7h16M4 12h16M4 17h16'/>",
     moon: "<path d='M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z'/>",
     sun: "<circle cx='12' cy='12' r='4'/><path d='M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.41M17.66 6.34l1.41-1.41'/>",
     feeding: "<path d='M9 3h6'/><path d='M10 3v4l-3 4v8a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-8l-3-4V3'/><path d='M8 13h8'/>",
@@ -444,7 +445,7 @@
     "<div class='v5-header-actions'>",
     "<button class='v5-icon-button' type='button' data-v5-home aria-label='Domov'>" + icon("home") + "</button>",
     "<button class='v5-icon-button' type='button' data-v5-night aria-label='Nočný režim' aria-pressed='false'>" + icon("moon") + "</button>",
-    "<button class='v5-icon-button' type='button' data-v5-feature='profiles' aria-label='Profily rodiny'>" + icon("user") + "</button>",
+    "<button class='v5-icon-button v2-menu-button' type='button' data-v5-feature='profiles' aria-label='Menu – profil a nastavenia'>" + icon("menu") + "</button>",
     "</div>",
     "</header>"
   ].join(""));
@@ -1116,8 +1117,9 @@
       window.GugubooV2?.betaFooterHtml?.() || ""
     ].join("");
     target.innerHTML = [
-      "<section class='v5-home-hero'><div class='v5-home-person'>", babyAvatar, "<div><h1>", escapeHtml(name), "</h1>", phaseLine ? "<p>" + phaseLine + "</p>" : "", "</div><button class='v5-mini-profile' type='button' data-v5-feature='profiles' aria-label='Otvoriť profil'>",
-      parentInitials() ? "<span class='v2-initials'>" + escapeHtml(parentInitials()) + "</span>" : icon("user"), "</button></div>", avatarPopover, "<div class='v5-glance-strip'>",
+      "<section class='v5-home-hero'><div class='v5-home-person'>", babyAvatar, "<div><h1>", escapeHtml(name), "</h1>", phaseLine ? "<p>" + phaseLine + "</p>" : "", "</div>",
+      // Profil a nastavenia sú v menu (☰) hore vedľa nočného režimu.
+      "</div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 6).map((item, index) => expecting
         ? "<button class='v5-glance v5-glance-action v5-prenatal-glance' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
         : index < 3

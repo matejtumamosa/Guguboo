@@ -879,3 +879,25 @@ body.v5-active #v5Header[data-home="true"] .v5-header-title { display: block; }
 body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 24px; font-weight: 900; line-height: 1.15; white-space: normal; }
 body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 3px; color: var(--v5-muted); font-size: 14px; font-weight: 600; }
 .v2-initials { display: grid; width: 100%; height: 100%; place-items: center; color: var(--v5-brand-dark, #5b4ca3); font-size: 17px; font-weight: 900; letter-spacing: .02em; line-height: 1; }
+
+/* ——— Domov: pozdrav v rámčeku na stred, vpravo nočný režim + menu (☰) ——— */
+body.v5-active #v5Header[data-home="true"] { align-items: stretch; gap: 10px; }
+body.v5-active #v5Header[data-home="true"] .v5-back { display: none; }
+body.v5-active #v5Header[data-home="true"] .v5-header-brand {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  place-items: center;
+  padding: 12px 14px;
+  text-align: center;
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid var(--v5-line);
+  border-radius: 22px;
+  box-shadow: 0 10px 26px rgba(72, 55, 100, .07);
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-title { width: 100%; text-align: center; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { font-size: 20px; line-height: 1.2; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { font-size: 13px; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+body.v5-active #v5Header[data-home="true"] [data-v5-feature="profiles"] { display: inline-flex !important; }
+body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: rgba(255, 255, 255, .06); }
