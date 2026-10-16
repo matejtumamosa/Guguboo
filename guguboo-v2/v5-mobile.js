@@ -108,6 +108,7 @@
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
     babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
+    mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady", description: "Lokálne kroky a podpora", icon: "book", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
@@ -174,19 +175,19 @@
   const circleByStage = {
     expecting: {
       care: ["Oddych", "Odpočinok bez výčitiek.", { rest: "10 minút oddychu", nap: "Zdriemla som si", handover: "Niekto mi s niečím pomohol", quiet: "Chvíľa bez povinností" }],
-      movement: ["Telo", "Pitie, jedlo a jemný pohyb.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemný pohyb" }],
-      health: ["Opora", "Ako sa máš a kto je pri tebe.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
+      movement: ["Telo", "Jedlo, vzduch a jemný pohyb.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemný pohyb" }],
+      health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     },
     born: {
       care: ["Zotavenie", "Oddych, spánok a telo po pôrode.", { rest: "Oddýchla som si", nap: "Zdriemla som si, keď spinkalo bábätko", handover: "Niekto ma vystriedal", quiet: "Chvíľa len pre mňa" }],
-      movement: ["Výživa", "Jedlo a pitie aj v rušnom dni.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemné pretiahnutie" }],
-      health: ["Opora", "Ako sa máš a kto je pri tebe.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
+      movement: ["Telo", "Jedlo, vzduch a jemné pretiahnutie.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemné pretiahnutie" }],
+      health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     }
   };
-  // Po narodení: vzduch a pretiahnutie patria k Zotaveniu, nie k Výžive (pripomienka #11).
+  // Pitný režim a nálada sú v okienku Mama, nie v kruhu (Samuel 16. 10.: každá vec na jednom správnom mieste).
   const circleGoalsByStage = {
-    expecting: { care: ["rest", "nap", "handover", "quiet"], movement: ["water", "meal", "fresh-air", "stretch"] },
-    born: { care: ["rest", "nap", "handover", "quiet", "fresh-air", "stretch"], movement: ["water", "meal"] }
+    expecting: { care: ["rest", "nap", "handover", "quiet"], movement: ["meal", "fresh-air", "stretch"], health: ["talk", "ask-help", "me-time"] },
+    born: { care: ["rest", "nap", "handover", "quiet"], movement: ["meal", "fresh-air", "stretch"], health: ["talk", "ask-help", "me-time"] }
   };
   const allCircleGoals = Object.fromEntries(Object.values(adaptiveOGoals).flat().map(goal => [goal.id, goal]));
   // Texty v prvej osobe podľa rodiča: Otec → mužský rod, inak ženský (kruh je predovšetkým pohoda mamy).
@@ -461,6 +462,7 @@
     "<section class='view' id='v5Prenatal'><div class='v5-flow' id='v5PrenatalContent'></div></section>",
     "<section class='view' id='v5PregnancyBook'><div class='v5-flow' id='v5PregnancyBookContent'></div></section>",
     "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
+    "<section class='view' id='v5Mama'><div class='v5-flow' id='v5MamaContent'></div></section>",
     "<section class='view' id='v5Calendar'><div class='v5-flow' id='v5CalendarContent'></div></section>",
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
@@ -530,6 +532,7 @@
     v5Prenatal: ["Moja príprava", "Pôrodnica, taška a domov"],
     v5PregnancyBook: ["Tehotenská knižka", "Bábätko, mama a aktuálny týždeň"],
     v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
+    v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
     v5Calendar: ["Kalendár", "Všetky termíny a pripomienky"],
     v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
     v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
@@ -1078,7 +1081,7 @@
     const statusCards = expecting ? [
       // Tehotenská knižka / Mama / Dieťa (Samuel 16. 10.) – obsah okienok Mama a Dieťa ešte dodefinujeme.
       ["Knižka", (() => { const d = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null; return d > 0 ? d + (d === 1 ? " deň" : d < 5 ? " dni" : " dní") + " do pôrodu" : "Otvoriť"; })(), "pregnancy"],
-      ["Mama", "Moje údaje", "mother"],
+      ["Mama", waterToday().count ? "💧 " + waterToday().count + " / " + waterToday().goal + " pohárov" : "Ako sa máš?", "mama"],
       (() => { const size = pregnancyWeek ? window.GugubooV2?.babySize?.(pregnancyWeek) : null; return ["Dieťa", size?.comparison ? size.emoji + " ako " + size.comparison : "Ako rastie", "babySize"]; })()
     ] : [
       ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
@@ -1931,6 +1934,12 @@
     if (feature.view === "v5Calendar") {
       routeTo("v5Calendar");
       renderCalendar();
+      return;
+    }
+    if (feature.view === "v5Mama") {
+      mamaSection = "home";
+      routeTo("v5Mama");
+      renderMama();
       return;
     }
     if (feature.view === "v5BabySize") {
@@ -3080,13 +3089,97 @@
       "<small>", data.approximate ? "Prirovnanie je orientačné, dĺžka je podľa NHS." : "Podľa NHS, orientačne.", "</small>",
       "</section>",
       baby.length ? "<section class='v2-size-dev'><h3><span aria-hidden='true'>👶</span> Bábätko</h3>" + list(baby) + "</section>" : "",
-      mom.length ? "<section class='v2-size-dev v2-size-mom'><h3><span aria-hidden='true'>🤰</span> Tvoje telo</h3>" + list(mom) + "</section>" : "",
-      tip.length ? "<section class='v2-size-dev v2-size-tip'><h3><span aria-hidden='true'>💡</span> Tip na tento týždeň</h3>" + list(tip) + "</section>" : "",
+      // Tvoje telo a tip týždňa sú v okienku Mama (Samuel 16. 10.) – tu len odkaz.
+      mom.length || tip.length ? "<button type='button' class='v2-size-mama-link' data-v2-mama-section='body' data-v2-mama-week='" + data.week + "'><span aria-hidden='true'>🤰</span><span><strong>Tvoje telo v " + data.week + ". týždni</strong><small>V okienku Mama</small></span><b aria-hidden='true'>›</b></button>" : "",
       data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : ""
     ].join("");
     // Vybraný týždeň do stredu pásu.
     const selected = target.querySelector(".v2-week-strip .is-selected");
     if (selected) selected.parentElement.scrollLeft = selected.offsetLeft - selected.parentElement.clientWidth / 2 + selected.offsetWidth / 2;
+  }
+
+  // Okienko Mama (Samuel 16. 10.): ako sa máš TY – telo tento týždeň, bežné ťažkosti, jedlo a pohyb,
+  // pitný režim a nálada. Obsah len z content/mama-tehotenstvo.js a pregnancy-weeks.js (NHS, so zdrojom).
+  // Po pôrode zatiaľ len pitie a nálada; šestonedelie doplníme po schválení obsahu.
+  let mamaSection = "home";
+  let mamaWeek = 0;
+  function renderMama() {
+    const target = byId("v5MamaContent");
+    if (!target) return;
+    const content = window.GugubooContent?.mamaPregnancy;
+    const expecting = state.profile.status === "expecting";
+    const currentWeek = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const back = "<button class='v5-check-categories-button' type='button' data-v2-mama-section='home'>" + icon("back") + " Mama</button>";
+    const source = (url, reviewed) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(content?.checked || "") + " ↗</a>";
+    const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
+    let section = expecting || mamaSection === "water" ? mamaSection : "home";
+    if (!content && ["troubles", "food"].includes(section)) section = "home";
+
+    if (section === "body") {
+      const week = Math.max(4, mamaWeek || currentWeek || 4);
+      const data = window.GugubooV2?.babySize?.(week);
+      const split = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
+      const you = split(data?.you);
+      const tip = split(data?.tip);
+      target.innerHTML = [
+        flowHead("Mama", "Tvoje telo v " + week + ". týždni", week === currentWeek ? "Čo sa s tebou môže diať práve teraz." : "Pozeráš iný ako aktuálny týždeň.", 0, 1),
+        you.length ? "<section class='v2-size-dev v2-size-mom'><h3><span aria-hidden='true'>🤰</span> Tvoje telo</h3>" + you.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "<div class='v5-empty'>Pre tento týždeň zatiaľ nemáme overený text.</div>",
+        tip.length ? "<section class='v2-size-dev v2-size-tip'><h3><span aria-hidden='true'>💡</span> Tip na tento týždeň</h3>" + tip.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "",
+        data?.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : "",
+        back
+      ].join("");
+      return;
+    }
+    if (section === "troubles") {
+      target.innerHTML = [
+        flowHead("Mama", "Bežné ťažkosti", "Čo zvyčajne pomáha a kedy sa ozvať lekárovi.", 0, 1),
+        "<div class='v2-mama-troubles'>",
+        content.troubles.map(item => [
+          "<details class='v2-mama-trouble'><summary><span aria-hidden='true'>", item.emoji, "</span><strong>", escapeHtml(item.title), "</strong><b aria-hidden='true'>›</b></summary>",
+          "<h4>Čo môže pomôcť</h4>", bullets(item.tips),
+          item.doctor.length ? "<div class='v2-calm-box'><strong>" + escapeHtml(item.doctorIntro) + "</strong>" + bullets(item.doctor) + (item.doctorNote ? "<p>" + escapeHtml(item.doctorNote) + "</p>" : "") + "</div>" : "",
+          source(item.source, item.reviewed),
+          "</details>"
+        ].join("")).join(""),
+        "</div>",
+        "<p class='v5-book-note'>S čímkoľvek, čo ťa znepokojuje, sa môžeš obrátiť na svojho lekára – aj s maličkosťou.</p>",
+        back
+      ].join("");
+      return;
+    }
+    if (section === "food") {
+      const { food, vitamins, exercise } = content;
+      target.innerHTML = [
+        flowHead("Mama", "Jedlo a pohyb", "Čomu sa vyhnúť, čo doplniť a aký pohyb je bezpečný.", 0, 1),
+        "<section class='v2-mama-card'><h3>Radšej vynechaj</h3>", bullets(food.avoid), "<h4>Obmedz</h4>", bullets(food.limit), "<p>", escapeHtml(food.alcohol), "</p>", source(food.source, food.reviewed), "</section>",
+        "<section class='v2-mama-card'><h3>Vitamíny</h3>", vitamins.items.map(([name, text]) => "<p><b>" + escapeHtml(name) + "</b> – " + escapeHtml(text) + "</p>").join(""), "<p class='v2-mama-muted'>Doplnky prebrať aj s lekárom.</p>", source(vitamins.source, vitamins.reviewed), "</section>",
+        "<section class='v2-mama-card'><h3>Pohyb</h3><p>", escapeHtml(exercise.goal), "</p>", bullets(exercise.tips), "<h4>Vyhni sa</h4>", bullets(exercise.avoid), "<p class='v2-mama-muted'>", escapeHtml(exercise.note), "</p>", source(exercise.source, exercise.reviewed), "</section>",
+        back
+      ].join("");
+      return;
+    }
+    if (section === "water") {
+      target.innerHTML = [flowHead("Mama", "Pitný režim", "Ťukni na ＋ po každom pohári.", 0, 1), waterSettingsHtml(), back].join("");
+      return;
+    }
+    // Domov okienka Mama
+    const water = waterToday();
+    const size = expecting && currentWeek ? window.GugubooV2?.babySize?.(Math.max(4, currentWeek)) : null;
+    const row = (sectionId, iconName, title, sub) => "<button type='button' data-v2-mama-section='" + sectionId + "'><span class='v5-icon'>" + icon(iconName) + "</span><span><strong>" + escapeHtml(title) + "</strong><small>" + escapeHtml(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
+    target.innerHTML = [
+      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(parentDisplayName() || "Mama"), "</h1><p>", expecting ? (currentWeek ? currentWeek + ". týždeň · " : "") + "tvoje telo, pitie a nálada" : "Obdobie po pôrode · obsah pre šestonedelie pripravujeme", "</p></section>",
+      "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) + " · nastaviť", "</small>",
+      "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span></button>",
+      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
+      "<div class='v2-book-tools'>",
+      expecting && size?.you ? row("body", "baby", "Tvoje telo tento týždeň", "Čo sa s tebou môže diať v " + currentWeek + ". týždni") : "",
+      expecting && content ? row("troubles", "health", "Bežné ťažkosti", "Nevoľnosť, pálenie záhy, kŕče, opuchy, únava…") : "",
+      expecting && content ? row("food", "meal", "Jedlo a pohyb", "Čomu sa vyhnúť, vitamíny, bezpečný pohyb") : "",
+      "<button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Ako sa dnes máš?</strong><small>",
+      state.v5.diaryLastEntry === todayKey() ? "Dnes zapísané v Mojom súkromnom denníku" : "Nálada jedným ťuknutím v Mojom súkromnom denníku", "</small></span><b aria-hidden='true'>›</b></button>",
+      "</div>",
+      "<p class='v5-book-note'>Rady sú všeobecné, z NHS. Nenahrádzajú lekára ani pôrodnú asistentku.</p>"
+    ].join("");
   }
 
   // Tehotenská knižka (Samuel 16. 10.): hore týždeň, dni do pôrodu, trimester (veľkosť bábätka je v okienku Dieťa, nie tu – Samuel 16. 10.);
@@ -3362,6 +3455,7 @@
     if (currentView() === "v5Prenatal") renderPrenatal();
     if (currentView() === "v5PregnancyBook") renderPregnancyBook();
     if (currentView() === "v5BabySize") renderBabySize();
+    if (currentView() === "v5Mama") renderMama();
     if (currentView() === "v5Calendar") renderCalendar();
     if (currentView() === "v5Sounds") renderSounds();
     if (currentView() === "v5Care") renderCare();
@@ -3523,7 +3617,6 @@
         return announce("Zobrazená príprava pred pôrodom.");
       }
       if (action === "hospital") return openOrganizationMenu("hospital");
-      if (action === "mother") { state.v5.profileTab = "mother"; persist(); return openFeature("profiles"); }
       return openFeature(action);
     }
     const circleMode = event.target.closest("[data-v5-circle-mode]");
@@ -3597,6 +3690,15 @@
       renderHome();
       renderCalendar();
       return announce(message);
+    }
+    const mamaNav = event.target.closest("[data-v2-mama-section]");
+    if (mamaNav) {
+      mamaSection = mamaNav.dataset.v2MamaSection || "home";
+      mamaWeek = Number(mamaNav.dataset.v2MamaWeek) || 0;
+      if (currentView() !== "v5Mama") routeTo("v5Mama");
+      renderMama();
+      if (byId("v5Mama")) byId("v5Mama").scrollTop = 0;
+      return;
     }
     const sizeWeek = event.target.closest("[data-v2-size-week]");
     if (sizeWeek) {
@@ -3716,6 +3818,7 @@
       persist();
       renderHome();
       renderAdaptiveOMenu();
+      if (currentView() === "v5Mama") renderMama();
       return announce(!wasDone && water.count >= water.goal ? "Denný cieľ pitia je splnený." : waterProgressText());
     }
     const adaptiveComplete = event.target.closest("[data-v5-o-complete]");
@@ -4438,6 +4541,7 @@
       persist();
       renderHome();
       renderAdaptiveOMenu();
+      if (currentView() === "v5Mama") renderMama();
       return announce("Uložené. " + waterProgressText());
     }
     const favoriteSelect = event.target.closest("[data-v5-favorite-select]");

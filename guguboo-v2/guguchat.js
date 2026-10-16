@@ -64,10 +64,10 @@
   }
 
   // ——— Obsah (týždne tehotenstva, Life Admin) – dáta so zdrojom a dátumom kontroly ———
-  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js"];
+  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
-    script.src = src + "?v=2.7.0";
+    script.src = src + "?v=2.8.0";
     script.onload = resolve;
     script.onerror = resolve; // chýbajúci modul appku nezastaví – GuguChat povie, že obsah pripravujeme
     document.head.appendChild(script);
