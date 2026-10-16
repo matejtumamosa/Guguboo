@@ -954,3 +954,27 @@ body.v5-active #v5Home { row-gap: 14px !important; gap: 14px !important; }
 body.v5-active #v5Home > * { margin-top: 0 !important; margin-bottom: 0 !important; }
 body.v5-active #v5Header[data-home="true"] { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
 body.v5-active #home.view { padding-top: 14px !important; }
+
+/* ——— Úvod: prihlásenie (prototyp) ——— */
+.v2-account-actions { display: grid !important; width: min(100%, 360px); gap: 10px; margin-inline: auto; }
+.v2-account-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 18px;
+  color: #241f33;
+  background: #fff;
+  border: 1px solid rgba(101, 87, 132, .2);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(72, 55, 100, .07);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.v2-account-button svg { width: 20px; height: 20px; flex: 0 0 20px; }
+.v2-account-apple { color: #fff; background: #111; border-color: #111; }
+.v2-account-guest { min-height: 44px; padding: 8px; color: var(--v5-brand-dark, #5b4ca3); background: none; border: 0; font: inherit; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.v2-account-note { margin: 2px 0 0; color: #7a7383; font-size: 11px; line-height: 1.4; text-align: center; }

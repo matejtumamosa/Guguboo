@@ -14,11 +14,54 @@
   const homeEl = () => byId("v5Home");
   let running = false;
   let stepIndex = 0;
+  let flow = [];
+
+  const isStandalone = () => window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const platform = () => /iphone|ipad|ipod/i.test(navigator.userAgent) ? "ios" : /android/i.test(navigator.userAgent) ? "android" : "desktop";
+  let setupShown = false;
+
+  function setupSteps() {
+    if (setupShown || state.v5?.setupDone) return [];
+    const list = [];
+    if ("Notification" in window && Notification.permission === "default") {
+      list.push({
+        setup: true,
+        target: () => null,
+        kicker: "Upozornenia",
+        title: "Máme ti pripomínať dôležité veci?",
+        text: "Kontroly a termíny z Kalendára – vrátane úradov. Žiadna reklama, len to, čo sa ťa týka. V beta verzii prídu upozornenia, len keď máš appku otvorenú.",
+        nextLabel: "Povoliť upozornenia",
+        skipLabel: "Neskôr",
+        onNext: async () => {
+          try { state.v5.notifyPermission = await Notification.requestPermission(); } catch (_) { state.v5.notifyPermission = "error"; }
+        }
+      });
+    }
+    if (!isStandalone()) {
+      const how = {
+        ios: "V Safari ťukni dole na Zdieľať (štvorček so šípkou) a zvoľ „Pridať na plochu“.",
+        android: "V Chrome ťukni hore na ⋮ a zvoľ „Pridať na plochu“ alebo „Inštalovať aplikáciu“.",
+        desktop: "Na mobile si Guguboo otvor v prehliadači a pridaj na plochu – potom sa otvára ako aplikácia."
+      }[platform()];
+      list.push({
+        setup: true,
+        target: () => null,
+        kicker: "Ikona na ploche",
+        title: "Pridaj si Guguboo na plochu",
+        text: how + " Budeš ho mať vždy po ruke a upozornenia budú fungovať spoľahlivejšie.",
+        nextLabel: "Hotovo",
+        skipLabel: "Neskôr"
+      });
+    }
+    return list;
+  }
 
   function steps() {
     const expecting = state.profile?.status === "expecting";
     const home = homeEl();
     return [
+      // Nastavenie po úvode (ako v Pregnancy+): upozornenia a pridanie na plochu. „Neskôr“ ide na ďalšie okienko.
+      ...setupSteps(),
       // Úvodné okienko (bez zvýraznenia) – dá sa zavrieť krížikom alebo „Teraz nie“.
       {
         intro: true,
@@ -81,18 +124,20 @@
   function place() {
     const root = byId("v2Tour");
     if (!root || !running) return;
-    const list = steps();
+    const list = flow;
     const step = list[stepIndex];
     const target = step.target();
     const spot = root.querySelector(".v2-tour-spot");
     const card = root.querySelector(".v2-tour-card");
-    const realSteps = list.filter(item => !item.intro).length;
-    byId("v2TourCount").textContent = step.intro ? "Vitaj v Guguboo" : stepIndex + " / " + realSteps;
+    const isSpot = item => !item.intro && !item.setup;
+    const realSteps = list.filter(isSpot).length;
+    const position = list.slice(0, stepIndex + 1).filter(isSpot).length;
+    byId("v2TourCount").textContent = step.setup ? step.kicker : step.intro ? "Vitaj v Guguboo" : position + " / " + realSteps;
     byId("v2TourTitle").textContent = step.title;
     byId("v2TourText").textContent = step.text;
-    root.querySelector("[data-v2-tour-next]").textContent = step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej";
-    root.querySelector(".v2-tour-skip").textContent = step.intro ? "Teraz nie" : "Preskočiť";
-    root.classList.toggle("is-intro", Boolean(step.intro));
+    root.querySelector("[data-v2-tour-next]").textContent = step.nextLabel || (step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej");
+    root.querySelector(".v2-tour-skip").textContent = step.skipLabel || (step.intro ? "Teraz nie" : "Preskočiť");
+    root.classList.toggle("is-intro", Boolean(step.intro || step.setup));
     if (!visible(target)) { spot.style.display = "none"; card.style.top = "32%"; return; }
     const rect = target.getBoundingClientRect();
     const pad = 8;
@@ -108,7 +153,7 @@
   }
 
   function show() {
-    const step = steps()[stepIndex];
+    const step = flow[stepIndex];
     const target = step.target();
     // Cieľ v strede obrazovky (spodná lišta je pevná, netreba posúvať).
     if (target && step.scroll) target.scrollIntoView({ block: "center", behavior: "instant" });
@@ -121,6 +166,10 @@
     if (!force && !canStart()) return;
     running = true;
     stepIndex = 0;
+    // Pri opätovnom spustení z pätičky bez okienok nastavenia; zoznam sa počas prechodu nemení.
+    if (force) setupShown = true;
+    flow = steps();
+    setupShown = true;
     const root = layer();
     root.classList.add("open");
     document.body.classList.add("v2-tour-open");
@@ -138,12 +187,28 @@
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
-  document.addEventListener("click", event => {
-    if (event.target.closest("[data-v2-tour-skip]")) return finish();
-    if (event.target.closest("[data-v2-tour-next]")) {
-      if (stepIndex >= steps().length - 1) return finish();
-      stepIndex += 1;
-      return show();
+  function advance() {
+    if (flow[stepIndex]?.setup && !flow[stepIndex + 1]?.setup) { state.v5.setupDone = true; window.GugubooV5?.persist?.(); }
+    if (stepIndex >= flow.length - 1) return finish();
+    stepIndex += 1;
+    show();
+  }
+
+  document.addEventListener("click", async event => {
+    // × zavrie všetko; „Neskôr“ pri nastavení len preskočí toto okienko.
+    if (event.target.closest(".v2-tour-close")) { state.v5.setupDone = true; return finish(); }
+    if (event.target.closest("[data-v2-tour-skip]")) return flow[stepIndex]?.setup ? advance() : finish();
+    const next = event.target.closest("[data-v2-tour-next]");
+    if (next) {
+      const step = flow[stepIndex];
+      if (step?.onNext) { next.disabled = true; await step.onNext(); next.disabled = false; window.GugubooV5?.persist?.(); }
+      return advance();
+    }
+    // Voľba účtu na úvodnej obrazovke – v bete len zapamätá voľbu (skutočné prihlásenie príde so serverom).
+    const account = event.target.closest("[data-v2-account]");
+    if (account) {
+      state.v2Account = account.dataset.v2Account;
+      if (account.dataset.v2Account !== "guest" && typeof showToast === "function") showToast("Prihlásenie spustíme čoskoro – teraz pokračuješ v beta verzii.");
     }
     if (event.target.closest("[data-v2-tour-restart]")) {
       event.preventDefault();
@@ -159,6 +224,23 @@
 
   // Spustí sa sama, keď je po úvode prvýkrát zobrazený domov (napr. aj po návrate z kartičky narodenia).
   window.setInterval(() => { if (canStart()) start(); }, 1200);
+
+  // Beta: upozornenie z Kalendára v čase udalosti, kým je appka otvorená (skutočné push príde so serverom).
+  function notifyDueReminders() {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    state.v5 ||= {};
+    const sent = state.v5.notifiedReminders ||= {};
+    const now = Date.now();
+    (state.reminders || []).forEach(item => {
+      const id = String(item.id || item.title + item.date);
+      const when = new Date(item.date).getTime();
+      if (!Number.isFinite(when) || item.completedAt || sent[id] || when > now || now - when > 10 * 60000) return;
+      sent[id] = true;
+      try { new Notification("Guguboo – " + (item.title || "Pripomienka"), { body: "Je čas: " + new Date(when).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }), icon: "guguboo-logo-3d-pastel-v2.png" }); } catch (_) {}
+    });
+    window.GugubooV5?.persist?.();
+  }
+  window.setInterval(notifyDueReminders, 30000);
 
   window.GugubooTour = { start: () => start(true) };
 })();
