@@ -944,3 +944,5 @@ body.v5-active #v5Header[data-home="true"] .v5-header-brand { align-items: flex-
 body.v5-active #v5Header[data-home="true"] .v5-header-title,
 body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
 body.v5-active #v5Header[data-home="true"] .v5-header-title span { text-align: left !important; }
+/* Bez symbolu dennej doby nad pozdravom – mýlil sa s tlačidlom nočného režimu. */
+body.v5-active #v5Header[data-home="true"] .v5-header-title::before { content: none !important; display: none !important; }
