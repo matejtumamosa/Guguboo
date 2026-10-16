@@ -16,8 +16,6 @@
   let stepIndex = 0;
   let flow = [];
 
-  const isStandalone = () => window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
-  const platform = () => /iphone|ipad|ipod/i.test(navigator.userAgent) ? "ios" : /android/i.test(navigator.userAgent) ? "android" : "desktop";
   let setupShown = false;
 
   function setupSteps() {
@@ -37,22 +35,7 @@
         }
       });
     }
-    if (!isStandalone()) {
-      const how = {
-        ios: "V Safari ťukni dole na Zdieľať (štvorček so šípkou) a zvoľ „Pridať na plochu“.",
-        android: "V Chrome ťukni hore na ⋮ a zvoľ „Pridať na plochu“ alebo „Inštalovať aplikáciu“.",
-        desktop: "Na mobile si Guguboo otvor v prehliadači a pridaj na plochu – potom sa otvára ako aplikácia."
-      }[platform()];
-      list.push({
-        setup: true,
-        target: () => null,
-        kicker: "Ikona na ploche",
-        title: "Pridaj si Guguboo na plochu",
-        text: how + " Budeš ho mať vždy po ruke a upozornenia budú fungovať spoľahlivejšie.",
-        nextLabel: "Hotovo",
-        skipLabel: "Neskôr"
-      });
-    }
+    // „Pridaj na plochu“ odstránené – Guguboo bude natívna mobilná appka z obchodu (Samuel 16. 10.).
     return list;
   }
 
