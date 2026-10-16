@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.11.2";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.12.0";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.11.5">
+  <link rel="stylesheet" href="v2.css?v=2.12.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -3273,9 +3273,24 @@
                 <label class="welcome-friendly-field">Meno alebo pracovné meno
                   <input id="welcomeName" autocomplete="off" placeholder="Ema, Oliver alebo drobec">
                 </label>
-                <label class="expecting-field welcome-friendly-field">Približný termín pôrodu
+                <!-- Kalkulačka termínu (ACOG/NHS): termín od lekára, alebo výpočet z menštruácie (+280 dní, upravené o dĺžku cyklu) či počatia (+266 dní). -->
+                <label class="expecting-field welcome-friendly-field">Ako poznáš termín pôrodu?
+                  <select id="welcomeDueMethod">
+                    <option value="due">Termín mi povedal lekár</option>
+                    <option value="lmp">Vypočítať z menštruácie</option>
+                    <option value="conception">Vypočítať z dátumu počatia</option>
+                  </select>
+                </label>
+                <label class="expecting-field welcome-friendly-field" id="welcomeDueWrap">Približný termín pôrodu
                   <input id="welcomeDue" type="date">
                 </label>
+                <label class="expecting-field welcome-friendly-field hidden" id="welcomeDueBasisWrap"><span id="welcomeDueBasisLabel">Prvý deň poslednej menštruácie</span>
+                  <input id="welcomeDueBasis" type="date">
+                </label>
+                <label class="expecting-field welcome-friendly-field hidden" id="welcomeCycleWrap">Dĺžka cyklu
+                  <select id="welcomeCycle"></select>
+                </label>
+                <p class="expecting-field v2-due-result hidden" id="welcomeDueResult" role="status" aria-live="polite"></p>
                 <label class="born-field welcome-friendly-field">Dátum narodenia
                   <input id="welcomeBirth" type="date">
                 </label>
@@ -8145,6 +8160,28 @@ Otázky:
       }
     }
 
+    // Kalkulačka termínu pôrodu v úvode. Výsledok sa zapíše do #welcomeDue, takže zvyšok úvodu funguje rovnako.
+    // Zdroj: ACOG „Methods for Estimating the Due Date“ (280 dní od 1. dňa poslednej menštruácie pri 28-dňovom
+    // cykle, ovulácia 14. deň → 266 dní od počatia); NHS kalkulačka upravuje výpočet podľa dĺžky cyklu.
+    function updateDueCalculator() {
+      const method = $("welcomeDueMethod")?.value || "due";
+      const basis = $("welcomeDueBasis")?.value || "";
+      $("welcomeDueWrap")?.classList.toggle("hidden", method !== "due");
+      $("welcomeDueBasisWrap")?.classList.toggle("hidden", method === "due");
+      $("welcomeCycleWrap")?.classList.toggle("hidden", method !== "lmp");
+      if ($("welcomeDueBasisLabel")) $("welcomeDueBasisLabel").textContent = method === "conception" ? "Dátum počatia" : "Prvý deň poslednej menštruácie";
+      const result = $("welcomeDueResult");
+      if (method === "due") { result?.classList.add("hidden"); return; }
+      if (!basis) { result.textContent = "Zadaj dátum a termín vypočítame."; result.classList.remove("hidden"); return; }
+      const days = method === "lmp" ? 280 + (Number($("welcomeCycle")?.value || 28) - 28) : 266;
+      const due = new Date(basis + "T12:00:00");
+      due.setDate(due.getDate() + days);
+      const dueKey = new Date(due.getTime() - due.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+      $("welcomeDue").value = dueKey;
+      result.innerHTML = `Termín pôrodu vychádza na <b>${due.toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })}</b>. Je to odhad – presnejší termín ti povie lekár na prvom ultrazvuku.`;
+      result.classList.remove("hidden");
+    }
+
     function updateWelcomeFruitAvatar() {
       const card = $("welcomeFruitAvatarChoice");
       if (!card) return;
@@ -8404,6 +8441,17 @@ Otázky:
         $("welcomeManualCountryBtn").setAttribute("aria-expanded", "false");
       }
     });
+    if ($("welcomeCycle")) {
+      $("welcomeCycle").innerHTML = Array.from({ length: 15 }, (_, i) => 21 + i).map(days => `<option value="${days}"${days === 28 ? " selected" : ""}>${days} dní${days === 28 ? " (najčastejšie)" : ""}</option>`).join("");
+    }
+    ["welcomeDueMethod", "welcomeDueBasis", "welcomeCycle"].forEach(id => {
+      ["input", "change"].forEach(type => $(id)?.addEventListener(type, () => {
+        updateDueCalculator();
+        updateWelcomeStory();
+        saveWelcomeDraft();
+      }));
+    });
+    if ($("welcomeDueBasis")) $("welcomeDueBasis").max = dateInputToday();
     ["welcomeUserName", "welcomeUserBirth", "welcomeName", "welcomeDue", "welcomeBirth", "welcomePartnerEmail"].forEach(id => {
       if (!$(id)) return;
       $(id).addEventListener("input", () => {
