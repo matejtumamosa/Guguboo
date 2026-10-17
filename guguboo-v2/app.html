@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.22.0";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.22.2";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.21.1">
+  <link rel="stylesheet" href="v2.css?v=2.22.2">
 </head>
 <body>
   <div class="app" id="app">
@@ -6062,6 +6062,7 @@
 
     function scheduleBirthCardReminders() {
       state.reminders = state.reminders.filter(reminder => reminder.key !== "birth-card-prep");
+      return; // V2: kartička narodenia je jednorazová úloha v kruhu (Organizácia → Rodina), nie pripomienky v Kalendári.
       if (state.profile.status !== "expecting" || !state.profile.due || state.birthCard.complete) return;
       const due = new Date(state.profile.due + "T10:00:00");
       const now = new Date();
@@ -9735,7 +9736,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.11"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.22.1"></script>
+  <script src="v5-mobile.js?v=2.22.2"></script>
   <script src="guguchat.js?v=2.18.0"></script>
   <script src="v2-birth.js?v=2.2.0"></script>
   <script src="v2-tour.js?v=2.22.0"></script>

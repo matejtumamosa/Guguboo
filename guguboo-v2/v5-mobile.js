@@ -1139,8 +1139,15 @@
     const openCalendar = calendarItems().filter(item => !item.completedAt && !item.virtual);
     const dueToday = openCalendar.filter(item => calendarDayKey(item.date) <= today).length;
     const nextOpen = openCalendar.find(item => new Date(item.date).getTime() >= Date.now());
+    // Ťuknutie na najbližšiu vec otvorí priamo ju (úloha z úradov, kontrola v Knižke…), nie celý Kalendár.
+    const nextAdminId = !dueToday && nextOpen ? calendarAdminId(nextOpen) : "";
+    const nextTarget = dueToday || !nextOpen ? "data-v5-feature='calendar'"
+      : nextAdminId ? "data-v2-admin-open='" + escapeHtml(nextAdminId) + "'"
+      : nextOpen.source === "prenatal-visit" ? "data-v5-feature='pregnancy'"
+      : nextOpen.source === "child-check" ? "data-v5-feature='childBook'"
+      : "data-v5-feature='calendar'";
     const calendarCard = [
-      "<button class='v5-row-card", dueToday ? " v2-cal-home-today" : "", "' type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"),
+      "<button class='v5-row-card", dueToday ? " v2-cal-home-today" : "", "' type='button' ", nextTarget, "><span class='v5-icon'>", icon("calendar"),
       "</span><div><strong>", dueToday ? "Dnes máš v kalendári " + dueToday + (dueToday === 1 ? " vec" : dueToday < 5 ? " veci" : " vecí") : nextOpen ? escapeHtml(nextOpen.title) : "Kalendár",
       "</strong><span>", dueToday ? "Kalendár · pozrieť a odškrtnúť" : nextOpen ? "Kalendár · " + escapeHtml(calendarHasTime(nextOpen.date) ? new Date(nextOpen.date).toLocaleString("sk-SK", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : new Date(nextOpen.date + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long" })) : "Všetky termíny a pripomienky na jednom mieste",
       "</span></div><span class='v5-row-arrow'>›</span></button>"
@@ -1348,13 +1355,20 @@
     byId("v5OMenuTitle").textContent = section.label;
     byId("v5OMenuSubtitle").textContent = progress.done + " z " + progress.total + " hotové";
     byId("v5OMenuBack").hidden = false;
+    // Všetky otvorené úlohy sú vidieť (Samuel 17. 10.: „vidím iba jednu, nedá sa vybrať“). Rozbalená je
+    // vybraná úloha – predvolene prvá otvorená; ostatné sú riadky, ktoré sa ťuknutím rozbalia.
+    const openTasks = section.tasks.filter(task => !state.checks[task[0]]);
+    const focusId = openTasks.some(task => task[0] === state.v5.orgFocus?.[section.id]) ? state.v5.orgFocus[section.id] : nextTask?.[0];
+    const focusTask = openTasks.find(task => task[0] === focusId) || nextTask;
     byId("v5OMenuBody").innerHTML = nextTask ? [
       "<div class='v5-org-progress'><span style='--progress:", progress.percentage, "%'></span></div>",
-      "<div class='v5-org-next-card'><small>Ďalšia úloha</small><span class='v5-icon'>", icon(nextTask[2]), "</span><h3>", escapeHtml(nextTask[1]), "</h3>",
-      organizationTaskWhy(nextTask) ? "<p class='v5-org-next-why'>" + escapeHtml(organizationTaskWhy(nextTask)) + "</p>" : "",
-      organizationTaskAdminLinks(nextTask),
-      organizationTaskButtons(nextTask),
-      "</div>",
+      openTasks.map(task => task[0] === focusTask[0] ? [
+        "<div class='v5-org-next-card'><small>", task === nextTask ? "Ďalšia úloha" : "Vybraná úloha", "</small><span class='v5-icon'>", icon(task[2]), "</span><h3>", escapeHtml(task[1]), "</h3>",
+        organizationTaskWhy(task) ? "<p class='v5-org-next-why'>" + escapeHtml(organizationTaskWhy(task)) + "</p>" : "",
+        organizationTaskAdminLinks(task),
+        organizationTaskButtons(task),
+        "</div>"
+      ].join("") : "<button type='button' class='v2-org-row' data-v2-org-focus='" + escapeHtml(task[0]) + "'><span class='v5-icon'>" + icon(task[2]) + "</span><strong>" + escapeHtml(task[1]) + "</strong><b aria-hidden='true'>›</b></button>").join(""),
       completed.length ? "<details class='v5-org-completed'><summary>Hotové · " + completed.length + "</summary>" + completed.map(task => "<div><span>✓</span>" + escapeHtml(task[1]) + "</div>").join("") + "</details>" : ""
     ].join("") : "<div class='v5-o-modal-confirm' data-v5-org-done><span>✓</span><h3>Táto časť je hotová</h3><p>Môžeš pokračovať v ďalšom segmente kruhu.</p><button class='v5-primary' type='button' data-v5-o-back>Späť ku kruhu</button><button class='v5-secondary' type='button' data-v5-org-list>Zobraziť položky</button></div>";
   }
@@ -1652,7 +1666,8 @@
     let changed = false;
     (state.reminders ||= []).forEach(item => { if (!item.id) { item.id = createId(); changed = true; } });
     if (changed) persist();
-    const items = state.reminders.filter(item => item.date && Number.isFinite(new Date(item.date).getTime()));
+    // Staré V1 pripomienky kartičky narodenia sa nezobrazujú (kartička je úloha v kruhu).
+    const items = state.reminders.filter(item => item.date && item.key !== "birth-card-prep" && Number.isFinite(new Date(item.date).getTime()));
     if (state.profile.status === "expecting" && state.profile.due) {
       items.push({ id: "due-date", title: "Termín pôrodu", date: state.profile.due, type: "Termín pôrodu", virtual: true });
     }
@@ -4050,6 +4065,13 @@
     const summaryDay = event.target.closest("[data-v2-summary-day]");
     if (summaryDay) {
       byId("v5OMenuBody").innerHTML = daySummaryHtml(Math.max(0, Math.min(SUMMARY_DAYS_BACK, Number(summaryDay.dataset.v2SummaryDay) || 0)));
+      return;
+    }
+    const orgFocus = event.target.closest("[data-v2-org-focus]");
+    if (orgFocus) {
+      (state.v5.orgFocus ||= {})[state.v5.organizationSection] = orgFocus.dataset.v2OrgFocus;
+      persist();
+      renderOrganizationMenu(state.v5.organizationSection);
       return;
     }
     const organizationAction = event.target.closest("[data-v5-org-action]");
