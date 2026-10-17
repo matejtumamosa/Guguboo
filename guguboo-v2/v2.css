@@ -1245,3 +1245,20 @@ body:not(.night) .v5-universal-window-head {
   border-bottom: 0;
 }
 #welcomeCard .v5-glance dt:empty { display: none; }
+
+/* 2.21.0: Prehliadka – „Vyskúšať“ a „Pokračovať v prehliadke“ */
+.v2-tour-try { width: 100%; min-height: 44px; margin: 4px 0 10px; border: 1px dashed rgba(117, 96, 181, .35); border-radius: 14px; background: rgba(236, 230, 255, .55); color: #4a3c8c; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.v2-tour-try[hidden] { display: none; }
+.v2-tour-resume { position: fixed; left: 50%; bottom: calc(108px + env(safe-area-inset-bottom)); z-index: 90; display: none; align-items: center; gap: 4px; padding: 5px; transform: translateX(-50%); background: rgba(255, 255, 255, .9); border: 1px solid rgba(117, 96, 181, .18); border-radius: 999px; box-shadow: 0 10px 28px rgba(76, 61, 103, .16); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.v2-tour-resume.open { display: flex; }
+.v2-tour-resume [data-v2-tour-resume] { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: linear-gradient(135deg, #ece6ff, #fbeef0); color: #4a3c8c; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.v2-tour-resume-close { width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; color: #777184; font-size: 18px; cursor: pointer; }
+
+/* 2.21.0: Zásuvka – názvy celé (2 riadky), špendlík v pravom hornom rohu, neprekrýva text */
+#v5Drawer .v5-drawer-pin { top: 8px; bottom: auto; right: 8px; }
+#v5Drawer .v5-drawer-app strong,
+#v5Drawer .v5-drawer-app-wrap.is-priority .v5-drawer-app strong {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; white-space: normal; text-overflow: clip;
+  padding: 0 8px; text-align: center; font-size: 12.5px; font-weight: 700; line-height: 1.22;
+}

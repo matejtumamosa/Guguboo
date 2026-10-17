@@ -5070,7 +5070,7 @@
   }, 1000);
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
-    openFeature, routeTo, openHome, openQuickRecord, openChecklistCategory, openUrgentModal,
+    openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
     renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features
   };
   renderDrawer();
