@@ -1,7 +1,7 @@
 /*
  * GUGUBOO V2 – Kartička „Oznámiť tehotenstvo“ (Samuel 16. 10. 2026). Dvojička kartičky narodenia:
- * pred pôrodom je v zásuvke „Oznámiť tehotenstvo“, po pôrode na tom istom mieste „Kartička narodenia“.
- * Fotka: ultrazvuk (s orezaním údajov o pacientke), bruško/pár, alebo bez fotky (ovocie podľa týždňa).
+ * obe sú jednorazové úlohy v kruhu (Príprava → Vybaviť, Organizácia → Rodina) a po vytvorení sa samy odfajknú.
+ * Fotka: ultrazvuk (s orezaním údajov o pacientke), bruško/pár, alebo bez fotky (kresba bábätkovských nôžok).
  * Termín len ako mesiac a rok (súkromie). Fotka sa NEUKLADÁ – je len v pamäti, kým je okno otvorené.
  * Zdieľanie cez systémové menu telefónu; appka nič neposiela sama.
  */
@@ -74,6 +74,37 @@
     ctx.arcTo(x, y + h, x, y, r);
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
+  }
+
+  // Dve malé nôžky v kruhu: chodidlo (zaoblený tvar) + 5 prštekov, ľavá trochu nižšie.
+  function drawFeet(ctx, cx, cy, r, color) {
+    const foot = (x, y, angle, mirror) => {
+      const s = r / 170;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.scale(mirror ? -s : s, s);
+      ctx.fillStyle = color;
+      // chodidlo: širšie vpredu, užšia päta
+      ctx.beginPath();
+      ctx.moveTo(0, -52);
+      ctx.bezierCurveTo(30, -54, 40, -20, 34, 10);
+      ctx.bezierCurveTo(30, 34, 26, 58, 6, 66);
+      ctx.bezierCurveTo(-14, 72, -26, 56, -24, 34);
+      ctx.bezierCurveTo(-22, 14, -36, -6, -32, -28);
+      ctx.bezierCurveTo(-28, -46, -16, -52, 0, -52);
+      ctx.fill();
+      // prštek od palca po malíček
+      [[-20, -72, 13], [2, -80, 10.5], [20, -76, 9], [33, -66, 7.5], [41, -52, 6.5]].forEach(([tx, ty, tr]) => {
+        ctx.beginPath(); ctx.arc(tx, ty, tr, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.restore();
+    };
+    ctx.save();
+    ctx.globalAlpha = 0.82;
+    foot(cx - r * 0.24, cy + r * 0.1, -0.18, true);
+    foot(cx + r * 0.24, cy - r * 0.08, 0.18, false);
+    ctx.restore();
   }
 
   // Nakreslí kartičku. Rovnaká funkcia pre náhľad aj zdieľaný obrázok.
@@ -161,7 +192,6 @@
       ctx.drawImage(photo, (sw - dw) / 2, top + (sh - dh) / 2, dw, dh, boxX, y, art.w, art.h);
       ctx.restore();
     } else {
-      const size = window.GugubooV2?.babySize?.(Math.max(4, currentWeek() || 12));
       const r = art.w / 2;
       const cx = W / 2;
       const cy = y + r;
@@ -169,10 +199,9 @@
       ctx.shadowColor = "rgba(60, 40, 120, .16)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
       ctx.fillStyle = t.frame; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.font = Math.round(r * 0.95) + "px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
-      ctx.fillText(size?.emoji || "🤍", cx, cy + 6);
-      ctx.textBaseline = "alphabetic";
+      // Bábätkovské nôžky (Samuel 17. 10.: namiesto ovocia pekný symbol bábätka) – kresba, nie emoji,
+      // aby vyzerala rovnako na každom telefóne. Ladí s „Krok za krokom – nôžka za nôžkou“.
+      drawFeet(ctx, cx, cy, r, t.accent);
     }
     y += art.h + gapArt;
 

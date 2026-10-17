@@ -272,7 +272,9 @@
       ["v5-health-pediatrician", "Vybrať pediatra", "health", "", null, ["sk.process.vyber_pediatra"]],
       ["v5-doc-id", "Skontrolovať doklady rodiča", "book", "Over si, že máš platné doklady, ktoré budeš potrebovať v pôrodnici a na úradoch."],
       ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu", "contacts", "", null, ["sk.process.zdravotne_poistenie_novorodenca"]],
-      ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov", "family", "Dohodni si vopred, kto ti pomôže s nákupom, varením alebo domácnosťou."]
+      ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov", "family", "Dohodni si vopred, kto ti pomôže s nákupom, varením alebo domácnosťou."],
+      // Robí sa raz – odfajkne sa samo po zdieľaní kartičky (state.v5.announceDone).
+      ["v5-prenatal-announce", "Oznámiť tehotenstvo blízkym", "cards", "Kartička s ultrazvukom alebo bez fotky, ktorú pošleš, komu chceš. Kedy, je len na vás.", { feature: "announce", label: "Vytvoriť kartičku" }]
     ] }
   ];
 
@@ -293,7 +295,9 @@
       ["v5-post-night-plan", "Dohodnúť nočné striedanie", "moon", "Keď sa v noci striedate, obaja si aspoň trochu oddýchnete."],
       ["v5-post-shopping", "Spoločný nákupný zoznam", "shopping", "Jeden zoznam pre teba aj partnera, aby ste vedeli, čo už je kúpené, a nekupovali to isté dvakrát.", { feature: "shopping", label: "Vytvoriť zoznam", done: true, invite: true }],
       ["v5-post-contacts", "Uložiť dôležité kontakty", "contacts", "Pediater, pôrodnica a blízki na jednom mieste, keď ich budeš potrebovať.", { feature: "contacts", label: "Otvoriť kontakty" }],
-      ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar", "Termín kontroly v kalendári – nič netreba držať v hlave.", { feature: "calendar", label: "Zapísať do kalendára" }]
+      ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar", "Termín kontroly v kalendári – nič netreba držať v hlave.", { feature: "calendar", label: "Zapísať do kalendára" }],
+      // Robí sa raz – odfajkne sa samo, keď je kartička narodenia hotová (state.birthCard.complete).
+      ["v5-post-birth-card", "Oznámiť narodenie – kartička", "cards", "Kartička s menom, dátumom a mierami, ktorú pošleš rodine a priateľom.", { feature: "cards", label: "Vytvoriť kartičku narodenia" }]
     ] }
   ];
 
@@ -305,12 +309,12 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "mama", "childBook", "privateSpace", "calendar", "cards", "care", "activities", "teeth", "family", "shopping",
+    "mama", "childBook", "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "calendar", "announce", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -935,6 +939,17 @@
   }
 
   function organizationSections() {
+    // Kartičky sa robia raz: hotová kartička = splnená úloha v kruhu.
+    state.checks ||= {};
+    if (state.v5?.announceDone) state.checks["v5-prenatal-announce"] = true;
+    if (state.birthCard?.complete) state.checks["v5-post-birth-card"] = true;
+    // Od 12. týždňa (keď väčšina párov tehotenstvo oznamuje) je oznámenie vo Vybaviť ako ďalšia úloha.
+    const admin = prenatalOrganizationSections.find(section => section.id === "admin");
+    const announceIndex = admin.tasks.findIndex(task => task[0] === "v5-prenatal-announce");
+    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const wantFirst = week >= 12 && !state.checks["v5-prenatal-announce"];
+    if (wantFirst && announceIndex > 0) admin.tasks.unshift(admin.tasks.splice(announceIndex, 1)[0]);
+    if (!wantFirst && announceIndex === 0) admin.tasks.push(admin.tasks.shift());
     return state.profile.status === "expecting" ? prenatalOrganizationSections : postpartumOrganizationSections;
   }
 
@@ -1133,7 +1148,7 @@
     // V2: namiesto jednej pevnej karty „Dnes“ ukáže Journey Engine TERAZ / ČOSKORO (max 3 + 2).
     const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
-      window.GugubooAnnounce?.homeCardHtml?.() || "",
+      // Oznámenie tehotenstva je úloha v kruhu Príprava → Vybaviť (bez ďalšej karty na domove).
       calendarCard,
       journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       daySummaryCard(),
@@ -2608,7 +2623,7 @@
         "<label>Alergie a dôležité poznámky<textarea id='v5ChildNotes'>", escapeHtml(state.profile.notes || ""), "</textarea></label>",
         "</div></details>",
         "</div><div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-child-profile'>Uložiť profil dieťaťa</button>",
-        state.profile.status === "expecting" ? "" : "<button class='v5-secondary' type='button' data-v5-action='open-birth-card'>Kartička narodenia</button>",
+        // Kartička narodenia je úloha v kruhu Organizácia → Rodina (jedno miesto, robí sa raz).
         "<button class='v5-secondary' type='button' data-v5-action='open-original-child-profile'>Rozšírené pôrodné údaje</button></div>"
       ].join("");
     } else if (tab === "family") {

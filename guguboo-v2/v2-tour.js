@@ -108,7 +108,9 @@
         scroll: true,
         target: () => home?.querySelector(".v5-o-ring-wrap") || home?.querySelector(".v5-o-card"),
         title: "Kruh",
-        text: "Ťukni na farebnú časť kruhu a uvidíš jej kroky. Kruh sa vypĺňa s každým hotovým krokom. Tlačidlo v strede ti ukáže, čo urobiť ďalej."
+        text: expecting
+          ? "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako oznámiť tehotenstvo blízkym. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
+          : "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako kartičku narodenia. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
       },
       {
         scroll: true,
@@ -127,8 +129,8 @@
         target: () => byId("v5BottomBar"),
         title: "Všetky aplikácie",
         text: expecting
-          ? "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Kalendár, Denník, Oznámiť tehotenstvo, Nákup, Kontakty… Obľúbené si vymeníš v zásuvke."
-          : "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Mama, Zdravotná knižka, Kartička narodenia, Denník… Obľúbené si vymeníš v zásuvke.",
+          ? "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Kalendár, Denník, Nákup, Kontakty… Obľúbené si vymeníš v zásuvke."
+          : "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Mama, Zdravotná knižka, Denník, Nákup… Obľúbené si vymeníš v zásuvke.",
         try: { label: "Otvoriť zásuvku", run: () => V5()?.openDrawer?.() }
       }
     ];
