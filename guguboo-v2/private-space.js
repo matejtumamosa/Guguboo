@@ -434,6 +434,11 @@
     }
     try {
       await persistPrivateData();
+      // Časová os spomienok: uloží sa len dátum prvého listu bábätku, nikdy jeho obsah.
+      if (selectedType === LETTER && typeof state !== "undefined") {
+        state.v5 ||= {};
+        (state.v5.momentMarks ||= {}).firstLetter ||= now;
+      }
       markDiaryToday();
       clearEditor();
       renderUnlocked();

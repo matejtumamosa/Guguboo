@@ -314,7 +314,7 @@
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "memories", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -1174,6 +1174,8 @@
             : "<button class='v5-glance v5-glance-action v5-glance-age' type='button' data-v5-feature='childBook' aria-label='Otvoriť Zdravotnú knižku'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>").join(""),
       "</div>",
       "</section>",
+      // Citová karta „X. deň spolu“ hneď pod hlavičkou – je to hlavný citový údaj (Samuel 17. 10.).
+      window.GugubooMoments?.homeCardHtml?.() || "",
       renderAdaptiveOHome(),
       homeTail
     ].join("");
@@ -2803,9 +2805,14 @@
     if (section === "home") {
       target.innerHTML = flowHead("Naše momenty", "Malé okamihy, jeden príbeh", "Bez albumov a triedenia. Guguboo z uložených chvíľ pripraví spoločný výstup.", 0, 1) +
         "<div class='v5-moments-hub'>" +
+        "<button type='button' data-v5-moments-section='timeline'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Naša časová os</strong><small>" + ((n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok"))((window.GugubooMoments?.collect?.() || []).length)) + " · zapisujú sa samy</small></span><b aria-hidden='true'>›</b></button>" +
         "<button type='button' data-v5-moments-section='today'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Dnešný malý moment</strong><small>Jedna fotografia alebo krátka veta</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='firsts'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Prvé razy</strong><small>" + state.v5.firstMoments.length + " zachytených míľnikov</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='story'><span class='v5-icon'>" + icon("baby") + "</span><span><strong>Náš príbeh</strong><small>100 dní spolu a prvý rok</small></span><b>›</b></button></div>";
+      return;
+    }
+    if (section === "timeline") {
+      target.innerHTML = window.GugubooMoments?.timelineHtml?.() || "<div class='v5-empty'>Časová os sa načítava…</div>";
       return;
     }
     if (section === "today") {
@@ -5108,7 +5115,7 @@
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
     openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
-    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features
+    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100()
   };
   renderDrawer();
   renderAll();

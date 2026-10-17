@@ -298,6 +298,25 @@
     return new Promise(resolve => canvas.toBlob(resolve, "image/png", 1));
   }
 
+  // Kartička hotová: úloha v kruhu sa odfajkne a do časovej osi sa uloží spomienka s malým náhľadom.
+  function markDone() {
+    state.v5.announceDone = true;
+    const m = (state.v5.momentMarks ||= {});
+    if (!m.announced) {
+      m.announced = new Date().toISOString();
+      try {
+        const big = document.createElement("canvas");
+        draw(big);
+        const small = document.createElement("canvas");
+        small.width = 360;
+        small.height = Math.round(360 * big.height / big.width);
+        small.getContext("2d").drawImage(big, 0, 0, small.width, small.height);
+        m.announcedImg = small.toDataURL("image/jpeg", 0.8);
+      } catch (_) {}
+    }
+    V5.persist();
+  }
+
   async function share() {
     if (busy) return;
     busy = true;
@@ -305,7 +324,7 @@
       const file = await blob().then(data => data ? new File([data], "guguboo-oznamenie.png", { type: "image/png" }) : null);
       if (file && navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
         await navigator.share({ files: [file], title: settings().headline });
-        state.v5.announceDone = true; V5.persist();
+        markDone();
         V5.announce("Kartička je pripravená na zdieľanie.");
         return;
       }
@@ -326,7 +345,7 @@
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    state.v5.announceDone = true; V5.persist();
+    markDone();
     V5.announce("Kartička sa ukladá.");
   }
 
