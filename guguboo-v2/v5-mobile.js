@@ -110,6 +110,7 @@
     babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
     mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie a otázky pre pediatra", icon: "book", tier: "free", view: "v5ChildBook" },
+    announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych – s ultrazvukom alebo bez fotky", icon: "cards", tier: "free", view: "v5Announce" },
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady", description: "Lokálne kroky a podpora", icon: "book", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
@@ -304,12 +305,12 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "mama", "childBook", "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
+    "mama", "childBook", "privateSpace", "calendar", "cards", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "calendar", "announce", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -465,6 +466,7 @@
     "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
     "<section class='view' id='v5Mama'><div class='v5-flow' id='v5MamaContent'></div></section>",
     "<section class='view' id='v5ChildBook'><div class='v5-flow' id='v5ChildBookContent'></div></section>",
+    "<section class='view' id='v5Announce'><div class='v5-flow' id='v5AnnounceContent'></div></section>",
     "<section class='view' id='v5Calendar'><div class='v5-flow' id='v5CalendarContent'></div></section>",
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
@@ -536,6 +538,7 @@
     v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
     v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
     v5ChildBook: ["Zdravotná knižka", "Prehliadky, rast, očkovanie a otázky pre pediatra"],
+    v5Announce: ["Oznámiť tehotenstvo", "Kartička pre blízkych"],
     v5Calendar: ["Kalendár", "Všetky termíny a pripomienky"],
     v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
     v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
@@ -1130,6 +1133,7 @@
     // V2: namiesto jednej pevnej karty „Dnes“ ukáže Journey Engine TERAZ / ČOSKORO (max 3 + 2).
     const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
+      window.GugubooAnnounce?.homeCardHtml?.() || "",
       calendarCard,
       journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       daySummaryCard(),
@@ -1966,6 +1970,11 @@
     if (feature.view === "v5Calendar") {
       routeTo("v5Calendar");
       renderCalendar();
+      return;
+    }
+    if (feature.view === "v5Announce") {
+      routeTo("v5Announce");
+      window.GugubooAnnounce?.render();
       return;
     }
     if (feature.view === "v5ChildBook") {
