@@ -3443,7 +3443,8 @@
     if (section === "home") {
       const daysLeft = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
       const trimester = !week ? "" : week < 13 ? "1." : week < 28 ? "2." : "3.";
-      const next = calendarItems().find(item => !item.completedAt && !item.virtual && new Date(item.date).getTime() >= Date.now());
+      // Len zdravotné termíny (kontroly, lekár) – nie úlohy ako kartička narodenia.
+      const next = calendarItems().find(item => !item.completedAt && !item.virtual && new Date(item.date).getTime() >= Date.now() && (item.type === "Zdravie" || item.source === "prenatal-visit" || /kontrol|lekár|gynek|ultrazvuk|poradň/i.test(item.title || "")));
       const lastVisit = visits.slice().sort((a, b) => b.date.localeCompare(a.date))[0];
       target.innerHTML = [
         "<section class='v2-book-hero'>",
