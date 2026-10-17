@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.20.1";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.20.3";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=7.4">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.20.0">
+  <link rel="stylesheet" href="v2.css?v=2.20.3">
 </head>
 <body>
   <div class="app" id="app">
@@ -8121,13 +8121,13 @@ Otázky:
           : dueDays === 0
             ? "Termín je dnes. Všetko dôležité máš na jednom mieste."
             : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň ti ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
-        // Rovnaké okienka ako na domove: Termín pôrodu · Do termínu · Tehotenská knižka (týždeň je v krúžku).
-        setText("welcomeFinishGlanceLabel1", "Termín pôrodu");
-        setText("welcomeFinishGlanceValue1", dateLabel(due, { day: "numeric", month: "long" }));
-        setText("welcomeFinishGlanceLabel2", "Do termínu");
-        setText("welcomeFinishGlanceValue2", dueDays === null || dueDays < 0 ? "—" : dueDays === 0 ? "Dnes" : slovakDays(dueDays));
-        setText("welcomeFinishGlanceLabel3", "Tehotenská knižka");
-        setText("welcomeFinishGlanceValue3", "Otvoriť");
+        // Rovnaké okienka ako na domove: len názvy Tehotenská knižka · Mama · Dieťa (Samuel 16. 10.).
+        setText("welcomeFinishGlanceLabel1", "");
+        setText("welcomeFinishGlanceValue1", "Tehotenská knižka");
+        setText("welcomeFinishGlanceLabel2", "");
+        setText("welcomeFinishGlanceValue2", "Mama");
+        setText("welcomeFinishGlanceLabel3", "");
+        setText("welcomeFinishGlanceValue3", "Dieťa");
         setText("welcomeFinishStepTitle", "Priprav dnes jednu vec do pôrodnice.");
         setText("welcomeFinishStepHint", "Checklist Taška do pôrodnice nájdeš po otvorení tvojho Guguboo.");
       } else {

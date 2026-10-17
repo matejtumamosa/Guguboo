@@ -1224,3 +1224,24 @@ body:not(.night) .v5-secondary {
 body:not(.night) .v2-mama-water > [data-v5-water-add] { color: #5f4fb1; background: linear-gradient(135deg, #ece6ff, #fbeef0); border: 1px solid rgba(117, 96, 181, .18); box-shadow: 0 6px 16px rgba(76, 61, 103, .08); }
 body:not(.night) .v2-ann-chip.is-active { color: #4a3c8c; background: #ece6ff; border-color: rgba(117, 96, 181, .35); }
 body:not(.night) .v2-photo-pick { color: #5f4fb1; }
+
+/* 2.20.2: Bez bielych obdĺžnikov za tlačidlami a pod nadpisom okna (Samuel 17. 10.) – lepkavé pásy sú priesvitné
+   a rozmazané, takže splývajú s farebným pozadím karty/okna. */
+body:not(.night) .welcome-story-actions {
+  background: transparent !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body:not(.night) .welcome-story-actions .ghost {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+body:not(.night) .v5-universal-window-head {
+  background: rgba(255, 251, 250, .46) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+  box-shadow: none;
+  border-bottom: 0;
+}
+#welcomeCard .v5-glance dt:empty { display: none; }
