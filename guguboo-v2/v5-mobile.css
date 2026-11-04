@@ -3890,8 +3890,40 @@ body.intro-only #v5AudioDock {
   box-shadow: 0 15px 40px rgba(72, 55, 100, .06);
 }
 
-.welcome-baby-card label:first-child {
+.welcome-baby-card label:first-child,
+.welcome-name-block {
   grid-column: 1 / -1;
+}
+
+.welcome-name-block {
+  display: grid;
+  gap: 10px;
+}
+
+.welcome-name-undecided {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  color: #514a5d;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+#welcomeCard .welcome-name-undecided input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: #8171ce;
+  cursor: pointer;
+}
+
+.welcome-name-undecided-note {
+  margin: 0;
+  color: #81798a;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .welcome-fruit-avatar-card {
@@ -4085,7 +4117,8 @@ body.intro-only #v5AudioDock {
     gap: 22px;
   }
 
-  .welcome-baby-card label:first-child {
+  .welcome-baby-card label:first-child,
+  .welcome-name-block {
     grid-column: auto;
   }
 

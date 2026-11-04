@@ -27,7 +27,7 @@
   ].join(""));
 
   function formHtml() {
-    const name = state.profile.name && state.profile.name !== "bábätko" ? state.profile.name : "";
+    const name = state.profile.name && !/^bábätko$/i.test(state.profile.name) ? state.profile.name : "";
     return [
       "<header class='v2-birth-head'><span class='v2-birth-heart' aria-hidden='true'>♡</span>",
       "<h2 id='v2BirthTitle'>Bábätko je na svete</h2>",

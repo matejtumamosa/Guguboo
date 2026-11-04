@@ -3096,8 +3096,8 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.27.0";</script>
-  <link rel="stylesheet" href="v5-mobile.css?v=7.4">
+  <script>window.GUGUBOO_V2_VERSION = "2.27.1";</script>
+  <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
@@ -3269,9 +3269,14 @@
               <h2 id="welcomeBabyStepTitle">Koho spolu privítame?</h2>
               <p class="welcome-story-lead">Teraz stačia dve drobnosti. Zvyšok počká v profile.</p>
               <div class="welcome-baby-card">
-                <label class="welcome-friendly-field">Meno alebo pracovné meno
-                  <input id="welcomeName" autocomplete="off" placeholder="Ema, Oliver alebo drobec">
-                </label>
+                <!-- Meno je povinné, ak ho rodičia ešte nemajú, zaškrtnú box a uloží sa „Bábätko“ (meno doplnia pri pôrode alebo v profile). -->
+                <div class="welcome-name-block">
+                  <label class="welcome-friendly-field" id="welcomeNameWrap">Meno bábätka
+                    <input id="welcomeName" autocomplete="off" placeholder="Ema, Oliver…">
+                  </label>
+                  <label class="welcome-name-undecided"><input type="checkbox" id="welcomeNameUndecided"><span>Ešte nemáme vybrané meno</span></label>
+                  <p class="welcome-name-undecided-note hidden" id="welcomeNameUndecidedNote">Zatiaľ budeme hovoriť „Bábätko“. Meno doplníš neskôr v profile.</p>
+                </div>
                 <!-- Kalkulačka termínu (ACOG/NHS): termín od lekára, alebo výpočet z menštruácie (+280 dní, upravené o dĺžku cyklu) či počatia (+266 dní). -->
                 <label class="expecting-field welcome-friendly-field">Ako poznáš termín pôrodu?
                   <select id="welcomeDueMethod">
@@ -8090,7 +8095,7 @@ Otázky:
       if (!$("welcomeFinishAvatar")) return;
       const setText = (id, value) => { if ($(id)) $(id).textContent = value; };
       const expecting = (state.welcomeStatus || "expecting") !== "born";
-      const babyName = $("welcomeName")?.value.trim() || "Bábätko";
+      const babyName = welcomeBabyName() || "Bábätko";
       const dateLabel = (value, options) => value ? new Date(value + "T12:00:00").toLocaleDateString("sk-SK", options) : "—";
       const avatar = $("welcomeFinishAvatar");
       setText("welcomeFinishBabyName", babyName);
@@ -8200,6 +8205,7 @@ Otázky:
         userName: $("welcomeUserName")?.value || "",
         userBirth: $("welcomeUserBirth")?.value || "",
         babyName: $("welcomeName")?.value || "",
+        babyNameUndecided: !!$("welcomeNameUndecided")?.checked,
         due: $("welcomeDue")?.value || "",
         birth: $("welcomeBirth")?.value || "",
         partnerEmail: $("welcomePartnerEmail")?.value || "",
@@ -8227,6 +8233,16 @@ Otázky:
       }
     }
 
+    function welcomeBabyName() {
+      return $("welcomeNameUndecided")?.checked ? "Bábätko" : ($("welcomeName")?.value.trim() || "");
+    }
+
+    function setWelcomeNameUndecided(undecided) {
+      $("welcomeNameUndecided").checked = undecided;
+      $("welcomeNameWrap").classList.toggle("hidden", undecided);
+      $("welcomeNameUndecidedNote").classList.toggle("hidden", !undecided);
+    }
+
     function validEmail(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
     }
@@ -8239,7 +8255,7 @@ Otázky:
       }
       if (step === 4 && !state.welcomeStatus) return "Vyber prosím, v ktorej fáze sa nachádzaš.";
       if (step === 5) {
-        if (!$("welcomeName").value.trim()) return "Doplň prosím meno alebo pracovné meno dieťaťa.";
+        if (!welcomeBabyName()) return "Doplň prosím meno bábätka alebo zaškrtni, že ho ešte nemáte vybrané.";
         if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return "Doplň prosím termín pôrodu.";
         if ((state.welcomeStatus || "expecting") === "expecting" && $("welcomeDue").value < dateInputToday()) return "Termín pôrodu nemôže byť v minulosti.";
         if ((state.welcomeStatus || "expecting") === "born" && !$("welcomeBirth").value) return "Doplň prosím dátum narodenia.";
@@ -8256,7 +8272,7 @@ Otázky:
       if (!$("welcomeUserName").value.trim()) missing.push("tvoje meno");
       if (!$("welcomeUserBirth").value) missing.push("tvoj dátum narodenia");
       if (parentBirthError($("welcomeUserBirth").value)) return parentBirthError($("welcomeUserBirth").value);
-      if (!$("welcomeName").value.trim()) missing.push("meno alebo pracovné meno dieťaťa");
+      if (!welcomeBabyName()) missing.push("meno bábätka");
 
       if (status === "expecting") {
         if (!$("welcomeDue").value) missing.push("termín pôrodu");
@@ -8292,7 +8308,7 @@ Otázky:
         ...state.profile,
         country: $("welcomeCountry") ? $("welcomeCountry").value : getCountry(),
         status,
-        name: $("welcomeName").value.trim(),
+        name: welcomeBabyName(),
         sex: $("welcomeSex").value,
         due: $("welcomeDue").value || state.profile.due || "",
         birth: status === "born" ? $("welcomeBirth").value : "",
@@ -9151,6 +9167,11 @@ Otázky:
       renderTravelHelp();
     }));
     $("welcomeName").addEventListener("blur", () => maybeGuessSex("welcomeName", "welcomeSex"));
+    $("welcomeNameUndecided").addEventListener("change", event => {
+      setWelcomeNameUndecided(event.target.checked);
+      updateWelcomeStory();
+      saveWelcomeDraft();
+    });
     $("babyName").addEventListener("blur", () => maybeGuessSex("babyName", "babySex"));
     $("saveWelcome").addEventListener("click", () => completeWelcome("home"));
     $("saveWelcomeBirthCard")?.addEventListener("click", () => completeWelcome("birthCard"));
@@ -9713,7 +9734,8 @@ Otázky:
     $("welcomePartnerEmail").value = state.welcomeDraft?.partnerEmail || state.partnerInvite.email || "";
     $("welcomePartnerEmailWrap").classList.toggle("hidden", !state.partnerInvite.wanted);
     document.querySelectorAll("[data-partner-choice]").forEach(btn => btn.classList.toggle("active", (btn.dataset.partnerChoice === "yes") === !!state.partnerInvite.wanted));
-    $("welcomeName").value = state.welcomeDraft?.babyName || state.profile.name || "";
+    $("welcomeName").value = state.welcomeDraft?.babyName || (/^bábätko$/i.test(state.profile.name || "") ? "" : state.profile.name || "");
+    setWelcomeNameUndecided(state.welcomeDraft?.babyNameUndecided ?? /^bábätko$/i.test(state.profile.name || ""));
     $("welcomeSex").value = state.profile.sex || "";
     $("welcomeDue").value = state.welcomeDraft?.due || state.profile.due || "";
     $("welcomeBirth").value = state.welcomeDraft?.birth || state.profile.birth || "";
@@ -9738,7 +9760,7 @@ Otázky:
   <script src="journey-engine.js?v=2.3.1"></script>
   <script src="v5-mobile.js?v=2.27.0"></script>
   <script src="guguchat.js?v=2.18.0"></script>
-  <script src="v2-birth.js?v=2.26.0"></script>
+  <script src="v2-birth.js?v=2.27.1"></script>
   <script src="v2-tour.js?v=2.25.0"></script>
   <script src="v2-announce.js?v=2.23.0"></script>
   <script src="v2-moments.js?v=2.27.0"></script>
