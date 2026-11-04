@@ -60,20 +60,28 @@
       {
         top: true,
         target: () => document.querySelector("#v5Header [data-v5-night]")?.parentElement,
-        title: "Menu a nočný režim",
-        text: "☰ Menu – tvoj profil, profil bábätka, rodina a nastavenia.\n🌙 Nočný režim stlmí farby, keď si hore v noci."
+        title: "Menu a Nočný režim",
+        // Názvy a piktogramy v celom sprievodcovi = tie isté ako v appke (ikony z GugubooV5.icon, lišta a týždeň z domova).
+        items: [
+          { icon: "menu", name: "Menu", text: "tvoj profil, profil bábätka, rodina a nastavenia." },
+          { icon: "moon", name: "Nočný režim", text: "stlmí farby, keď si hore v noci." }
+        ]
       },
       expecting ? {
         scroll: true,
         target: () => home?.querySelector(".v2-week-badge"),
-        title: "Krúžok s týždňom",
-        text: "Ukazuje, v ktorom týždni si. Ťukni naň a uvidíš, aké veľké je bábätko a čo sa práve vyvíja.",
-        try: { label: "Vyskúšať", run: () => V5()?.openFeature("babySize") }
+        title: "Týždeň tehotenstva",
+        items: () => [
+          { week: home?.querySelector(".v2-week-badge")?.innerHTML || "", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Ťukni naň a otvorí sa Aké veľké je bábätko – veľkosť a čo sa práve vyvíja." }
+        ],
+        try: { label: "Otvoriť Aké veľké je bábätko", run: () => V5()?.openFeature("babySize") }
       } : {
         scroll: true,
         target: () => home?.querySelector(".v5-home-hero .v5-baby-avatar"),
         title: "Fotka bábätka",
-        text: "Ťukni na krúžok a pridaj fotku bábätka. Uvidíš ju vždy na domove."
+        items: [
+          { icon: "baby", name: "Fotka bábätka", text: "ťukni na tento krúžok a pridaj fotku. Uvidíš ju vždy na domove." }
+        ]
       },
       expecting ? {
         scroll: true,
@@ -90,23 +98,32 @@
         scroll: true,
         target: () => home?.querySelector(".v5-glance-strip"),
         title: "Rýchle záznamy",
-        text: "Spánok, kŕmenie a prebalenie zapíšeš jedným ťuknutím. Výška a váha sa ukladajú do rastu a Zdravotná knižka má prehliadky, očkovanie a prehľad pre pediatra.",
+        items: [
+          { icon: "moon", name: "Spánok", text: "spustíš alebo doplníš jedným ťuknutím." },
+          { icon: "feeding", name: "Kŕmenie", text: "dojčenie, fľaša alebo príkrm." },
+          { icon: "diaper", name: "Prebalenie", text: "kedy dieťa cikalo alebo kakalo." },
+          { icon: "growth", name: "Výška a Váha", text: "ukladajú sa do rastu." },
+          { icon: "book", name: "Zdravotná knižka", text: "prehliadky, očkovanie a prehľad pre pediatra." }
+        ],
         try: { label: "Otvoriť Zdravotnú knižku", run: () => V5()?.openFeature("childBook") }
       },
       {
         scroll: true,
         target: () => home?.querySelector(".v2-ask-card, .v2-days-card"),
-        title: "Vaše spomienky",
-        text: "Guguboo si spomienky zapisuje samo – sono, prvé pohyby, kartičku, prvé razy. Občas sa jemne opýta „Stalo sa už?“ a stačí jedno ťuknutie. Všetko nájdeš v Naše momenty.",
-        try: { label: "Pozrieť spomienky", run: () => document.dispatchEvent(new CustomEvent("v2-open-timeline")) }
+        title: "Naše momenty",
+        items: [
+          { icon: "memory", name: "Naše momenty", text: "spomienky sa zapisujú samy – sono, prvé pohyby, kartička, prvé razy. Občas sa jemne opýtame „Stalo sa už?“ a stačí jedno ťuknutie." }
+        ],
+        try: { label: "Otvoriť Naše momenty", run: () => document.dispatchEvent(new CustomEvent("v2-open-timeline")) }
       },
       {
         scroll: true,
         target: () => home?.querySelector(".v5-circle-mode") || home?.querySelector("[data-v5-circle-mode]")?.parentElement,
         title: expecting ? "Príprava a Pohoda" : "Organizácia a Pohoda",
-        text: expecting
-          ? "Prepínač nad kruhom. Príprava sú kroky pred pôrodom, Pohoda sú malé veci len pre teba – oddych, telo, opora."
-          : "Prepínač nad kruhom. Organizácia sú praktické veci po pôrode, Pohoda sú malé veci len pre teba.",
+        lead: "Prepínač nad kruhom:",
+        items: expecting
+          ? [{ name: "Príprava", text: "kroky pred pôrodom." }, { name: "Pohoda", text: "malé veci len pre teba – oddych, telo, opora." }]
+          : [{ name: "Organizácia", text: "praktické veci po pôrode." }, { name: "Pohoda", text: "malé veci len pre teba." }],
         try: {
           label: "Prepnúť",
           stay: true,
@@ -119,7 +136,7 @@
       {
         scroll: true,
         target: () => home?.querySelector(".v5-o-ring-wrap") || home?.querySelector(".v5-o-card"),
-        title: "Kruh",
+        title: expecting ? "Kruh prípravy a pohody" : "Kruh organizácie a pohody",
         text: expecting
           ? "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako oznámiť tehotenstvo blízkym. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
           : "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako kartičku narodenia. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
@@ -128,22 +145,32 @@
         scroll: true,
         target: () => home?.querySelector("[data-v5-feature='calendar'].v5-row-card"),
         title: "Kalendár",
-        text: "Najbližší termín. Všetky kontroly, prehliadky a pripomienky sú na jednom mieste v Kalendári.",
+        items: [
+          { icon: "calendar", name: "Kalendár", text: "najbližší termín na domove. Všetky kontroly, prehliadky a pripomienky sú na jednom mieste." }
+        ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
       {
         target: () => document.querySelector("#v5BottomBar .v2-chat-shutter"),
         title: "GuguChat",
-        text: "Keď nevieš, čo ďalej, opýtaj sa. Odpovedá z overených zdrojov a ukáže ďalší krok.",
-        try: { label: "Opýtať sa", run: () => document.querySelector("#v5BottomBar .v2-chat-shutter")?.click() }
+        items: [
+          { icon: "chat", name: "GuguChat", text: "keď nevieš, čo ďalej, opýtaj sa. Odpovedá z overených zdrojov a ukáže ďalší krok." }
+        ],
+        try: { label: "Otvoriť GuguChat", run: () => document.querySelector("#v5BottomBar .v2-chat-shutter")?.click() }
       },
       {
         target: () => byId("v5BottomBar"),
-        title: "Všetky aplikácie",
-        text: expecting
-          ? "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor: v karte Praktické sú nástroje ako Kalendár, Knižka či Nákup, v karte Spomienky Naše momenty a denník. Obľúbené si vymeníš v zásuvke."
-          : "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor: v karte Praktické sú Mama, Zdravotná knižka či Nákup, v karte Spomienky Naše momenty, denník a uspávanky. Obľúbené si vymeníš v zásuvke.",
-        try: { label: "Otvoriť zásuvku", run: () => V5()?.openDrawer?.() }
+        title: "Ďalšie aplikácie",
+        lead: "Dole sú tvoje 4 obľúbené:",
+        // Presne to, čo je v lište (ikona aj krátky názov) – po výmene obľúbených sa zmení aj tu.
+        chips: () => [...document.querySelectorAll("#v5BottomBar .v5-bottom-action")].map(button => ({
+          iconHtml: button.querySelector(".v5-nav-icon")?.innerHTML || "",
+          label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
+        })),
+        after: expecting
+          ? "Potiahni lištu nahor: v karte Praktické sú napríklad Kalendár, Tehotenská knižka či Nákup, v karte Spomienky Naše momenty a Môj súkromný denník. Obľúbené si vymeníš tam."
+          : "Potiahni lištu nahor: v karte Praktické sú napríklad Mama, Zdravotná knižka či Nákup, v karte Spomienky Naše momenty, Môj súkromný denník a Zvuky. Obľúbené si vymeníš tam.",
+        try: { label: "Otvoriť Ďalšie aplikácie", run: () => V5()?.openDrawer?.() }
       }
     ];
   }
@@ -172,6 +199,27 @@
     return root;
   }
 
+  // Telo kroku: úvodná veta (lead), riadky s piktogramom a názvom z appky (items), ikony z lišty (chips),
+  // záverečná veta (after); staré kroky len s text.
+  function stepBodyHtml(step) {
+    const V5 = window.GugubooV5;
+    const esc = V5?.escapeHtml || (value => String(value).replace(/[&<>"']/g, ch => "&#" + ch.charCodeAt(0) + ";"));
+    const items = typeof step.items === "function" ? step.items() : step.items || [];
+    const chips = typeof step.chips === "function" ? step.chips() : step.chips || [];
+    if (!items.length && !chips.length) return esc(step.text || "");
+    const mark = item => item.week
+      ? "<span class='v2-tour-week' aria-hidden='true'>" + item.week + "</span>"
+      : item.icon && V5?.icon ? "<span class='v5-icon' aria-hidden='true'>" + V5.icon(item.icon) + "</span>" : "";
+    return [
+      step.lead ? "<span class='v2-tour-lead'>" + esc(step.lead) + "</span>" : "",
+      items.length ? "<span class='v2-tour-items'>" + items.map(item =>
+        "<span class='v2-tour-item" + (mark(item) ? "" : " no-icon") + "'>" + mark(item) + "<span><b>" + esc(item.name) + "</b> – " + esc(item.text) + "</span></span>").join("") + "</span>" : "",
+      chips.length ? "<span class='v2-tour-chips'>" + chips.map(chip =>
+        "<span class='v2-tour-chip'><span class='v5-icon' aria-hidden='true'>" + chip.iconHtml + "</span><b>" + esc(chip.label) + "</b></span>").join("") + "</span>" : "",
+      step.after ? "<span class='v2-tour-after'>" + esc(step.after) + "</span>" : ""
+    ].join("");
+  }
+
   function place() {
     const root = byId("v2Tour");
     if (!root || !running) return;
@@ -185,13 +233,7 @@
     const position = list.slice(0, stepIndex + 1).filter(isSpot).length;
     byId("v2TourCount").textContent = step.setup ? step.kicker : step.intro ? "Vitaj v Guguboo" : position + " / " + realSteps;
     byId("v2TourTitle").textContent = step.title;
-    const esc = window.GugubooV5?.escapeHtml || (value => String(value));
-    if (step.items && window.GugubooV5?.icon) {
-      byId("v2TourText").innerHTML = "<span class='v2-tour-items'>" + step.items.map(item =>
-        "<span class='v2-tour-item'><span class='v5-icon' aria-hidden='true'>" + window.GugubooV5.icon(item.icon) + "</span><span><b>" + esc(item.name) + "</b> – " + esc(item.text) + "</span></span>").join("") + "</span>";
-    } else {
-      byId("v2TourText").textContent = step.text || (step.items || []).map(item => item.name + " – " + item.text).join("\n");
-    }
+    byId("v2TourText").innerHTML = stepBodyHtml(step);
     root.querySelector("[data-v2-tour-next]").textContent = step.nextLabel || (step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej");
     root.querySelector(".v2-tour-skip").textContent = step.skipLabel || (step.intro ? "Teraz nie" : "Preskočiť");
     root.classList.toggle("is-intro", Boolean(step.intro || step.setup));

@@ -1172,6 +1172,18 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v2-tour-item .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
 .v2-tour-item .v5-icon svg { width: 19px; height: 19px; }
 .v2-tour-item b { color: var(--v5-ink); font-weight: 700; }
+.v2-tour-item.no-icon { grid-template-columns: minmax(0, 1fr); }
+.v2-tour-lead, .v2-tour-after { display: block; }
+.v2-tour-lead { margin-bottom: 8px; }
+.v2-tour-after { margin-top: 10px; }
+.v2-tour-week { display: grid; place-items: center; align-content: center; width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(145deg, #fff, #f1ecff); box-shadow: inset 0 0 0 1.5px rgba(129, 113, 206, .25); color: #5b45b8; line-height: 1; }
+.v2-tour-week b { font-size: 13px; font-weight: 900; }
+.v2-tour-week small { font-size: 5.5px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.v2-tour-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.v2-tour-chip { display: grid; justify-items: center; gap: 4px; min-width: 0; }
+.v2-tour-chip .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v2-tour-chip .v5-icon svg { width: 19px; height: 19px; }
+.v2-tour-chip b { max-width: 100%; overflow: hidden; color: var(--v5-ink); font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 
 /* 2.18.0: Zdravotná knižka dieťaťa, súkromie */
 .v2-account-note b { color: var(--v5-ink); font-weight: 700; }
