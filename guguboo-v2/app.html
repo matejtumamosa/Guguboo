@@ -3096,7 +3096,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.29.5";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.29.6";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
@@ -6927,6 +6927,30 @@
       if (value < yearsAgo(PARENT_MAX_AGE)) return "Skontroluj prosím rok narodenia.";
       return "";
     }
+    // Rozumné rozsahy dátumov v úvode: termín pôrodu najviac 42 týždňov dopredu (280 dní od menštruácie
+    // + rezerva na dlhší cyklus), menštruácia najviac 42 týždňov a počatie 40 týždňov dozadu, dieťa do 3 rokov.
+    const DUE_MAX_DAYS = 294;
+    const LMP_MAX_DAYS = 294;
+    const CONCEPTION_MAX_DAYS = 280;
+    const BABY_MAX_YEARS = 3;
+    function daysFromToday(days) {
+      const date = new Date(dateInputToday() + "T12:00:00");
+      date.setDate(date.getDate() + days);
+      return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+    function welcomeDateError(status) {
+      const today = dateInputToday();
+      if (status === "expecting") {
+        const due = $("welcomeDue").value;
+        if (due && due < today) return "Termín pôrodu nemôže byť v minulosti.";
+        if (due && due > daysFromToday(DUE_MAX_DAYS)) return "Termín pôrodu môže byť najviac 42 týždňov dopredu. Skontroluj prosím dátum.";
+        return "";
+      }
+      const birth = $("welcomeBirth").value;
+      if (birth && birth > today) return "Dátum narodenia nemôže byť v budúcnosti.";
+      if (birth && birth < yearsAgo(BABY_MAX_YEARS)) return `Guguboo je pre deti do ${BABY_MAX_YEARS} rokov. Skontroluj prosím dátum narodenia.`;
+      return "";
+    }
     function limitParentBirthInput(input) {
       if (!input) return;
       input.min = yearsAgo(PARENT_MAX_AGE);
@@ -7922,8 +7946,8 @@ Otázky:
       if (!expecting && $("welcomeNameUndecided")?.checked) setWelcomeNameUndecided(false);
       if (expecting) updateDueCalculator();
       const today = dateInputToday();
-      if ($("welcomeDue")) $("welcomeDue").min = today;
-      if ($("welcomeBirth")) $("welcomeBirth").max = today;
+      if ($("welcomeDue")) { $("welcomeDue").min = today; $("welcomeDue").max = daysFromToday(DUE_MAX_DAYS); }
+      if ($("welcomeBirth")) { $("welcomeBirth").max = today; $("welcomeBirth").min = yearsAgo(BABY_MAX_YEARS); }
       if ($("babyDue")) $("babyDue").min = today;
       if ($("babyBirth")) $("babyBirth").max = today;
       if ($("babyStatus")) $("babyStatus").value = status;
@@ -8307,9 +8331,21 @@ Otázky:
       $("welcomeDueBasisWrap")?.classList.toggle("hidden", method !== "lmp" && method !== "conception");
       $("welcomeCycleWrap")?.classList.toggle("hidden", method !== "lmp");
       if ($("welcomeDueBasisLabel")) $("welcomeDueBasisLabel").textContent = method === "conception" ? "Dátum počatia" : "Prvý deň poslednej menštruácie";
+      const maxBack = method === "conception" ? CONCEPTION_MAX_DAYS : LMP_MAX_DAYS;
+      if ($("welcomeDueBasis")) $("welcomeDueBasis").min = daysFromToday(-maxBack);
       const result = $("welcomeDueResult");
       if (method !== "lmp" && method !== "conception") { result?.classList.add("hidden"); return; }
       if (!basis) { result.textContent = "Zadaj dátum a termín vypočítame."; result.classList.remove("hidden"); return; }
+      // Dátum mimo rozsahu nevypočíta termín (inak by vyšiel v minulosti alebo ďaleko v budúcnosti).
+      const basisError = basis > dateInputToday()
+        ? "Tento dátum nemôže byť v budúcnosti."
+        : basis < daysFromToday(-maxBack) ? `Tento dátum je viac ako ${Math.round(maxBack / 7)} týždňov dozadu. Skontroluj ho prosím.` : "";
+      if (basisError) {
+        $("welcomeDue").value = "";
+        result.textContent = basisError;
+        result.classList.remove("hidden");
+        return;
+      }
       const days = method === "lmp" ? 280 + (Number($("welcomeCycle")?.value || 28) - 28) : 266;
       const due = new Date(basis + "T12:00:00");
       due.setDate(due.getDate() + days);
@@ -8389,8 +8425,9 @@ Otázky:
       if (step === 5) {
         if (!welcomeBabyName()) return "Doplň prosím meno bábätka alebo zaškrtni, že ho ešte nemáte vybrané.";
         if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDueMethod").value) return "Vyber prosím, ako poznáš termín pôrodu.";
-        if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return "Doplň prosím termín pôrodu.";
-        if ((state.welcomeStatus || "expecting") === "expecting" && $("welcomeDue").value < dateInputToday()) return "Termín pôrodu nemôže byť v minulosti.";
+        // Pri výpočte z dátumu s chybou (mimo rozsahu) ukážeme tú istú vetu ako pod kalkulačkou.
+        if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return $("welcomeDueMethod").value !== "due" && $("welcomeDueBasis").value ? $("welcomeDueResult").textContent : "Doplň prosím termín pôrodu.";
+        if (welcomeDateError(state.welcomeStatus || "expecting")) return welcomeDateError(state.welcomeStatus || "expecting");
         if ((state.welcomeStatus || "expecting") === "born" && !$("welcomeBirth").value) return "Doplň prosím dátum narodenia.";
       }
       if (step === 6 && state.partnerInvite.wanted && !validEmail($("welcomePartnerEmail").value)) return "Doplň platný e-mail blízkej osoby alebo zvoľ Zatiaľ nie.";
@@ -8399,7 +8436,6 @@ Otázky:
 
     function validateWelcome() {
       const status = state.welcomeStatus || "expecting";
-      const today = dateInputToday();
       const missing = [];
 
       if (!$("welcomeUserName").value.trim()) missing.push("tvoje meno");
@@ -8409,11 +8445,10 @@ Otázky:
 
       if (status === "expecting") {
         if (!$("welcomeDue").value) missing.push("termín pôrodu");
-        if ($("welcomeDue").value && $("welcomeDue").value < today) return "Termín pôrodu nemôže byť v minulosti.";
       } else {
         if (!$("welcomeBirth").value) missing.push("dátum narodenia");
-        if ($("welcomeBirth").value && $("welcomeBirth").value > today) return "Dátum narodenia nemôže byť v budúcnosti.";
       }
+      if (welcomeDateError(status)) return welcomeDateError(status);
       if (state.partnerInvite.wanted && !validEmail($("welcomePartnerEmail").value)) missing.push("platný e-mail blízkej osoby");
 
       return missing.length ? `Doplň prosím: ${missing.join(", ")}.` : "";
