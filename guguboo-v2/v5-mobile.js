@@ -3217,8 +3217,6 @@
     const split = text => String(text || "").split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(Boolean);
     const list = items => items.map(sentence => "<p>" + escapeHtml(sentence) + "</p>").join("");
     const baby = split(data.baby);
-    const mom = split(data.you);
-    const tip = split(data.tip);
     // Pás týždňov (4.–42.) namiesto šípok: ovocie + číslo, vyznačený aktuálny aj vybraný týždeň.
     const strip = Array.from({ length: 39 }, (_, index) => index + 4).map(week => {
       const size = window.GugubooV2.babySize(week);
@@ -3236,8 +3234,7 @@
       "<small>", data.approximate ? "Prirovnanie je orientačné, dĺžka je podľa NHS." : "Podľa NHS, orientačne.", "</small>",
       "</section>",
       baby.length ? "<section class='v2-size-dev'><h3><span aria-hidden='true'>👶</span> Bábätko</h3>" + list(baby) + "</section>" : "",
-      // Tvoje telo a tip týždňa sú v okienku Mama (Samuel 16. 10.) – tu len odkaz.
-      mom.length || tip.length ? "<button type='button' class='v2-size-mama-link' data-v2-mama-section='body' data-v2-mama-week='" + data.week + "'><span aria-hidden='true'>🤰</span><span><strong>Tvoje telo v " + data.week + ". týždni</strong><small>V okienku Mama</small></span><b aria-hidden='true'>›</b></button>" : "",
+      // Bez odkazu na telo mamy – to je len v okienku Mama (Samuel 4. 11.).
       data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · zhrnuté vlastnými slovami ↗</a>" : ""
     ].join("");
     // Vybraný týždeň do stredu pásu.
