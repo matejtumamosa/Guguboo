@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.27.1";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.27.2";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.27.0">
+  <link rel="stylesheet" href="v2.css?v=2.27.2">
 </head>
 <body>
   <div class="app" id="app">
@@ -8090,6 +8090,23 @@ Otázky:
       return `${Math.floor(days / 365.25)}. rok`;
     }
 
+    // Ikony v okienkach náhľadu – tie isté, ktoré kreslí renderHome (GugubooV5.icon).
+    function setWelcomeFinishGlanceIcons(names) {
+      document.querySelectorAll(".welcome-finish-preview .v5-glance").forEach((glance, index) => {
+        const name = window.GugubooV5?.icon ? names[index] : "";
+        let slot = glance.querySelector(".v5-icon");
+        glance.classList.toggle("v2-glance-named", !!name);
+        if (!name) return slot?.remove();
+        if (!slot) {
+          slot = document.createElement("span");
+          slot.className = "v5-icon";
+          slot.setAttribute("aria-hidden", "true");
+          glance.prepend(slot);
+        }
+        slot.innerHTML = window.GugubooV5.icon(name);
+      });
+    }
+
     // Posledný krok onboardingu = náhľad domova v7.6 (rovnaké v5 bloky ako renderHome vo v5-mobile.js).
     function updateWelcomeFinishScreen() {
       if (!$("welcomeFinishAvatar")) return;
@@ -8127,7 +8144,8 @@ Otázky:
           : dueDays === 0
             ? "Termín je dnes. Všetko dôležité máš na jednom mieste."
             : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň ti ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
-        // Rovnaké okienka ako na domove: len názvy Tehotenská knižka · Mama · Dieťa (Samuel 16. 10.).
+        // Rovnaké okienka ako na domove: len názvy Tehotenská knižka · Mama · Dieťa (Samuel 16. 10.), s rovnakými ikonami.
+        setWelcomeFinishGlanceIcons(["book", "health", "baby"]);
         setText("welcomeFinishGlanceLabel1", "");
         setText("welcomeFinishGlanceValue1", "Tehotenská knižka");
         setText("welcomeFinishGlanceLabel2", "");
@@ -8146,6 +8164,7 @@ Otázky:
         // Vek je už v okienku VEK – pod menom ho neopakujeme.
         setText("welcomeFinishBabyMeta", "");
         setText("welcomeFinishLead", `${readyLine} Kŕmenie, spánok, pripomienky aj spomienky nájdeš v Guguboo.`);
+        setWelcomeFinishGlanceIcons([]);
         setText("welcomeFinishGlanceLabel1", "Vek");
         setText("welcomeFinishGlanceValue1", ageLabel || "—");
         setText("welcomeFinishGlanceLabel2", "Narodenie");
