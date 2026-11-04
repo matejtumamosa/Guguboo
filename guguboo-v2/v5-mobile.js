@@ -2855,7 +2855,10 @@
         "<button type='button' data-v5-moments-section='timeline'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Naša časová os</strong><small>" + ((n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok"))((window.GugubooMoments?.collect?.() || []).length)) + " · zapisujú sa samy</small></span><b aria-hidden='true'>›</b></button>" +
         "<button type='button' data-v5-moments-section='today'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Dnešný malý moment</strong><small>Jedna fotografia alebo krátka veta</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='firsts'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Prvé razy</strong><small>" + state.v5.firstMoments.length + " zachytených míľnikov</small></span><b>›</b></button>" +
-        "<button type='button' data-v5-moments-section='albums'><span class='v5-icon'>" + icon("baby") + "</span><span><strong>Albumy</strong><small>Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok</small></span><b aria-hidden='true'>›</b></button></div>";
+        "<button type='button' data-v5-moments-section='albums'><span class='v5-icon'>" + icon("baby") + "</span><span><strong>Albumy</strong><small>Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok</small></span><b aria-hidden='true'>›</b></button>" +
+        // Hotová kartička narodenia sa ukazuje tu – na domove už nie (Samuel 4. 11.).
+        (state.birthCard?.complete && state.profile.status !== "expecting" ? "<button type='button' data-v5-feature='cards'><span class='v5-icon'>" + icon("cards") + "</span><span><strong>Ukázať kartičku narodenia</strong><small>Pozrieť, upraviť alebo znova poslať</small></span><b aria-hidden='true'>›</b></button>" : "") +
+        "</div>";
       return;
     }
     // Albumy (bod 4) – staré „Náš príbeh“ vedie tiež na albumy.
