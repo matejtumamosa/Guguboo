@@ -86,29 +86,45 @@
     ctx.restore();
   }
 
+  // Údaje ako dlaždice: symbol + krátka hodnota (Samuel 4. 11.: „musia byť ikony a k tomu info, 3215 g, 50 cm“).
   function facts() {
     const s = settings();
     const p = profile();
-    const list = [];
-    if (p.birth) {
-      const date = new Date(p.birth + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" });
-      list.push(date + (s.show.time && p.birthTime ? " · " + p.birthTime : ""));
-    }
+    const tiles = [];
     // Váha a dĺžka môžu byť uložené ako „3450“ (úvod) alebo „3450 g“ (formulár narodenia) – zjednotiť.
     const unit = (value, suffix) => {
-      const raw = String(value || "").trim().replace(/s*(g|cm)$/i, "");
+      const raw = String(value || "").trim().replace(/\s*(g|cm)$/i, "");
       if (!raw) return "";
       if (/^[\d\s.,]+$/.test(raw)) { const n = Number(raw.replace(/\s/g, "").replace(",", ".")); return (suffix === "g" ? n.toLocaleString("sk-SK") : String(n).replace(".", ",")) + " " + suffix; }
       return raw;
     };
-    const measures = [s.show.weight ? unit(p.weight, "g") : "", s.show.height ? unit(p.height, "cm") : ""].filter(Boolean).join(" · ");
-    if (measures) list.push(measures);
-    if (s.show.place && p.birthPlace) list.push(p.birthPlace);
-    if (s.show.parents && s.parents) list.push(s.parents);
+    if (p.birth) tiles.push({ icon: "date", text: new Date(p.birth + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric", year: "numeric" }) });
+    if (s.show.time && p.birthTime) tiles.push({ icon: "time", text: p.birthTime });
+    if (s.show.weight && p.weight) tiles.push({ icon: "weight", text: unit(p.weight, "g") });
+    if (s.show.height && p.height) tiles.push({ icon: "ruler", text: unit(p.height, "cm") });
+    if (s.show.place && p.birthPlace) tiles.push({ icon: "pin", text: p.birthPlace });
     const z = s.show.sign ? sign(p.birth) : null;
-    // ︎ = textová (nie emoji) podoba symbolu, aby mal farbu kartičky.
-    if (z) list.push(z[0] + "︎ " + z[1]);
-    return list;
+    if (z) tiles.push({ icon: "sign", glyph: z[0] + "︎", text: z[1] });
+    if (s.show.parents && s.parents) tiles.push({ icon: "heart", text: s.parents });
+    return tiles;
+  }
+
+  // Jednoduché čiarové symboly vo farbe kartičky (nie emoji – vyzerajú všade rovnako).
+  function drawIcon(ctx, type, x, y, size, color, glyph) {
+    const u = size / 24;
+    ctx.save();
+    ctx.translate(x - size / 2, y - size / 2);
+    ctx.scale(u, u);
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath();
+    if (type === "date") { roundRect(ctx, 3, 5, 18, 16, 3); ctx.moveTo(3, 10); ctx.lineTo(21, 10); ctx.moveTo(8, 3); ctx.lineTo(8, 7); ctx.moveTo(16, 3); ctx.lineTo(16, 7); ctx.stroke(); }
+    else if (type === "time") { ctx.arc(12, 12, 9, 0, Math.PI * 2); ctx.moveTo(12, 7); ctx.lineTo(12, 12); ctx.lineTo(15.5, 14); ctx.stroke(); }
+    else if (type === "weight") { ctx.arc(12, 6.5, 2.6, 0, Math.PI * 2); ctx.moveTo(7.5, 10); ctx.lineTo(16.5, 10); ctx.lineTo(20, 21); ctx.lineTo(4, 21); ctx.closePath(); ctx.stroke(); }
+    else if (type === "ruler") { ctx.save(); ctx.translate(12, 12); ctx.rotate(-Math.PI / 4); roundRect(ctx, -10, -4, 20, 8, 2); for (let i = -6; i <= 6; i += 3) { ctx.moveTo(i, -4); ctx.lineTo(i, i % 2 ? -1 : 0); } ctx.restore(); ctx.stroke(); }
+    else if (type === "pin") { ctx.moveTo(12, 21); ctx.bezierCurveTo(6, 15, 5, 12, 5, 9.5); ctx.arc(12, 9.5, 7, Math.PI, 0); ctx.bezierCurveTo(19, 12, 18, 15, 12, 21); ctx.stroke(); ctx.beginPath(); ctx.arc(12, 9.5, 2.4, 0, Math.PI * 2); ctx.fill(); }
+    else if (type === "heart") { ctx.moveTo(12, 20); ctx.bezierCurveTo(4, 14, 3, 10, 3, 8); ctx.bezierCurveTo(3, 5, 5.5, 3.5, 7.5, 3.5); ctx.bezierCurveTo(9.5, 3.5, 11, 5, 12, 6.5); ctx.bezierCurveTo(13, 5, 14.5, 3.5, 16.5, 3.5); ctx.bezierCurveTo(18.5, 3.5, 21, 5, 21, 8); ctx.bezierCurveTo(21, 10, 20, 14, 12, 20); ctx.stroke(); }
+    else if (type === "sign") { ctx.font = "700 20px 'Segoe UI Symbol', 'Noto Sans Symbols', Arial, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(glyph || "✦", 12, 13); }
+    ctx.restore();
   }
 
   function draw(canvas) {
@@ -149,16 +165,32 @@
     ctx.font = font(800, headSize);
     const head = wrap(ctx, s.headline || "Vitaj na svete", W - 160);
     const name = babyName();
-    const list = facts();
+    // Dlaždice údajov: rozmiestnia sa do riadkov (max. šírka), každý riadok vycentrovaný.
+    const tiles = facts();
+    const tileH = Math.round(112 * k);
+    const gap = Math.round(14 * k);
+    const iconSize = Math.round(34 * k);
+    ctx.font = font(700, Math.round(30 * k));
+    tiles.forEach(tile => { tile.w = Math.max(Math.round(150 * k), Math.ceil(ctx.measureText(tile.text).width) + Math.round(48 * k)); });
+    const rows = [];
+    tiles.forEach(tile => {
+      const row = rows[rows.length - 1];
+      const used = row ? row.reduce((sum, t) => sum + t.w + gap, 0) : Infinity;
+      if (!row || used + tile.w > W - 140 || row.length >= 3) rows.push([tile]); else row.push(tile);
+    });
+    // Rovnaká šírka dlaždíc v riadku (ak sa zmestia) – pôsobí to úhľadnejšie.
+    rows.forEach(row => { const max = Math.max(...row.map(t => t.w)); if (max * row.length + gap * (row.length - 1) <= W - 140) row.forEach(t => { t.w = max; }); });
+    const tilesH = rows.length ? Math.round(50 * k) + rows.length * tileH + (rows.length - 1) * gap : 0;
+    const list = [];
     // Krátky odkaz (napr. „Ďakujeme za lásku“) kurzívou pod údajmi.
     ctx.font = "italic 500 " + Math.round(34 * k) + "px Montserrat, 'Segoe UI', Arial, sans-serif";
     const msg = s.show.message && s.message ? wrap(ctx, s.message, W - 220).slice(0, 3) : [];
     const msgH = msg.length ? msg.length * Math.round(48 * k) + Math.round(30 * k) : 0;
     let art = hasPhoto ? { w: story ? 760 : 520, h: story ? 760 : 420 } : { w: (story ? 280 : 150) * 2, h: (story ? 280 : 150) * 2 };
-    const blocks = art.h + 60 + head.length * headSize * 1.12 + (name ? Math.round(110 * k) : 0) + list.length * Math.round(58 * k) + msgH + 20;
+    const blocks = art.h + 60 + head.length * headSize * 1.12 + (name ? Math.round(110 * k) : 0) + tilesH + msgH + 20;
     const room = H - (story ? 420 : 160);
     if (blocks > room) { const shrink = Math.min(art.h - 200, blocks - room); art = { w: hasPhoto ? art.w : art.h - shrink, h: art.h - shrink }; }
-    const total = art.h + 60 + head.length * headSize * 1.12 + (name ? Math.round(110 * k) : 0) + list.length * Math.round(58 * k) + msgH;
+    const total = art.h + 60 + head.length * headSize * 1.12 + (name ? Math.round(110 * k) : 0) + tilesH + msgH;
     let y = Math.max(story ? 150 : 60, (H - (story ? 150 : 90) - total) / 2);
 
     const boxX = (W - art.w) / 2;
@@ -181,11 +213,27 @@
     ctx.fillStyle = c.ink; ctx.font = font(800, headSize);
     head.forEach(line => { y += headSize * 0.92; ctx.fillText(line, W / 2, y); y += headSize * 0.2; });
     if (name) { y += Math.round(92 * k); ctx.fillStyle = c.accent; ctx.font = font(800, Math.round(76 * k)); ctx.fillText(name, W / 2, y); }
-    ctx.fillStyle = c.ink; ctx.globalAlpha = 0.82; ctx.font = font(600, Math.round(38 * k));
-    list.forEach((line, index) => { y += Math.round((index ? 54 : 70) * k); ctx.fillText(line, W / 2, y); });
+    if (rows.length) {
+      y += Math.round(50 * k);
+      rows.forEach((row, rowIndex) => {
+        const rowW = row.reduce((sum, t) => sum + t.w, 0) + gap * (row.length - 1);
+        let x = (W - rowW) / 2;
+        const top = y + rowIndex * (tileH + gap);
+        row.forEach(tile => {
+          ctx.save();
+          ctx.fillStyle = "rgba(255, 255, 255, .72)";
+          roundRect(ctx, x, top, tile.w, tileH, Math.round(26 * k)); ctx.fill();
+          ctx.restore();
+          drawIcon(ctx, tile.icon, x + tile.w / 2, top + Math.round(36 * k), iconSize, c.accent, tile.glyph);
+          ctx.fillStyle = c.ink; ctx.textAlign = "center"; ctx.font = font(700, Math.round(30 * k));
+          ctx.fillText(tile.text, x + tile.w / 2, top + Math.round(92 * k));
+          x += tile.w + gap;
+        });
+      });
+      y += rows.length * tileH + (rows.length - 1) * gap;
+    }
     if (msg.length) { y += Math.round(30 * k); ctx.globalAlpha = 0.9; ctx.fillStyle = c.accent; ctx.font = "italic 500 " + Math.round(34 * k) + "px Montserrat, 'Segoe UI', Arial, sans-serif"; msg.forEach(line => { y += Math.round(48 * k); ctx.fillText(line, W / 2, y); }); }
-    ctx.globalAlpha = 0.85; ctx.fillStyle = c.accent; ctx.font = font(700, Math.round(24 * k));
-    ctx.fillText("MALÝ ZÁZRAK  ✦  VEĽKÁ LÁSKA", W / 2, H - (story ? 100 : 54));
+    // Bez spodného textu „Malý zázrak · Veľká láska“ (Samuel 4. 11.: „divný“).
     ctx.globalAlpha = 1;
   }
 
