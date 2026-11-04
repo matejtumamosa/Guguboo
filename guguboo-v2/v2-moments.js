@@ -250,6 +250,10 @@
 
   // Domov: jedna citová karta – buď otázka „Stalo sa už?“, alebo (po pôrode) najbližší míľnik dní spolu.
   function homeCardHtml() {
+    // 100. deň a prvé narodeniny majú prednosť pred otázkou „Stalo sa už?“.
+    const birth = state.profile?.status !== "expecting" && state.profile?.birth;
+    const day = birth ? Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1 : 0;
+    if ((day >= 100 && day < 110) || (day >= 365 && day < 375)) return daysCardHtml();
     const ask = duePrompt();
     if (ask) return promptCardHtml(ask);
     return daysCardHtml();
@@ -261,6 +265,11 @@
     if (!birth) return "";
     const day = Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1;
     if (day < 1) return "";
+    // Deň 100 a prvé narodeniny: album je pripravený (10 dní sa ponúka, potom späť na míľnik).
+    if ((day >= 100 && day < 110) || (day >= 365 && day < 375)) {
+      const sto = day < 365;
+      return "<button type='button' class='v2-days-card v2-days-album' data-v2-album-open='" + (sto ? "sto" : "rok") + "'><span aria-hidden='true'>" + (sto ? "💯" : "🎂") + "</span><span><strong>" + (sto ? "Ste spolu 100 dní" : "Prvý rok spolu") + "</strong><small>Váš album je pripravený – pozri si ho</small></span><b aria-hidden='true'>›</b></button>";
+    }
     // „X. deň spolu“ je už v pozdrave hore – karta ukazuje najbližší míľnik a vedie do spomienok.
     const left = n => n + (n === 1 ? " deň" : n < 5 ? " dni" : " dní");
     const title = day < 100 ? "Do 100 dní spolu: " + left(100 - day) : day < 365 ? "Do prvého roka: " + left(365 - day) : "Váš prvý rok je za vami";

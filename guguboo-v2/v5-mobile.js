@@ -671,7 +671,8 @@
       return;
     }
     if (view === "v5First100" && state.v5.momentsSection !== "home") {
-      state.v5.momentsSection = "home";
+      // Z albumu späť na zoznam albumov, inak na Naše momenty.
+      state.v5.momentsSection = String(state.v5.momentsSection).startsWith("album-") ? "albums" : "home";
       persist();
       renderFirst100();
       return;
@@ -2821,7 +2822,12 @@
         "<button type='button' data-v5-moments-section='timeline'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Naša časová os</strong><small>" + ((n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok"))((window.GugubooMoments?.collect?.() || []).length)) + " · zapisujú sa samy</small></span><b aria-hidden='true'>›</b></button>" +
         "<button type='button' data-v5-moments-section='today'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Dnešný malý moment</strong><small>Jedna fotografia alebo krátka veta</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='firsts'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Prvé razy</strong><small>" + state.v5.firstMoments.length + " zachytených míľnikov</small></span><b>›</b></button>" +
-        "<button type='button' data-v5-moments-section='story'><span class='v5-icon'>" + icon("baby") + "</span><span><strong>Náš príbeh</strong><small>100 dní spolu a prvý rok</small></span><b>›</b></button></div>";
+        "<button type='button' data-v5-moments-section='albums'><span class='v5-icon'>" + icon("baby") + "</span><span><strong>Albumy</strong><small>Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok</small></span><b aria-hidden='true'>›</b></button></div>";
+      return;
+    }
+    // Albumy (bod 4) – staré „Náš príbeh“ vedie tiež na albumy.
+    if (section === "albums" || section === "story" || String(section).startsWith("album-")) {
+      target.innerHTML = window.GugubooAlbums?.sectionHtml?.(section === "story" ? "albums" : section) || "<div class='v5-empty'>Albumy sa načítavajú…</div>";
       return;
     }
     if (section === "timeline") {

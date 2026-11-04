@@ -55,6 +55,7 @@
       "<p>Guguboo sa prepína na prvé dni s bábätkom. Domov ti teraz ukáže len to, čo je dôležité v najbližších dňoch – a Kruh sa postará aj o teba.</p></header>",
       "<div class='v2-birth-actions'>",
       "<button class='v5-primary' type='button' data-v2-birth-card>Vytvoriť kartičku narodenia</button>",
+      (window.GugubooAlbums?.count?.("cakanie") ? "<button class='v5-secondary' type='button' data-v2-birth-album>Pozrieť album Naše čakanie</button>" : ""),
       "<button class='v5-secondary' type='button' data-v2-birth-home>Pokračovať domov</button>",
       "</div>"
     ].join("");
@@ -126,6 +127,7 @@
     if (event.target.closest("[data-v2-birth-close]")) return close();
     if (event.target.closest("[data-v2-birth-home]")) { close(); return V5.openHome(); }
     if (event.target.closest("[data-v2-birth-card]")) { close(); return V5.openFeature("cards"); }
+    if (event.target.closest("[data-v2-birth-album]")) { close(); V5.openFeature("memories"); state.v5.momentsSection = "album-cakanie"; V5.persist(); return V5.rerenderMoments?.(); }
     if (event.target.id === "v2BirthOverlay") close();
   });
 
