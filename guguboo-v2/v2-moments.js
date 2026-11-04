@@ -91,7 +91,7 @@
     }
 
     // Ručné „Prvé razy“ a malé momenty (už existujúce zápisy z Naše momenty)
-    (state.v5?.firstMoments || []).forEach(item => add({ key: "first-" + item.key, phase: pre(item.date), emoji: "✨", title: item.label, date: item.date, photo: item.photo || "", source: "manual" }));
+    (state.v5?.firstMoments || []).forEach(item => add({ key: "first-" + item.key, phase: pre(item.date), emoji: (CATALOG.find(entry => entry.key === item.key) || {}).emoji || "✨", title: item.label, date: item.date, photo: item.photo || "", source: "manual" }));
     (state.diary || []).filter(item => item.first100 || item.text || item.photo).forEach(item =>
       add({ key: "diary-" + (item.id || item.date), phase: pre(item.date || item.created), emoji: "📷", title: item.text ? String(item.text).slice(0, 70) : "Malý moment", date: item.date || item.created, photo: item.photo || "", source: "manual" }));
 
@@ -128,8 +128,135 @@
     ].join("");
   }
 
-  // Domov po pôrode: „23. deň spolu“ + najbližší míľnik. Jemne, bez tlaku.
+  // ——— Prvé razy a „Stalo sa už?“ (bod 2) ———
+  // Kedy sa appka opýta: CDC „Learn the Signs. Act Early“ (vek, do ktorého to zvládne väčšina detí, 75 %+;
+  // overené 4. 11. 2026, stránky z 16. 5. 2026), lezenie WHO Motor Development Study 2006 (okno 5,2–13,5 mes.;
+  // pýtame sa v jeho strede, 9. mes.), príkrm NHS „around 6 months“ (19. 2. 2026). Čas slúži LEN na to, kedy sa
+  // opýtať – nikdy na hodnotenie. „Ešte nie“ = opýta sa o 4 týždne, najviac 3-krát, potom už nie.
+  const CDC = "CDC – Learn the Signs. Act Early";
+  const CATALOG = [
+    { key: "heartbeat", phase: "pre", emoji: "💓", label: "Prvýkrát sme počuli srdiečko", askWeek: 12 },
+    { key: "bump", phase: "pre", emoji: "🤰", label: "Prvá fotka bruška", askWeek: 16 },
+    { key: "firstbuy", phase: "pre", emoji: "🧸", label: "Prvá vec pre bábätko", askWeek: 20 },
+    { key: "partnerkick", phase: "pre", emoji: "🤲", label: "Pohyby cítil aj partner", askWeek: 24 },
+    { key: "home", phase: "post", emoji: "🏡", label: "Prvý deň doma", askDays: 2 },
+    { key: "grandparents", phase: "post", emoji: "👵", label: "Prvýkrát so starými rodičmi", askDays: 7 },
+    { key: "walk", phase: "post", emoji: "🌳", label: "Prvá prechádzka", askDays: 10 },
+    { key: "stroller", phase: "post", emoji: "🌙", label: "Prvé zaspatie v kočíku" },
+    { key: "smile", phase: "post", emoji: "😊", label: "Prvý úsmev", askMonths: 2, source: CDC },
+    { key: "laugh", phase: "post", emoji: "😄", label: "Prvý smiech", askMonths: 4, source: CDC },
+    { key: "roll", phase: "post", emoji: "🔄", label: "Prvé pretočenie z bruška na chrbát", askMonths: 6, source: CDC },
+    { key: "solids", phase: "post", emoji: "🥄", label: "Prvý príkrm", askMonths: 6, source: "NHS" },
+    { key: "sit", phase: "post", emoji: "🪑", label: "Prvé sedenie bez opory", askMonths: 9, source: CDC },
+    { key: "crawl", phase: "post", emoji: "🐾", label: "Prvé lezenie po štyroch", askMonths: 9, source: "WHO", note: "Niektoré deti štvornožkovanie preskočia – aj to je v poriadku." },
+    { key: "mama", phase: "post", emoji: "🗣️", label: "Prvé „mama“ alebo „tata“", askMonths: 12, source: CDC },
+    { key: "wave", phase: "post", emoji: "👋", label: "Prvé pápá", askMonths: 12, source: CDC },
+    { key: "stand", phase: "post", emoji: "🧍", label: "Prvé postavenie sa", askMonths: 12, source: CDC },
+    { key: "steps", phase: "post", emoji: "👣", label: "Prvé samostatné kroky", askMonths: 15, source: CDC },
+    { key: "word", phase: "post", emoji: "💬", label: "Prvé slovo", askMonths: 15, source: CDC }
+  ];
+  const saved = key => (state.v5?.firstMoments || []).find(item => item.key === key);
+  const prompts = () => { state.v5 ||= {}; return state.v5.firstPrompts ||= {}; };
+
+  function duePrompt() {
+    // Najviac jedna otázka za deň – po odpovedi ďalšia až zajtra (nie dotazník).
+    if (state.v5?.lastPromptDay === todayKey()) return null;
+    const expecting = state.profile?.status === "expecting";
+    const p = prompts();
+    const now = Date.now();
+    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const birth = state.profile?.birth;
+    const days = birth ? Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) : -1;
+    return CATALOG.find(item => {
+      if (saved(item.key)) return false;
+      const status = p[item.key] || {};
+      if (status.never || (status.asks || 0) >= 3 || (status.again && status.again > now)) return false;
+      if (expecting) return item.phase === "pre" && item.askWeek && week >= item.askWeek;
+      if (item.phase !== "post" || days < 0) return false;
+      if (item.askDays !== undefined) return days >= item.askDays && days <= item.askDays + 30;
+      return item.askMonths !== undefined && days >= item.askMonths * 30.4375;
+    }) || null;
+  }
+
+  function promptCardHtml(item) {
+    return [
+      "<section class='v2-ask-card' aria-label='Stalo sa už?'>",
+      "<button type='button' class='v2-ask-never' data-v2-first-never='", item.key, "' aria-label='Túto otázku už neukazovať'>×</button>",
+      "<small>Stalo sa už?</small><div class='v2-ask-title'><span aria-hidden='true'>", item.emoji, "</span><strong>", esc(item.label), "</strong></div>",
+      item.note ? "<p>" + esc(item.note) + "</p>" : "<p>Každé bábätko má vlastné tempo. Odpovedz, len ak chceš.</p>",
+      "<div class='v2-ask-actions'><button type='button' class='v5-primary' data-v2-first-yes='", item.key, "'>Áno, dnes</button>",
+      "<button type='button' class='v5-secondary' data-v2-first-earlier='", item.key, "'>Už skôr</button>",
+      "<button type='button' class='v5-text-action' data-v2-first-later='", item.key, "'>Ešte nie</button></div>",
+      "<div class='v2-ask-date' hidden><label>Kedy to bolo?<input type='date' max='", todayKey(), "' data-v2-first-date='", item.key, "'></label><button type='button' class='v5-primary' data-v2-first-date-save='", item.key, "'>Uložiť</button></div>",
+      "</section>"
+    ].join("");
+  }
+
+  // Zoznam „Prvé razy“ v Naše momenty – všetko na jedno ťuknutie, uložené s dátumom a časom.
+  function firstsHtml() {
+    const expecting = state.profile?.status === "expecting";
+    const tile = item => {
+      const entry = saved(item.key);
+      return "<button type='button' class='" + (entry ? "is-saved" : "") + "' data-v5-first-moment='" + item.key + "' data-v5-first-label='" + esc(item.label) + "'><span class='v2-first-emoji' aria-hidden='true'>" + item.emoji + "</span><strong>" + esc(item.label) + "</strong><small>" + (entry ? esc(dateText(entry.date)) : "Ťukni, keď sa to stane") + "</small></button>";
+    };
+    const block = (phase, title) => "<h3 class='v2-book-group'>" + title + "</h3><div class='v5-first-moments-grid v2-first-grid'>" + CATALOG.filter(item => item.phase === phase).map(tile).join("") + "</div>";
+    return [
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Prvé razy</h1><p>Ťukni na okamih, keď sa stane – dátum a čas sa uložia samy a objavia sa v časovej osi. Opätovným ťuknutím ho zrušíš.</p></header>",
+      expecting ? block("pre", "Čakanie na teba") + block("post", "Po narodení") : block("post", "Spolu") + block("pre", "Z čakania"),
+      "<p class='v5-book-note'>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (míľniky, ktoré do daného veku zvládne väčšina detí), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p>",
+      "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
+    ].join("");
+  }
+
+  function saveFirst(key, date) {
+    const item = CATALOG.find(entry => entry.key === key);
+    if (!item || saved(key)) return;
+    (state.v5.firstMoments ||= []).push({ key, label: item.label, date });
+    state.v5.lastPromptDay = todayKey();
+    V5.persist();
+    V5.renderHome();
+    V5.announce("Uložené do vašich spomienok.");
+  }
+
+  document.addEventListener("click", event => {
+    const yes = event.target.closest("[data-v2-first-yes]");
+    if (yes) return saveFirst(yes.dataset.v2FirstYes, nowIso());
+    const earlier = event.target.closest("[data-v2-first-earlier]");
+    if (earlier) { const box = earlier.closest(".v2-ask-card")?.querySelector(".v2-ask-date"); if (box) { box.hidden = false; box.querySelector("input")?.focus(); } return; }
+    const dateSave = event.target.closest("[data-v2-first-date-save]");
+    if (dateSave) {
+      const input = dateSave.parentElement.querySelector("input");
+      if (!input?.value) return V5.announce("Vyber dátum.");
+      return saveFirst(dateSave.dataset.v2FirstDateSave, input.value);
+    }
+    const later = event.target.closest("[data-v2-first-later]");
+    if (later) {
+      const status = prompts()[later.dataset.v2FirstLater] ||= {};
+      status.asks = (status.asks || 0) + 1;
+      status.again = Date.now() + 28 * DAY;
+      state.v5.lastPromptDay = todayKey();
+      V5.persist();
+      V5.renderHome();
+      return V5.announce("Dobre, opýtame sa neskôr.");
+    }
+    const never = event.target.closest("[data-v2-first-never]");
+    if (never) {
+      (prompts()[never.dataset.v2FirstNever] ||= {}).never = true;
+      state.v5.lastPromptDay = todayKey();
+      V5.persist();
+      V5.renderHome();
+    }
+  });
+
+  // Domov: jedna citová karta – buď otázka „Stalo sa už?“, alebo (po pôrode) najbližší míľnik dní spolu.
   function homeCardHtml() {
+    const ask = duePrompt();
+    if (ask) return promptCardHtml(ask);
+    return daysCardHtml();
+  }
+
+  // Domov po pôrode: „23. deň spolu“ + najbližší míľnik. Jemne, bez tlaku.
+  function daysCardHtml() {
     const birth = state.profile?.status !== "expecting" && state.profile?.birth;
     if (!birth) return "";
     const day = Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1;
@@ -151,6 +278,6 @@
     V5.rerenderMoments?.();
   });
 
-  window.GugubooMoments = { collect, timelineHtml, homeCardHtml, mark: (key, value) => { const m = marks(); if (!m[key]) { m[key] = value || nowIso(); V5.persist(); } } };
+  window.GugubooMoments = { collect, timelineHtml, homeCardHtml, firstsHtml, catalog: CATALOG, mark: (key, value) => { const m = marks(); if (!m[key]) { m[key] = value || nowIso(); V5.persist(); } } };
   if (document.getElementById("home")?.classList.contains("active")) V5.renderHome();
 })();

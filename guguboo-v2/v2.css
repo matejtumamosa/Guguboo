@@ -1289,3 +1289,25 @@ body:not(.night) .v5-universal-window-head {
 .v2-days-card strong { display: block; font-size: 16px; font-weight: 800; color: var(--v5-ink); }
 .v2-days-card small { color: var(--v5-muted); font-size: 12.5px; }
 .v2-days-card b { color: var(--v5-muted); }
+
+/* 2.24.0: „Stalo sa už?“ a Prvé razy */
+.v2-ask-card { position: relative; margin: 0 0 14px; padding: 16px 16px 14px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .14); border-radius: 22px; }
+.v2-ask-card > small { display: block; color: #6a4fc4; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.v2-ask-title { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.v2-ask-title span { font-size: 28px; }
+.v2-ask-title strong { font-size: 17px; font-weight: 800; color: var(--v5-ink); line-height: 1.25; }
+.v2-ask-card p { margin: 6px 0 12px; color: var(--v5-muted); font-size: 13px; line-height: 1.45; }
+.v2-ask-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.v2-ask-actions button { min-height: 44px; margin: 0; padding: 8px 10px; font-size: 14px; }
+.v2-ask-never { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .7); color: var(--v5-muted); font-size: 17px; cursor: pointer; }
+.v2-ask-date { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin-top: 10px; }
+.v2-ask-date label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--v5-ink); }
+.v2-ask-date button { min-height: 46px; margin: 0; }
+.v2-first-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+.v2-first-grid button { display: grid; justify-items: center; gap: 4px; min-height: 112px; padding: 12px 10px; text-align: center; }
+.v2-first-grid .v2-first-emoji { font-size: 26px; }
+.v2-first-grid strong { font-size: 13px; font-weight: 700; line-height: 1.25; }
+.v2-first-grid small { font-size: 11.5px; color: var(--v5-muted); }
+.v2-first-grid button.is-saved { background: linear-gradient(135deg, #f1ecff, #fff0ec) !important; border-color: rgba(117, 96, 181, .3) !important; }
+.v2-first-grid button.is-saved small { color: #5f4fb1; font-weight: 600; }
+.v2-ask-date[hidden] { display: none; }

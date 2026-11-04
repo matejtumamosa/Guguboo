@@ -2824,6 +2824,10 @@
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-first100'>Uložiť moment</button><button class='v5-secondary' type='button' data-v5-moments-home>Späť</button></div>";
       return;
     }
+    if (section === "firsts" && window.GugubooMoments?.firstsHtml) {
+      target.innerHTML = window.GugubooMoments.firstsHtml();
+      return;
+    }
     if (section === "firsts") {
       target.innerHTML = flowHead("Naše momenty", "Prvé razy", "Klepni iba na okamih, ktorý sa dnes stal.", 0, 1) +
         "<div class='v5-first-moments-grid'>" + firstOptions.map(item => {
