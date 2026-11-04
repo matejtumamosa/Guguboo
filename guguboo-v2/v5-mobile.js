@@ -933,6 +933,29 @@
     ].join(" ");
   }
 
+  // Uhol ťažiska dielu kruhu (rovnaký tvar ako adaptiveOSegmentPath): obrys sa navzorkuje do mnohouholníka.
+  function adaptiveOCentroidAngle(start) {
+    const points = [];
+    const bez = (p0, p1, p2, p3, t) => {
+      const u = 1 - t;
+      return { x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x, y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y };
+    };
+    const from = adaptiveOCut(start);
+    const to = adaptiveOCut(start + 120);
+    for (let i = 0; i <= 24; i += 1) points.push(adaptiveOPoint(start + 120 * i / 24, 156));
+    for (let i = 1; i <= 16; i += 1) points.push(bez(to.outer, to.c1, to.c2, to.inner, i / 16));
+    for (let i = 1; i <= 24; i += 1) points.push(adaptiveOPoint(start + 120 - 120 * i / 24, 68));
+    for (let i = 1; i < 16; i += 1) points.push(bez(from.inner, from.c2, from.c1, from.outer, i / 16));
+    let area = 0, cx = 0, cy = 0;
+    points.forEach((p, index) => {
+      const q = points[(index + 1) % points.length];
+      const cross = p.x * q.y - q.x * p.y;
+      area += cross; cx += (p.x + q.x) * cross; cy += (p.y + q.y) * cross;
+    });
+    cx /= 3 * area; cy /= 3 * area;
+    return Math.atan2(cy - 210, cx - 210) * 180 / Math.PI;
+  }
+
   function adaptiveOGlossPath(start, percentage = 100) {
     const span = Math.max(0, Math.min(120, 120 * percentage / 100));
     if (span <= 18) return "";
@@ -1008,7 +1031,9 @@
       // Názov segmentu ide po oblúku kruhu (pripomienka #9). V dolnej polovici sa oblúk kreslí
       // opačným smerom, aby text nebol hore nohami.
       sections.map((section, index) => {
-        const mid = section.start + 60;
+        // Nápis presne na stred dielu (Samuel 4. 11.): okraje dielov sú esovito zahnuté, preto uhol berieme
+        // z ťažiska skutočného tvaru dielu, nie z polovice uhla.
+        const mid = adaptiveOCentroidAngle(section.start);
         const lower = Math.sin(mid * Math.PI / 180) > 0.2;
         const from = adaptiveOPoint(mid + (lower ? 45 : -45), 112);
         const to = adaptiveOPoint(mid + (lower ? -45 : 45), 112);

@@ -1387,3 +1387,8 @@ body:not(.night) .v5-universal-window-head {
 .v2-o-label-2 text { fill: #a3602a; }
 .v2-o-label-3 text { fill: #4560b0; }
 body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
+/* 2.28.5: svetlejšie nápisy v kruhu (Samuel 4. 11.) */
+.v2-o-label text { font-weight: 800; }
+.v2-o-label-1 text { fill: #d28ba3; }
+.v2-o-label-2 text { fill: #d6995f; }
+.v2-o-label-3 text { fill: #8299d8; }
