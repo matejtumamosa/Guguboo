@@ -3096,7 +3096,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.27.4";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.27.5";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
@@ -3274,7 +3274,7 @@
                   <label class="welcome-friendly-field" id="welcomeNameWrap">Meno bábätka
                     <input id="welcomeName" autocomplete="off" placeholder="Ema, Oliver…">
                   </label>
-                  <label class="welcome-name-undecided"><input type="checkbox" id="welcomeNameUndecided"><span>Ešte nemáme vybrané meno</span></label>
+                  <label class="welcome-name-undecided expecting-field"><input type="checkbox" id="welcomeNameUndecided"><span>Ešte nemáme vybrané meno</span></label>
                   <p class="welcome-name-undecided-note hidden" id="welcomeNameUndecidedNote">Zatiaľ budeme hovoriť „Bábätko“. Meno doplníš neskôr v profile.</p>
                 </div>
                 <!-- Kalkulačka termínu (ACOG/NHS): termín od lekára, alebo výpočet z menštruácie (+280 dní, upravené o dĺžku cyklu) či počatia (+266 dní). -->
@@ -7870,6 +7870,8 @@ Otázky:
       const expecting = status === "expecting";
       document.querySelectorAll(".expecting-field").forEach(el => el.classList.toggle("hidden", !expecting));
       document.querySelectorAll(".born-field").forEach(el => el.classList.toggle("hidden", expecting));
+      // Po pôrode nemá „Ešte nemáme vybrané meno“ zmysel (Samuel 4. 11.) – políčko je len pred pôrodom.
+      if (!expecting && $("welcomeNameUndecided")?.checked) setWelcomeNameUndecided(false);
       const today = dateInputToday();
       if ($("welcomeDue")) $("welcomeDue").min = today;
       if ($("welcomeBirth")) $("welcomeBirth").max = today;
