@@ -1195,7 +1195,8 @@
       // Profil a nastavenia sú v menu (☰) hore vedľa nočného režimu.
       "</div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 6).map((item, index) => expecting
-        ? "<button class='v5-glance v5-glance-action v5-prenatal-glance v2-glance-named' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span class='v5-icon' aria-hidden='true'>" + icon(item[3]) + "</span><strong>" + escapeHtml(item[0]) + "</strong></button>"
+        // Len piktogram – názvy vysvetľuje sprievodca (krok Tehotenská knižka, Mama a Dieťa); názov ostáva pre čítačky.
+        ? "<button class='v5-glance v5-glance-action v5-prenatal-glance v2-glance-named v2-glance-icon-only' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span class='v5-icon' aria-hidden='true'>" + icon(item[3]) + "</span><strong class='v5-sr-only'>" + escapeHtml(item[0]) + "</strong></button>"
         : index < 3
           ? "<button class='v5-glance v5-glance-action' type='button' data-v5-quick-feature='" + ["sleep", "feeding", "diaper"][index] + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong>" + (item[3] ? "<small class='v2-glance-time'>" + escapeHtml(item[3]) + "</small>" : "") + "</button>"
           : index < 5

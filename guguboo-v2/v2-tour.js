@@ -79,7 +79,12 @@
         scroll: true,
         target: () => home?.querySelector(".v5-glance-strip"),
         title: "Tehotenská knižka, Mama a Dieťa",
-        text: "📖 Tehotenská knižka – zápisy z kontrol, výsledky, termíny a prehľad pre lekára.\n🤰 Mama – tvoje telo, bežné ťažkosti, pitie a nálada.\n👶 Dieťa – aké veľké je bábätko.",
+        // Rovnaké piktogramy ako v okienkach na domove (tie sú bez textu, vysvetlenie je len tu).
+        items: [
+          { icon: "book", name: "Tehotenská knižka", text: "zápisy z kontrol, výsledky, termíny a prehľad pre lekára." },
+          { icon: "health", name: "Mama", text: "tvoje telo, bežné ťažkosti, pitie a nálada." },
+          { icon: "baby", name: "Dieťa", text: "aké veľké je bábätko a všetko dôležité o jeho vývoji týždeň po týždni." }
+        ],
         try: { label: "Otvoriť Tehotenskú knižku", run: () => V5()?.openFeature("pregnancy") }
       } : {
         scroll: true,
@@ -180,7 +185,13 @@
     const position = list.slice(0, stepIndex + 1).filter(isSpot).length;
     byId("v2TourCount").textContent = step.setup ? step.kicker : step.intro ? "Vitaj v Guguboo" : position + " / " + realSteps;
     byId("v2TourTitle").textContent = step.title;
-    byId("v2TourText").textContent = step.text;
+    const esc = window.GugubooV5?.escapeHtml || (value => String(value));
+    if (step.items && window.GugubooV5?.icon) {
+      byId("v2TourText").innerHTML = "<span class='v2-tour-items'>" + step.items.map(item =>
+        "<span class='v2-tour-item'><span class='v5-icon' aria-hidden='true'>" + window.GugubooV5.icon(item.icon) + "</span><span><b>" + esc(item.name) + "</b> – " + esc(item.text) + "</span></span>").join("") + "</span>";
+    } else {
+      byId("v2TourText").textContent = step.text || (step.items || []).map(item => item.name + " – " + item.text).join("\n");
+    }
     root.querySelector("[data-v2-tour-next]").textContent = step.nextLabel || (step.intro ? "Ukázať" : stepIndex === list.length - 1 ? "Rozumiem" : "Ďalej");
     root.querySelector(".v2-tour-skip").textContent = step.skipLabel || (step.intro ? "Teraz nie" : "Preskočiť");
     root.classList.toggle("is-intro", Boolean(step.intro || step.setup));

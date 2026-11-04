@@ -1163,6 +1163,15 @@ body.v5-active #home.view { padding-top: 14px !important; }
 .v5-glance.v2-glance-named .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
 .v5-glance.v2-glance-named .v5-icon svg { width: 19px; height: 19px; }
 .v5-glance.v2-glance-named strong { font-size: 14.5px; line-height: 1.2; color: var(--v5-ink); hyphens: none; }
+/* Domov pred pôrodom: okienka len s piktogramom (ako náhľad v úvode), vysvetlenie je v sprievodcovi. */
+.v5-glance.v2-glance-icon-only { align-items: center; justify-content: center; min-height: 72px; }
+.v5-glance.v2-glance-icon-only .v5-icon { width: 46px; height: 46px; border-radius: 15px; }
+.v5-glance.v2-glance-icon-only .v5-icon svg { width: 25px; height: 25px; }
+.v2-tour-items { display: grid; gap: 10px; white-space: normal; }
+.v2-tour-item { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; }
+.v2-tour-item .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v2-tour-item .v5-icon svg { width: 19px; height: 19px; }
+.v2-tour-item b { color: var(--v5-ink); font-weight: 700; }
 
 /* 2.18.0: Zdravotná knižka dieťaťa, súkromie */
 .v2-account-note b { color: var(--v5-ink); font-weight: 700; }
