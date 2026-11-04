@@ -3096,12 +3096,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.28.9";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.29.0";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=2">
-  <link rel="stylesheet" href="v2.css?v=2.28.5">
+  <link rel="stylesheet" href="v2.css?v=2.29.0">
 </head>
 <body>
   <div class="app" id="app">
@@ -3346,12 +3346,42 @@
                 </dl>
               </section>
 
-              <div class="v5-today-card welcome-finish-first-step" id="welcomeFinishFirstStep">
-                <span class="v5-icon" aria-hidden="true"><svg id="welcomeFinishIconChecklist" viewBox="0 0 24 24"><path d="M9 5h10M9 12h10M9 19h10"/><path d="m3.5 5 1.5 1.5L7.5 4M3.5 12l1.5 1.5L7.5 11M3.5 19l1.5 1.5L7.5 18"/></svg><svg id="welcomeFinishIconMoment" class="hidden" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>
-                <div>
-                  <small>Prvý krok na domove</small>
-                  <strong id="welcomeFinishStepTitle">Priprav dnes jednu vec do pôrodnice.</strong>
-                  <span class="v5-today-hint" id="welcomeFinishStepHint">Checklist Taška do pôrodnice nájdeš po otvorení tvojho Guguboo.</span>
+              <!-- Motivačná karta (namiesto „Prvý krok“): cesta tehotenstvom, značka = aktuálny týždeň, na konci stretnutie s bábätkom. -->
+              <div class="welcome-finish-first-step welcome-journey-card" id="welcomeFinishFirstStep">
+                <svg class="welcome-journey-art" viewBox="0 0 320 112" role="img" aria-labelledby="welcomeJourneyArtLabel">
+                  <title id="welcomeJourneyArtLabel">Cesta tehotenstvom</title>
+                  <defs>
+                    <linearGradient id="welcomeJourneyGradient" x1="0" x2="1" y1="0" y2="0">
+                      <stop offset="0" stop-color="#8171ce"/>
+                      <stop offset=".6" stop-color="#b57bd0"/>
+                      <stop offset="1" stop-color="#f07f98"/>
+                    </linearGradient>
+                    <radialGradient id="welcomeJourneyGlow">
+                      <stop offset="0" stop-color="#ffd9e2"/>
+                      <stop offset="1" stop-color="#ffd9e2" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <path class="welcome-journey-sparkle" d="M64 18l1.6 4.4L70 24l-4.4 1.6L64 30l-1.6-4.4L58 24l4.4-1.6Z"/>
+                  <path class="welcome-journey-sparkle" d="M212 14l1.2 3.3 3.3 1.2-3.3 1.2L212 23l-1.2-3.3-3.3-1.2 3.3-1.2Z"/>
+                  <circle cx="290" cy="40" r="30" fill="url(#welcomeJourneyGlow)"/>
+                  <path class="welcome-journey-track" id="welcomeJourneyTrack" d="M18 82C62 82 70 40 120 44S190 92 236 70 272 42 290 40"/>
+                  <path class="welcome-journey-progress" id="welcomeJourneyProgress" d="M18 82C62 82 70 40 120 44S190 92 236 70 272 42 290 40"/>
+                  <circle class="welcome-journey-start" cx="18" cy="82" r="5"/>
+                  <g class="welcome-journey-goal" transform="translate(290 40)">
+                    <circle r="17"/>
+                    <path d="M0 7.5S-8.5 2.4-8.5-3.2A4.6 4.6 0 0 1 0-5.6a4.6 4.6 0 0 1 8.5 2.4C8.5 2.4 0 7.5 0 7.5Z"/>
+                  </g>
+                  <g class="welcome-journey-marker" id="welcomeJourneyMarker" transform="translate(18 82)">
+                    <circle class="welcome-journey-marker-halo" r="13"/>
+                    <circle class="welcome-journey-marker-dot" r="7"/>
+                  </g>
+                  <text class="welcome-journey-label" id="welcomeJourneyWeekLabel" x="18" y="108" text-anchor="middle">Dnes</text>
+                  <text class="welcome-journey-label welcome-journey-goal-label" x="290" y="74" text-anchor="middle">Stretnutie</text>
+                </svg>
+                <div class="welcome-journey-copy">
+                  <small>Začíname spoločnú cestu</small>
+                  <strong>Ideme na to!</strong>
+                  <span>Krok za krokom, týždeň po týždni. Spolu to zvládneme.</span>
                 </div>
               </div>
 
@@ -8113,6 +8143,26 @@ Otázky:
       });
     }
 
+    // Motivačná karta: značka na ceste podľa týždňa tehotenstva (40 týždňov = celá cesta).
+    function setWelcomeJourneyProgress(week) {
+      const track = $("welcomeJourneyTrack");
+      if (!track?.getTotalLength) return;
+      const total = track.getTotalLength();
+      const length = total * Math.min(1, Math.max(0, (Number(week) || 0) / 40));
+      const point = track.getPointAtLength(length);
+      const progress = $("welcomeJourneyProgress");
+      progress.style.strokeDasharray = `${length} ${total}`;
+      progress.style.setProperty("--journey-length", total);
+      progress.classList.remove("welcome-journey-draw");
+      void progress.getBoundingClientRect();
+      progress.classList.add("welcome-journey-draw");
+      $("welcomeJourneyMarker").setAttribute("transform", `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})`);
+      const label = $("welcomeJourneyWeekLabel");
+      label.setAttribute("x", Math.min(250, Math.max(30, point.x)).toFixed(1));
+      label.setAttribute("y", Math.min(108, point.y + 26).toFixed(1));
+      label.textContent = week ? `${week}. týždeň` : "Dnes";
+    }
+
     // Posledný krok onboardingu = náhľad domova v7.6 (rovnaké v5 bloky ako renderHome vo v5-mobile.js).
     function updateWelcomeFinishScreen() {
       if (!$("welcomeFinishAvatar")) return;
@@ -8136,8 +8186,6 @@ Otázky:
         $("saveWelcome").className = expecting ? "primary" : "ghost";
         $("saveWelcome").innerHTML = expecting ? `Otvoriť môj Guguboo <span aria-hidden="true">→</span>` : "Pokračovať do aplikácie";
       }
-      $("welcomeFinishIconChecklist")?.classList.toggle("hidden", !expecting);
-      $("welcomeFinishIconMoment")?.classList.toggle("hidden", expecting);
 
       if (expecting) {
         const due = $("welcomeDue")?.value || "";
@@ -8158,8 +8206,7 @@ Otázky:
         setText("welcomeFinishGlanceValue2", "Mama");
         setText("welcomeFinishGlanceLabel3", "");
         setText("welcomeFinishGlanceValue3", "Dieťa");
-        setText("welcomeFinishStepTitle", "Priprav dnes jednu vec do pôrodnice.");
-        setText("welcomeFinishStepHint", "Checklist Taška do pôrodnice nájdeš po otvorení tvojho Guguboo.");
+        setWelcomeJourneyProgress(fruit.week);
       } else {
         const birth = $("welcomeBirth")?.value || "";
         const ageLabel = welcomeChildAgeLabel(birth);
@@ -8177,8 +8224,6 @@ Otázky:
         setText("welcomeFinishGlanceValue2", "Kŕmenie");
         setText("welcomeFinishGlanceLabel3", "");
         setText("welcomeFinishGlanceValue3", "Prebalenie");
-        setText("welcomeFinishStepTitle", "Dnešný malý moment");
-        setText("welcomeFinishStepHint", "Pridaj jednu fotku alebo krátku vetu.");
       }
 
       setText("welcomeFinishCountry", `Miestny obsah: ${euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa"}`);

@@ -1357,6 +1357,28 @@ body:not(.night) .v5-universal-window-head {
 .welcome-finish-preview .v5-glance.v2-glance-named .v5-icon svg { width: 25px; height: 25px; }
 .welcome-finish-preview .v5-glance.v2-glance-named dd { position: absolute; width: 1px; height: 1px; overflow: hidden !important; clip: rect(0 0 0 0); white-space: nowrap !important; }
 
+/* Úvod: motivačná karta „Začíname spoločnú cestu“ (namiesto Prvý krok) */
+.welcome-journey-card { display: grid; gap: 6px; margin-top: 12px; padding: 16px 18px 18px; background: linear-gradient(135deg, rgba(240, 235, 255, .95), rgba(255, 238, 243, .92) 60%, rgba(255, 244, 232, .9)); border: 1px solid rgba(123, 107, 200, .14); border-radius: 24px; box-shadow: 0 15px 40px rgba(72, 55, 100, .07); text-align: center; overflow: hidden; }
+.welcome-journey-art { display: block; width: 100%; height: auto; overflow: visible; }
+.welcome-journey-track { fill: none; stroke: rgba(129, 113, 206, .25); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 2 9; }
+.welcome-journey-progress { fill: none; stroke: url(#welcomeJourneyGradient); stroke-width: 5; stroke-linecap: round; }
+.welcome-journey-start { fill: #8171ce; }
+.welcome-journey-goal circle { fill: #fff; stroke: rgba(240, 127, 152, .35); stroke-width: 1.5; filter: drop-shadow(0 6px 12px rgba(240, 127, 152, .25)); }
+.welcome-journey-goal path { fill: #f07f98; }
+.welcome-journey-marker-halo { fill: rgba(129, 113, 206, .18); animation: welcome-journey-pulse 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.welcome-journey-marker-dot { fill: #6a4fc4; stroke: #fff; stroke-width: 3; }
+.welcome-journey-sparkle { fill: #f6c89f; opacity: .9; }
+.welcome-journey-label { fill: #6a4fc4; font: 800 11px Montserrat, ui-sans-serif, system-ui, sans-serif; }
+.welcome-journey-goal-label { fill: #d4627d; }
+.welcome-journey-copy { display: grid; gap: 4px; }
+.welcome-journey-copy small { color: #8171ce; font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.welcome-journey-copy strong { color: var(--v5-ink); font: 900 22px/1.15 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: -.02em; }
+.welcome-journey-copy span { color: #665d75; font-size: 13px; font-weight: 600; line-height: 1.45; }
+.welcome-journey-draw { animation: welcome-journey-draw 1.1s ease-out both; }
+@keyframes welcome-journey-draw { from { stroke-dashoffset: var(--journey-length, 400); } to { stroke-dashoffset: 0; } }
+@keyframes welcome-journey-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .welcome-journey-draw, .welcome-journey-marker-halo { animation: none; } }
+
 /* 2.27.0: Môj hlas pre bábätko */
 .v2-voice-card { margin-top: 12px; padding: 16px; background: rgba(255, 255, 255, .9); border: 1px solid rgba(111, 91, 163, .12); border-radius: 24px; text-align: center; }
 .v2-voice-card .v2-ann-chips { justify-content: center; }
