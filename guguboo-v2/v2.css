@@ -1311,3 +1311,11 @@ body:not(.night) .v5-universal-window-head {
 .v2-first-grid button.is-saved { background: linear-gradient(135deg, #f1ecff, #fff0ec) !important; border-color: rgba(117, 96, 181, .3) !important; }
 .v2-first-grid button.is-saved small { color: #5f4fb1; font-weight: 600; }
 .v2-ask-date[hidden] { display: none; }
+
+/* 2.25.0: Zásuvka Praktické | Spomienky */
+.v2-drawer-tabs { margin: 0 auto 12px; }
+.v2-drawer-hint { margin: -2px 4px 10px; color: var(--v5-muted); font-size: 13px; text-align: center; }
+#v5Drawer .v5-drawer-emotional-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-bottom: 12px; padding: 14px 16px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .16); border-radius: 22px; text-align: left; }
+#v5Drawer .v5-drawer-emotional-card small { display: block; color: #6a4fc4; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+#v5Drawer .v5-drawer-emotional-card strong { display: block; font-size: 16px; font-weight: 800; color: var(--v5-ink); }
+#v5Drawer .v5-drawer-emotional-card em { font-style: normal; font-size: 12.5px; color: var(--v5-muted); }

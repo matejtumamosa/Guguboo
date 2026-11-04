@@ -68,7 +68,7 @@
     if (m.announced) add({ key: "announced", phase: pre(m.announced), emoji: "💌", title: "Oznámili sme to blízkym", date: m.announced, photo: m.announcedImg || "", source: "Kartička" });
     // Meno a pohlavie sú spomienkou len z čakania (po narodení ich nesie „… je na svete“).
     if (m.sex && pre(m.sex) === "pre") add({ key: "sex", phase: pre(m.sex), emoji: "🎀", title: p.sex === "girl" ? "Bude to dievčatko" : p.sex === "boy" ? "Bude to chlapček" : "Vieme, kto to bude", date: m.sex, source: "auto" });
-    if (m.name && pre(m.name) === "pre") add({ key: "name", phase: pre(m.name), emoji: "🏷️", title: "Meno: " + p.name, date: m.name, source: "auto" });
+    if (m.name && pre(m.name) === "pre") add({ key: "name", phase: pre(m.name), emoji: "💜", title: "Meno: " + p.name, date: m.name, source: "auto" });
     if (m.firstLetter) add({ key: "letter", phase: pre(m.firstLetter), emoji: "✉️", title: "Prvý list bábätku", text: "Obsah ostáva v tvojom súkromnom denníku.", date: m.firstLetter, source: "Denník" });
     if (m.bag) add({ key: "bag", phase: pre(m.bag), emoji: "👜", title: "Taška do pôrodnice je zbalená", date: m.bag, source: "auto" });
     if (m.birthPlan) add({ key: "plan", phase: pre(m.birthPlan), emoji: "📝", title: "Plán pôrodu je napísaný", date: m.birthPlan, source: "auto" });
@@ -269,14 +269,18 @@
     return "<button type='button' class='v2-days-card' data-v2-moments-open='timeline'><span aria-hidden='true'>💛</span><span><strong>" + esc(title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
   }
 
-  document.addEventListener("click", event => {
-    const open = event.target.closest("[data-v2-moments-open]");
-    if (!open) return;
+  function openMoments(section) {
     V5.openFeature("memories");
-    state.v5.momentsSection = open.dataset.v2MomentsOpen;
+    state.v5.momentsSection = section || "timeline";
     V5.persist();
     V5.rerenderMoments?.();
+  }
+  document.addEventListener("click", event => {
+    const open = event.target.closest("[data-v2-moments-open]");
+    if (open) openMoments(open.dataset.v2MomentsOpen);
   });
+  // Prehliadka: „Pozrieť spomienky“
+  document.addEventListener("v2-open-timeline", () => openMoments("timeline"));
 
   window.GugubooMoments = { collect, timelineHtml, homeCardHtml, firstsHtml, catalog: CATALOG, mark: (key, value) => { const m = marks(); if (!m[key]) { m[key] = value || nowIso(); V5.persist(); } } };
   if (document.getElementById("home")?.classList.contains("active")) V5.renderHome();

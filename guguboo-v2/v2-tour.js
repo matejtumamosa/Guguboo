@@ -90,6 +90,13 @@
       },
       {
         scroll: true,
+        target: () => home?.querySelector(".v2-ask-card, .v2-days-card"),
+        title: "Vaše spomienky",
+        text: "Guguboo si spomienky zapisuje samo – sono, prvé pohyby, kartičku, prvé razy. Občas sa jemne opýta „Stalo sa už?“ a stačí jedno ťuknutie. Všetko nájdeš v Naše momenty.",
+        try: { label: "Pozrieť spomienky", run: () => document.dispatchEvent(new CustomEvent("v2-open-timeline")) }
+      },
+      {
+        scroll: true,
         target: () => home?.querySelector(".v5-circle-mode") || home?.querySelector("[data-v5-circle-mode]")?.parentElement,
         title: expecting ? "Príprava a Pohoda" : "Organizácia a Pohoda",
         text: expecting
@@ -129,8 +136,8 @@
         target: () => byId("v5BottomBar"),
         title: "Všetky aplikácie",
         text: expecting
-          ? "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Kalendár, Denník, Nákup, Kontakty… Obľúbené si vymeníš v zásuvke."
-          : "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor a uvidíš všetko ostatné – Mama, Zdravotná knižka, Denník, Nákup… Obľúbené si vymeníš v zásuvke.",
+          ? "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor: v karte Praktické sú nástroje ako Kalendár, Knižka či Nákup, v karte Spomienky Naše momenty a denník. Obľúbené si vymeníš v zásuvke."
+          : "Dole sú tvoje 4 obľúbené. Potiahni lištu nahor: v karte Praktické sú Mama, Zdravotná knižka či Nákup, v karte Spomienky Naše momenty, denník a uspávanky. Obľúbené si vymeníš v zásuvke.",
         try: { label: "Otvoriť zásuvku", run: () => V5()?.openDrawer?.() }
       }
     ];

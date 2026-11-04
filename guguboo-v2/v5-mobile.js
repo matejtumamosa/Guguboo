@@ -309,7 +309,7 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "mama", "childBook", "privateSpace", "calendar", "care", "activities", "teeth", "family", "shopping",
+    "mama", "childBook", "privateSpace", "sounds", "calendar", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
@@ -1215,23 +1215,36 @@
     ].join("");
   }
 
+  // Zásuvka má dve karty ako kruh (Samuel 17. 10.): Praktické (povinnosti a nástroje) | Spomienky (citové veci).
+  const emotionalFeatures = new Set(["memories", "privateSpace", "sounds", "activities"]);
   function renderDrawer() {
     const scroll = byId("v5DrawerScroll");
     if (!scroll) return;
     ensureFavoritePhase();
-    if (state.profile.status !== "expecting") {
+    const expecting = state.profile.status === "expecting";
+    const all = expecting ? prenatalDrawerFeatures : postpartumDrawerFeatures;
+    const memoriesTab = state.v5.drawerTab === "memories";
+    const tabs = [
+      "<div class='v2-circle-tabs v2-drawer-tabs' role='tablist' aria-label='Druh aplikácií'>",
+      "<button type='button' role='tab' data-v2-drawer-tab='practical' aria-selected='", String(!memoriesTab), "' class='", memoriesTab ? "" : "active", "'>Praktické</button>",
+      "<button type='button' role='tab' data-v2-drawer-tab='memories' aria-selected='", String(memoriesTab), "' class='", memoriesTab ? "active" : "", "'>Spomienky</button>",
+      "</div>"
+    ].join("");
+    if (memoriesTab) {
+      const items = all.filter(key => emotionalFeatures.has(key) && key !== "memories");
+      const count = (window.GugubooMoments?.collect?.() || []).length;
       scroll.innerHTML = [
-        "<button class='v5-drawer-emotional-card' type='button' data-v5-feature='memories'><span class='v5-icon'>", icon("memory"), "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>Dnešný moment · prvé razy · 100 dní a prvý rok</em></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-        "<div class='v5-drawer-grid v5-drawer-flat'>",
-        postpartumDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
-        "</div>",
-        renderFavoriteEditor()
+        tabs,
+        "<p class='v2-drawer-hint'>Chvíle, ktoré si chceš zapamätať – väčšina sa zapisuje sama.</p>",
+        "<button class='v5-drawer-emotional-card' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>", icon("memory"), "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>", count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy a malé momenty", "</em></span><b aria-hidden='true'>›</b></button>",
+        "<div class='v5-drawer-grid v5-drawer-flat'>", items.map(key => drawerApp(key, false)).join(""), "</div>"
       ].join("");
       return;
     }
     scroll.innerHTML = [
-      "<div class='v5-drawer-grid v5-drawer-flat v5-prenatal-drawer-grid'>",
-      prenatalDrawerFeatures.map((key, index) => drawerApp(key, index === 0)).join(""),
+      tabs,
+      "<div class='v5-drawer-grid v5-drawer-flat", expecting ? " v5-prenatal-drawer-grid" : "", "'>",
+      all.filter(key => !emotionalFeatures.has(key)).map((key, index) => drawerApp(key, index === 0)).join(""),
       "</div>",
       renderFavoriteEditor()
     ].join("");
@@ -3903,6 +3916,13 @@
       }
       if (action === "hospital") return openOrganizationMenu("hospital");
       return openFeature(action);
+    }
+    const drawerTab = event.target.closest("[data-v2-drawer-tab]");
+    if (drawerTab) {
+      state.v5.drawerTab = drawerTab.dataset.v2DrawerTab;
+      persist();
+      renderDrawer();
+      return;
     }
     const circleMode = event.target.closest("[data-v5-circle-mode]");
     if (circleMode) {
