@@ -111,6 +111,7 @@
     mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie a otázky pre pediatra", icon: "book", tier: "free", view: "v5ChildBook" },
     announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych – s ultrazvukom alebo bez fotky", icon: "cards", tier: "free", view: "v5Announce" },
+    voice: { label: "Môj hlas pre bábätko", description: "Uspávanka alebo pár slov tvojím hlasom", icon: "sound", tier: "free", view: "v5Voice" },
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady", description: "Lokálne kroky a podpora", icon: "book", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
@@ -314,7 +315,7 @@
   ];
 
   const prenatalDrawerFeatures = [
-    "privateSpace", "memories", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
+    "privateSpace", "memories", "voice", "calendar", "beforeBirth", "pregnancy", "contacts", "shopping",
     "products", "family", "travel", "profiles"
   ];
 
@@ -471,6 +472,7 @@
     "<section class='view' id='v5Mama'><div class='v5-flow' id='v5MamaContent'></div></section>",
     "<section class='view' id='v5ChildBook'><div class='v5-flow' id='v5ChildBookContent'></div></section>",
     "<section class='view' id='v5Announce'><div class='v5-flow' id='v5AnnounceContent'></div></section>",
+    "<section class='view' id='v5Voice'><div class='v5-flow' id='v5VoiceContent'></div></section>",
     "<section class='view' id='v5Calendar'><div class='v5-flow' id='v5CalendarContent'></div></section>",
     "<section class='view' id='v5Sounds'><div class='v5-flow' id='v5SoundsContent'></div></section>",
     "<section class='view' id='v5Care'><div class='v5-flow' id='v5CareContent'></div></section>",
@@ -543,6 +545,7 @@
     v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
     v5ChildBook: ["Zdravotná knižka", "Prehliadky, rast, očkovanie a otázky pre pediatra"],
     v5Announce: ["Oznámiť tehotenstvo", "Kartička pre blízkych"],
+    v5Voice: ["Môj hlas pre bábätko", "Uspávanka tvojím hlasom"],
     v5Calendar: ["Kalendár", "Všetky termíny a pripomienky"],
     v5Sounds: ["Spánok", "Zvuky na zaspávanie"],
     v5Care: ["Pomoc a starostlivosť", "Jedno miesto pre otázky a ťažkosti"],
@@ -1217,7 +1220,7 @@
   }
 
   // Zásuvka má dve karty ako kruh (Samuel 17. 10.): Praktické (povinnosti a nástroje) | Spomienky (citové veci).
-  const emotionalFeatures = new Set(["memories", "privateSpace", "sounds", "activities"]);
+  const emotionalFeatures = new Set(["memories", "privateSpace", "voice", "sounds", "activities"]);
   function renderDrawer() {
     const scroll = byId("v5DrawerScroll");
     if (!scroll) return;
@@ -2016,6 +2019,11 @@
     if (feature.view === "v5Calendar") {
       routeTo("v5Calendar");
       renderCalendar();
+      return;
+    }
+    if (feature.view === "v5Voice") {
+      routeTo("v5Voice");
+      window.GugubooVoice?.render();
       return;
     }
     if (feature.view === "v5Announce") {
@@ -3700,7 +3708,7 @@
       "<div class='v5-choice-grid'>" +
       "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Biely šum</strong><small>Jemné stále pozadie.</small></span></button>" +
       "<button class='v5-choice' type='button' data-v5-audio-type='lullaby-soft' data-v5-audio-title='Jemná uspávanka'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Jemná melódia</strong><small>Predvolená pokojná hudba.</small></span></button>" +
-      "<button class='v5-choice' type='button' data-v5-action='open-original-sounds'><span class='v5-icon'>" + icon("family") + "</span><span><strong>Nahrať uspávanku</strong><small>Hlas mamy, otca alebo blízkej osoby.</small></span></button></div>" +
+      "<button class='v5-choice' type='button' data-v5-feature='voice'><span class='v5-icon'>" + icon("family") + "</span><span><strong>Nahrať uspávanku</strong><small>Hlas mamy, otca alebo blízkej osoby.</small></span></button></div>" +
       (lullabies.length ? "<section class='v5-shared-lullabies'><div class='v5-compact-head'><div><h3>Naše nahrávky</h3><p>Spoločná knižnica rodičov.</p></div></div><div class='v5-lullaby-quick-list'>" + lullabies.map(item => "<button type='button' data-v5-play-lullaby='" + escapeHtml(item.id) + "'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>" + escapeHtml(item.title || "Rodinná uspávanka") + "</strong><small>" + escapeHtml(item.author === "otec" ? "Nahral otec" : item.author === "mama" ? "Nahrala mama" : "Rodinná nahrávka") + "</small></span><b>Prehrať</b></button>").join("") + "</div></section>" : "") +
       "<div class='v5-info-box'>Zvuk má byť iba jemným pozadím. Telefón ani reproduktor nedávaj k hlave dieťaťa.</div>";
   }

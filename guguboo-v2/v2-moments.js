@@ -70,6 +70,7 @@
     if (m.sex && pre(m.sex) === "pre") add({ key: "sex", phase: pre(m.sex), emoji: "🎀", title: p.sex === "girl" ? "Bude to dievčatko" : p.sex === "boy" ? "Bude to chlapček" : "Vieme, kto to bude", date: m.sex, source: "auto" });
     if (m.name && pre(m.name) === "pre") add({ key: "name", phase: pre(m.name), emoji: "💜", title: "Meno: " + p.name, date: m.name, source: "auto" });
     if (m.firstLetter) add({ key: "letter", phase: pre(m.firstLetter), emoji: "✉️", title: "Prvý list bábätku", text: "Obsah ostáva v tvojom súkromnom denníku.", date: m.firstLetter, source: "Denník" });
+    if (m.voice) add({ key: "voice", phase: pre(m.voice), emoji: "🎙️", title: pre(m.voice) === "pre" ? "Nahrala som bábätku svoj hlas" : "Prvá nahraná uspávanka", date: m.voice, source: "Môj hlas" });
     if (m.bag) add({ key: "bag", phase: pre(m.bag), emoji: "👜", title: "Taška do pôrodnice je zbalená", date: m.bag, source: "auto" });
     if (m.birthPlan) add({ key: "plan", phase: pre(m.birthPlan), emoji: "📝", title: "Plán pôrodu je napísaný", date: m.birthPlan, source: "auto" });
 
@@ -256,6 +257,9 @@
     if ((day >= 100 && day < 110) || (day >= 365 && day < 375)) return daysCardHtml();
     const ask = duePrompt();
     if (ask) return promptCardHtml(ask);
+    // Pred pôrodom od 16. týždňa: pozvánka „Nahraj bábätku svoj hlas“ (raz, dá sa skryť).
+    const invite = window.GugubooVoice?.inviteHtml?.();
+    if (invite) return invite;
     return daysCardHtml();
   }
 
