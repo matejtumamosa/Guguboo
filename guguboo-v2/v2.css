@@ -1380,3 +1380,10 @@ body:not(.night) .v5-universal-window-head {
 .v2-bc-swatch { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; background: linear-gradient(135deg, var(--sw1) 0 50%, var(--sw2) 50% 100%); box-shadow: 0 0 0 1px rgba(111, 91, 163, .2), 0 4px 10px rgba(76, 61, 103, .1); cursor: pointer; }
 .v2-bc-swatch.is-active { box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(117, 96, 181, .55); }
 .v2-bc-form h3 { margin-top: 16px; }
+
+/* 2.28.4: Nápisy v kruhu hrubé ako meno dieťaťa a viditeľne ohnuté po oblúku (Samuel 4. 11.) */
+.v2-o-label text { font: 900 20px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .16em; }
+.v2-o-label-1 text { fill: #b14d70; }
+.v2-o-label-2 text { fill: #a3602a; }
+.v2-o-label-3 text { fill: #4560b0; }
+body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
