@@ -183,7 +183,6 @@
   function promptCardHtml(item) {
     return [
       "<section class='v2-ask-card' aria-label='Stalo sa už?'>",
-      "<button type='button' class='v2-ask-never' data-v2-first-never='", item.key, "' aria-label='Túto otázku už neukazovať'>×</button>",
       "<small>Stalo sa už?</small><div class='v2-ask-title'><span aria-hidden='true'>", item.emoji, "</span><strong>", esc(item.label), "</strong></div>",
       item.note ? "<p>" + esc(item.note) + "</p>" : "<p>Každé bábätko má vlastné tempo. Odpovedz, len ak chceš.</p>",
       "<div class='v2-ask-actions'><button type='button' class='v5-primary' data-v2-first-yes='", item.key, "'>Áno, dnes</button>",
@@ -250,19 +249,109 @@
     }
   });
 
-  // Domov: jedna citová karta – buď otázka „Stalo sa už?“, alebo (po pôrode) najbližší míľnik dní spolu.
-  function homeCardHtml() {
-    // 100. deň a prvé narodeniny majú prednosť pred otázkou „Stalo sa už?“.
+  // ——— Okno „Pre teba dnes“ (Samuel 4. 11.): jedno dynamické okno pod hlavičkou domova namiesto
+  // samostatných kariet. Karty podľa dôležitosti: termín dnes/zajtra → súhrn dňa → míľnik → „Stalo sa už?“ →
+  // pozvánky → tento týždeň → dni spolu. Najviac 4, potiahnutím prstom sa prechádza; bez krížika.
+  const card = (kicker, emoji, title, text, actions) => "<section class='v2-ask-card v2-deck-card'><small>" + esc(kicker) + "</small><div class='v2-ask-title'><span aria-hidden='true'>" + emoji + "</span><strong>" + esc(title) + "</strong></div>" + (text ? "<p>" + esc(text) + "</p>" : "") + "<div class='v2-ask-actions v2-deck-actions'>" + actions + "</div></section>";
+  const btn = (label, attrs, primary) => "<button type='button' class='" + (primary ? "v5-primary" : "v5-secondary") + "' " + attrs + ">" + esc(label) + "</button>";
+  const duration = ms => { const m = Math.round(ms / 60000); return m >= 60 ? Math.floor(m / 60) + " h " + (m % 60 ? (m % 60) + " min" : "") : m + " min"; };
+
+  function eventCard() {
+    const now = Date.now();
+    const today = todayKey();
+    const tomorrow = new Date(dayDate(today).getTime() + DAY).toISOString().slice(0, 10);
+    const items = (state.reminders || []).filter(item => item.date && !item.completedAt && item.key !== "birth-card-prep")
+      .filter(item => { const key = String(item.date).slice(0, 10); return key === today || key === tomorrow; })
+      .sort((a, b) => time(a.date) - time(b.date));
+    const item = items[0];
+    if (!item) return "";
+    const isToday = String(item.date).slice(0, 10) === today;
+    const hasTime = String(item.date).length > 10;
+    const when = (isToday ? "Dnes" : "Zajtra") + (hasTime ? " o " + new Date(item.date).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "");
+    const health = item.type === "Zdravie" || /kontrol|lekár|gynek|pediatr|prehliad|ultrazvuk/i.test(item.title || "");
+    const born = state.profile?.status !== "expecting";
+    const questions = (born ? state.v5?.pediatricianQuestions : state.v5?.pregnancyQuestions) || [];
+    const past = isToday && hasTime && time(item.date) < now;
+    const actions = [
+      health && past ? btn(born ? "Zapísať z prehliadky" : "Zapísať z kontroly", "data-v2-deck-go='" + (born ? "childBook|[data-v2-child-section=\"check-new\"]" : "pregnancy|[data-v5-book-section=\"visit-new\"]") + "'", true) : "",
+      health && !past ? btn("Otázky" + (questions.length ? " (" + questions.length + ")" : ""), "data-v2-deck-go='" + (born ? "childBook|[data-v2-child-section=\"questions\"]" : "pregnancy|[data-v5-book-section=\"questions\"]") + "'", true) : "",
+      btn("Hotovo", "data-v2-deck-done='" + esc(item.id || "") + "'", !health),
+      items.length > 1 ? btn("Kalendár (" + items.length + ")", "data-v5-feature='calendar'") : ""
+    ].join("");
+    return card(when, health ? "🩺" : "📅", item.title || "Udalosť", items.length > 1 ? "Ďalšie termíny nájdeš v Kalendári." : "", actions);
+  }
+
+  function summaryCard() {
+    if (state.profile?.status === "expecting" || !V5.daySummaryData) return "";
+    const today = todayKey();
+    const yesterday = new Date(dayDate(today).getTime() - DAY).toISOString().slice(0, 10);
+    const pick = [[yesterday, "Včera"], [today, "Dnes zatiaľ"]].map(([key, label]) => [V5.daySummaryData(key), label]).find(([d]) => d.sleepTotal || d.feedings || d.diapers);
+    if (!pick) return "";
+    const [d, label] = pick;
+    const name = state.profile?.name && !/^(bábätko|pipík)$/i.test(state.profile.name) ? state.profile.name : "Bábätko";
+    const parts = [d.sleepTotal ? "spánok " + duration(d.sleepTotal) : "", d.feedings ? d.feedings + "× kŕmenie" : "", d.diapers ? d.diapers + (d.diapers === 1 ? " plienka" : d.diapers < 5 ? " plienky" : " plienok") : ""].filter(Boolean);
+    return card(label, "🌙", name + ": " + parts.join(" · "), d.sleepLongest ? "Najdlhší spánok " + duration(d.sleepLongest) + "." : "", btn("Súhrn dňa", "data-v2-summary-open", true) + btn("Zapísať", "data-v5-open-record"));
+  }
+
+  function weekCard() {
+    if (state.profile?.status !== "expecting") return "";
+    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const size = week >= 4 ? window.GugubooV2?.babySize?.(week) : null;
+    if (!size) return "";
+    if (week === 20) return card("Míľnik", "✨", "Si v polovici tehotenstva", "Pozri, čo všetko už máte za sebou.", btn("Časová os", "data-v2-moments-open='timeline'", true));
+    return card("Tento týždeň · " + week + ". týždeň", size.emoji || "👶", size.comparison ? "Bábätko je veľké asi ako " + size.comparison : "Bábätko rastie", size.length ? size.length.charAt(0).toUpperCase() + size.length.slice(1) + "." : "", btn("Aké veľké je bábätko", "data-v5-feature='babySize'", true) + btn("Tvoje telo", "data-v2-deck-go='mama|[data-v2-mama-section=\"body\"]'"));
+  }
+
+  function announceCard() {
+    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    if (state.profile?.status !== "expecting" || week < 12 || state.v5?.announceDone || state.v5?.announceDismissed) return "";
+    return card("Pre blízkych", "💌", "Chcete to oznámiť blízkym?", "Kartička s ultrazvukom alebo bez fotky – pošleš ju, komu chceš.", btn("Vytvoriť kartičku", "data-v5-feature='announce'", true) + "<button type='button' class='v5-text-action' data-v2-ann-dismiss>Neskôr</button>");
+  }
+
+  function deckCards() {
     const birth = state.profile?.status !== "expecting" && state.profile?.birth;
     const day = birth ? Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1 : 0;
-    if ((day >= 100 && day < 110) || (day >= 365 && day < 375)) return daysCardHtml();
+    const milestone = (day >= 100 && day < 110) || (day >= 365 && day < 375) ? daysCardHtml() : "";
     const ask = duePrompt();
-    if (ask) return promptCardHtml(ask);
-    // Pred pôrodom od 16. týždňa: pozvánka „Nahraj bábätku svoj hlas“ (raz, dá sa skryť).
-    const invite = window.GugubooVoice?.inviteHtml?.();
-    if (invite) return invite;
-    return daysCardHtml();
+    const voice = (window.GugubooVoice?.inviteHtml?.() || "").replace(/<button[^>]*v2-ask-never[^>]*>×<\/button>/, "");
+    return [eventCard(), summaryCard(), milestone, ask ? promptCardHtml(ask) : "", voice, announceCard(), weekCard(), milestone ? "" : daysCardHtml()]
+      .filter(Boolean).slice(0, 4);
   }
+
+  // Domov: okno „Pre teba dnes“ (karty sa prechádzajú potiahnutím prstom alebo bodkami).
+  function homeCardHtml() {
+    const cards = deckCards();
+    if (!cards.length) return "";
+    return "<section class='v2-deck' aria-label='Pre teba dnes'><div class='v2-deck-head'><strong>Pre teba dnes</strong>" + (cards.length > 1 ? "<span>" + cards.length + " ›</span>" : "") + "</div>" +
+      "<div class='v2-deck-track'>" + cards.map(html => "<div class='v2-deck-slide'>" + html.replace("class='v2-ask-card'", "class='v2-ask-card v2-deck-card'").replace("class='v2-days-card", "class='v2-days-card v2-deck-card") + "</div>").join("") + "</div>" +
+      (cards.length > 1 ? "<div class='v2-deck-dots'>" + cards.map((_, i) => "<button type='button' data-v2-deck-dot='" + i + "' class='" + (i ? "" : "is-active") + "' aria-label='Karta " + (i + 1) + "'></button>").join("") + "</div>" : "") +
+      "</section>";
+  }
+
+  document.addEventListener("click", event => {
+    const dot = event.target.closest("[data-v2-deck-dot]");
+    if (dot) { const track = dot.closest(".v2-deck")?.querySelector(".v2-deck-track"); track?.scrollTo({ left: (track.clientWidth + 12) * Number(dot.dataset.v2DeckDot), behavior: "smooth" }); return; }
+    const done = event.target.closest("[data-v2-deck-done]");
+    if (done) {
+      const item = (state.reminders || []).find(entry => String(entry.id) === done.dataset.v2DeckDone);
+      if (item) { item.completedAt = new Date().toISOString(); V5.persist(); V5.renderHome(); V5.announce("Hotovo. Ďalšie veci máš v Kalendári."); }
+      return;
+    }
+    const go = event.target.closest("[data-v2-deck-go]");
+    if (go) {
+      const [feature, selector] = go.dataset.v2DeckGo.split("|");
+      V5.openFeature(feature);
+      setTimeout(() => document.querySelector(".view.active " + selector)?.click(), 80);
+      return;
+    }
+  });
+  // Bodky sledujú, ktorá karta je práve vidieť.
+  document.addEventListener("scroll", event => {
+    const track = event.target;
+    if (!track?.classList?.contains("v2-deck-track")) return;
+    const index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth + 12));
+    track.parentElement.querySelectorAll("[data-v2-deck-dot]").forEach((dot, i) => dot.classList.toggle("is-active", i === index));
+  }, true);
 
   // Domov po pôrode: „23. deň spolu“ + najbližší míľnik. Jemne, bez tlaku.
   function daysCardHtml() {

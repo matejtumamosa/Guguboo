@@ -109,10 +109,11 @@
       },
       {
         scroll: true,
-        target: () => home?.querySelector(".v2-ask-card, .v2-days-card"),
-        title: "Naše momenty",
+        target: () => home?.querySelector(".v2-deck"),
+        title: "Pre teba dnes",
         items: [
-          { icon: "memory", name: "Naše momenty", text: "spomienky sa zapisujú samy – sono, prvé pohyby, kartička, prvé razy. Občas sa jemne opýtame „Stalo sa už?“ a stačí jedno ťuknutie." }
+          { icon: "sparkle", name: "Pre teba dnes", text: "okno pod hlavičkou ukáže to najdôležitejšie – zajtrajšiu kontrolu, súhrn dňa, „Stalo sa už?“ či tento týždeň. Potiahni prstom a uvidíš ďalšie karty." },
+          { icon: "memory", name: "Naše momenty", text: "spomienky sa zapisujú samy – sono, prvé pohyby, kartička, prvé razy." }
         ],
         try: { label: "Otvoriť Naše momenty", run: () => document.dispatchEvent(new CustomEvent("v2-open-timeline")) }
       },
@@ -143,10 +144,10 @@
       },
       {
         scroll: true,
-        target: () => home?.querySelector("[data-v5-feature='calendar'].v5-row-card"),
+        target: () => document.querySelector("#v5BottomBar [data-v5-feature='calendar']"),
         title: "Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "najbližší termín na domove. Všetky kontroly, prehliadky a pripomienky sú na jednom mieste." }
+          { icon: "calendar", name: "Kalendár", text: "termíny dnes a zajtra ti ukáže okno Pre teba dnes. Všetky kontroly, prehliadky a pripomienky sú v Kalendári." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },

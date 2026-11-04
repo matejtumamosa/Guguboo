@@ -1445,3 +1445,24 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-bc-fields label:nth-last-child(-n+2) { grid-column: 1 / -1; }
 .v2-bc-fields input { min-width: 0; width: 100%; }
 .v2-ann-share.v2-bc-share { grid-template-columns: 1.3fr 1fr 1fr; }
+
+/* 2.32.0: Okno „Pre teba dnes“ – posúvateľné karty pod hlavičkou domova */
+.v2-deck { margin: 0 0 14px; }
+.v2-deck-head { display: flex; align-items: baseline; justify-content: space-between; margin: 0 6px 8px; }
+.v2-deck-head strong { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted); }
+.v2-deck-head span { font-size: 12px; font-weight: 700; color: #6a4fc4; }
+.v2-deck-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.v2-deck-track::-webkit-scrollbar { display: none; }
+.v2-deck-slide { flex: 0 0 100%; scroll-snap-align: start; display: flex; }
+.v2-deck-slide > * { flex: 1; margin: 0 !important; }
+.v2-deck-card { display: flex; flex-direction: column; min-height: 168px; }
+.v2-deck-card .v2-deck-actions { margin-top: auto; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.v2-deck-dots { display: flex; justify-content: center; gap: 7px; margin-top: 9px; }
+.v2-deck-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(117, 96, 181, .22); cursor: pointer; transition: width .2s, background .2s; }
+.v2-deck-dots button.is-active { width: 20px; border-radius: 999px; background: rgba(117, 96, 181, .65); }
+.v2-days-card.v2-deck-card { min-height: 0; }
+/* Okno nesmie roztiahnuť domov do šírky – posúva sa len vnútri. */
+.v2-deck { min-width: 0; max-width: 100%; overflow: hidden; }
+.v2-deck-track { width: 100%; min-width: 0; }
+.v2-deck-slide { min-width: 0; }
+.v2-deck-dots button { min-height: 0 !important; min-width: 0 !important; height: 8px !important; box-shadow: none !important; }

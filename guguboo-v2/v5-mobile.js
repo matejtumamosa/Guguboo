@@ -1185,9 +1185,9 @@
     const journeyHtml = window.GugubooV2?.homeJourneyHtml?.() || "";
     const homeTail = [
       // Oznámenie tehotenstva je úloha v kruhu Príprava → Vybaviť (bez ďalšej karty na domove).
-      calendarCard,
+      // Kalendár (dnes/zajtra) a súhrn dňa sú v dynamickom okne „Pre teba dnes“ pod hlavičkou (v2-moments.js).
       journeyHtml || "<button class='v5-today-card' type='button' data-v5-today-action='" + recommendationAction + "' aria-label='" + escapeHtml(recommendation + " " + recommendationLabel) + "'><span class='v5-icon'>" + icon(expecting ? "checklist" : state.sleepTimer?.active ? "moon" : "memory") + "</span><div><small>Dnes</small><strong>" + escapeHtml(recommendation) + "</strong><span class='v5-today-hint'>" + escapeHtml(recommendationLabel) + "</span></div><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      daySummaryCard(),
+      // daySummaryCard() – presunuté do okna „Pre teba dnes“
       window.GugubooV2?.betaFooterHtml?.() || ""
     ].join("");
     target.innerHTML = [
@@ -5181,7 +5181,7 @@
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
     openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
-    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100()
+    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), daySummaryData, calendarItems
   };
   renderDrawer();
   renderAll();
