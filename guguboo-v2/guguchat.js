@@ -64,10 +64,10 @@
   }
 
   // ——— Obsah (týždne tehotenstva, Life Admin) – dáta so zdrojom a dátumom kontroly ———
-  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js", "content/mama-po-porode.js", "content/dieta-sk.js"];
+  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js", "content/mama-po-porode.js", "content/dieta-sk.js", "content/vybava.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
-    script.src = src + "?v=2.10.0";
+    script.src = src + "?v=2.11.0";
     script.onload = resolve;
     script.onerror = resolve; // chýbajúci modul appku nezastaví – GuguChat povie, že obsah pripravujeme
     document.head.appendChild(script);
@@ -373,7 +373,7 @@
   function navAnswer(t, ctx) {
     const pre = ctx.life_stage === "pregnancy";
     // Všeobecná otázka o appke → prehľad najdôležitejších miest + prehliadka.
-    if (["kde co najdem", "kde co je", "co vsetko", "ako funguje aplik", "ako funguje guguboo", "co vie aplik", "co vie guguboo", "ako pouzivat", "napoveda"].some(word => t.includes(word))) {
+    if (["kde co najdem", "kde co je", "co vsetko vie", "co vsetko je v aplik", "ako funguje aplik", "ako funguje guguboo", "co vie aplik", "co vie guguboo", "ako pouzivat", "napoveda"].some(word => t.includes(word))) {
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
@@ -427,6 +427,25 @@
     const pre = C.mamaPregnancy;
     const post = C.mamaPostpartum;
     const kid = C.childHealthSK;
+    // Výbava: čo, koľko a kedy (NHS) – s tlačidlom „Pridať do Nákupu“.
+    const vyb = C.vybava;
+    if (vyb) {
+      const topic = vyb.topics.find(item => t.includes(norm(item.title)) || item.words.some(word => t.includes(word)));
+      if (topic) {
+        return {
+          level: "content",
+          text: topic.title + "\n\nČo stačí:\n" + topic.items.map(x => "• " + x).join("\n") + "\n\nKedy: " + topic.when + "\n\n" + vyb.general + "\n\n(Zdroj: NHS, overené " + vyb.checked + ".)",
+          actions: [{ label: "Pridať do Nákupu", kind: "shop", value: topic.id }, { label: "Domov pre bábätko", kind: "checklist", value: topic.checklist }, ...sourceAction(vyb.buySource)]
+        };
+      }
+      if (has(t, ["vybava", "vybavu", "vybavy", "vybavick", "co kupit", "co mam kupit", "co treba kupit", "co potrebujem pre babatko", "co vsetko kupit", "nakupit pre babatko", "kedy kupit", "kedy mam kupit", "kedy nakupit"])) {
+        return {
+          level: "content",
+          text: "Výbava pre bábätko\n\n" + vyb.general + "\n\n" + vyb.bagWhen + "\n\nZáklad podľa NHS: spánok, prebaľovanie, oblečenie, autosedačka a kočík, kŕmenie. Na čo sa chceš pozrieť?\n\n(Zdroj: NHS, overené " + vyb.checked + ".)",
+          actions: [...vyb.topics.slice(0, 5).map(item => ({ label: item.title, kind: "ask", value: item.title })), { label: "Domov pre bábätko", kind: "checklist", value: "home" }]
+        };
+      }
+    }
     // Ťažkosti mamy – podľa fázy
     const pack = pregnant ? pre : withBaby ? post : null;
     if (pack) {
@@ -710,6 +729,20 @@
       if (kind === "open") return openItem(item);
       if (kind === "feature") return V5.openFeature(value);
       if (kind === "urgentinfo") return V5.openUrgentModal?.();
+      if (kind === "checklist") return V5.openChecklistCategory?.(value || "home");
+      if (kind === "shop") {
+        // Pridá položky témy výbavy do spoločného Nákupu (bez duplicít).
+        const topic = window.GugubooContent?.vybava?.topics.find(item => item.id === value);
+        if (!topic) return;
+        state.shopping ||= [];
+        const have = new Set(state.shopping.map(entry => norm(entry.item)));
+        const added = topic.items.filter(item => !have.has(norm(item)));
+        added.forEach(item => state.shopping.push({ item, category: "Výbava – " + topic.title, note: "Podľa NHS", created: new Date().toISOString() }));
+        V5.persist();
+        state.v2.chat.push({ role: "bot", text: added.length ? "Pridané do Nákupu: " + added.length + (added.length === 1 ? " položka" : added.length < 5 ? " položky" : " položiek") + " (" + topic.title + ")." : "Všetko z tejto časti už v Nákupe máš.", actions: [{ label: "Otvoriť Nákup", kind: "feature", value: "shopping" }] });
+        save();
+        return render();
+      }
       if (kind === "pedq" || kind === "docq") {
         // Zapíše otázku s dátumom do Zdravotnej knižky (pediater) alebo Tehotenskej knižky (lekár).
         state.v5 ||= {};
