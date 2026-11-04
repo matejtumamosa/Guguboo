@@ -2902,6 +2902,8 @@
   }
 
   function renderCards() {
+    // Nová kartička narodenia (v2-birthcard.js, Samuel 4. 11.) nahrádza starú so znameniami.
+    if (window.GugubooBirthCard) return window.GugubooBirthCard.render();
     const target = byId("v5CardsContent");
     if (!target) return;
     state.v5.selectedZodiac ||= zodiacFromBirth();
