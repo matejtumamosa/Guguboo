@@ -330,6 +330,71 @@
     return { text: item.title + ".\n" + (item.why || "") + (when ? "\n\n" + when : ""), item: id, actions: itemActions(item) };
   }
 
+  // ——— Sprievodca appkou (Samuel 4. 11.): „kde sú fotky?“, „kde mám uspávanky?“ → krátka odpoveď + tlačidlo,
+  // ktoré to rovno otvorí. Spustí sa len pri otázke typu kde/ako/otvor/chcem…, aby nekradol iné odpovede.
+  // go = "funkcia|selektor": otvorí funkciu a v nej ťukne na danú časť (napr. sekciu Knižky).
+  const NAV_INTENT = ["kde ", "kde?", "ako ", "otvor", "najdem", "najst", "chcem", "ukaz", "zapis", "zapisat", "pridat", "pridam", "nahra", "mozem", "potrebujem", "zobraz", "pozriet", "pozriem", "vytvor", "spravit", "urobit"];
+  const NAV = [
+    // Spomienky
+    { words: ["album"], text: "Albumy (Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok) sú v Naše momenty.", label: "Otvoriť albumy", go: "moments:albums" },
+    { words: ["fotk", "fotograf", "spomien", "moment", "casova os", "casovu os"], text: "Fotky a spomienky sú v Naše momenty – v časovej osi sa zapisujú samy.", label: "Otvoriť časovú os", go: "moments:timeline" },
+    { words: ["prve razy", "prvy raz", "prvy usmev", "prve kroky", "prve slovo"], text: "Prvé razy zapíšeš jedným ťuknutím v Naše momenty → Prvé razy.", label: "Otvoriť Prvé razy", go: "moments:firsts" },
+    { words: ["uspavank", "nahravk", "nahrat hlas", "moj hlas", "nahrany hlas", "nahrane"], text: "Nahrávky tvojím hlasom sú v Môj hlas pre bábätko. Po narodení ich nájdeš aj pri Spánku → Zvuky.", label: "Otvoriť Môj hlas", feature: "voice" },
+    { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník je v zásuvke v karte Spomienky – chránený PIN-om.", label: "Otvoriť denník", feature: "privateSpace" },
+    { words: ["oznamit tehotenstvo", "oznamenie tehotenstva", "oznamit blizkym", "kartick oznam"], stage: "pre", text: "Kartičku na oznámenie tehotenstva vytvoríš v kruhu Príprava → Vybaviť alebo priamo tu.", label: "Vytvoriť kartičku", feature: "announce" },
+    { words: ["kartick"], stage: "post", text: "Kartičku narodenia vytvoríš, upravíš alebo znova pošleš tu.", label: "Otvoriť kartičku", feature: "cards" },
+    // Tehotenská knižka
+    { words: ["sono", "ultrazvuk", "vysledk"], stage: "pre", text: "Výsledky vyšetrení (aj s fotkou sona) sú v Tehotenskej knižke → Výsledky vyšetrení.", label: "Otvoriť výsledky", go: "pregnancy|[data-v5-book-section='results']" },
+    { words: ["zapis z kontrol", "zapisy z kontrol", "zapisat kontrol", "z kontroly"], stage: "pre", text: "Zápisy z kontrol sú v Tehotenskej knižke.", label: "Otvoriť zápisy z kontrol", go: "pregnancy|[data-v5-book-section='visits']" },
+    { words: ["hmotnost", "tlak"], stage: "pre", text: "Hmotnosť a tlak sa ukazujú v Tehotenskej knižke zo zápisov z kontrol.", label: "Otvoriť hmotnosť a tlak", go: "pregnancy|[data-v5-book-section='weight']" },
+    { words: ["pohyb", "kopan"], stage: "pre", text: "Pohyby bábätka zapíšeš v Tehotenskej knižke → Pohyby bábätka.", label: "Otvoriť pohyby", go: "pregnancy|[data-v5-book-section='moves']" },
+    { words: ["plan porodu"], stage: "pre", text: "Plán pôrodu je v Tehotenskej knižke.", label: "Otvoriť plán pôrodu", go: "pregnancy|[data-v5-book-section='birthplan']" },
+    { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otvoriť otázky", go: "pregnancy|[data-v5-book-section='questions']" },
+    { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je prvé okienko na domove.", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
+    { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Mojej príprave.", label: "Otvoriť Moju prípravu", feature: "beforeBirth" },
+    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Aké veľké je bábätko ukazuje okienko Dieťa alebo krúžok s týždňom na domove.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
+    { words: ["telo", "tazkost", "nevolnost", "palenie zahy", "opuch", "jedlo", "vitamin", "pitny rezim", "pitie"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v okienku Mama.", label: "Otvoriť Mamu", feature: "mama" },
+    // Po pôrode
+    { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Otvoriť očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
+    { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Otvoriť prehliadky", go: "childBook|[data-v2-child-section='checks']" },
+    { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Otvoriť rast", go: "childBook|[data-v2-child-section='growth']" },
+    { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je na domove v okienku s vekom bábätka.", label: "Otvoriť Zdravotnú knižku", feature: "childBook" },
+    { words: ["zubk", "zub"], stage: "post", text: "Zúbky sú v zásuvke v karte Praktické.", label: "Otvoriť Zúbky", feature: "teeth" },
+    { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v zásuvke v karte Spomienky.", label: "Otvoriť Aktivity", feature: "activities" },
+    // Praktické
+    { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Otvoriť Kalendár", feature: "calendar" },
+    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Kontaktoch.", label: "Otvoriť Kontakty", feature: "contacts" },
+    { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
+    { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
+    { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetky aplikácie uvidíš, keď potiahneš spodnú lištu nahor – sú tam karty Praktické a Spomienky.", label: "Otvoriť zásuvku", kind: "drawer" }
+  ];
+
+  function navAnswer(t, ctx) {
+    const pre = ctx.life_stage === "pregnancy";
+    // Všeobecná otázka o appke → prehľad najdôležitejších miest + prehliadka.
+    if (["kde co najdem", "kde co je", "co vsetko", "ako funguje aplik", "ako funguje guguboo", "co vie aplik", "co vie guguboo", "ako pouzivat", "napoveda"].some(word => t.includes(word))) {
+      return {
+        level: "nav",
+        text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Zásuvka (potiahni lištu nahor) – Praktické a Spomienky\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+        actions: [
+          { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
+          { label: "Naše momenty", kind: "go", value: "moments:timeline" },
+          { label: "Zásuvka", kind: "drawer", value: "" },
+          { label: "Ukázať prehliadku", kind: "tour", value: "" }
+        ]
+      };
+    }
+    if (!NAV_INTENT.some(word => t.includes(word))) return null;
+    const entry = NAV.find(item => (!item.stage || (item.stage === "pre") === pre) && item.words.some(word => t.includes(word)));
+    if (!entry) return null;
+    const action = entry.feature ? { label: entry.label, kind: "feature", value: entry.feature }
+      : entry.go ? { label: entry.label, kind: "go", value: entry.go }
+      : entry.kind ? { label: entry.label, kind: entry.kind, value: "" } : null;
+    return { level: "nav", text: entry.text, actions: action ? [action] : [] };
+  }
+
   function answer(question) {
     const t = norm(question);
     const plan = J.compute(state);
@@ -350,6 +415,10 @@
     if (has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem"])) {
       return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Kruh pohody", kind: "home" }] };
     }
+
+    // 1b. Sprievodca appkou („kde sú fotky?“) – po bezpečnosti, pred ostatným.
+    const nav = navAnswer(t, ctx);
+    if (nav) return nav;
 
     // 2. Plán a úlohy.
     if (has(t, ["co ma caka", "co ma teraz", "co mam urobit", "co mam robit", "plan", "dalsi krok", "co teraz"])) return planAnswer(ctx, plan, "all");
@@ -433,9 +502,9 @@
 
   // ——— GuguChat: UI ———
   function chips(ctx) {
-    if (ctx.life_stage === "pregnancy") return ["Čo ma teraz čaká?", "Čo ešte musím vybaviť pred pôrodom?", "Kedy zbaliť tašku?", "Ako rastie bábätko?", "Úrady a príspevky"];
+    if (ctx.life_stage === "pregnancy") return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Čo ešte musím vybaviť pred pôrodom?", "Ako rastie bábätko?", "Úrady a príspevky"];
     if (ctx.life_stage === "setup") return ["Ako začať?", "Úrady a príspevky"];
-    return ["Čo ma teraz čaká?", "Zapísať kŕmenie", "Kedy k pediatrovi?", "Kedy je 100 dní?", "Úrady po pôrode"];
+    return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Zapísať kŕmenie", "Kedy k pediatrovi?", "Úrady po pôrode"];
   }
 
   function proactiveOpening(plan) {
@@ -535,6 +604,20 @@
       const item = J.item(value);
       if (kind === "open") return openItem(item);
       if (kind === "feature") return V5.openFeature(value);
+      if (kind === "tour") { V5.openHome(); return setTimeout(() => window.GugubooTour?.start?.(), 250); }
+      if (kind === "drawer") { V5.openHome(); return setTimeout(() => V5.openDrawer?.(), 200); }
+      if (kind === "go") {
+        // „moments:sekcia“ = Naše momenty; „funkcia|selektor“ = otvoriť funkciu a ťuknúť na jej časť.
+        if (value.startsWith("moments:")) {
+          V5.openFeature("memories");
+          state.v5.momentsSection = value.slice(8);
+          V5.persist();
+          return V5.rerenderMoments?.();
+        }
+        const [feature, selector] = value.split("|");
+        V5.openFeature(feature);
+        return setTimeout(() => document.querySelector(".view.active " + selector)?.click(), 80);
+      }
       if (kind === "home") return V5.openHome();
       if (kind === "birth") return window.GugubooBirth?.open();
       if (kind === "admin") return window.GugubooAdmin?.open(value);
