@@ -208,7 +208,8 @@
       ].join("") : "",
       plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Daj vedieť a Guguboo sa prepne na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
       "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí zatiaľ nemusíš riešiť. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
-      "<button type='button' data-v2-chat-ask='Čo ma teraz čaká?'>Opýtať sa GuguChatu</button></footer>",
+      // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
+      "</footer>",
       "</section>"
     ].join("");
   }
