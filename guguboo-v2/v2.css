@@ -1417,3 +1417,10 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-o-label-1 text { fill: #d28ba3; }
 .v2-o-label-2 text { fill: #d6995f; }
 .v2-o-label-3 text { fill: #8299d8; }
+
+/* 2.29.1: kartička narodenia – údaje a 3 tlačidlá */
+.v2-bc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 10px; margin-bottom: 6px; }
+.v2-bc-fields label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--v5-ink); min-width: 0; }
+.v2-bc-fields label:nth-last-child(-n+2) { grid-column: 1 / -1; }
+.v2-bc-fields input { min-width: 0; width: 100%; }
+.v2-ann-share.v2-bc-share { grid-template-columns: 1.3fr 1fr 1fr; }
