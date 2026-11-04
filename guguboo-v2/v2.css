@@ -1342,3 +1342,11 @@ body:not(.night) .v5-universal-window-head {
   body.v2-printing-album #v2AlbumPrint { display: block !important; }
   body.v2-printing-album #v2AlbumPrint img { width: 100%; height: auto; }
 }
+
+/* 2.26.3: Ukážka domova v úvode – celé texty (Samuel 4. 11.: „Tehotenská kn…“, „37. týždeň · n…“) */
+.welcome-finish-preview .v5-glance dd { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.25; font-size: 13.5px; }
+.welcome-finish-preview .v5-glance { min-height: 64px; display: flex; align-items: center; }
+.welcome-finish-preview .v5-home-person,
+.welcome-finish-preview .v5-home-person > div { min-width: 0; }
+.welcome-finish-preview .v5-home-person h3,
+.welcome-finish-preview .v5-home-person p { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.3; }
