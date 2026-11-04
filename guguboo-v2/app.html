@@ -3096,7 +3096,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.27.3";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.27.4";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
@@ -8161,16 +8161,16 @@ Otázky:
         avatar.style.backgroundPosition = "";
         avatar.textContent = babyName.charAt(0).toUpperCase();
         avatar.setAttribute("aria-label", `Profil: ${babyName}`);
-        // Vek je už v okienku VEK – pod menom ho neopakujeme.
-        setText("welcomeFinishBabyMeta", "");
+        // Vek a dátum narodenia pod menom; okienka sú ako na domove po pôrode (Spánok · Kŕmenie · Prebalenie), len piktogramy.
+        setText("welcomeFinishBabyMeta", [ageLabel, birth ? `narodené ${dateLabel(birth, { day: "numeric", month: "long" })}` : ""].filter(Boolean).join(" · "));
         setText("welcomeFinishLead", `${readyLine} Kŕmenie, spánok, pripomienky aj spomienky nájdeš v Guguboo.`);
-        setWelcomeFinishGlanceIcons([]);
-        setText("welcomeFinishGlanceLabel1", "Vek");
-        setText("welcomeFinishGlanceValue1", ageLabel || "—");
-        setText("welcomeFinishGlanceLabel2", "Narodenie");
-        setText("welcomeFinishGlanceValue2", dateLabel(birth, { day: "numeric", month: "long" }));
-        setText("welcomeFinishGlanceLabel3", "Krajina");
-        setText("welcomeFinishGlanceValue3", euCountries[$("welcomeCountry")?.value || getCountry()] || "Európa");
+        setWelcomeFinishGlanceIcons(["moon", "feeding", "diaper"]);
+        setText("welcomeFinishGlanceLabel1", "");
+        setText("welcomeFinishGlanceValue1", "Spánok");
+        setText("welcomeFinishGlanceLabel2", "");
+        setText("welcomeFinishGlanceValue2", "Kŕmenie");
+        setText("welcomeFinishGlanceLabel3", "");
+        setText("welcomeFinishGlanceValue3", "Prebalenie");
         setText("welcomeFinishStepTitle", "Dnešný malý moment");
         setText("welcomeFinishStepHint", "Pridaj jednu fotku alebo krátku vetu.");
       }
