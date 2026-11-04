@@ -302,24 +302,13 @@
     return card("Tento týždeň · " + week + ". týždeň", size.emoji || "👶", size.comparison ? "Bábätko je veľké asi ako " + size.comparison : "Bábätko rastie", size.length ? size.length.charAt(0).toUpperCase() + size.length.slice(1) + "." : "", btn("Aké veľké je bábätko", "data-v5-feature='babySize'", true) + btn("Tvoje telo", "data-v2-deck-go='mama|[data-v2-mama-section=\"body\"]'"));
   }
 
-  function announceCard() {
-    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
-    if (state.profile?.status !== "expecting" || week < 12 || state.v5?.announceDone || state.v5?.announceDismissed) return "";
-    return card("Pre blízkych", "💌", "Chcete to oznámiť blízkym?", "Kartička s ultrazvukom alebo bez fotky – pošleš ju, komu chceš.", btn("Vytvoriť kartičku", "data-v5-feature='announce'", true) + "<button type='button' class='v5-text-action' data-v2-ann-dismiss>Neskôr</button>");
-  }
-
+  // Okno „Pre teba dnes“ má len praktické karty (termín, súhrn dňa, tento týždeň). Citové veci – „Stalo sa už?“,
+  // míľniky, dni spolu, hlas, oznámenie – sú v tlačidle „Dnešný malý moment“ pod oknom (Matej 4. 11.).
   function deckCards() {
-    const birth = state.profile?.status !== "expecting" && state.profile?.birth;
-    const day = birth ? Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1 : 0;
-    const milestone = (day >= 100 && day < 110) || (day >= 365 && day < 375) ? daysCardHtml() : "";
-    const ask = duePrompt();
-    const voice = (window.GugubooVoice?.inviteHtml?.() || "").replace(/<button[^>]*v2-ask-never[^>]*>×<\/button>/, "");
-    return [eventCard(), summaryCard(), milestone, ask ? promptCardHtml(ask) : "", voice, announceCard(), weekCard(), milestone ? "" : daysCardHtml()]
-      .filter(Boolean).slice(0, 4);
+    return [eventCard(), summaryCard(), weekCard()].filter(Boolean).slice(0, 4);
   }
 
-  // Domov: okno „Pre teba dnes“ (karty sa prechádzajú potiahnutím prstom alebo bodkami).
-  function homeCardHtml() {
+  function deckHtml() {
     const cards = deckCards();
     if (!cards.length) return "";
     return "<section class='v2-deck' aria-label='Pre teba dnes'><div class='v2-deck-head'><strong>Pre teba dnes</strong>" + (cards.length > 1 ? "<span>" + cards.length + " ›</span>" : "") + "</div>" +
@@ -327,6 +316,70 @@
       (cards.length > 1 ? "<div class='v2-deck-dots'>" + cards.map((_, i) => "<button type='button' data-v2-deck-dot='" + i + "' class='" + (i ? "" : "is-active") + "' aria-label='Karta " + (i + 1) + "'></button>").join("") + "</div>" : "") +
       "</section>";
   }
+
+  // ——— Tlačidlo „Dnešný malý moment“: po ťuknutí sa priamo na domove rozbalí menu momentov ———
+  let momentMenuOpen = false;
+  const spomienky = n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok");
+
+  function momentHtml() {
+    const expecting = state.profile?.status === "expecting";
+    const birth = !expecting && state.profile?.birth;
+    const day = birth ? Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1 : 0;
+    const count = collect().length;
+    const left = n => n + (n === 1 ? " deň" : n < 5 ? " dni" : " dní");
+    const daysLine = !birth || day < 1 ? "" : day < 100 ? "Do 100 dní spolu: " + left(100 - day) : day < 365 ? "Do prvého roka: " + left(365 - day) : "Váš prvý rok je za vami";
+    const sub = [daysLine, count ? spomienky(count) : "Spomienky sa zapisujú samy"].filter(Boolean).join(" · ");
+
+    // Návrhy na dnes (zvýraznené hore v menu): otázka „Stalo sa už?“ a album k míľniku.
+    // Oznámenie tehotenstva tu nie je – je ako úloha v Kruhu prípravy (Matej 4. 11.).
+    const ask = duePrompt();
+    const album = (day >= 100 && day < 110) || (day >= 365 && day < 375) ? (day < 365 ? "sto" : "rok") : "";
+    const row = (iconName, label, attrs, extra) => "<button type='button' class='v2-moment-row' " + attrs + "><span class='v5-icon' aria-hidden='true'>" + V5.icon(iconName) + "</span><span>" + esc(label) + "</span>" + (extra ? "<em>" + esc(extra) + "</em>" : "") + "</button>";
+    const suggestions = [
+      ask ? promptCardHtml(ask) : "",
+      album ? row("sparkle", album === "sto" ? "Album 100 dní spolu je pripravený" : "Album Prvý rok spolu je pripravený", "data-v2-album-open='" + album + "'").replace("v2-moment-row", "v2-moment-row is-suggestion") : ""
+    ].filter(Boolean);
+    const rows = [
+      row("camera", expecting ? "Fotka dňa (aj bruška)" : "Fotka dňa", "data-v2-moment-go='photo'"),
+      row("pen", "Jedna veta", "data-v2-moment-go='text'"),
+      row("sparkle", "Prvé razy", "data-v2-moments-open='firsts'"),
+      row("sound", "Môj hlas pre bábätko", "data-v5-feature='voice'"),
+      row("memory", "Naše momenty", "data-v2-moments-open='timeline'", count ? String(count) : "")
+    ];
+    return "<section class='v2-moment" + (momentMenuOpen ? " is-open" : "") + "'>" +
+      "<button type='button' class='v2-moment-cta' data-v2-moment-toggle aria-expanded='" + momentMenuOpen + "' aria-controls='v2MomentMenu'>" +
+      "<span class='v5-icon' aria-hidden='true'>" + V5.icon("memory") + "</span>" +
+      "<span><strong>Dnešný malý moment</strong><small>" + esc(sub) + "</small></span>" +
+      (suggestions.length ? "<i class='v2-moment-badge'>" + suggestions.length + "</i>" : "") +
+      "<b aria-hidden='true'><svg viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg></b></button>" +
+      "<div class='v2-moment-menu' id='v2MomentMenu'" + (momentMenuOpen ? "" : " hidden") + ">" + suggestions.join("") + rows.join("") + "</div>" +
+      "</section>";
+  }
+
+  // Domov: len tlačidlo „Dnešný malý moment“ (Matej 4. 11.). Okno „Pre teba dnes“ (deckHtml – termín, súhrn dňa,
+  // tento týždeň) je vypnuté; ak sa má vrátiť, stačí ho sem pridať pred momentHtml().
+  function homeCardHtml() {
+    return "<div class='v2-home-today'>" + momentHtml() + "</div>";
+  }
+
+  document.addEventListener("click", event => {
+    const toggle = event.target.closest("[data-v2-moment-toggle]");
+    if (toggle) {
+      momentMenuOpen = !momentMenuOpen;
+      const box = toggle.closest(".v2-moment");
+      box?.classList.toggle("is-open", momentMenuOpen);
+      toggle.setAttribute("aria-expanded", String(momentMenuOpen));
+      const menu = box?.querySelector(".v2-moment-menu");
+      if (menu) menu.hidden = !momentMenuOpen;
+      return;
+    }
+    const go = event.target.closest("[data-v2-moment-go]");
+    if (go) {
+      openMoments("today");
+      const field = go.dataset.v2MomentGo === "photo" ? "v5First100Photo" : "v5First100Text";
+      window.setTimeout(() => { const input = document.getElementById(field); input?.scrollIntoView({ block: "center" }); input?.focus(); }, 80);
+    }
+  });
 
   document.addEventListener("click", event => {
     const dot = event.target.closest("[data-v2-deck-dot]");
@@ -352,25 +405,6 @@
     const index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth + 12));
     track.parentElement.querySelectorAll("[data-v2-deck-dot]").forEach((dot, i) => dot.classList.toggle("is-active", i === index));
   }, true);
-
-  // Domov po pôrode: „23. deň spolu“ + najbližší míľnik. Jemne, bez tlaku.
-  function daysCardHtml() {
-    const birth = state.profile?.status !== "expecting" && state.profile?.birth;
-    if (!birth) return "";
-    const day = Math.floor((dayDate(todayKey()) - dayDate(birth)) / DAY) + 1;
-    if (day < 1) return "";
-    // Deň 100 a prvé narodeniny: album je pripravený (10 dní sa ponúka, potom späť na míľnik).
-    if ((day >= 100 && day < 110) || (day >= 365 && day < 375)) {
-      const sto = day < 365;
-      return "<button type='button' class='v2-days-card v2-days-album' data-v2-album-open='" + (sto ? "sto" : "rok") + "'><span aria-hidden='true'>" + (sto ? "💯" : "🎂") + "</span><span><strong>" + (sto ? "Ste spolu 100 dní" : "Prvý rok spolu") + "</strong><small>Váš album je pripravený – pozri si ho</small></span><b aria-hidden='true'>›</b></button>";
-    }
-    // „X. deň spolu“ je už v pozdrave hore – karta ukazuje najbližší míľnik a vedie do spomienok.
-    const left = n => n + (n === 1 ? " deň" : n < 5 ? " dni" : " dní");
-    const title = day < 100 ? "Do 100 dní spolu: " + left(100 - day) : day < 365 ? "Do prvého roka: " + left(365 - day) : "Váš prvý rok je za vami";
-    const count = collect().length;
-    const sub = count ? "Pozri si vaše spomienky (" + count + ")" : "Spomienky sa budú zapisovať samy";
-    return "<button type='button' class='v2-days-card' data-v2-moments-open='timeline'><span aria-hidden='true'>💛</span><span><strong>" + esc(title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
-  }
 
   function openMoments(section) {
     V5.openFeature("memories");

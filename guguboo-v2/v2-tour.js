@@ -72,7 +72,7 @@
         target: () => home?.querySelector(".v2-week-badge"),
         title: "Týždeň tehotenstva",
         items: () => [
-          { week: home?.querySelector(".v2-week-badge")?.innerHTML || "", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Ťukni naň a otvorí sa Aké veľké je bábätko – veľkosť a čo sa práve vyvíja." }
+          { week: home?.querySelector(".v2-week-badge b")?.textContent || "?", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Ťukni naň a otvorí sa Aké veľké je bábätko – veľkosť a čo sa práve vyvíja." }
         ],
         try: { label: "Otvoriť Aké veľké je bábätko", run: () => V5()?.openFeature("babySize") }
       } : {
@@ -109,13 +109,16 @@
       },
       {
         scroll: true,
-        target: () => home?.querySelector(".v2-deck"),
-        title: "Pre teba dnes",
+        target: () => home?.querySelector(".v2-home-today"),
+        title: "Dnešný malý moment",
         items: [
-          { icon: "sparkle", name: "Pre teba dnes", text: "okno pod hlavičkou ukáže to najdôležitejšie – zajtrajšiu kontrolu, súhrn dňa, „Stalo sa už?“ či tento týždeň. Potiahni prstom a uvidíš ďalšie karty." },
-          { icon: "memory", name: "Naše momenty", text: "spomienky sa zapisujú samy – sono, prvé pohyby, kartička, prvé razy." }
+          { icon: "memory", name: "Dnešný malý moment", text: "ťukni a rozbalí sa: Fotka dňa, Jedna veta, Prvé razy, Môj hlas pre bábätko a Naše momenty. Občas sa tu jemne opýtame „Stalo sa už?“." }
         ],
-        try: { label: "Otvoriť Naše momenty", run: () => document.dispatchEvent(new CustomEvent("v2-open-timeline")) }
+        try: {
+          label: "Otvoriť Dnešný malý moment",
+          stay: true,
+          run: () => { const cta = home?.querySelector("[data-v2-moment-toggle]"); if (cta?.getAttribute("aria-expanded") !== "true") cta?.click(); }
+        }
       },
       {
         scroll: true,
@@ -147,7 +150,7 @@
         target: () => document.querySelector("#v5BottomBar [data-v5-feature='calendar']"),
         title: "Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "termíny dnes a zajtra ti ukáže okno Pre teba dnes. Všetky kontroly, prehliadky a pripomienky sú v Kalendári." }
+          { icon: "calendar", name: "Kalendár", text: "všetky kontroly, prehliadky a pripomienky na jednom mieste." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
@@ -208,8 +211,9 @@
     const items = typeof step.items === "function" ? step.items() : step.items || [];
     const chips = typeof step.chips === "function" ? step.chips() : step.chips || [];
     if (!items.length && !chips.length) return esc(step.text || "");
+    // Zmenšený odznak týždňa z domova – vlastné spany, aby nezdedil štýly b/small z karty sprievodcu.
     const mark = item => item.week
-      ? "<span class='v2-tour-week' aria-hidden='true'>" + item.week + "</span>"
+      ? "<span class='v2-tour-week' aria-hidden='true'><span class='v2-tour-week-num'>" + esc(item.week) + "</span><span class='v2-tour-week-label'>týždeň</span></span>"
       : item.icon && V5?.icon ? "<span class='v5-icon' aria-hidden='true'>" + V5.icon(item.icon) + "</span>" : "";
     return [
       step.lead ? "<span class='v2-tour-lead'>" + esc(step.lead) + "</span>" : "",
