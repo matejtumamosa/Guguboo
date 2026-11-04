@@ -3096,7 +3096,7 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.28.8";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.28.9";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
@@ -3280,12 +3280,13 @@
                 <!-- Kalkulačka termínu (ACOG/NHS): termín od lekára, alebo výpočet z menštruácie (+280 dní, upravené o dĺžku cyklu) či počatia (+266 dní). -->
                 <label class="expecting-field welcome-friendly-field">Ako poznáš termín pôrodu?
                   <select id="welcomeDueMethod">
+                    <option value="" disabled selected>Vyber možnosť</option>
                     <option value="due">Termín mi povedal lekár</option>
                     <option value="lmp">Vypočítať z menštruácie</option>
                     <option value="conception">Vypočítať z dátumu počatia</option>
                   </select>
                 </label>
-                <label class="expecting-field welcome-friendly-field" id="welcomeDueWrap">Približný termín pôrodu
+                <label class="expecting-field welcome-friendly-field hidden" id="welcomeDueWrap">Približný termín pôrodu
                   <input id="welcomeDue" type="date">
                 </label>
                 <label class="expecting-field welcome-friendly-field hidden" id="welcomeDueBasisWrap"><span id="welcomeDueBasisLabel">Prvý deň poslednej menštruácie</span>
@@ -7874,6 +7875,7 @@ Otázky:
       document.querySelectorAll(".born-field").forEach(el => el.classList.toggle("hidden", expecting));
       // Po pôrode nemá „Ešte nemáme vybrané meno“ zmysel (Samuel 4. 11.) – políčko je len pred pôrodom.
       if (!expecting && $("welcomeNameUndecided")?.checked) setWelcomeNameUndecided(false);
+      if (expecting) updateDueCalculator();
       const today = dateInputToday();
       if ($("welcomeDue")) $("welcomeDue").min = today;
       if ($("welcomeBirth")) $("welcomeBirth").max = today;
@@ -8191,15 +8193,16 @@ Otázky:
     // Kalkulačka termínu pôrodu v úvode. Výsledok sa zapíše do #welcomeDue, takže zvyšok úvodu funguje rovnako.
     // Zdroj: ACOG „Methods for Estimating the Due Date“ (280 dní od 1. dňa poslednej menštruácie pri 28-dňovom
     // cykle, ovulácia 14. deň → 266 dní od počatia); NHS kalkulačka upravuje výpočet podľa dĺžky cyklu.
+    // Najprv výber spôsobu, polia k nemu sa ukážu až potom (bez výberu je vidieť len otázku).
     function updateDueCalculator() {
-      const method = $("welcomeDueMethod")?.value || "due";
+      const method = $("welcomeDueMethod")?.value || "";
       const basis = $("welcomeDueBasis")?.value || "";
       $("welcomeDueWrap")?.classList.toggle("hidden", method !== "due");
-      $("welcomeDueBasisWrap")?.classList.toggle("hidden", method === "due");
+      $("welcomeDueBasisWrap")?.classList.toggle("hidden", method !== "lmp" && method !== "conception");
       $("welcomeCycleWrap")?.classList.toggle("hidden", method !== "lmp");
       if ($("welcomeDueBasisLabel")) $("welcomeDueBasisLabel").textContent = method === "conception" ? "Dátum počatia" : "Prvý deň poslednej menštruácie";
       const result = $("welcomeDueResult");
-      if (method === "due") { result?.classList.add("hidden"); return; }
+      if (method !== "lmp" && method !== "conception") { result?.classList.add("hidden"); return; }
       if (!basis) { result.textContent = "Zadaj dátum a termín vypočítame."; result.classList.remove("hidden"); return; }
       const days = method === "lmp" ? 280 + (Number($("welcomeCycle")?.value || 28) - 28) : 266;
       const due = new Date(basis + "T12:00:00");
@@ -8279,6 +8282,7 @@ Otázky:
       if (step === 4 && !state.welcomeStatus) return "Vyber prosím, v ktorej fáze sa nachádzaš.";
       if (step === 5) {
         if (!welcomeBabyName()) return "Doplň prosím meno bábätka alebo zaškrtni, že ho ešte nemáte vybrané.";
+        if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDueMethod").value) return "Vyber prosím, ako poznáš termín pôrodu.";
         if ((state.welcomeStatus || "expecting") === "expecting" && !$("welcomeDue").value) return "Doplň prosím termín pôrodu.";
         if ((state.welcomeStatus || "expecting") === "expecting" && $("welcomeDue").value < dateInputToday()) return "Termín pôrodu nemôže byť v minulosti.";
         if ((state.welcomeStatus || "expecting") === "born" && !$("welcomeBirth").value) return "Doplň prosím dátum narodenia.";
@@ -8361,6 +8365,7 @@ Otázky:
       const status = state.profile.status || state.welcomeStatus || ($("babyStatus") ? $("babyStatus").value : "expecting");
       document.querySelectorAll(".expecting-field").forEach(el => el.classList.toggle("hidden", status !== "expecting"));
       document.querySelectorAll(".born-field").forEach(el => el.classList.toggle("hidden", status === "expecting"));
+      if (status === "expecting") updateDueCalculator();
       document.querySelectorAll("[data-welcome-status]").forEach(btn => btn.classList.toggle("active", btn.dataset.welcomeStatus === (state.welcomeStatus || status)));
     }
 
@@ -9761,6 +9766,8 @@ Otázky:
     setWelcomeNameUndecided(state.welcomeDraft?.babyNameUndecided ?? /^bábätko$/i.test(state.profile.name || ""));
     $("welcomeSex").value = state.profile.sex || "";
     $("welcomeDue").value = state.welcomeDraft?.due || state.profile.due || "";
+    // Uložený termín = spôsob už bol zvolený; inak čaká výber.
+    if ($("welcomeDue").value) $("welcomeDueMethod").value = "due";
     $("welcomeBirth").value = state.welcomeDraft?.birth || state.profile.birth || "";
     $("welcomeBirthTime").value = state.profile.birthTime || "";
     $("welcomeGestationalWeek").value = state.profile.gestationalWeek || "";
