@@ -1516,7 +1516,8 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-per-legend i.is-period { background: #f6c9d6; }
 .v2-per-legend i.is-spot { box-shadow: inset 0 0 0 2px #f6c9d6; }
 .v2-per-legend i.is-predicted { border: 1.5px dashed #e58aa3; }
-.v2-per-day h3 { margin: 0; font-size: 16px; color: var(--v5-ink); text-transform: capitalize; }
+.v2-per-day h3 { margin: 0; font-size: 16px; color: var(--v5-ink); }
+.v2-per-day h3::first-letter { text-transform: uppercase; }
 .v2-per-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .v2-per-chips button { min-height: 38px !important; padding: 0 14px; color: var(--v5-ink); background: #f7f5fc; border: 1px solid rgba(123, 97, 200, .14); border-radius: 999px; font: inherit; font-size: 13px; font-weight: 700; }
 .v2-per-chips button.active { color: #5b4ca3; background: #ece7ff; border-color: #c9bdf5; }

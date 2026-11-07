@@ -112,6 +112,7 @@
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
     babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
     mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
+    period: { label: "Menštruačný kalendár", description: "Zápis, odhad ďalšej a prehľad pre gynekológa", icon: "cycle", tier: "free", view: "v5Period" },
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie a otázky pre pediatra", icon: "book", tier: "free", view: "v5ChildBook" },
     announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych – s ultrazvukom alebo bez fotky", icon: "cards", tier: "free", view: "v5Announce" },
     voice: { label: "Môj hlas pre bábätko", description: "Uspávanka alebo pár slov tvojím hlasom", icon: "sound", tier: "free", view: "v5Voice" },
@@ -313,7 +314,7 @@
   ];
 
   const postpartumDrawerFeatures = [
-    "mama", "childBook", "privateSpace", "sounds", "calendar", "care", "activities", "teeth", "family", "shopping",
+    "mama", "childBook", "period", "privateSpace", "sounds", "calendar", "care", "activities", "teeth", "family", "shopping",
     "contacts", "checklists", "administration", "travel", "products"
   ];
 
@@ -324,7 +325,7 @@
 
   const favoriteOptions = phase => phase === "expecting"
     ? [...prenatalDrawerFeatures]
-    : ["privateSpace", "calendar", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
+    : ["privateSpace", "period", "calendar", "memories", "activities", "shopping", "care", "family", "contacts", "checklists", "administration", "travel", "products", "teeth"];
   const defaultFavorites = phase => phase === "expecting"
     ? ["beforeBirth", "contacts", "shopping", "travel"]
     : ["privateSpace", "memories", "activities", "shopping"];
@@ -473,6 +474,7 @@
     "<section class='view' id='v5PregnancyBook'><div class='v5-flow' id='v5PregnancyBookContent'></div></section>",
     "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
     "<section class='view' id='v5Mama'><div class='v5-flow' id='v5MamaContent'></div></section>",
+    "<section class='view' id='v5Period'><div class='v5-flow' id='v5PeriodContent'></div></section>",
     "<section class='view' id='v5ChildBook'><div class='v5-flow' id='v5ChildBookContent'></div></section>",
     "<section class='view' id='v5Announce'><div class='v5-flow' id='v5AnnounceContent'></div></section>",
     "<section class='view' id='v5Voice'><div class='v5-flow' id='v5VoiceContent'></div></section>",
@@ -546,6 +548,7 @@
     v5PregnancyBook: ["Tehotenská knižka", "Bábätko, mama a aktuálny týždeň"],
     v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
     v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
+    v5Period: ["Menštruačný kalendár", "Zápis, odhad a prehľad"],
     v5ChildBook: ["Zdravotná knižka", "Prehliadky, rast, očkovanie a otázky pre pediatra"],
     v5Announce: ["Oznámiť tehotenstvo", "Kartička pre blízkych"],
     v5Voice: ["Môj hlas pre bábätko", "Uspávanka tvojím hlasom"],
@@ -703,6 +706,15 @@
       renderPrenatal();
       return;
     }
+    // Menštruačný kalendár otvorený z Mamy → späť do Mamy (inak domov).
+    if (view === "v5Period" && periodFromMama) {
+      periodFromMama = false;
+      mamaSection = "home";
+      mamaFromLink = false;
+      routeTo("v5Mama");
+      renderMama();
+      return;
+    }
     // Mama: z podsekcie späť na zoznam Mama; ak prišla odkazom z inej obrazovky (napr. Aké veľké je bábätko), späť tam.
     if (view === "v5Mama" && mamaSection !== "home" && !mamaFromLink) {
       mamaSection = "home";
@@ -781,7 +793,7 @@
     const shortLabels = {
       beforeBirth: "Príprava", pregnancy: "Knižka", privateSpace: "Denník", memories: "Momenty",
       travel: "Cesty", administration: "Úrady", products: "Výbava", checklists: "Zoznamy",
-      care: "Pomoc", profiles: "Profily", calendar: "Kalendár"
+      care: "Pomoc", profiles: "Profily", calendar: "Kalendár", period: "Cyklus"
     };
     const favoriteButton = key => {
       const feature = features[key] || features.sleep;
@@ -2066,6 +2078,12 @@
       renderChildBook();
       return;
     }
+    if (feature.view === "v5Period") {
+      periodFromMama = currentView() === "v5Mama";
+      routeTo("v5Period");
+      renderPeriod();
+      return;
+    }
     if (feature.view === "v5Mama") {
       mamaSection = "home";
       mamaFromLink = false;
@@ -3260,7 +3278,7 @@
     const back = "<button class='v5-check-categories-button' type='button' data-v2-mama-section='home'>" + icon("back") + " Mama</button>";
     const source = (url, reviewed) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(content?.checked || "") + " ↗</a>";
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
-    const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "period", "water"];
+    const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "water"];
     let section = allowed.includes(mamaSection) ? mamaSection : "home";
     if (!content && section !== "water") section = "home";
     // Po pôrode: koľký deň / týždeň (šestonedelie = prvých 6 týždňov).
@@ -3281,15 +3299,6 @@
         "<section class='v2-mama-card'><h4>Čo sa zvyčajne preberá</h4>", bullets(check.items), source(check.source, check.reviewed), "</section>",
         remindDate ? "<div class='v5-actions'><button class='v5-primary' type='button' data-v2-mama-check-remind" + (planned ? " disabled" : "") + ">" + (planned ? "✓ Pripomienka je v Kalendári" : "Pripomenúť dohodnúť termín") + "</button></div>" : "",
         remindDate && !planned ? "<p class='v2-visit-hint'>Pripomenieme ti " + dateText(remindDate) + ", aby si si včas dohodla termín u gynekológa.</p>" : "",
-        back
-      ].join("");
-      return;
-    }
-    if (section === "period") {
-      // Menštruačný kalendár (v2-period.js) – zápis, odhad, štatistiky a overené info z NHS.
-      target.innerHTML = [
-        flowHead("Mama", "Menštruácia", "Zápis jedným ťuknutím, odhad ďalšej a čo je po pôrode dobré vedieť.", 0, 1),
-        window.GugubooPeriod?.html?.() || "<div class='v5-empty'>Kalendár sa načítava…</div>",
         back
       ].join("");
       return;
@@ -3366,7 +3375,8 @@
         : s.late > 0 ? "Mešká oproti odhadu"
         : s.next ? "Ďalšia asi " + new Date(s.next + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) + " · odhad"
         : "Odhad po druhej zapísanej";
-      return row("period", "cycle", "Menštruačný kalendár", sub);
+      // Samostatná aplikácia (zásuvka / lišta); z Mamy je to len vchod – späť vedie do Mamy.
+      return "<button type='button' data-v5-feature='period'><span class='v5-icon'>" + icon("cycle") + "</span><span><strong>Menštruačný kalendár</strong><small>" + escapeHtml(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
     };
     const row = (sectionId, iconName, title, sub) => "<button type='button' data-v2-mama-section='" + sectionId + "'><span class='v5-icon'>" + icon(iconName) + "</span><span><strong>" + escapeHtml(title) + "</strong><small>" + escapeHtml(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
     target.innerHTML = [
@@ -3386,6 +3396,17 @@
       state.v5.diaryLastEntry === todayKey() ? "Dnes už zapísané · chránené PIN-om" : "Nálada jedným ťuknutím alebo myšlienka · s PIN-om", "</small></span><b aria-hidden='true'>›</b></button>",
       "</div>",
       "<p class='v5-book-note'>Rady sú všeobecné, z NHS. Nenahrádzajú lekára ani pôrodnú asistentku.</p>"
+    ].join("");
+  }
+
+  // Menštruačný kalendár – samostatná aplikácia po pôrode (obsah v v2-period.js).
+  let periodFromMama = false;
+  function renderPeriod() {
+    const target = byId("v5PeriodContent");
+    if (!target) return;
+    target.innerHTML = [
+      flowHead("Mama", "Menštruačný kalendár", "Zápis jedným ťuknutím, odhad ďalšej a čo je po pôrode dobré vedieť.", 0, 1),
+      window.GugubooPeriod?.html?.() || "<div class='v5-empty'>Kalendár sa načítava…</div>"
     ].join("");
   }
 
@@ -3817,6 +3838,7 @@
     if (currentView() === "v5PregnancyBook") renderPregnancyBook();
     if (currentView() === "v5BabySize") renderBabySize();
     if (currentView() === "v5Mama") renderMama();
+    if (currentView() === "v5Period") renderPeriod();
     if (currentView() === "v5ChildBook") renderChildBook();
     if (currentView() === "v5Calendar") renderCalendar();
     if (currentView() === "v5Sounds") renderSounds();
@@ -5203,7 +5225,7 @@
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
     openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
-    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), rerenderMama: () => renderMama(), daySummaryData, calendarItems
+    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), rerenderPeriod: () => (currentView() === "v5Period" ? renderPeriod() : renderMama()), daySummaryData, calendarItems
   };
   renderDrawer();
   renderAll();

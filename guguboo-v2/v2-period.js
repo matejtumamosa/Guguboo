@@ -301,7 +301,7 @@
 
   function rerender() {
     V5.persist();
-    window.GugubooV5.rerenderMama?.();
+    window.GugubooV5.rerenderPeriod?.();
   }
 
   document.addEventListener("click", event => {
