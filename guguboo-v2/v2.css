@@ -1552,3 +1552,11 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-home-cal .v5-row-card { width: 100%; min-height: 0; padding: 12px 14px; background: rgba(255, 255, 255, .72); border: 1px solid rgba(123, 97, 200, .12); border-radius: 18px; box-shadow: none; }
 .v2-home-cal .v5-row-card strong { font-size: 14px; }
 .v2-home-cal .v5-row-card span:not(.v5-icon) { font-size: 12px; }
+
+/* ——— Upratanie 2.37: pevná lišta Domov · Bábätko · GuguChat · Mama · Rodina, prehľady oblastí ——— */
+.v2-hub-record { width: 100%; margin-top: 12px; }
+.v2-hub-moments { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 14px 16px; color: var(--v5-ink); background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .16); border-radius: 22px; text-align: left; font: inherit; }
+.v2-hub-moments small { display: block; color: var(--v5-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.v2-hub-moments strong { display: block; font-size: 17px; }
+.v2-hub-moments em { display: block; color: var(--v5-muted); font-size: 13px; font-style: normal; }
+#v5Drawer .v5-drawer-pin { display: none; }

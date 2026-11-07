@@ -86,12 +86,13 @@
       expecting ? {
         scroll: true,
         target: () => home?.querySelector(".v5-glance-strip"),
-        title: "Tehotenská knižka, Mama a Dieťa",
-        // Rovnaké piktogramy ako v okienkach na domove (tie sú bez textu, vysvetlenie je len tu).
+        title: "Prehľad na jeden pohľad",
+        // Upratanie 2.36: rovnaké dlaždice ako po pôrode – údaje, ťuknutím otvoríš miesto, kam patria.
         items: [
-          { icon: "book", name: "Tehotenská knižka", text: "zápisy z kontrol, výsledky, termíny a prehľad pre lekára." },
-          { icon: "health", name: "Mama", text: "tvoje telo, bežné ťažkosti, pitie a nálada." },
-          { icon: "baby", name: "Dieťa", text: "aké veľké je bábätko a všetko dôležité o jeho vývoji týždeň po týždni." }
+          { icon: "calendar", name: "Do termínu a trimester", text: "koľko dní ostáva a kde v tehotenstve si." },
+          { icon: "baby", name: "Veľkosť", text: "aké veľké je bábätko tento týždeň." },
+          { icon: "book", name: "Kontrola a Otázky", text: "najbližšia kontrola a otázky pre lekára v Tehotenskej knižke." },
+          { icon: "water", name: "Pitný režim", text: "koľko pohárov už máš dnes za sebou." }
         ],
         try: { label: "Otvoriť Tehotenskú knižku", run: () => V5()?.openFeature("pregnancy") }
       } : {
@@ -147,10 +148,10 @@
       },
       {
         scroll: true,
-        target: () => document.querySelector("#v5BottomBar [data-v5-feature='calendar']"),
+        target: () => home?.querySelector(".v2-home-cal"),
         title: "Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "všetky kontroly, prehliadky a pripomienky na jednom mieste." }
+          { icon: "calendar", name: "Kalendár", text: "na domove vidíš najbližší termín – ťuknutím otvoríš všetky kontroly, prehliadky a pripomienky." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
@@ -164,17 +165,17 @@
       },
       {
         target: () => byId("v5BottomBar"),
-        title: "Ďalšie aplikácie",
-        lead: "Dole sú tvoje 4 obľúbené:",
-        // Presne to, čo je v lište (ikona aj krátky názov) – po výmene obľúbených sa zmení aj tu.
+        title: "Spodná lišta",
+        lead: "Dole sú 4 časti appky – pred aj po pôrode rovnaké:",
+        // Presne to, čo je v lište (ikona aj názov).
         chips: () => [...document.querySelectorAll("#v5BottomBar .v5-bottom-action")].map(button => ({
           iconHtml: button.querySelector(".v5-nav-icon")?.innerHTML || "",
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
         after: expecting
-          ? "Potiahni lištu nahor: všetky aplikácie sú zoradené podľa oblastí – Tehotenstvo, Mama, Organizácia a Spomienky. Obľúbené si vymeníš tam."
-          : "Potiahni lištu nahor: všetky aplikácie sú zoradené podľa oblastí – Bábätko, Mama, Organizácia a Spomienky. Obľúbené si vymeníš tam.",
-        try: { label: "Otvoriť Ďalšie aplikácie", run: () => V5()?.openDrawer?.() }
+          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz."
+          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
+        try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature?.("babyHub") }
       }
     ];
   }

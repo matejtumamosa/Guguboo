@@ -112,6 +112,9 @@
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
     babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
     mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
+    // Upratanie 2.36: pevná spodná lišta Domov · Bábätko · GuguChat · Mama · Rodina (rovnaká pred aj po pôrode).
+    babyHub: { label: "Bábätko", description: "Všetko o bábätku na jednom mieste", icon: "baby", tier: "free", view: "v5BabyHub" },
+    familyHub: { label: "Rodina", description: "Momenty, kalendár, nákup, úrady a kontakty", icon: "family", tier: "free", view: "v5FamilyHub" },
     period: { label: "Menštruačný kalendár", description: "Zápis, odhad ďalšej a prehľad pre gynekológa", icon: "cycle", tier: "free", view: "v5Period" },
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie a otázky pre pediatra", icon: "book", tier: "free", view: "v5ChildBook" },
     announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych – s ultrazvukom alebo bez fotky", icon: "cards", tier: "free", view: "v5Announce" },
@@ -119,7 +122,7 @@
     beforeBirth: { label: "Moja príprava", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady a doklady", description: "Lokálne kroky a podpora", icon: "book", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Používané veci a doplnenie", icon: "products", tier: "premium", view: "v5Utility" },
-    family: { label: "Rodina", description: "Spoločné úlohy a zastúpenie", icon: "family", tier: "premium", view: "v5Utility" },
+    family: { label: "Spoločné úlohy", description: "Kto čo urobí a kto koho zastúpi", icon: "family", tier: "premium", view: "v5Utility" },
     profiles: { label: "Profily rodiny", description: "Mama, dieťa a blízke osoby", icon: "profile", tier: "free", view: "v5Profiles" },
     // V2: falošná „AI“ (kľúčové slová) nahradená GuguChatom – odpovede z overeného obsahu + akcie.
     guguChat: { label: "GuguChat", description: "Opýtaj sa alebo vyrieš ďalší krok", icon: "chat", tier: "free", view: "guguChat" },
@@ -315,17 +318,16 @@
 
   // Zásuvka podľa oblastí (plán docs/01-usporiadanie-aplikacii.md): každá aplikácia má jeden domov.
   // Zúbky, Teplota a záznamy sú v Zdravotnej knižke, Výbava v Nákupe, Profily v Rodine – v zásuvke už nie sú zvlášť.
+  // Rovnaké 3 oblasti ako spodná lišta (Bábätko · Mama · Rodina) – pred aj po pôrode, mení sa len obsah.
   const prenatalDrawerGroups = [
-    ["Tehotenstvo", ["pregnancy", "babySize", "beforeBirth", "voice"]],
+    ["Bábätko", ["pregnancy", "babySize", "beforeBirth", "voice"]],
     ["Mama", ["mama", "privateSpace"]],
-    ["Organizácia", ["calendar", "shopping", "administration", "contacts", "family", "travel"]],
-    ["Spomienky", ["memories"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "travel"]]
   ];
   const postpartumDrawerGroups = [
     ["Bábätko", ["childBook", "sounds", "activities", "care"]],
     ["Mama", ["mama", "period", "privateSpace"]],
-    ["Organizácia", ["calendar", "shopping", "administration", "contacts", "family", "checklists", "travel"]],
-    ["Spomienky", ["memories"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "checklists", "travel"]]
   ];
   const postpartumDrawerFeatures = postpartumDrawerGroups.flatMap(group => group[1]);
   const prenatalDrawerFeatures = prenatalDrawerGroups.flatMap(group => group[1]);
@@ -486,6 +488,8 @@
     "<section class='view' id='v5BabySize'><div class='v5-flow' id='v5BabySizeContent'></div></section>",
     "<section class='view' id='v5Mama'><div class='v5-flow' id='v5MamaContent'></div></section>",
     "<section class='view' id='v5Period'><div class='v5-flow' id='v5PeriodContent'></div></section>",
+    "<section class='view' id='v5BabyHub'><div class='v5-flow' id='v5BabyHubContent'></div></section>",
+    "<section class='view' id='v5FamilyHub'><div class='v5-flow' id='v5FamilyHubContent'></div></section>",
     "<section class='view' id='v5ChildBook'><div class='v5-flow' id='v5ChildBookContent'></div></section>",
     "<section class='view' id='v5Announce'><div class='v5-flow' id='v5AnnounceContent'></div></section>",
     "<section class='view' id='v5Voice'><div class='v5-flow' id='v5VoiceContent'></div></section>",
@@ -560,6 +564,8 @@
     v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
     v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
     v5Period: ["Menštruačný kalendár", "Zápis, odhad a prehľad"],
+    v5BabyHub: ["Bábätko", "Všetko o bábätku na jednom mieste"],
+    v5FamilyHub: ["Rodina", "Momenty, kalendár, nákup a úrady"],
     v5ChildBook: ["Zdravotná knižka", "Prehliadky, rast, očkovanie a otázky pre pediatra"],
     v5Announce: ["Oznámiť tehotenstvo", "Kartička pre blízkych"],
     v5Voice: ["Môj hlas pre bábätko", "Uspávanka tvojím hlasom"],
@@ -804,6 +810,29 @@
     return Object.keys(features).find(key => features[key].view === view) || "";
   }
 
+  // Ktorá oblasť lišty je práve aktívna (aj keď je otvorená aplikácia vo vnútri oblasti).
+  function activeTab() {
+    const view = currentView();
+    if (view === "home") return "home";
+    if (view === "guguChat") return "chat";
+    const key = activeFeatureId();
+    if (["v5Mama", "v5Period", "privateSpace"].includes(view) || ["mama", "period", "privateSpace"].includes(key)) return "mama";
+    if (view === "v5FamilyHub") return "family";
+    if (view === "v5BabyHub" || view === "v5Flow") return "baby";
+    const all = [...prenatalDrawerGroups, ...postpartumDrawerGroups];
+    if (all.some(([title, keys]) => title === "Rodina" && keys.includes(key)) || ["v5First100", "v5Utility", "v5Profiles"].includes(view)) return "family";
+    if (all.some(([title, keys]) => title === "Bábätko" && keys.includes(key)) || ["teeth", "v5Care"].includes(view)) return "baby";
+    return "";
+  }
+
+  function openTab(id) {
+    closeDrawer();
+    if (id === "home") return openHome();
+    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : "familyHub");
+    // Z oblasti lišty vedie šípka späť vždy na Domov (nie na predchádzajúcu aplikáciu).
+    history = ["home"];
+  }
+
   function renderBottomBar() {
     ensureFavoritePhase();
     const active = activeFeatureId();
@@ -829,7 +858,14 @@
       "<span class='v2-chat-shutter-ring' aria-hidden='true'><span class='v2-chat-shutter-core'>", icon("chat"), "</span></span>",
       "<span class='v2-chat-shutter-label'>GuguChat</span></button>"
     ].join("");
-    const favorites = visibleFavorites.slice(0, 4).map(favoriteButton);
+    // Upratanie 2.36 (Samuel 7. 11.): namiesto 4 obľúbených pevné oblasti – rovnaké pred aj po pôrode.
+    const tab = activeTab();
+    const tabButton = (id, label, iconName) => [
+      "<button class='v5-bottom-action", tab === id ? " active" : "", "' type='button' data-v2-tab='", id, "' aria-label='", escapeHtml(label), "'",
+      tab === id ? " aria-current='page'" : "", "><span class='v5-nav-icon'>", icon(iconName), "</span><span>", escapeHtml(label), "</span></button>"
+    ].join("");
+    const favorites = [tabButton("home", "Domov", "home"), tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("family", "Rodina", "family")];
+    void visibleFavorites; void favoriteButton;
     byId("v5BottomBar").classList.add("v2-bottom-bar");
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
     // Pre čítačky obrazovky ostáva neviditeľné tlačidlo.
@@ -1179,12 +1215,23 @@
     const dueDateLabel = state.profile.due
       ? new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })
       : "Doplniť termín";
-    const statusCards = expecting ? [
-      // Len názvy okienok, bez popisu (Samuel 16. 10.) – obsah je jasný z názvu a ikony.
-      ["Tehotenská knižka", "", "pregnancy", "book"],
-      ["Mama", "", "mama", "health"],
-      ["Dieťa", "", "babySize", "baby"]
-    ] : [
+    // Upratanie 2.36: hlavička vyzerá pred aj po pôrode rovnako – 6 dlaždíc s údajmi (navigácia je v spodnej lište).
+    const prenatalTiles = () => {
+      const daysToDue = state.profile.due ? Math.round((new Date(state.profile.due + "T12:00:00") - new Date(todayKey() + "T12:00:00")) / 86400000) : null;
+      const size = pregnancyWeek ? window.GugubooV2?.babySize?.(Math.max(4, pregnancyWeek)) : null;
+      const nextVisit = calendarItems().filter(item => item.source === "prenatal-visit" && !item.completedAt && calendarDayKey(item.date) >= today).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+      const water = waterToday();
+      const questions = state.v5.pregnancyQuestions.length;
+      return [
+        ["Do termínu", daysToDue === null ? "Doplniť" : daysToDue > 0 ? daysToDue + (daysToDue === 1 ? " deň" : daysToDue < 5 ? " dni" : " dní") : daysToDue === 0 ? "Dnes" : "Po termíne", "data-v5-feature='pregnancy'"],
+        ["Trimester", !pregnancyWeek ? "—" : (pregnancyWeek < 13 ? "1." : pregnancyWeek < 28 ? "2." : "3.") + " trimester", "data-v5-feature='pregnancy'"],
+        ["Veľkosť", String(size?.length || "—").replace(/^približne\s+/i, ""), "data-v5-feature='babySize'"],
+        ["Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) : "Zapísať", "data-v5-feature='pregnancy'"],
+        ["Pitný režim", water.count + " / " + water.goal, "data-v2-mama-section='water'"],
+        ["Otázky", questions ? questions + " pre lekára" : "Žiadne", "data-v5-feature='pregnancy'"]
+      ];
+    };
+    const statusCards = expecting ? prenatalTiles() : [
       ["Spánok", state.sleepTimer?.active ? "Beží" : sleep ? (String(sleep.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", state.sleepTimer?.active ? "od " + formatClock(state.sleepTimer.start) : sleep ? "od " + formatClock(sleep.start || sleep.created) : ""],
       ["Kŕmenie", state.v5.feedingTimer.active ? "Prebieha" : feeding ? (String(feeding.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", !state.v5.feedingTimer.active && feeding ? "o " + formatClock(feeding.created) : ""],
       ["Prebalenie", diaper ? (String(diaper.value || "").split(" · ")[0] || "Uložené") : "Bez záznamu", "", diaper ? "o " + formatClock(diaper.created) : ""],
@@ -1231,7 +1278,7 @@
       "</div>", avatarPopover, "<div class='v5-glance-strip'>",
       statusCards.slice(0, 6).map((item, index) => expecting
         // Len piktogram – názvy vysvetľuje sprievodca (krok Tehotenská knižka, Mama a Dieťa); názov ostáva pre čítačky.
-        ? "<button class='v5-glance v5-glance-action v5-prenatal-glance v2-glance-named v2-glance-icon-only' type='button' data-v5-prenatal-glance='" + escapeHtml(item[2]) + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span class='v5-icon' aria-hidden='true'>" + icon(item[3]) + "</span><strong class='v5-sr-only'>" + escapeHtml(item[0]) + "</strong></button>"
+        ? "<button class='v5-glance v5-glance-action' type='button' " + item[2] + " aria-label='" + escapeHtml(item[0] + ": " + item[1]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong></button>"
         : index < 3
           ? "<button class='v5-glance v5-glance-action' type='button' data-v5-quick-feature='" + ["sleep", "feeding", "diaper"][index] + "' aria-label='Otvoriť " + escapeHtml(item[0]) + "'><span>" + escapeHtml(item[0]) + "</span><strong>" + escapeHtml(item[1]) + "</strong>" + (item[3] ? "<small class='v2-glance-time'>" + escapeHtml(item[3]) + "</small>" : "") + "</button>"
           : index < 5
@@ -1291,14 +1338,39 @@
     const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
     const count = (window.GugubooMoments?.collect?.() || []).length;
     const momentsCard = "<button class='v5-drawer-emotional-card' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>" + (count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy, albumy a kartičky") + "</em></span><b aria-hidden='true'>›</b></button>";
-    scroll.innerHTML = [
-      groups.map(([title, keys]) => [
-        "<section class='v2-drawer-group'><h3>", escapeHtml(title), "</h3>",
-        keys.length === 1 && keys[0] === "memories" ? momentsCard
-          : "<div class='v5-drawer-grid v5-drawer-flat'>" + keys.map(key => drawerApp(key, false)).join("") + "</div>",
-        "</section>"
-      ].join("")).join(""),
-      renderFavoriteEditor()
+    // Zásuvka = „všetko na jednom mieste“ (bez obľúbených a pripínania – lišta je pevná).
+    scroll.innerHTML = groups.map(([title, keys]) => [
+      "<section class='v2-drawer-group'><h3>", escapeHtml(title), "</h3>",
+      keys.includes("memories") ? momentsCard : "",
+      "<div class='v5-drawer-grid v5-drawer-flat'>", keys.filter(key => key !== "memories").map(key => drawerApp(key, false)).join(""), "</div>",
+      "</section>"
+    ].join("")).join("");
+  }
+
+  // Prehľad oblasti Bábätko / Rodina (z lišty) – rovnaký vzhľad ako okno Mama, obsah podľa fázy.
+  function renderHubs() {
+    const view = currentView();
+    const baby = view === "v5BabyHub";
+    const target = byId(baby ? "v5BabyHubContent" : "v5FamilyHubContent");
+    if (!target) return;
+    const expecting = state.profile.status === "expecting";
+    const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
+    const keys = groups.find(([title]) => title === (baby ? "Bábätko" : "Rodina"))[1];
+    const appRow = key => {
+      const feature = features[key];
+      return "<button type='button' data-v5-feature='" + key + "'><span class='v5-icon'>" + icon(feature.icon) + "</span><span><strong>" + escapeHtml(feature.label) + "</strong><small>" + escapeHtml(feature.description) + "</small></span><b aria-hidden='true'>›</b></button>";
+    };
+    const pregnancyWeek = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const age = ageData();
+    const subtitle = baby
+      ? (expecting ? (pregnancyWeek ? pregnancyWeek + ". týždeň tehotenstva" : "Tehotenstvo") : age?.label && !age.invalid ? age.label : "")
+      : "Momenty, kalendár, nákup a úrady";
+    const count = (window.GugubooMoments?.collect?.() || []).length;
+    target.innerHTML = [
+      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? (expecting ? "Bábätko" : state.profile.name || "Bábätko") : "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
+      baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>Zapísať spánok, kŕmenie alebo plienku</button>" : "",
+      !baby ? "<button class='v5-drawer-emotional-card v2-hub-moments' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>" + (count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy, albumy a kartičky") + "</em></span><b aria-hidden='true'>›</b></button>" : "",
+      "<div class='v2-book-tools'>", keys.filter(key => key !== "memories").map(appRow).join(""), "</div>"
     ].join("");
   }
 
@@ -2083,6 +2155,11 @@
       childBookSection = "home";
       routeTo("v5ChildBook");
       renderChildBook();
+      return;
+    }
+    if (feature.view === "v5BabyHub" || feature.view === "v5FamilyHub") {
+      routeTo(feature.view);
+      renderHubs();
       return;
     }
     if (feature.view === "v5Period") {
@@ -3850,6 +3927,7 @@
     if (currentView() === "v5BabySize") renderBabySize();
     if (currentView() === "v5Mama") renderMama();
     if (currentView() === "v5Period") renderPeriod();
+    if (currentView() === "v5BabyHub" || currentView() === "v5FamilyHub") renderHubs();
     if (currentView() === "v5ChildBook") renderChildBook();
     if (currentView() === "v5Calendar") renderCalendar();
     if (currentView() === "v5Sounds") renderSounds();
@@ -4173,6 +4251,8 @@
       renderHome();
       return announce("Pripomienka je v Kalendári.");
     }
+    const tabButton = event.target.closest("[data-v2-tab]");
+    if (tabButton) return openTab(tabButton.dataset.v2Tab);
     // Nákup → Výbava a produkty (časť Nákupu); šípka späť vráti do Nákupu.
     const utilitySub = event.target.closest("[data-v2-utility-sub]");
     if (utilitySub) {
