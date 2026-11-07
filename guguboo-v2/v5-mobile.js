@@ -41,6 +41,7 @@
   const iconPaths = {
     home: "<path d='M3 11.5 12 4l9 7.5'/><path d='M5.5 10.5V20h13v-9.5'/><path d='M9 20v-6h6v6'/>",
     back: "<path d='m15 18-6-6 6-6'/>",
+    cycle: "<circle cx='12' cy='12' r='9'/><path d='M12 7.5s-3.2 3.6-3.2 5.8a3.2 3.2 0 0 0 6.4 0c0-2.2-3.2-5.8-3.2-5.8Z'/>",
     user: "<circle cx='12' cy='8' r='4'/><path d='M4.5 21a7.5 7.5 0 0 1 15 0'/>",
     menu: "<path d='M4 7h16M4 12h16M4 17h16'/>",
     moon: "<path d='M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z'/>",
@@ -3259,7 +3260,7 @@
     const back = "<button class='v5-check-categories-button' type='button' data-v2-mama-section='home'>" + icon("back") + " Mama</button>";
     const source = (url, reviewed) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(content?.checked || "") + " ↗</a>";
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
-    const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "water"];
+    const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "period", "water"];
     let section = allowed.includes(mamaSection) ? mamaSection : "home";
     if (!content && section !== "water") section = "home";
     // Po pôrode: koľký deň / týždeň (šestonedelie = prvých 6 týždňov).
@@ -3280,6 +3281,15 @@
         "<section class='v2-mama-card'><h4>Čo sa zvyčajne preberá</h4>", bullets(check.items), source(check.source, check.reviewed), "</section>",
         remindDate ? "<div class='v5-actions'><button class='v5-primary' type='button' data-v2-mama-check-remind" + (planned ? " disabled" : "") + ">" + (planned ? "✓ Pripomienka je v Kalendári" : "Pripomenúť dohodnúť termín") + "</button></div>" : "",
         remindDate && !planned ? "<p class='v2-visit-hint'>Pripomenieme ti " + dateText(remindDate) + ", aby si si včas dohodla termín u gynekológa.</p>" : "",
+        back
+      ].join("");
+      return;
+    }
+    if (section === "period") {
+      // Menštruačný kalendár (v2-period.js) – zápis, odhad, štatistiky a overené info z NHS.
+      target.innerHTML = [
+        flowHead("Mama", "Menštruácia", "Zápis jedným ťuknutím, odhad ďalšej a čo je po pôrode dobré vedieť.", 0, 1),
+        window.GugubooPeriod?.html?.() || "<div class='v5-empty'>Kalendár sa načítava…</div>",
         back
       ].join("");
       return;
@@ -3349,6 +3359,15 @@
     // Domov okienka Mama
     const water = waterToday();
     const size = expecting && currentWeek ? window.GugubooV2?.babySize?.(Math.max(4, currentWeek)) : null;
+    const periodRow = () => {
+      const s = window.GugubooPeriod?.stats?.();
+      const sub = !s?.runs?.length ? "Kalendár, odhad ďalšej, kedy sa vráti po pôrode"
+        : s.ongoing ? "Prebieha · zapíš dnešný deň"
+        : s.late > 0 ? "Mešká oproti odhadu"
+        : s.next ? "Ďalšia asi " + new Date(s.next + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) + " · odhad"
+        : "Odhad po druhej zapísanej";
+      return row("period", "cycle", "Menštruačný kalendár", sub);
+    };
     const row = (sectionId, iconName, title, sub) => "<button type='button' data-v2-mama-section='" + sectionId + "'><span class='v5-icon'>" + icon(iconName) + "</span><span><strong>" + escapeHtml(title) + "</strong><small>" + escapeHtml(sub) + "</small></span><b aria-hidden='true'>›</b></button>";
     target.innerHTML = [
       "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(parentDisplayName() || "Mama"), "</h1><p>", expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth), "</p></section>",
@@ -3361,6 +3380,7 @@
       expecting && content ? row("food", "meal", "Jedlo a pohyb", "Čomu sa vyhnúť, vitamíny, bezpečný pohyb") : "",
       !expecting && content ? row("troubles", "health", "Telo po pôrode", "Krvácanie, stehy, cisársky rez, prsia, panvové dno") : "",
       !expecting && content ? row("check", "calendar", "Kontrola po pôrode", "6 týždňov po pôrode · čo sa na nej preberá") : "",
+      !expecting && content ? periodRow() : "",
       !expecting && content ? row("mood", "sparkle", "Nálada a spánok", "Baby blues, kedy si povedať o pomoc, oddych") : "",
       "<button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Môj súkromný denník</strong><small>",
       state.v5.diaryLastEntry === todayKey() ? "Dnes už zapísané · chránené PIN-om" : "Nálada jedným ťuknutím alebo myšlienka · s PIN-om", "</small></span><b aria-hidden='true'>›</b></button>",
@@ -5183,7 +5203,7 @@
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
     openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
-    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), daySummaryData, calendarItems
+    renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), rerenderMama: () => renderMama(), daySummaryData, calendarItems
   };
   renderDrawer();
   renderAll();

@@ -169,5 +169,34 @@ window.GugubooContent.mamaPostpartum = {
     sleepSource: "https://www.nhs.uk/baby/support-and-services/sleep-and-tiredness-after-having-a-baby/",
     sleepReviewed: "24. 8. 2026",
     evidence: "it usually goes away within 2 weeks of the birth … It's important to get help even if you only have some of the signs. | Try to rest when your baby sleeps."
+  },
+  // Menštruácia po pôrode – NHS „Your body after the birth“ (stránka z 25. 4. 2024) a „Irregular periods“ (26. 6. 2026). Overené 7. 11. 2026.
+  period: {
+    checked: "7. 11. 2026",
+    returnTitle: "Kedy sa vráti",
+    returnItems: [
+      "Je to u každej iné – presný čas sa povedať nedá.",
+      "Ak kŕmiš z fľaše alebo kombinuješ fľašu s dojčením, prvá menštruácia môže prísť už 5 až 6 týždňov po pôrode.",
+      "Ak výlučne dojčíš (aj v noci) bez fľaše, menštruácia sa často vráti až keď začneš dojčiť menej."
+    ],
+    pregnancyTitle: "Otehotnieť sa dá skôr, ako príde menštruácia",
+    pregnancyItems: [
+      "Otehotnieť môžeš už 3 týždne po pôrode – aj keď dojčíš a menštruáciu ešte nemáš.",
+      "Ak nechceš hneď ďalšie bábätko, antikoncepciu je dobré začať do 21 dní po pôrode. Ktorá je pre teba vhodná, preber s gynekológom."
+    ],
+    padsTitle: "Tampóny a kalíšok",
+    padsItems: [
+      "Tampóny ani menštruačný kalíšok nepoužívaj pred kontrolou 6 týždňov po pôrode – rana v maternici sa ešte hojí a mohla by vzniknúť infekcia.",
+      "Dovtedy používaj vložky."
+    ],
+    source: "https://www.nhs.uk/pregnancy/labour-and-birth/your-body/",
+    reviewed: "25. 4. 2024",
+    evidence: "If you bottle feed your baby, or combine bottle feeding with breastfeeding, your first period could start as soon as 5 to 6 weeks after you give birth. … If you fully breastfeed (including at night) without any bottle feeding, your periods may not start again until you start to reduce breastfeeding. | You can get pregnant again just 3 weeks after the birth of your baby, even if you're breastfeeding and your periods have not started again yet. It's important to start using contraception within 21 days of giving birth … | You should not use tampons until you've had your 6-week postnatal check.",
+    doctorIntro: "Povedz to lekárovi, ak",
+    doctor: ["menštruácia trvá dlhšie ako 7 dní", "krvácaš medzi menštruáciami"],
+    cycleNote: "Bežný cyklus (od začiatku jednej menštruácie po začiatok ďalšej) má okolo 28 dní, môže byť trochu kratší aj dlhší.",
+    doctorSource: "https://www.nhs.uk/conditions/irregular-periods/",
+    doctorReviewed: "26. 6. 2026",
+    doctorEvidence: "The average gap between periods starting (the menstrual cycle) is around 28 days. It can sometimes be a bit shorter or longer. | See a GP if: … your periods last longer than 7 days … you have bleeding between periods"
   }
 };

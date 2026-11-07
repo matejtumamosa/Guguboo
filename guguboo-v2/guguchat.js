@@ -67,7 +67,7 @@
   const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js", "content/mama-po-porode.js", "content/dieta-sk.js", "content/vybava.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
-    script.src = src + "?v=2.11.0";
+    script.src = src + "?v=" + (window.GUGUBOO_V2_VERSION || "2.34.0");
     script.onload = resolve;
     script.onerror = resolve; // chýbajúci modul appku nezastaví – GuguChat povie, že obsah pripravujeme
     document.head.appendChild(script);
@@ -353,6 +353,7 @@
     { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je prvé okienko na domove.", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
     { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Mojej príprave.", label: "Otvoriť Moju prípravu", feature: "beforeBirth" },
     { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Aké veľké je bábätko ukazuje okienko Dieťa alebo krúžok s týždňom na domove.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
+    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár je v okienku Mama – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", go: "mama|[data-v2-mama-section='period']" },
     { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v okienku Mama.", label: "Otvoriť Mamu", feature: "mama" },
     // Po pôrode
     { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Otvoriť očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
@@ -470,6 +471,13 @@
       if (has(t, ["kontrola po porode", "kontrolu po porode", "prehliadka po porode", "gynekolog po porode", "sestonedel"])) {
         const k = post.check;
         return { level: "content", text: (kid ? kid.mother.text : k.when) + "\n\nČo sa zvyčajne preberá:\n" + k.items.map(x => "• " + x).join("\n") + "\n\n(Zdroje: " + (kid ? kid.sourceName + ", overené " + kid.checked + "; " : "") + "NHS, stránka z " + k.reviewed + ".)", actions: [{ label: "Kontrola po pôrode", kind: "go", value: "mama|[data-v2-mama-section='check']" }, ...sourceAction(kid?.source || k.source)] };
+      }
+      if (post.period && has(t, ["menstru", "periodu", "perioda", "tampon", "kalisok", "antikoncep", "otehotn"])) {
+        const p = post.period;
+        const tampon = has(t, ["tampon", "kalisok"]);
+        const pregnancy = has(t, ["antikoncep", "otehotn"]);
+        const items = tampon ? p.padsItems : pregnancy ? p.pregnancyItems : p.returnItems.concat(p.pregnancyItems.slice(0, 1));
+        return { level: "content", text: (tampon ? p.padsTitle : pregnancy ? p.pregnancyTitle : "Menštruácia po pôrode") + "\n\n" + items.map(x => "• " + x).join("\n") + "\n\n(Zdroj: NHS, stránka z " + p.reviewed + ", overené " + p.checked + ".)", actions: [{ label: "Menštruačný kalendár", kind: "go", value: "mama|[data-v2-mama-section='period']" }, ...sourceAction(p.source)] };
       }
       if (has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) {
         const m = post.mood;
