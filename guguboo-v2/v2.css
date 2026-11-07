@@ -1543,3 +1543,12 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-per-grid button.is-predicted:disabled { opacity: 1; color: #b0607c; }
 .v2-per-toggle strong { font-weight: 700; }
 .v2-per-toggle small { font-weight: 500; }
+
+/* ——— Upratanie 2.36: zásuvka podľa oblastí, kalendár na domove ——— */
+#v5Drawer .v2-drawer-group { margin: 0 0 18px; }
+#v5Drawer .v2-drawer-group h3 { margin: 0 4px 8px; color: var(--v5-muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+#v5Drawer .v2-drawer-group .v5-drawer-emotional-card { margin-bottom: 0; }
+.v2-home-cal { margin: 12px 0 0; }
+.v2-home-cal .v5-row-card { width: 100%; min-height: 0; padding: 12px 14px; background: rgba(255, 255, 255, .72); border: 1px solid rgba(123, 97, 200, .12); border-radius: 18px; box-shadow: none; }
+.v2-home-cal .v5-row-card strong { font-size: 14px; }
+.v2-home-cal .v5-row-card span:not(.v5-icon) { font-size: 12px; }

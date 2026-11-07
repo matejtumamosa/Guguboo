@@ -172,8 +172,8 @@
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
         after: expecting
-          ? "Potiahni lištu nahor: v karte Praktické sú napríklad Kalendár, Tehotenská knižka či Nákup, v karte Spomienky Naše momenty a Môj súkromný denník. Obľúbené si vymeníš tam."
-          : "Potiahni lištu nahor: v karte Praktické sú napríklad Mama, Zdravotná knižka či Nákup, v karte Spomienky Naše momenty, Môj súkromný denník a Zvuky. Obľúbené si vymeníš tam.",
+          ? "Potiahni lištu nahor: všetky aplikácie sú zoradené podľa oblastí – Tehotenstvo, Mama, Organizácia a Spomienky. Obľúbené si vymeníš tam."
+          : "Potiahni lištu nahor: všetky aplikácie sú zoradené podľa oblastí – Bábätko, Mama, Organizácia a Spomienky. Obľúbené si vymeníš tam.",
         try: { label: "Otvoriť Ďalšie aplikácie", run: () => V5()?.openDrawer?.() }
       }
     ];
