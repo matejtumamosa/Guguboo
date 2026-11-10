@@ -3108,12 +3108,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.37.21-nahlad";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.37.22-nahlad";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.21">
+  <link rel="stylesheet" href="v2.css?v=2.37.22">
 </head>
 <body>
   <div class="app" id="app">
@@ -3355,6 +3355,10 @@
                   <div class="v5-glance"><dt id="welcomeFinishGlanceLabel1">Týždeň</dt><dd id="welcomeFinishGlanceValue1">—</dd></div>
                   <div class="v5-glance"><dt id="welcomeFinishGlanceLabel2">Termín</dt><dd id="welcomeFinishGlanceValue2">—</dd></div>
                   <div class="v5-glance"><dt id="welcomeFinishGlanceLabel3">Do termínu</dt><dd id="welcomeFinishGlanceValue3">—</dd></div>
+                  <!-- Samuel 10. 11.: náhľad ako aktuálny domov – 6 dlaždíc s údajmi. -->
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel4"></dt><dd id="welcomeFinishGlanceValue4">—</dd></div>
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel5"></dt><dd id="welcomeFinishGlanceValue5">—</dd></div>
+                  <div class="v5-glance"><dt id="welcomeFinishGlanceLabel6"></dt><dd id="welcomeFinishGlanceValue6">—</dd></div>
                 </dl>
               </section>
 
@@ -8293,14 +8297,17 @@ Otázky:
           : dueDays === 0
             ? "Termín je dnes. Všetko dôležité máš na jednom mieste."
             : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň ti ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
-        // Rovnaké okienka ako na domove: len názvy Tehotenská knižka · Mama · Dieťa (Samuel 16. 10.), s rovnakými ikonami.
-        setWelcomeFinishGlanceIcons(["book", "health", "baby"]);
-        setText("welcomeFinishGlanceLabel1", "");
-        setText("welcomeFinishGlanceValue1", "Tehotenská knižka");
-        setText("welcomeFinishGlanceLabel2", "");
-        setText("welcomeFinishGlanceValue2", "Mama");
-        setText("welcomeFinishGlanceLabel3", "");
-        setText("welcomeFinishGlanceValue3", "Dieťa");
+        // Rovnaké dlaždice ako aktuálny domov v tehotenstve (Samuel 10. 11.): údaje, bez ikon.
+        setWelcomeFinishGlanceIcons([]);
+        const weekNow = Number(fruit.week || 0);
+        [
+          ["Do termínu", dueDays === null ? "—" : dueDays > 0 ? slovakDays(dueDays) : dueDays === 0 ? "Dnes" : "Po termíne"],
+          ["Trimester", weekNow ? (weekNow < 13 ? "1." : weekNow < 28 ? "2." : "3.") + " trimester" : "—"],
+          ["Pohyby", "Zapísať"],
+          ["Kontrola", "Zapísať"],
+          ["Pitný režim", "0 / 8"],
+          ["Otázky", "Žiadne"]
+        ].forEach(([label, value], index) => { setText("welcomeFinishGlanceLabel" + (index + 1), label); setText("welcomeFinishGlanceValue" + (index + 1), value); });
         setWelcomeJourney(false, (fruit.week || 0) / 40, fruit.week ? `${fruit.week}. týždeň` : "");
       } else {
         const birth = $("welcomeBirth")?.value || "";
@@ -8312,13 +8319,16 @@ Otázky:
         // Vek a dátum narodenia pod menom; okienka sú ako na domove po pôrode (Spánok · Kŕmenie · Prebalenie), len piktogramy.
         setText("welcomeFinishBabyMeta", [ageLabel, birth ? `narodené ${dateLabel(birth, { day: "numeric", month: "long" })}` : ""].filter(Boolean).join(" · "));
         setText("welcomeFinishLead", `${readyLine} Kŕmenie, spánok, pripomienky aj spomienky nájdeš v Guguboo.`);
-        setWelcomeFinishGlanceIcons(["moon", "feeding", "diaper"]);
-        setText("welcomeFinishGlanceLabel1", "");
-        setText("welcomeFinishGlanceValue1", "Spánok");
-        setText("welcomeFinishGlanceLabel2", "");
-        setText("welcomeFinishGlanceValue2", "Kŕmenie");
-        setText("welcomeFinishGlanceLabel3", "");
-        setText("welcomeFinishGlanceValue3", "Prebalenie");
+        // Rovnaké dlaždice ako aktuálny domov po pôrode (Samuel 10. 11.).
+        setWelcomeFinishGlanceIcons([]);
+        [
+          ["Spánok", "Bez záznamu"],
+          ["Kŕmenie", "Bez záznamu"],
+          ["Prebalenie", "Bez záznamu"],
+          ["Výška", "—"],
+          ["Váha", "—"],
+          ["Zdravotná knižka", ageLabel || "—"]
+        ].forEach(([label, value], index) => { setText("welcomeFinishGlanceLabel" + (index + 1), label); setText("welcomeFinishGlanceValue" + (index + 1), value); });
         const ageDays = birth ? Math.max(0, (Date.now() - new Date(birth + "T12:00:00").getTime()) / 86400000) : 0;
         setWelcomeJourney(true, ageDays / 365, ageLabel);
       }

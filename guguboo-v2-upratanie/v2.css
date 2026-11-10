@@ -1644,3 +1644,10 @@ body.v5-active #v5Header[data-home="true"] { position: relative !important; top:
 .v2-choice-chip { border-width: 1.5px !important; }
 .v2-choice-chip:focus { outline: none; }
 .v2-choice-chip:focus-visible, .v2-select-button:focus-visible, .v2-picker-item:focus-visible { outline: 2px solid rgba(123, 97, 200, .5); outline-offset: 2px; }
+/* Posledný krok úvodu: náhľad domova má 6 dlaždíc – karta cesty a medzery kompaktnejšie, aby sa úvod nemusel zmenšovať. */
+.welcome-finish-step #welcomeFinishFirstStep { min-height: 0 !important; gap: 4px !important; padding: 12px 16px 14px !important; }
+.welcome-finish-step .welcome-journey-art { height: 100px !important; min-height: 0 !important; }
+.welcome-finish-step .welcome-story-lead { margin-bottom: 12px !important; }
+.welcome-finish-step .welcome-finish-actions { margin-top: 12px !important; }
+.welcome-finish-step .welcome-finish-facts:empty { display: none !important; }
+.welcome-finish-preview .v5-glance { padding: 8px 10px !important; min-height: 0 !important; }
