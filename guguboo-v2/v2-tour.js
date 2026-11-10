@@ -147,11 +147,13 @@
           : "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako kartičku narodenia. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
       },
       {
-        scroll: true,
-        target: () => home?.querySelector(".v2-home-cal"),
-        title: "Kalendár",
+        scroll: false,
+        target: () => document.querySelector("#v5BottomBar [data-v2-tab='record']"),
+        title: "Zapísať, Knižka, Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "na domove vidíš najbližší termín – ťuknutím otvoríš všetky kontroly, prehliadky a pripomienky." }
+          { icon: "plus", name: "Zapísať", text: "rýchly zápis jedným ťuknutím." },
+          { icon: "book", name: "Knižka", text: "kontroly, výsledky a otázky pre lekára." },
+          { icon: "calendar", name: "Kalendár", text: "všetky termíny a pripomienky." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
@@ -173,9 +175,9 @@
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
         after: expecting
-          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz."
-          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
-        try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature?.("babyHub") }
+          ? "Dole sú rýchle akcie: Zapísať (pohyby, voda, nálada, otázka pre lekára), Knižka a Kalendár. Všetko ostatné – Mama, Príprava, Naše momenty, Nákup či Úrady – uvidíš, keď lištu potiahneš nahor."
+          : "Dole sú rýchle akcie: Zapísať (spánok, kŕmenie, plienka…), Knižka a Kalendár. Všetko ostatné – Mama, Spánok a zvuky, Aktivity, Naše momenty, Nákup či Úrady – uvidíš, keď lištu potiahneš nahor.",
+        try: { label: "Otvoriť menu", run: () => V5()?.openDrawer?.() }
       }
     ];
   }

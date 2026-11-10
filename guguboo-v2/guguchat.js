@@ -340,7 +340,7 @@
     { words: ["fotk", "fotograf", "spomien", "moment", "casova os", "casovu os"], text: "Fotky a spomienky sú v Naše momenty – v časovej osi sa zapisujú samy.", label: "Otvoriť časovú os", go: "moments:timeline" },
     { words: ["prve razy", "prvy raz", "prvy usmev", "prve kroky", "prve slovo"], text: "Prvé razy zapíšeš jedným ťuknutím v Naše momenty → Prvé razy.", label: "Otvoriť Prvé razy", go: "moments:firsts" },
     { words: ["uspavank", "nahravk", "nahrat hlas", "moj hlas", "nahrany hlas", "nahrane"], text: "Nahrávky tvojím hlasom sú v Môj hlas pre bábätko. Po narodení ich nájdeš aj pri Spánku → Zvuky.", label: "Otvoriť Môj hlas", feature: "voice" },
-    { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník je v časti Mama (spodná lišta) – chránený PIN-om.", label: "Otvoriť denník", feature: "privateSpace" },
+    { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník nájdeš v menu – potiahni spodnú lištu nahor, časť Mama. Je chránený PIN-om.", label: "Otvoriť denník", feature: "privateSpace" },
     { words: ["oznamit tehotenstvo", "oznamenie tehotenstva", "oznamit blizkym", "kartick oznam"], stage: "pre", text: "Kartičku na oznámenie tehotenstva vytvoríš v kruhu Príprava → Vybaviť alebo priamo tu.", label: "Vytvoriť kartičku", feature: "announce" },
     { words: ["kartick"], stage: "post", text: "Kartičku narodenia vytvoríš, upravíš alebo znova pošleš tu.", label: "Otvoriť kartičku", feature: "cards" },
     // Tehotenská knižka
@@ -353,7 +353,7 @@
     { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je prvé okienko na domove.", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
     { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Mojej príprave.", label: "Otvoriť Moju prípravu", feature: "beforeBirth" },
     { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Aké veľké je bábätko ukazuje okienko Dieťa alebo krúžok s týždňom na domove.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
-    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama (spodná lišta) – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", feature: "period" },
+    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v menu (potiahni spodnú lištu nahor, časť Mama) – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", feature: "period" },
     { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v okienku Mama.", label: "Otvoriť Mamu", feature: "mama" },
     // Po pôrode
     { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Otvoriť očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
@@ -361,14 +361,14 @@
     { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Otvoriť rast", go: "childBook|[data-v2-child-section='growth']" },
     { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je na domove v okienku s vekom bábätka.", label: "Otvoriť Zdravotnú knižku", feature: "childBook" },
     { words: ["zubk", "zub"], stage: "post", text: "Zúbky sú v Zdravotnej knižke.", label: "Otvoriť Zúbky", feature: "teeth" },
-    { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko (spodná lišta).", label: "Otvoriť Aktivity", feature: "activities" },
+    { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku nájdeš v menu – potiahni spodnú lištu nahor, časť Bábätko.", label: "Otvoriť Aktivity", feature: "activities" },
     // Praktické
     { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Otvoriť Kalendár", feature: "calendar" },
     { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Kontaktoch.", label: "Otvoriť Kontakty", feature: "contacts" },
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetky aplikácie uvidíš, keď potiahneš spodnú lištu nahor – sú zoradené ako spodná lišta: Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "V spodnej lište sú rýchle akcie: Domov, Zapísať, Knižka a Kalendár. Všetky ostatné aplikácie uvidíš, keď lištu potiahneš nahor – sú v skupinách Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
   ];
 
   function navAnswer(t, ctx) {
