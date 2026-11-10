@@ -340,16 +340,16 @@
 
   // Zásuvka podľa oblastí (plán docs/01-usporiadanie-aplikacii.md): každá aplikácia má jeden domov.
   // Zúbky, Teplota a záznamy sú v Zdravotnej knižke, Výbava v Nákupe, Profily v Rodine – v zásuvke už nie sú zvlášť.
-  // Vysúvacie menu (Samuel 10. 11.): len aplikácie, ktoré nie sú nikde inde – Knižka a Kalendár sú v lište, Aké veľké je bábätko pod odznakom týždňa.
+  // Rovnaké 3 oblasti ako spodná lišta (Bábätko · Mama · Rodina) – pred aj po pôrode, mení sa len obsah.
   const prenatalDrawerGroups = [
-    ["Bábätko", ["beforeBirth", "voice"]],
+    ["Bábätko", ["pregnancy", "babySize", "beforeBirth", "voice"]],
     ["Mama", ["mama", "privateSpace"]],
-    ["Rodina", ["memories", "shopping", "contacts", "administration", "family", "travel"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "travel"]]
   ];
   const postpartumDrawerGroups = [
-    ["Bábätko", ["sounds", "activities", "care"]],
+    ["Bábätko", ["childBook", "sounds", "activities", "care"]],
     ["Mama", ["mama", "period", "privateSpace"]],
-    ["Rodina", ["memories", "shopping", "contacts", "administration", "family", "checklists", "travel"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "checklists", "travel"]]
   ];
   const postpartumDrawerFeatures = postpartumDrawerGroups.flatMap(group => group[1]);
   const prenatalDrawerFeatures = prenatalDrawerGroups.flatMap(group => group[1]);
@@ -531,7 +531,7 @@
     "<aside id='v5QuickRecord' role='dialog' aria-modal='true' aria-labelledby='v5QuickRecordTitle'>",
     "<div class='v5-drawer-head'><div><h2 id='v5QuickRecordTitle'>Čo chceš zaznamenať?</h2><p>Vyber jednu vec.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-record aria-label='Zatvoriť'>×</button></div>",
-    "<div class='v5-quick-record-grid' id='v5QuickRecordGrid'>",
+    "<div class='v5-quick-record-grid'>",
     quickFeatureButton("sleep", "Spánok") + quickFeatureButton("feeding", "Kŕmenie") +
     quickFeatureButton("diaper", "Prebaľovanie") + quickFeatureButton("bath", "Kúpanie") +
     quickFeatureButton("temperature", "Teplota") + quickActionButton("note", "book", "Poznámka"),
@@ -843,18 +843,21 @@
     const view = currentView();
     if (view === "home") return "home";
     if (view === "guguChat") return "chat";
-    if (["v5PregnancyBook", "v5ChildBook"].includes(view)) return "book";
-    if (view === "v5Calendar") return "calendar";
+    const key = activeFeatureId();
+    if (["v5Mama", "v5Period", "privateSpace"].includes(view) || ["mama", "period", "privateSpace"].includes(key)) return "mama";
+    if (view === "v5FamilyHub") return "family";
+    if (view === "v5BabyHub" || view === "v5Flow") return "baby";
+    const all = [...prenatalDrawerGroups, ...postpartumDrawerGroups];
+    if (all.some(([title, keys]) => title === "Rodina" && keys.includes(key)) || ["v5First100", "v5Utility", "v5Profiles"].includes(view)) return "family";
+    if (all.some(([title, keys]) => title === "Bábätko" && keys.includes(key)) || ["teeth", "v5Care"].includes(view)) return "baby";
     return "";
   }
 
   function openTab(id) {
-    // Lišta = rýchle akcie (Samuel 10. 11.): Domov · Zapísať ＋ · GuguChat · Knižka · Kalendár – pred aj po pôrode rovnaká.
     closeDrawer();
     if (id === "home") return openHome();
-    if (id === "record") return openQuickRecord();
-    openFeature(id === "book" ? (state.profile.status === "expecting" ? "pregnancy" : "childBook") : "calendar");
-    // Z lišty vedie šípka späť vždy na Domov.
+    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : "familyHub");
+    // Z oblasti lišty vedie šípka späť vždy na Domov (nie na predchádzajúcu aplikáciu).
     history = ["home"];
   }
 
@@ -889,7 +892,7 @@
       "<button class='v5-bottom-action", tab === id ? " active" : "", "' type='button' data-v2-tab='", id, "' aria-label='", escapeHtml(label), "'",
       tab === id ? " aria-current='page'" : "", "><span class='v5-nav-icon'>", icon(iconName), "</span><span>", escapeHtml(label), "</span></button>"
     ].join("");
-    const favorites = [tabButton("home", "Domov", "home"), tabButton("record", "Zapísať", "plus"), tabButton("book", "Knižka", "book"), tabButton("calendar", "Kalendár", "calendar")];
+    const favorites = [tabButton("home", "Domov", "home"), tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("family", "Rodina", "family")];
     void visibleFavorites; void favoriteButton;
     byId("v5BottomBar").classList.add("v2-bottom-bar");
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
@@ -1317,7 +1320,8 @@
       "</section>",
       // Citová karta „X. deň spolu“ hneď pod hlavičkou – je to hlavný citový údaj (Samuel 17. 10.).
       window.GugubooMoments?.homeCardHtml?.() || "",
-      // Kalendár je v spodnej lište (rýchla akcia) – riadok na domove by bol duplicita.
+      // Upratanie 2.36: najbližší termín z Kalendára – nenápadný riadok pod Dnešným malým momentom.
+      "<div class='v2-home-cal'>", calendarCard, "</div>",
       renderAdaptiveOHome(),
       homeTail
     ].join("");
@@ -1397,21 +1401,7 @@
     ].join("");
   }
 
-  // Rýchly zápis (tlačidlo „Zapísať ＋“ v lište) – rovnaké okno pred aj po pôrode, obsah podľa fázy (Samuel 10. 11.).
-  function quickRecordTiles() {
-    if (state.profile.status !== "expecting") {
-      return quickFeatureButton("sleep", "Spánok") + quickFeatureButton("feeding", "Kŕmenie") +
-        quickFeatureButton("diaper", "Prebaľovanie") + quickFeatureButton("bath", "Kúpanie") +
-        quickFeatureButton("temperature", "Teplota") + quickActionButton("note", "book", "Poznámka");
-    }
-    const tile = (action, iconName, label) => "<button class='v5-quick-tile' type='button' data-v2-qr='" + action + "'><span class='v5-icon'>" + icon(iconName) + "</span><strong>" + escapeHtml(label) + "</strong></button>";
-    return tile("move", "baby", "Pohyb bábätka") + tile("water", "water", "Pohár vody") + tile("mood", "lock", "Nálada do denníka") +
-      tile("question", "book", "Otázka pre lekára") + tile("visit", "health", "Zápis z kontroly") + tile("result", "camera", "Výsledok alebo sono");
-  }
-
   function openQuickRecord() {
-    const grid = byId("v5QuickRecordGrid");
-    if (grid) grid.innerHTML = quickRecordTiles();
     const overlay = byId("v5QuickRecordOverlay");
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
@@ -4341,35 +4331,6 @@
       renderMama();
       renderHome();
       return announce("Pripomienka je v Kalendári.");
-    }
-    // Rýchly zápis v tehotenstve (okno „Zapísať ＋“).
-    const quickPrenatal = event.target.closest("[data-v2-qr]");
-    if (quickPrenatal) {
-      const action = quickPrenatal.dataset.v2Qr;
-      closeQuickRecord();
-      if (action === "move") {
-        (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
-        persist(); renderHome();
-        const count = state.v5.babyMoves.filter(move => calendarDayKey(move.time) === todayKey()).length;
-        return announce("Pohyb zapísaný – dnes " + count + "×.");
-      }
-      if (action === "water") {
-        const water = waterToday();
-        water.count += 1;
-        (state.v5.waterLog ||= {})[todayKey()] = water.count;
-        persist(); renderHome();
-        return announce(waterProgressText());
-      }
-      if (action === "mood") return openFeature("privateSpace");
-      const section = { question: "questions", visit: "visit-new", result: "result-new" }[action];
-      if (section) {
-        state.v5.pregnancyBookSection = section;
-        bookFromLink = currentView() !== "v5PregnancyBook";
-        if (bookFromLink) routeTo("v5PregnancyBook");
-        persist();
-        return renderPregnancyBook();
-      }
-      return;
     }
     const tabButton = event.target.closest("[data-v2-tab]");
     if (tabButton) return openTab(tabButton.dataset.v2Tab);
