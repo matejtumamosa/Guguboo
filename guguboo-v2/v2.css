@@ -1601,4 +1601,4 @@ body.v5-active.v5-app-window-open .view.active { width: min(calc(100vw - 20px), 
 /* V rámčeku telefónu (frame.html) bez sivého posuvníka – posúvanie funguje ďalej (Samuel 10. 11. 2026) */
 html.v2-in-frame, html.v2-in-frame * { scrollbar-width: none; }
 html.v2-in-frame *::-webkit-scrollbar, html.v2-in-frame::-webkit-scrollbar { width: 0; height: 0; display: none; }
-html.v2-in-frame #welcomeCard { border-radius: 28px !important; overflow: hidden; }
+html.v2-in-frame #welcomeCard { border-radius: 44px !important; overflow: hidden; }
