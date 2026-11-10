@@ -548,7 +548,7 @@
     "<div id='v5DrawerOverlay' aria-hidden='true'>",
     "<aside id='v5Drawer' role='dialog' aria-modal='true' aria-labelledby='v5DrawerTitle'>",
     "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť ďalšie aplikácie'></button>",
-    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Ďalšie aplikácie</h2><p>Vyber jednu aplikáciu.</p></div>",
+    "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Praktické</h2><p>Kalendár, nákup, úrady a ďalšie.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-drawer aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-drawer-scroll' id='v5DrawerScroll'></div>",
     "</aside></div>",
@@ -903,7 +903,7 @@
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
     // Pre čítačky obrazovky ostáva neviditeľné tlačidlo.
     // Nenápadná úchytka (čiarka bez textu) – na počítači sa na ňu klikne, na mobile sa lišta potiahne.
-    byId("v5BottomBar").innerHTML = "" +
+    byId("v5BottomBar").innerHTML = "<button class='v2-bar-grip' type='button' data-v5-open-drawer aria-label='Praktické aplikácie' title='Praktické aplikácie'><span aria-hidden='true'></span></button>" +
       favorites.slice(0, 2).join("") + chatButton + favorites.slice(2).join("");
   }
 
@@ -1327,7 +1327,7 @@
       window.GugubooMoments?.homeCardHtml?.() || "",
       renderAdaptiveOHome(),
       // Upratanie 2.38: praktické nástroje majú jediné miesto – rad pod kruhom (Kalendár ukáže, koľko vecí je dnes).
-      toolsRowHtml(dueToday),
+      // Praktické aplikácie sú v spodnom vysúvacom menu (Samuel 10. 11.), nie na domove.
       homeTail
     ].join("");
   }
@@ -1370,19 +1370,12 @@
   function renderDrawer() {
     const scroll = byId("v5DrawerScroll");
     if (!scroll) return;
-    ensureFavoritePhase();
-    const expecting = state.profile.status === "expecting";
-    const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
-    // Zásuvka = „všetko na jednom mieste“ (bez obľúbených a pripínania – lišta je pevná).
-    scroll.innerHTML = groups.map(([title, keys]) => [
-      "<section class='v2-drawer-group'><h3>", escapeHtml(title), "</h3>",
-      "<div class='v5-drawer-grid v5-drawer-flat'>", keys.map(key => drawerApp(key, false)).join(""), "</div>",
-      "</section>"
-    ].join("")).join("");
+    // Spodné vysúvacie menu = len praktické aplikácie (Samuel 10. 11.) – nič, čo už je v lište (Bábätko, Mama, Momenty).
+    scroll.innerHTML = toolsRowHtml(calendarItems().filter(item => !item.completedAt && !item.virtual && calendarDayKey(item.date) <= todayKey()).length);
   }
 
-  // Rad nástrojov na domove: Kalendár · Nákup · Kontakty · Úrady (jediné miesto, odkiaľ sa otvárajú).
-  // Samuel 10. 11.: praktické aplikácie netreba triediť – sú spolu v časti „Praktické“ (jediné miesto, odkiaľ sa otvárajú).
+  // Praktické aplikácie v spodnom vysúvacom menu (jediné miesto, odkiaľ sa otvárajú).
+  // Samuel 10. 11.: netreba ich triediť – sú spolu ako „Praktické“.
   // Úrady ukážu, koľko úradných vecí je práve aktuálnych (predtým v „Teraz / Čoskoro“ na domove).
   function toolsRowHtml(dueToday) {
     const shoppingOpen = (state.shopping || []).length;
@@ -1400,7 +1393,7 @@
       ["travel", "Cestovanie", ""],
       ...(state.profile.status === "expecting" ? [] : [["checklists", "Zoznamy", ""]])
     ];
-    return "<h3 class='v2-home-tools-title'>Praktické</h3><nav class='v2-home-tools' aria-label='Praktické'>" + tools.map(([key, label, badge]) =>
+    return "<nav class='v2-home-tools v2-drawer-tools' aria-label='Praktické aplikácie'>" + tools.map(([key, label, badge]) =>
       "<button type='button' data-v5-feature='" + key + "'><span class='v5-icon'>" + icon(features[key].icon) + (badge ? "<i>" + escapeHtml(badge) + "</i>" : "") + "</span><span>" + escapeHtml(label) + "</span></button>"
     ).join("") + "</nav>";
   }
@@ -2182,8 +2175,6 @@
   }
 
   function openDrawer() {
-    // Upratanie 2.38 (Samuel 10. 11.): zásuvka zrušená – spodná lišta je jediná navigácia, nič sa neopakuje.
-    return;
     renderDrawer();
     const overlay = byId("v5DrawerOverlay");
     overlay.classList.add("open");

@@ -1596,3 +1596,6 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v5-baby-avatar.v2-week-badge { cursor: default; }
 .v2-home-tools-title { margin: 18px 4px 0; color: var(--v5-muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .v2-home-tools { margin-top: 8px; }
+/* Praktické v spodnom vysúvacom menu (2.38.2) */
+#v5Drawer .v2-drawer-tools { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 4px; }
+#v5Drawer .v2-drawer-tools button { min-height: 0; }
