@@ -149,12 +149,13 @@
       {
         scroll: true,
         target: () => home?.querySelector(".v2-home-tools"),
-        title: "Kalendár, Nákup, Kontakty, Úrady",
+        title: "Praktické",
         items: [
           { icon: "calendar", name: "Kalendár", text: "všetky kontroly, prehliadky a pripomienky." },
           { icon: "shopping", name: "Nákup", text: "spoločný zoznam aj výbava." },
           { icon: "contacts", name: "Kontakty", text: "lekár, pôrodnica a blízki." },
-          { icon: "book", name: "Úrady", text: "čo treba vybaviť a kedy." }
+          { icon: "book", name: "Úrady", text: "čo treba vybaviť a kedy – číslo ukáže, koľko vecí je práve aktuálnych." },
+          { icon: "family", name: "Úlohy a Cestovanie", text: "kto čo urobí a príprava na cestu." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },

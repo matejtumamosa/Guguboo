@@ -1594,3 +1594,5 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-hub-week-copy small { display: block; margin-top: 4px; color: var(--v5-ink); font-size: 13px; line-height: 1.45; }
 .v2-hub-week-copy em { display: block; margin-top: 6px; color: #5b4ca3; font-size: 13px; font-style: normal; font-weight: 800; }
 .v5-baby-avatar.v2-week-badge { cursor: default; }
+.v2-home-tools-title { margin: 18px 4px 0; color: var(--v5-muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.v2-home-tools { margin-top: 8px; }

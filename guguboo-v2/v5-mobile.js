@@ -293,6 +293,7 @@
       ["v5-prenatal-car-seat", "Autosedačka na cestu domov", "travel", "Ak pôjdete z pôrodnice autom, priprav si autosedačku vopred."]
     ] },
     { id: "hospital", label: "Pôrodnica", shortLabel: "Taška", description: "Taška po malých častiach.", icon: "checklist", start: 30, tasks: [
+      ["v5-prenatal-hospital", "Vybrať pôrodnicu", "checklist", "Zisti, kam ísť a ako prebieha príjem – aby si presne vedela, čo čakať.", { feature: "beforeBirth", label: "Otvoriť prípravu" }],
       ["v5-bag-mother", "Veci pre mamu", "profile", "Veci pre seba na pobyt v pôrodnici. Podrobný zoznam máš v Príprave.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
       ["v5-bag-baby", "Veci pre bábätko", "baby", "Oblečenie a potreby pre bábätko na prvé dni v pôrodnici.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
       ["v5-bag-hygiene", "Hygiena a praktické potreby", "bath", "Drogéria a drobnosti, ktoré sa v pôrodnici zídu.", { feature: "beforeBirth", label: "Otvoriť zoznam do tašky" }],
@@ -300,6 +301,7 @@
     ] },
     { id: "admin", label: "Vybaviť", shortLabel: "Vybaviť", description: "Kontakty a doklady, ktoré chceš mať poruke.", icon: "book", start: 150, tasks: [
       ["v5-health-pediatrician", "Vybrať pediatra", "health", "", null, ["sk.process.vyber_pediatra"]],
+      ["v5-prenatal-contacts", "Uložiť kontakt na gynekológa a pôrodnicu", "contacts", "Keď ich budeš potrebovať, nemusíš nič hľadať.", { feature: "contacts", label: "Otvoriť kontakty" }],
       ["v5-doc-id", "Skontrolovať doklady rodiča", "book", "Over si, že máš platné doklady, ktoré budeš potrebovať v pôrodnici a na úradoch."],
       ["v5-prenatal-insurance", "Overiť zdravotnú poisťovňu", "contacts", "", null, ["sk.process.zdravotne_poistenie_novorodenca"]],
       ["v5-prenatal-help", "Dohodnúť pomoc po návrate domov", "family", "Dohodni si vopred, kto ti pomôže s nákupom, varením alebo domácnosťou."],
@@ -313,6 +315,7 @@
       ["v5-post-safe-sleep", "Skontrolovať bezpečné miesto na spánok", "moon", "Jedno pripravené miesto, kde bábätko spinká."],
       ["v5-post-diapers-stock", "Doplniť plienky a hygienu", "diaper", "Aby ti plienky a obrúsky nedošli v noci alebo cez víkend."],
       ["v5-post-pharmacy", "Uložiť kontakt na lekáreň", "contacts", "Kontakt na najbližšiu lekáreň sa hodí, keď niečo treba rýchlo.", { feature: "contacts", label: "Otvoriť kontakty" }],
+      ["v5-post-pediatrician-call", "Ozvať sa pediatrovi po návrate domov", "health", "Dohodnete prvú kontrolu. Kontakt na pediatra si ulož do Kontaktov.", { feature: "contacts", label: "Otvoriť kontakty" }],
       ["v5-post-help-plan", "Dohodnúť, kto dnes pomôže", "family", "Povedz nahlas, s čím ti dnes niekto môže pomôcť."]
     ] },
     { id: "documents", label: "Doklady", shortLabel: "Doklady", description: "Povinnosti po narodení na jednom mieste.", icon: "book", start: 30, tasks: [
@@ -1379,15 +1382,25 @@
   }
 
   // Rad nástrojov na domove: Kalendár · Nákup · Kontakty · Úrady (jediné miesto, odkiaľ sa otvárajú).
+  // Samuel 10. 11.: praktické aplikácie netreba triediť – sú spolu v časti „Praktické“ (jediné miesto, odkiaľ sa otvárajú).
+  // Úrady ukážu, koľko úradných vecí je práve aktuálnych (predtým v „Teraz / Čoskoro“ na domove).
   function toolsRowHtml(dueToday) {
     const shoppingOpen = (state.shopping || []).length;
+    let adminNow = 0;
+    try {
+      const plan = window.GugubooJourney?.compute?.(state);
+      adminNow = [...(plan?.what_is_relevant_now || []), ...(plan?.what_is_coming || [])].filter(item => String(item.id).startsWith("admin.")).length;
+    } catch { adminNow = 0; }
     const tools = [
       ["calendar", "Kalendár", dueToday ? "Dnes " + dueToday : ""],
       ["shopping", "Nákup", shoppingOpen ? String(shoppingOpen) : ""],
       ["contacts", "Kontakty", ""],
-      ["administration", "Úrady", ""]
+      ["administration", "Úrady", adminNow ? String(adminNow) : ""],
+      ["family", "Úlohy", ""],
+      ["travel", "Cestovanie", ""],
+      ...(state.profile.status === "expecting" ? [] : [["checklists", "Zoznamy", ""]])
     ];
-    return "<nav class='v2-home-tools' aria-label='Nástroje'>" + tools.map(([key, label, badge]) =>
+    return "<h3 class='v2-home-tools-title'>Praktické</h3><nav class='v2-home-tools' aria-label='Praktické'>" + tools.map(([key, label, badge]) =>
       "<button type='button' data-v5-feature='" + key + "'><span class='v5-icon'>" + icon(features[key].icon) + (badge ? "<i>" + escapeHtml(badge) + "</i>" : "") + "</span><span>" + escapeHtml(label) + "</span></button>"
     ).join("") + "</nav>";
   }
