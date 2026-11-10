@@ -1580,3 +1580,17 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 
 /* Upratanie 2.37 (Samuel 10. 11.): bez tlačidiel pod kruhom – časti kruhu sú klikateľné samy (aj klávesnicou) */
 .v5-o-legend { display: none !important; }
+
+/* ——— Upratanie 2.38: rad nástrojov na domove, karta týždňa v časti Bábätko ——— */
+.v2-home-tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; }
+.v2-home-tools button { display: grid; justify-items: center; gap: 6px; padding: 12px 4px; color: var(--v5-ink); background: rgba(255, 255, 255, .78); border: 1px solid rgba(123, 97, 200, .12); border-radius: 20px; font: inherit; font-size: 12px; font-weight: 700; }
+.v2-home-tools .v5-icon { position: relative; display: grid; place-items: center; width: 42px; height: 42px; color: #5b4ca3; background: #f1edff; border-radius: 14px; }
+.v2-home-tools .v5-icon i { position: absolute; top: -6px; right: -10px; min-width: 20px; padding: 2px 6px; color: #fff; background: #e58aa3; border-radius: 999px; font-size: 10px; font-style: normal; font-weight: 800; line-height: 1.4; }
+.v2-hub-week { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; width: 100%; margin-top: 12px; padding: 16px; color: var(--v5-ink); background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .16); border-radius: 22px; text-align: left; font: inherit; }
+.v2-hub-week-num { display: grid; place-items: center; width: 64px; height: 64px; background: #fff; border-radius: 20px; }
+.v2-hub-week-num b { color: #5b4ca3; font-size: 24px; line-height: 1; }
+.v2-hub-week-num small { color: var(--v5-muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.v2-hub-week-copy strong { display: block; font-size: 16px; }
+.v2-hub-week-copy small { display: block; margin-top: 4px; color: var(--v5-ink); font-size: 13px; line-height: 1.45; }
+.v2-hub-week-copy em { display: block; margin-top: 6px; color: #5b4ca3; font-size: 13px; font-style: normal; font-weight: 800; }
+.v5-baby-avatar.v2-week-badge { cursor: default; }
