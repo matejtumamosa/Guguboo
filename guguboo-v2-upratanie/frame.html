@@ -6,10 +6,6 @@
   <title>Guguboo V2 – upratanie (náhľad)</title>
   <!-- V2 – rámček telefónu pre širokú obrazovku (Samuel 10. 11. 2026). Appka beží vo vnútri ako na mobile.
        Rámček má vždy rozmer telefónu (430 × 900); pri menšom okne sa celý zmenší, nikdy nestlačí. -->
-  <script>
-    // Na úzkej obrazovke (telefón) rámček netreba – rovno appka.
-    if (window.innerWidth <= 560) window.location.replace("app.html?frame=1" + window.location.hash);
-  </script>
   <style>
     :root { color-scheme: light; }
     html, body { height: 100%; margin: 0; overflow: hidden; }

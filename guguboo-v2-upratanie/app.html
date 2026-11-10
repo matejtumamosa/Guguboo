@@ -6,7 +6,7 @@
     // V2 – vždy formát mobilu (Samuel 10. 11. 2026): na širokej obrazovke sa appka otvorí v rámčeku telefónu
     // (frame.html), vo vnútri sa správa presne ako na mobile. Na telefóne sa nič nemení.
     (function gugubooPhoneFrame() {
-      if (window.top === window.self && window.innerWidth > 560 && !/[?&]frame=1/.test(window.location.search)) {
+      if (window.top === window.self && window.innerWidth > 560) {
         window.location.replace("frame.html" + window.location.hash);
       }
     })();
