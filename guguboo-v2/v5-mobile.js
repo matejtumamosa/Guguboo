@@ -102,7 +102,7 @@
     growth: { label: "Rast a váha", description: "Hmotnosť, výška a obvod hlavy", icon: "growth", tier: "premium", view: "growth" },
     urgent: { label: "Kontakty na pomoc", description: "Pohotovosť, pediater a blízki", icon: "alert", tier: "free", view: "urgent" },
     checklists: { label: "Praktické zoznamy", description: "Lekár, choroba a cestovanie", icon: "checklist", tier: "free", view: "v5Checklists" },
-    memories: { label: "Naše momenty", description: "Rodinný denník – fotky, prvé razy a spoločný príbeh", icon: "memory", tier: "premium", view: "v5First100" },
+    memories: { label: "Naše momenty", description: "Časová os, prvé razy, albumy a kartičky", icon: "memory", tier: "premium", view: "v5First100" },
     first100: { label: "Naše momenty", description: "Rodinný denník – fotky, prvé razy a spoločný príbeh", icon: "baby", tier: "premium", view: "v5First100" },
     activities: { label: "Aktivity", description: "Krátke spoločné chvíle podľa veku", icon: "activity", tier: "free", view: "activities" },
     // Starý „Rodinný denník“ = to isté čo Naše momenty – jedna aplikácia, jeden názov.
@@ -1336,13 +1336,10 @@
     ensureFavoritePhase();
     const expecting = state.profile.status === "expecting";
     const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
-    const count = (window.GugubooMoments?.collect?.() || []).length;
-    const momentsCard = "<button class='v5-drawer-emotional-card' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>" + (count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy, albumy a kartičky") + "</em></span><b aria-hidden='true'>›</b></button>";
     // Zásuvka = „všetko na jednom mieste“ (bez obľúbených a pripínania – lišta je pevná).
     scroll.innerHTML = groups.map(([title, keys]) => [
       "<section class='v2-drawer-group'><h3>", escapeHtml(title), "</h3>",
-      keys.includes("memories") ? momentsCard : "",
-      "<div class='v5-drawer-grid v5-drawer-flat'>", keys.filter(key => key !== "memories").map(key => drawerApp(key, false)).join(""), "</div>",
+      "<div class='v5-drawer-grid v5-drawer-flat'>", keys.map(key => drawerApp(key, false)).join(""), "</div>",
       "</section>"
     ].join("")).join("");
   }
@@ -1365,12 +1362,10 @@
     const subtitle = baby
       ? (expecting ? (pregnancyWeek ? pregnancyWeek + ". týždeň tehotenstva" : "Tehotenstvo") : age?.label && !age.invalid ? age.label : "")
       : "Momenty, kalendár, nákup a úrady";
-    const count = (window.GugubooMoments?.collect?.() || []).length;
     target.innerHTML = [
       "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? state.profile.name || "Bábätko" : [parentDisplayName(), state.profile.name].filter(Boolean).join(" a ") || "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
       baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>Zapísať spánok, kŕmenie alebo plienku</button>" : "",
-      !baby ? "<button class='v5-drawer-emotional-card v2-hub-moments' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>" + (count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy, albumy a kartičky") + "</em></span><b aria-hidden='true'>›</b></button>" : "",
-      "<div class='v2-book-tools'>", keys.filter(key => key !== "memories").map(appRow).join(""), "</div>"
+      "<div class='v2-book-tools'>", keys.map(appRow).join(""), "</div>"
     ].join("");
   }
 
