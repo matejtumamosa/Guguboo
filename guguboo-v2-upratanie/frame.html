@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guguboo V2 – upratanie (náhľad)</title>
+  <!-- V2 – rámček telefónu pre širokú obrazovku (Samuel 10. 11. 2026). Appka beží vo vnútri ako na mobile. -->
+  <script>
+    // Na úzkej obrazovke (telefón) rámček netreba – rovno appka.
+    if (window.innerWidth <= 560) window.location.replace("app.html?frame=1" + window.location.hash);
+  </script>
+  <style>
+    :root { color-scheme: light; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 20% 15%, #f6f0ff 0, transparent 45%), radial-gradient(circle at 85% 85%, #fff1ec 0, transparent 45%), #fbf8f6;
+      font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
+    }
+    .phone {
+      width: 430px;
+      height: min(932px, calc(100vh - 32px));
+      border: 0;
+      border-radius: 36px;
+      background: #fff;
+      box-shadow: 0 30px 80px rgba(48, 36, 67, .18), 0 0 0 10px #fff, 0 0 0 11px rgba(123, 97, 200, .14);
+    }
+  </style>
+</head>
+<body>
+  <iframe class="phone" src="app.html?frame=1" title="Guguboo" allow="microphone; camera; clipboard-write; web-share; fullscreen"></iframe>
+  <script>
+    // Hash (#...) z adresy pošli do appky v rámčeku.
+    if (window.location.hash) document.querySelector(".phone").src = "app.html?frame=1" + window.location.hash;
+  </script>
+</body>
+</html>

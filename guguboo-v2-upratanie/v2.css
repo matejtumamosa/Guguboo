@@ -1580,3 +1580,20 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 
 /* Upratanie 2.37 (Samuel 10. 11.): bez tlačidiel pod kruhom – časti kruhu sú klikateľné samy (aj klávesnicou) */
 .v5-o-legend { display: none !important; }
+
+/* ——— Vždy formát mobilu (Samuel 10. 11. 2026): na širokej obrazovke úzky stĺpec v strede, nie roztiahnutá appka ——— */
+body.v5-active:not(.welcome-mode):not(.intro-only) .app {
+  width: min(100%, 440px) !important;
+  max-width: 440px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+body.v5-active:not(.welcome-mode):not(.intro-only) .main {
+  max-width: 440px !important;
+  padding-inline: 16px !important;
+}
+#v5BottomBar { width: min(calc(100% - 24px), 420px) !important; }
+#v5Drawer, #v5QuickRecord { width: min(100%, 440px) !important; }
+.v5-care-grid { grid-template-columns: minmax(0, 1fr) !important; }
+.v5-care-option:last-child { grid-column: auto !important; }
+body.v5-active.v5-app-window-open .view.active { width: min(calc(100vw - 20px), 440px) !important; max-width: 440px !important; }
