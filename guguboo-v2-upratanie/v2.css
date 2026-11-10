@@ -1608,3 +1608,23 @@ html.v2-in-frame #welcomeCard { border-radius: 44px !important; overflow: hidden
 @media (max-width: 560px) {
   body.welcome-mode #welcomeCard[data-step="1"] { min-height: calc(100dvh - 20px) !important; height: calc(100dvh - 20px) !important; }
 }
+
+/* Výber „Ako poznáš termín pôrodu?“ – tlačidlá namiesto systémového okienka (Samuel 10. 11. 2026) */
+.v2-native-hidden { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important; overflow: hidden !important; }
+.v2-choice-chips { display: grid; gap: 8px; margin-top: 8px; }
+.v2-choice-chip { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .18); border-radius: 18px; font: inherit; font-size: 15px; font-weight: 700; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+.v2-choice-chip:hover { border-color: rgba(123, 97, 200, .4); }
+.v2-choice-chip.active { background: #f4f0ff; border-color: #7b6bc8; box-shadow: 0 6px 18px rgba(123, 97, 200, .14); }
+.v2-choice-dot { flex: 0 0 auto; width: 20px; height: 20px; border: 2px solid rgba(123, 97, 200, .45); border-radius: 50%; background: #fff; }
+.v2-choice-chip.active .v2-choice-dot { border-color: #7b6bc8; background: radial-gradient(circle, #7b6bc8 0 45%, #fff 50%); }
+/* Domov: hlavička s pozdravom sa posúva s obsahom – karta s menom pod ňu nezachádza a nič sa neoreže (Samuel 10. 11.). */
+body.v5-active #v5Header[data-home="true"] { position: relative !important; top: auto !important; }
+/* Spodná lišta: aktívne tlačidlo bez fialového podsvietenia (Samuel 10. 11.) – vyzerá ako ostatné. */
+#v5BottomBar .v5-bottom-action.active { color: var(--v5-muted) !important; background: transparent !important; box-shadow: none !important; }
+#v5BottomBar .v5-bottom-action.active .v5-nav-icon { color: inherit !important; background: transparent !important; box-shadow: none !important; }
+/* Kompaktné tlačidlá termínu; pri výpočte (viac polí) bez ozdobnej kartičky, aby sa krok zmestil bez posúvania. */
+.v2-choice-chips { gap: 6px; margin-top: 6px; }
+.v2-choice-chip { min-height: 42px; padding: 8px 14px; font-size: 14px; border-radius: 14px; }
+.v2-choice-dot { width: 18px; height: 18px; }
+.welcome-step:has(#welcomeCycleWrap:not(.hidden)) .welcome-fruit-avatar-card,
+.welcome-step:has(#welcomeDueBasisWrap:not(.hidden)) .welcome-fruit-avatar-card { display: none !important; }
