@@ -148,8 +148,8 @@
       },
       {
         scroll: true,
-        target: () => document.querySelector("#v5BottomBar .v2-bar-grip") || byId("v5BottomBar"),
-        title: "Praktické – potiahni lištu nahor",
+        target: () => home?.querySelector(".v2-home-tools"),
+        title: "Praktické",
         items: [
           { icon: "calendar", name: "Kalendár", text: "všetky kontroly, prehliadky a pripomienky." },
           { icon: "shopping", name: "Nákup", text: "spoločný zoznam aj výbava." },
@@ -157,7 +157,7 @@
           { icon: "book", name: "Úrady", text: "čo treba vybaviť a kedy – číslo ukáže, koľko vecí je práve aktuálnych." },
           { icon: "family", name: "Úlohy a Cestovanie", text: "kto čo urobí a príprava na cestu." }
         ],
-        try: { label: "Otvoriť Praktické", run: () => V5()?.openDrawer?.() }
+        try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
       {
         target: () => document.querySelector("#v5BottomBar .v2-chat-shutter"),

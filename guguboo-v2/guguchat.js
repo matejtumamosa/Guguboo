@@ -355,7 +355,7 @@
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v spodnej lište: Domov, Bábätko, Mama a Momenty. Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú v spodnom menu – potiahni lištu nahor." }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v spodnej lište: Domov, Bábätko, Mama a Momenty. Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú na domove v časti Praktické." }
   ];
 
   function navAnswer(t, ctx) {
@@ -365,7 +365,7 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Spodná lišta – Domov, Bábätko, Mama a Momenty; Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú v spodnom menu – potiahni lištu nahor\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Spodná lišta – Domov, Bábätko, Mama a Momenty; Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú na domove v časti Praktické\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
