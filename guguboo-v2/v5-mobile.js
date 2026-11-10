@@ -777,6 +777,12 @@
       return;
     }
     // Knižka: z formulára späť na jeho zoznam (nový zápis → Zápisy z kontrol), inak na úvod knižky.
+    if (view === "v5PregnancyBook" && bookFromLink) {
+      bookFromLink = false;
+      state.v5.pregnancyBookSection = "home";
+      persist();
+      return goBack();
+    }
     if (view === "v5PregnancyBook" && state.v5.pregnancyBookSection !== "home") {
       const parent = { "visit-new": "visits", "result-new": "results" }[state.v5.pregnancyBookSection];
       state.v5.pregnancyBookSection = parent || "home";
@@ -1241,17 +1247,20 @@
     // Upratanie 2.36: hlavička vyzerá pred aj po pôrode rovnako – 6 dlaždíc s údajmi (navigácia je v spodnej lište).
     const prenatalTiles = () => {
       const daysToDue = state.profile.due ? Math.round((new Date(state.profile.due + "T12:00:00") - new Date(todayKey() + "T12:00:00")) / 86400000) : null;
-      const size = pregnancyWeek ? window.GugubooV2?.babySize?.(Math.max(4, pregnancyWeek)) : null;
+      const moves = state.v5.babyMoves || [];
+      const movesToday = moves.filter(move => calendarDayKey(move.time) === today).length;
+      const lastMove = moves[moves.length - 1];
       const nextVisit = calendarItems().filter(item => item.source === "prenatal-visit" && !item.completedAt && calendarDayKey(item.date) >= today).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
       const water = waterToday();
       const questions = state.v5.pregnancyQuestions.length;
       return [
         ["Do termínu", daysToDue === null ? "Doplniť" : daysToDue > 0 ? daysToDue + (daysToDue === 1 ? " deň" : daysToDue < 5 ? " dni" : " dní") : daysToDue === 0 ? "Dnes" : "Po termíne", "data-v5-feature='pregnancy'"],
         ["Trimester", !pregnancyWeek ? "—" : (pregnancyWeek < 13 ? "1." : pregnancyWeek < 28 ? "2." : "3.") + " trimester", "data-v5-feature='pregnancy'"],
-        ["Veľkosť", String(size?.length || "—").replace(/^približne\s+/i, ""), "data-v5-feature='babySize'"],
-        ["Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) : "Zapísať", "data-v5-feature='pregnancy'"],
+        // Veľkosť bábätka otvára odznak týždňa vedľa mena – tu namiesto nej Pohyby bábätka (Samuel 10. 11.: nie dve rovnaké funkcie).
+        ["Pohyby", movesToday ? "Dnes " + movesToday + "×" : lastMove ? "Naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "Zapísať", "data-v5-book-section='moves'"],
+        ["Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) : "Zapísať", "data-v5-book-section='visits'"],
         ["Pitný režim", water.count + " / " + water.goal, "data-v2-mama-section='water'"],
-        ["Otázky", questions ? questions + " pre lekára" : "Žiadne", "data-v5-feature='pregnancy'"]
+        ["Otázky", questions ? questions + " pre lekára" : "Žiadne", "data-v5-book-section='questions'"]
       ];
     };
     const statusCards = expecting ? prenatalTiles() : [
@@ -2253,6 +2262,7 @@
     }
     if (feature.view === "v5PregnancyBook") {
       state.v5.pregnancyBookSection = "home";
+      bookFromLink = false;
       persist();
       routeTo("v5PregnancyBook");
       renderPregnancyBook();
@@ -3556,6 +3566,7 @@
 
   // Menštruačný kalendár – samostatná aplikácia po pôrode (obsah v v2-period.js).
   let periodFromMama = false;
+  let bookFromLink = false;
   function renderPeriod() {
     const target = byId("v5PeriodContent");
     if (!target) return;
@@ -4800,6 +4811,9 @@
     const pregnancyBookSection = event.target.closest("[data-v5-book-section]");
     if (pregnancyBookSection) {
       state.v5.pregnancyBookSection = pregnancyBookSection.dataset.v5BookSection;
+      // Z domova (dlaždica Pohyby, Kontrola…) priamo do časti knižky; šípka späť potom vráti na domov.
+      bookFromLink = currentView() !== "v5PregnancyBook";
+      if (bookFromLink) routeTo("v5PregnancyBook");
       persist();
       return renderPregnancyBook();
     }

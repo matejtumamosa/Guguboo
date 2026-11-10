@@ -90,7 +90,7 @@
         // Upratanie 2.36: rovnaké dlaždice ako po pôrode – údaje, ťuknutím otvoríš miesto, kam patria.
         items: [
           { icon: "calendar", name: "Do termínu a trimester", text: "koľko dní ostáva a kde v tehotenstve si." },
-          { icon: "baby", name: "Veľkosť", text: "aké veľké je bábätko tento týždeň." },
+          { icon: "baby", name: "Pohyby", text: "zápis pohybov bábätka jedným ťuknutím. Aké veľké je bábätko, ukáže odznak s týždňom." },
           { icon: "book", name: "Kontrola a Otázky", text: "najbližšia kontrola a otázky pre lekára v Tehotenskej knižke." },
           { icon: "water", name: "Pitný režim", text: "koľko pohárov už máš dnes za sebou." }
         ],
