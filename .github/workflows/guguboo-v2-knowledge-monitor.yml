@@ -14,6 +14,7 @@ on:
     branches: [v2]
     paths:
       - "guguboo-v2/content/*.js"
+      - "guguboo-v2/activities-data.js"
       - "guguboo-v2/tools/knowledge-monitor.mjs"
       - ".github/workflows/guguboo-v2-knowledge-monitor.yml"
 

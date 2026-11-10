@@ -106,6 +106,19 @@
       <b aria-hidden="true">${isTried(activity.id) ? "✓" : "›"}</b></button>`;
   }
 
+  // „Čoskoro“: v posledných 2 týždňoch obdobia ukážka 3 nápadov z ďalšieho obdobia (len na prezretie).
+  function soonHtml(period, days) {
+    const index = data.periods.findIndex(item => item.id === period.id);
+    const next = data.periods[index + 1];
+    const left = period.maxDays - days;
+    if (!next || left > 14) return "";
+    const items = data.activities.filter(item => item.period === next.id).slice(0, 3);
+    if (!items.length) return "";
+    return `<section class="act2-soon"><h3>Čoskoro · ${escapeHtml(next.label)}</h3><p>O ${left + 1} ${left + 1 === 1 ? "deň" : left + 1 < 5 ? "dni" : "dní"} pribudnú nové nápady. Ukážka:</p>
+      ${items.map(item => `<details class="act2-soon-item act2-${escapeHtml(item.domain)}"><summary><span class="act2-icon">${icon(domainOf(item).icon)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">›</b></summary><ol class="act2-steps">${item.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol>${item.safety ? `<p class="act2-safety"><strong>Bezpečne:</strong> ${escapeHtml(item.safety)}</p>` : ""}</details>`).join("")}
+    </section>`;
+  }
+
   function render() {
     if (!isPostpartum()) {
       if (view.classList.contains("active") && typeof switchView === "function") switchView("home");
@@ -139,6 +152,7 @@
       <div data-activity-current>${todayCard(activity)}</div>
       <div class="act2-chips" role="group" aria-label="Oblasť">${chips}</div>
       <div class="act2-list">${shown.map(item => activityRow(item, activity?.id)).join("")}</div>
+      ${soonHtml(period, age.days)}
       <details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
         <p>Voliteľné poznámky na rozhovor s pediatrom. Nie je to test – každé dieťa má svoje tempo.</p>
         ${observations.map(item => `<label class="act2-obs"><span>${escapeHtml(item.text)}</span><select data-observation-id="${item.id}" aria-label="Stav: ${escapeHtml(item.text)}">${option(item, "", "—")}${option(item, "noticed", "Všimla som si")}${option(item, "unknown", "Zatiaľ neviem")}${option(item, "ask", "Opýtať sa pediatra")}</select></label>`).join("")}

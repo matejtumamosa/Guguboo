@@ -35,7 +35,15 @@ async function loadContent() {
   for (const file of files) {
     vm.runInContext(await readFile(path.join(CONTENT, file), "utf8"), sandbox, { filename: file });
   }
-  return sandbox.window.GugubooContent || {};
+  // Aktivity s dieťaťom (CDC/NHS) žijú mimo content/ – sledujú sa rovnako (Samuel 10. 11. 2026).
+  try {
+    vm.runInContext(await readFile(path.join(ROOT, "activities-data.js"), "utf8"), sandbox, { filename: "activities-data.js" });
+  } catch (error) {
+    console.warn("activities-data.js sa nepodarilo načítať:", error.message);
+  }
+  const content = sandbox.window.GugubooContent || {};
+  if (sandbox.window.GugubooActivitiesData) content.activities = sandbox.window.GugubooActivitiesData;
+  return content;
 }
 
 // Zozbiera { url → [ {module, id, title, critical} ] } zo všetkých modulov.
@@ -57,6 +65,10 @@ function collectSources(content) {
   for (const [week, entry] of Object.entries(weeks)) {
     const ref = { module: "pregnancyWeeks", id: "week-" + week, title: week + ". týždeň", critical: true };
     [entry.source_url, ...(entry.source_urls || [])].forEach(url => add(url, ref));
+  }
+  // Aktivity: každá stránka CDC/NHS raz, s odkazom na všetky nápady z nej.
+  for (const activity of content.activities?.activities || []) {
+    add(activity.sourceUrl, { module: "activities", id: activity.id, title: activity.title + " (" + activity.period + ")", critical: false });
   }
   return map;
 }

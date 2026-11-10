@@ -90,3 +90,11 @@ body.night .activities-visual { background:linear-gradient(145deg,#403750,#49343
 .act2 .act2-parent p { color:var(--act-muted); font-size:.85rem; }
 .act2 .act2-obs { display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--act-line); font-size:.88rem; }
 @media(max-width:420px) { .act2 .act2-obs { grid-template-columns:1fr; } }
+.act2 .act2-soon { padding:14px; background:linear-gradient(135deg,#f6f0ff,#fff1ec); border:1px solid var(--act-line); border-radius:20px; }
+.act2 .act2-soon h3 { margin:0 0 4px; font-size:1rem; color:var(--act-ink); }
+.act2 .act2-soon > p { margin:0 0 8px; color:var(--act-muted); font-size:.85rem; }
+.act2 .act2-soon-item { margin-top:8px; padding:8px 10px; background:#fff; border:1px solid var(--act-line); border-radius:16px; }
+.act2 .act2-soon-item summary { display:flex; align-items:center; gap:10px; list-style:none; cursor:pointer; }
+.act2 .act2-soon-item summary::-webkit-details-marker { display:none; }
+.act2 .act2-soon-item summary strong { flex:1; font-size:.92rem; }
+.act2 .act2-soon-item .act2-steps { margin-top:8px; font-size:.88rem; }
