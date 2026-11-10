@@ -3108,12 +3108,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.37.20-nahlad";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.37.21-nahlad";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.20">
+  <link rel="stylesheet" href="v2.css?v=2.37.21">
 </head>
 <body>
   <div class="app" id="app">
@@ -9999,32 +9999,116 @@ Otázky:
       if (card) new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["data-step"] });
       sync();
     })();
+    // V2 (Samuel 10. 11.): dlhé systémové zoznamy (krajina, dĺžka cyklu) → vlastný výber zospodu v dizajne appky.
+    // Pôvodný <select> ostáva skrytý, takže logika úvodu sa nemení.
+    (function sheetPickers() {
+      const ids = ["welcomeCountry", "welcomeCycle"];
+      let sheet = null;
+      function close() { sheet?.remove(); sheet = null; }
+      function labelFor(select) {
+        const label = select.closest("label");
+        const text = label ? [...label.childNodes].filter(node => node.nodeType === 3).map(node => node.textContent.trim()).join(" ").trim() : "";
+        return text || label?.querySelector(".v5-sr-only")?.textContent || "Vyber";
+      }
+      function open(select, button) {
+        close();
+        sheet = document.createElement("div");
+        sheet.className = "v2-picker";
+        sheet.innerHTML = "<div class='v2-picker-panel' role='dialog' aria-modal='true'><div class='v2-picker-head'><strong></strong><button type='button' class='v2-picker-close' aria-label='Zavrieť'>×</button></div><div class='v2-picker-list' role='listbox'></div></div>";
+        sheet.querySelector("strong").textContent = labelFor(select);
+        const list = sheet.querySelector(".v2-picker-list");
+        [...select.options].filter(option => option.value && !option.disabled).forEach(option => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "v2-picker-item" + (option.value === select.value ? " active" : "");
+          item.setAttribute("role", "option");
+          item.setAttribute("aria-selected", String(option.value === select.value));
+          item.textContent = option.textContent;
+          item.addEventListener("click", () => {
+            select.value = option.value;
+            select.dispatchEvent(new Event("input", { bubbles: true }));
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            sync(select, button);
+            close();
+            button.focus();
+          });
+          list.appendChild(item);
+        });
+        sheet.addEventListener("click", event => { if (event.target === sheet || event.target.closest(".v2-picker-close")) close(); });
+        document.body.appendChild(sheet);
+        list.querySelector(".active")?.scrollIntoView({ block: "center" });
+      }
+      function sync(select, button) {
+        button.querySelector("span").textContent = select.selectedOptions[0]?.textContent || "Vyber";
+      }
+      ids.forEach(id => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        select.classList.add("v2-native-hidden");
+        select.tabIndex = -1;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "v2-select-button";
+        button.innerHTML = "<span></span><b aria-hidden='true'>⌄</b>";
+        button.addEventListener("click", event => { event.preventDefault(); open(select, button); });
+        select.insertAdjacentElement("afterend", button);
+        select.addEventListener("change", () => sync(select, button));
+        new MutationObserver(() => sync(select, button)).observe(select, { childList: true });
+        sync(select, button);
+        setTimeout(() => sync(select, button), 500);
+      });
+      document.addEventListener("keydown", event => { if (event.key === "Escape") close(); });
+    })();
+    // V2 (Samuel 10. 11.): úvod na telefóne bez posúvania a so STABILNOU veľkosťou. Jedno zmenšenie pre všetky kroky
+    // podľa najdlhšej situácie (vrátane výpočtu z menštruácie) – pri klikaní sa už nemení, len pri zmene okna.
     (function fitWelcomeSteps() {
       const card = document.getElementById("welcomeCard");
       if (!card) return;
-      let busy = false;
-      function fit() {
-        if (busy) return;
-        busy = true;
-        const step = card.querySelector(".welcome-step.active");
-        document.querySelectorAll(".welcome-step").forEach(item => { if (item !== step) item.style.zoom = ""; });
-        if (!step || !document.body.classList.contains("welcome-mode") || window.innerWidth > 560) {
-          if (step) step.style.zoom = "";
-          busy = false;
+      let measuring = false;
+      let lastKey = "";
+      function measure() {
+        const steps = [...card.querySelectorAll(".welcome-step")];
+        if (measuring || !steps.length) return;
+        if (!document.body.classList.contains("welcome-mode") || Math.min(window.innerWidth, screen.width) > 560) {
+          steps.forEach(step => { step.style.zoom = ""; });
           return;
         }
-        step.style.zoom = "";
-        const over = document.scrollingElement.scrollHeight - window.innerHeight;
-        if (over > 0) {
-          const height = step.getBoundingClientRect().height;
-          step.style.zoom = String(Math.max(0.8, (height - over - 4) / height));
-        }
-        setTimeout(() => { busy = false; }, 30);
+        const key = window.innerWidth + "x" + window.innerHeight + ":" + document.body.className;
+        if (key === lastKey) return;
+        measuring = true;
+        const active = steps.find(step => step.classList.contains("active"));
+        const activeStep = card.dataset.step;
+        const extra = ["welcomeDueBasisWrap", "welcomeCycleWrap", "welcomeDueResult"].map(id => document.getElementById(id)).filter(Boolean);
+        const resultEl = document.getElementById("welcomeDueResult");
+        const resultText = resultEl ? resultEl.textContent : "";
+        const extraHidden = extra.map(el => el.classList.contains("hidden"));
+        const scrollY = window.scrollY;
+        steps.forEach(step => { step.style.zoom = ""; });
+        let zoom = 1;
+        steps.forEach(step => {
+          steps.forEach(item => item.classList.toggle("active", item === step));
+          card.dataset.step = step.dataset.welcomeStep;
+          if (step.contains(extra[0])) { extra.forEach(el => el.classList.remove("hidden")); if (resultEl && !resultText) resultEl.textContent = "Termín pôrodu: 1. januára 2027 · 30. týždeň"; }
+          const over = document.scrollingElement.scrollHeight - window.innerHeight;
+          if (over > 0) {
+            const height = step.getBoundingClientRect().height;
+            zoom = Math.min(zoom, (height - over - 4) / height);
+          }
+          extra.forEach((el, index) => el.classList.toggle("hidden", extraHidden[index]));
+          if (resultEl) resultEl.textContent = resultText;
+        });
+        steps.forEach(item => item.classList.toggle("active", item === active));
+        if (activeStep) card.dataset.step = activeStep;
+        zoom = Math.max(0.8, Math.min(1, zoom));
+        steps.forEach(step => { step.style.zoom = zoom < 1 ? String(zoom) : ""; });
+        window.scrollTo(0, scrollY);
+        lastKey = key;
+        setTimeout(() => { measuring = false; }, 50);
       }
-      new MutationObserver(() => setTimeout(fit, 40)).observe(card, { attributes: true, subtree: true, attributeFilter: ["class", "data-step"] });
-      window.addEventListener("resize", () => setTimeout(fit, 40));
-      document.fonts?.ready?.then(fit);
-      setTimeout(fit, 300);
+      window.addEventListener("resize", () => { lastKey = ""; setTimeout(measure, 60); });
+      new MutationObserver(() => setTimeout(measure, 60)).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      document.fonts?.ready?.then(() => { lastKey = ""; measure(); });
+      setTimeout(measure, 300);
     })();
   </script>
 </body>
