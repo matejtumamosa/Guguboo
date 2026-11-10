@@ -1369,11 +1369,8 @@
     const expecting = state.profile.status === "expecting";
     const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
     // Zásuvka = „všetko na jednom mieste“ (bez obľúbených a pripínania – lišta je pevná).
-    scroll.innerHTML = groups.map(([title, keys]) => [
-      "<section class='v2-drawer-group'><h3>", escapeHtml(title), "</h3>",
-      "<div class='v5-drawer-grid v5-drawer-flat'>", keys.map(key => drawerApp(key, false)).join(""), "</div>",
-      "</section>"
-    ].join("")).join("");
+    // Samuel 10. 11.: bez nadpisov skupín (Bábätko / Mama / Rodina) – jedna mriežka, poradie podľa skupín ostáva.
+    scroll.innerHTML = "<div class='v5-drawer-grid v5-drawer-flat'>" + groups.flatMap(([, keys]) => keys).map(key => drawerApp(key, false)).join("") + "</div>";
   }
 
   // Prehľad oblasti Bábätko / Rodina (z lišty) – rovnaký vzhľad ako okno Mama, obsah podľa fázy.

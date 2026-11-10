@@ -8,7 +8,8 @@
     (function gugubooPhoneFrame() {
       // V rámčeku telefónu bez sivého posuvníka (Samuel 10. 11.).
       if (/[?&]frame=1/.test(window.location.search)) document.documentElement.classList.add("v2-in-frame");
-      if (window.top === window.self && window.innerWidth > 560) {
+      // Rovnaké pravidlo ako vo frame.html (inak by sa telefón na šírku prehadzoval tam a späť).
+      if (window.top === window.self && Math.min(window.innerWidth, screen.width) > 560) {
         window.location.replace("frame.html" + window.location.hash);
       }
     })();
@@ -3107,12 +3108,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.37.9";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.37.19";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.16">
+  <link rel="stylesheet" href="v2.css?v=2.37.20">
 </head>
 <body>
   <div class="app" id="app">
@@ -9940,7 +9941,7 @@ Otázky:
   </script>
   <script src="v4-upgrade.js?v=6.11"></script>
   <script src="journey-engine.js?v=2.3.1"></script>
-  <script src="v5-mobile.js?v=2.37.9"></script>
+  <script src="v5-mobile.js?v=2.37.19"></script>
   <script src="guguchat.js?v=2.37.5"></script>
   <script src="v2-birth.js?v=2.27.1"></script>
   <script src="v2-tour.js?v=2.37.9"></script>
@@ -9957,6 +9958,47 @@ Otázky:
   <script>
     // V2 (Samuel 10. 11. 2026): úvodné kroky sa na telefóne nikdy neposúvajú – keď sa obsah kroku nezmestí,
     // jemne sa zmenší (najviac o 20 %). Posúvať sa dá len v samotnej appke.
+    // V2 (Samuel 10. 11. 2026): systémové rozbaľovacie okienko „Ako poznáš termín pôrodu?“ nahradené tlačidlami
+    // v dizajne appky. Pôvodný <select> ostáva skrytý – logika výpočtu termínu sa nemení.
+    (function choiceChips() {
+      const select = document.getElementById("welcomeDueMethod");
+      if (!select) return;
+      select.classList.add("v2-native-hidden");
+      select.tabIndex = -1;
+      const group = document.createElement("div");
+      group.className = "v2-choice-chips";
+      group.setAttribute("role", "radiogroup");
+      group.setAttribute("aria-label", "Ako poznáš termín pôrodu?");
+      [...select.options].filter(option => option.value).forEach(option => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "v2-choice-chip";
+        button.dataset.value = option.value;
+        button.setAttribute("role", "radio");
+        button.innerHTML = "<span class='v2-choice-dot' aria-hidden='true'></span><span></span>";
+        button.lastChild.textContent = option.textContent;
+        button.addEventListener("click", event => {
+          event.preventDefault();
+          select.value = option.value;
+          select.dispatchEvent(new Event("input", { bubbles: true }));
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+          sync();
+        });
+        group.appendChild(button);
+      });
+      select.insertAdjacentElement("afterend", group);
+      function sync() {
+        group.querySelectorAll("button").forEach(button => {
+          const on = button.dataset.value === select.value;
+          button.classList.toggle("active", on);
+          button.setAttribute("aria-checked", String(on));
+        });
+      }
+      select.addEventListener("change", sync);
+      const card = document.getElementById("welcomeCard");
+      if (card) new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["data-step"] });
+      sync();
+    })();
     (function fitWelcomeSteps() {
       const card = document.getElementById("welcomeCard");
       if (!card) return;
@@ -9977,10 +10019,10 @@ Otázky:
           const height = step.getBoundingClientRect().height;
           step.style.zoom = String(Math.max(0.8, (height - over - 4) / height));
         }
-        requestAnimationFrame(() => { busy = false; });
+        setTimeout(() => { busy = false; }, 30);
       }
-      new MutationObserver(() => requestAnimationFrame(fit)).observe(card, { attributes: true, subtree: true, attributeFilter: ["class", "data-step"] });
-      window.addEventListener("resize", () => requestAnimationFrame(fit));
+      new MutationObserver(() => setTimeout(fit, 40)).observe(card, { attributes: true, subtree: true, attributeFilter: ["class", "data-step"] });
+      window.addEventListener("resize", () => setTimeout(fit, 40));
       document.fonts?.ready?.then(fit);
       setTimeout(fit, 300);
     })();
