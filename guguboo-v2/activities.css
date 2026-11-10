@@ -51,3 +51,42 @@ body.night .activities-today,body.night .activities-shell button,body.night .act
 body.night .activities-visual { background:linear-gradient(145deg,#403750,#49343e); } body.night .activities-safety-details p { background:#423a2b; color:#eadfc8; }
 @media(max-width:600px) { .activities-shell { padding-inline:12px; gap:15px; } .activities-focus-content { padding:17px; } .activities-more,.activities-favorites { grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; } .activities-mini-card .activities-visual { height:86px; } .activities-mini-copy { padding:9px; } .activities-mini-copy strong { font-size:.76rem; } .activities-observations label { grid-template-columns:1fr; } }
 @media(max-width:350px) { .activities-actions { grid-template-columns:1fr; } .activities-mini-copy strong { font-size:.72rem; } }
+
+/* ——— Aktivity 2 (prepracované 10. 11. 2026): bez kreslených obrázkov, ikona a pastelová farba podľa oblasti ——— */
+.act2 { gap:14px; }
+.act2 .act2-hero h1 { margin:2px 0 4px; font-size:1.6rem; line-height:1.15; color:var(--act-ink); }
+.act2 .act2-hero p { margin:0; color:var(--act-muted); font-size:.9rem; }
+.act2 .act2-eyebrow { display:block; color:var(--act-accent); font-size:.72rem; font-weight:850; letter-spacing:.06em; text-transform:uppercase; }
+.act2 .act2-pohyb { --tone:#eaf3ff; --tone-ink:#3f6ea8; }
+.act2 .act2-rec { --tone:#fff1e6; --tone-ink:#b06a2c; }
+.act2 .act2-vztah { --tone:#fdecf2; --tone-ink:#b0507a; }
+.act2 .act2-objavovanie { --tone:#eef8ee; --tone-ink:#4c8a52; }
+.act2 .act2-icon { display:grid; place-items:center; flex:0 0 auto; width:44px; height:44px; border-radius:14px; background:var(--tone,#f2eef9); color:var(--tone-ink,#7464a8); }
+.act2 .act2-icon svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.act2 .act2-today { padding:18px; background:#fff; border:1px solid var(--act-line); border-radius:24px; box-shadow:0 10px 30px rgba(82,68,105,.08); }
+.act2 .act2-today-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.act2 .act2-domain { padding:4px 10px; border-radius:999px; background:var(--tone); color:var(--tone-ink); font-size:.78rem; font-weight:800; }
+.act2 .act2-fav { margin-left:auto; width:44px; padding:0; font-size:1.2rem; color:#b0507a; }
+.act2 .act2-today h2 { margin:2px 0 8px; font-size:1.3rem; color:var(--act-ink); }
+.act2 .act2-steps { margin:0; padding-left:20px; display:grid; gap:6px; color:var(--act-ink); font-size:.95rem; line-height:1.5; }
+.act2 .act2-safety { margin:12px 0 0; padding:10px 12px; background:#f4f8ff; border:1px solid rgba(125,148,220,.3); border-radius:14px; font-size:.85rem; line-height:1.45; }
+.act2 .act2-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+.act2 .act2-actions .v5-primary { color:#fff; background:var(--act-accent); border-color:var(--act-accent); }
+.act2 .act2-actions .v5-primary[aria-pressed="true"] { color:var(--act-accent-dark); background:var(--act-soft); border-color:transparent; }
+.act2 .act2-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+.act2 .act2-chips button { flex:0 0 auto; min-height:38px; padding:0 14px; border-radius:999px; font-size:.85rem; }
+.act2 .act2-chips button span { color:var(--act-muted); font-weight:600; }
+.act2 .act2-chips button.active { color:#fff; background:var(--act-accent); border-color:var(--act-accent); }
+.act2 .act2-chips button.active span { color:rgba(255,255,255,.8); }
+.act2 .act2-list { display:grid; gap:8px; }
+.act2 .act2-row { display:flex; align-items:center; gap:12px; width:100%; padding:10px 14px 10px 10px; border-radius:18px; text-align:left; }
+.act2 .act2-row.is-current { border-color:var(--act-accent); box-shadow:0 0 0 1px var(--act-accent) inset; }
+.act2 .act2-row-copy { display:grid; flex:1; min-width:0; }
+.act2 .act2-row-copy strong { font-size:.95rem; }
+.act2 .act2-row-copy small { color:var(--act-muted); font-size:.78rem; font-weight:600; }
+.act2 .act2-row b { color:var(--act-muted); }
+.act2 .act2-parent { padding:12px 14px; background:rgba(255,255,255,.72); border:1px solid var(--act-line); border-radius:18px; }
+.act2 .act2-parent summary { font-weight:800; cursor:pointer; }
+.act2 .act2-parent p { color:var(--act-muted); font-size:.85rem; }
+.act2 .act2-obs { display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--act-line); font-size:.88rem; }
+@media(max-width:420px) { .act2 .act2-obs { grid-template-columns:1fr; } }
