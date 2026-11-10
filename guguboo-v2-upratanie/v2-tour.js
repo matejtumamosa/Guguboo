@@ -148,10 +148,10 @@
       },
       {
         scroll: true,
-        target: () => document.querySelector("#v5BottomBar [data-v2-tab='calendar']"),
+        target: () => home?.querySelector(".v2-home-cal"),
         title: "Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "je dole v lište – všetky kontroly, prehliadky a pripomienky na jedno ťuknutie." }
+          { icon: "calendar", name: "Kalendár", text: "na domove vidíš najbližší termín – ťuknutím otvoríš všetky kontroly, prehliadky a pripomienky." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
@@ -173,8 +173,8 @@
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
         after: expecting
-          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Kalendár všetky termíny a Rodina Naše momenty, nákup a úrady. Na domov sa vrátiš šípkou späť. Keď potiahneš lištu nahor, uvidíš všetko naraz."
-          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Kalendár všetky termíny a Rodina Naše momenty, nákup a úrady. Na domov sa vrátiš šípkou späť. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
+          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz."
+          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
         try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature?.("babyHub") }
       }
     ];

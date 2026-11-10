@@ -344,12 +344,12 @@
   const prenatalDrawerGroups = [
     ["Bábätko", ["pregnancy", "babySize", "beforeBirth", "voice"]],
     ["Mama", ["mama", "privateSpace"]],
-    ["Rodina", ["memories", "shopping", "administration", "contacts", "family", "travel"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "travel"]]
   ];
   const postpartumDrawerGroups = [
     ["Bábätko", ["childBook", "sounds", "activities", "care"]],
     ["Mama", ["mama", "period", "privateSpace"]],
-    ["Rodina", ["memories", "shopping", "administration", "contacts", "family", "checklists", "travel"]]
+    ["Rodina", ["memories", "calendar", "shopping", "administration", "contacts", "family", "checklists", "travel"]]
   ];
   const postpartumDrawerFeatures = postpartumDrawerGroups.flatMap(group => group[1]);
   const prenatalDrawerFeatures = prenatalDrawerGroups.flatMap(group => group[1]);
@@ -843,7 +843,6 @@
     const view = currentView();
     if (view === "home") return "home";
     if (view === "guguChat") return "chat";
-    if (view === "v5Calendar") return "calendar";
     const key = activeFeatureId();
     if (["v5Mama", "v5Period", "privateSpace"].includes(view) || ["mama", "period", "privateSpace"].includes(key)) return "mama";
     if (view === "v5FamilyHub") return "family";
@@ -857,7 +856,7 @@
   function openTab(id) {
     closeDrawer();
     if (id === "home") return openHome();
-    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : id === "calendar" ? "calendar" : "familyHub");
+    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : "familyHub");
     // Z oblasti lišty vedie šípka späť vždy na Domov (nie na predchádzajúcu aplikáciu).
     history = ["home"];
   }
@@ -893,8 +892,7 @@
       "<button class='v5-bottom-action", tab === id ? " active" : "", "' type='button' data-v2-tab='", id, "' aria-label='", escapeHtml(label), "'",
       tab === id ? " aria-current='page'" : "", "><span class='v5-nav-icon'>", icon(iconName), "</span><span>", escapeHtml(label), "</span></button>"
     ].join("");
-    // Samuel 10. 11.: Kalendár je dôležitá funkcia – v lište namiesto Domova (na domov vedie šípka späť).
-    const favorites = [tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("calendar", "Kalendár", "calendar"), tabButton("family", "Rodina", "family")];
+    const favorites = [tabButton("home", "Domov", "home"), tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("family", "Rodina", "family")];
     void visibleFavorites; void favoriteButton;
     byId("v5BottomBar").classList.add("v2-bottom-bar");
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
@@ -1322,7 +1320,8 @@
       "</section>",
       // Citová karta „X. deň spolu“ hneď pod hlavičkou – je to hlavný citový údaj (Samuel 17. 10.).
       window.GugubooMoments?.homeCardHtml?.() || "",
-      // Kalendár je v spodnej lište (Samuel 10. 11.) – riadok na domove by bol duplicita.
+      // Upratanie 2.36: najbližší termín z Kalendára – nenápadný riadok pod Dnešným malým momentom.
+      "<div class='v2-home-cal'>", calendarCard, "</div>",
       renderAdaptiveOHome(),
       homeTail
     ].join("");
