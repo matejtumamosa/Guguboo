@@ -1628,3 +1628,19 @@ body.v5-active #v5Header[data-home="true"] { position: relative !important; top:
 .v2-choice-dot { width: 18px; height: 18px; }
 .welcome-step:has(#welcomeCycleWrap:not(.hidden)) .welcome-fruit-avatar-card,
 .welcome-step:has(#welcomeDueBasisWrap:not(.hidden)) .welcome-fruit-avatar-card { display: none !important; }
+
+/* Vlastný výber zospodu (krajina, dĺžka cyklu) namiesto systémového zoznamu (Samuel 10. 11.) */
+.v2-select-button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 50px; padding: 10px 16px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .18); border-radius: 16px; font: inherit; font-size: 15px; font-weight: 700; text-align: left; cursor: pointer; }
+.v2-select-button b { color: #7b6bc8; font-size: 18px; line-height: 1; }
+.v2-picker { position: fixed; inset: 0; z-index: 400; display: flex; align-items: flex-end; justify-content: center; background: rgba(40, 33, 51, .32); }
+.v2-picker-panel { width: min(100%, 460px); max-height: 70vh; display: flex; flex-direction: column; background: #fffafd; border-radius: 26px 26px 0 0; box-shadow: 0 -12px 40px rgba(48, 36, 67, .2); }
+.v2-picker-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 8px; }
+.v2-picker-head strong { color: var(--v5-ink, #2f2a3a); font-size: 17px; }
+.v2-picker-close { width: 40px; height: 40px; color: var(--v5-muted, #756e7d); background: #f4f0ff; border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; }
+.v2-picker-list { display: grid; gap: 6px; padding: 6px 14px 18px; overflow-y: auto; }
+.v2-picker-item { min-height: 46px; padding: 10px 14px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .12); border-radius: 14px; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.v2-picker-item.active { background: #f4f0ff; border-color: #7b6bc8; font-weight: 800; }
+/* Stabilné tlačidlá – rovnaká veľkosť a okraj, nech je vybrané alebo nie; bez čierneho rámčeka pri ťuknutí. */
+.v2-choice-chip { border-width: 1.5px !important; }
+.v2-choice-chip:focus { outline: none; }
+.v2-choice-chip:focus-visible, .v2-select-button:focus-visible, .v2-picker-item:focus-visible { outline: 2px solid rgba(123, 97, 200, .5); outline-offset: 2px; }
