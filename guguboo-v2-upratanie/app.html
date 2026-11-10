@@ -6,6 +6,8 @@
     // V2 – vždy formát mobilu (Samuel 10. 11. 2026): na širokej obrazovke sa appka otvorí v rámčeku telefónu
     // (frame.html), vo vnútri sa správa presne ako na mobile. Na telefóne sa nič nemení.
     (function gugubooPhoneFrame() {
+      // V rámčeku telefónu bez sivého posuvníka (Samuel 10. 11.).
+      if (/[?&]frame=1/.test(window.location.search)) document.documentElement.classList.add("v2-in-frame");
       if (window.top === window.self && window.innerWidth > 560) {
         window.location.replace("frame.html" + window.location.hash);
       }
@@ -3105,12 +3107,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.37.9-nahlad";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.37.11-nahlad";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.9">
+  <link rel="stylesheet" href="v2.css?v=2.37.11">
 </head>
 <body>
   <div class="app" id="app">

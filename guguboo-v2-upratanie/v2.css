@@ -1597,3 +1597,8 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 .v5-care-grid { grid-template-columns: minmax(0, 1fr) !important; }
 .v5-care-option:last-child { grid-column: auto !important; }
 body.v5-active.v5-app-window-open .view.active { width: min(calc(100vw - 20px), 440px) !important; max-width: 440px !important; }
+
+/* V rámčeku telefónu (frame.html) bez sivého posuvníka – posúvanie funguje ďalej (Samuel 10. 11. 2026) */
+html.v2-in-frame, html.v2-in-frame * { scrollbar-width: none; }
+html.v2-in-frame *::-webkit-scrollbar, html.v2-in-frame::-webkit-scrollbar { width: 0; height: 0; display: none; }
+html.v2-in-frame #welcomeCard { border-radius: 28px !important; overflow: hidden; }
