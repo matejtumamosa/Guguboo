@@ -193,12 +193,25 @@
       return "<section class='v2-journey'><header><small>Tvoja cesta</small><h2>Najprv jeden údaj</h2></header>" +
         "<button class='v5-today-card' type='button' data-v5-feature='profiles'><span class='v5-icon'>" + icon("calendar") + "</span><div><small>Teraz</small><strong>Doplň termín pôrodu alebo dátum narodenia</strong><span class='v5-today-hint'>Podľa neho Guguboo vie, čo je pre teba práve dôležité.</span></div><span class='v5-row-arrow'>›</span></button></section>";
     }
-    // Upratanie 2.38 (Samuel 10. 11.): na domove je jediný zoznam úloh = kruh. „Teraz / Čoskoro“ a karta „Tento týždeň“
-    // sú preč (úlohy sú v kruhu, úrady v Úradoch, vývoj v časti Bábätko). Ostáva len prechod „Bábätko je na svete?“.
-    // (Prázdny komentár zabráni náhradnej karte „Dnes“ na domove.)
-    return plan.transition
-      ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Daj vedieť a Guguboo sa prepne na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>"
-      : "<!-- plán je v kruhu -->";
+    const now = plan.what_is_relevant_now;
+    const soon = plan.what_is_coming;
+    const later = plan.counts.later;
+    return [
+      // Upratanie 2.38 (Samuel 10. 11.): karta „Tento týždeň“ (vývoj) už nie je na domove – je len v časti Bábätko.
+      "<section class='v2-journey' aria-label='Tvoj plán'>",
+      "<header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
+      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je všetko podstatné hotové. Užívaj si to ❤️</p>",
+      soon.length ? [
+        "<div class='v2-journey-soon'><h3>Čoskoro</h3>",
+        soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
+        "</div>"
+      ].join("") : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Daj vedieť a Guguboo sa prepne na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí zatiaľ nemusíš riešiť. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
+      // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
+      "</footer>",
+      "</section>"
+    ].join("");
   }
 
   function betaFooterHtml() {
@@ -355,7 +368,7 @@
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v spodnej lište: Domov, Bábätko, Mama a Momenty. Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú na domove v časti Praktické." }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v spodnej lište: Domov, Bábätko, Mama a Momenty. Kalendár, Nákup, Kontakty a Úrady sú na domove pod kruhom." }
   ];
 
   function navAnswer(t, ctx) {
@@ -365,7 +378,7 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Spodná lišta – Domov, Bábätko, Mama a Momenty; Kalendár, Nákup, Kontakty, Úrady, Úlohy a Cestovanie sú na domove v časti Praktické\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Spodná lišta – Domov, Bábätko, Mama a Momenty; Kalendár, Nákup, Kontakty a Úrady sú na domove pod kruhom\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
