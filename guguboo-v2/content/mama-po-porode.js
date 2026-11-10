@@ -170,6 +170,53 @@ window.GugubooContent.mamaPostpartum = {
     sleepReviewed: "24. 8. 2026",
     evidence: "it usually goes away within 2 weeks of the birth … It's important to get help even if you only have some of the signs. | Try to rest when your baby sleeps."
   },
+  // Cviky na zotavenie po pôrode – NHS „Your post-pregnancy body“ (stránka z 20. 7. 2026). Overené 10. 11. 2026.
+  // Masážny valec ani loptička na stránke nie sú – preto ich neuvádzame.
+  exercises: {
+    checked: "10. 11. 2026",
+    source: "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/",
+    reviewed: "20. 7. 2026",
+    items: [
+      {
+        id: "pelvic", title: "Cviky panvového dna", perDay: 3,
+        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku.",
+        steps: [
+          "Cvičiť môžeš poležiačky, v sede aj v stoji.",
+          "Stiahni konečník, akoby si zadržiavala plyny.",
+          "Stiahni svaly okolo pošvy a močového mechúra, akoby si zastavovala močenie.",
+          "Dlhé stiahnutie: drž, kým vládzeš, najviac 10 sekúnd, potom uvoľni.",
+          "Krátke stiahnutia: rýchlo stiahni a hneď pusť – opakuj, kým sa svaly neunavia.",
+          "Dýchaj normálne a pritom nevťahuj brucho."
+        ],
+        dose: "Postupne do 10 opakovaní každého cviku, aspoň 3-krát denne."
+      },
+      {
+        id: "tummy", title: "Cvik na brucho", perDay: 1,
+        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch.",
+        steps: [
+          "Ľahni si na bok s mierne pokrčenými kolenami.",
+          "Uvoľni brucho a jemne sa nadýchni.",
+          "S výdychom jemne vtiahni spodnú časť brucha ako korzet.",
+          "Zároveň stiahni panvové dno.",
+          "Drž, kým napočítaš do 10, dýchaj normálne a jemne uvoľni."
+        ],
+        dose: "Opakuj najviac 10-krát."
+      },
+      {
+        id: "gap", title: "Kontrola brušných svalov", perDay: 0,
+        why: "Rozostúpené brušné svaly sú po tehotenstve bežné a zvyčajne sa do 8 týždňov zatiahnu.",
+        steps: [
+          "Ľahni si na chrbát, nohy pokrč, chodidlá polož na zem.",
+          "Mierne nadvihni ramená.",
+          "Prstami nahmataj medzeru nad a pod pupkom a spočítaj, koľko prstov sa do nej zmestí.",
+          "Opakuj pravidelne – medzera by sa mala postupne zmenšovať."
+        ],
+        dose: "Ak je medzera 8 týždňov po pôrode stále zreteľná, ozvi sa lekárovi – môže ťa poslať k fyzioterapeutovi."
+      }
+    ],
+    avoid: ["sedy-ľahy, plank a skákanie (spočiatku)", "tlačenie na WC a dvíhanie ťažkého"],
+    evidence: "Aim to build up to 10 repeats of each exercise, at least 3 times a day. | Lie on your side with your knees slightly bent … Hold for a count of 10 … Repeat up to 10 times. | If the gap is still obvious 8 weeks after the birth, contact the GP | Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
+  },
   // Menštruácia po pôrode – NHS „Your body after the birth“ (stránka z 25. 4. 2024) a „Irregular periods“ (26. 6. 2026). Overené 7. 11. 2026.
   period: {
     checked: "7. 11. 2026",

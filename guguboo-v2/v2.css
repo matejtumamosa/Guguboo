@@ -1560,3 +1560,20 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-hub-moments strong { display: block; font-size: 17px; }
 .v2-hub-moments em { display: block; color: var(--v5-muted); font-size: 13px; font-style: normal; }
 #v5Drawer .v5-drawer-pin { display: none; }
+
+/* Upratanie 2.37: Pohoda a Organizácia v rovnako veľkom okne */
+#v5OMenu.v2-o-sheet { min-height: min(620px, calc(100dvh - 32px)); }
+
+/* Cviky v kruhu Pohoda (2.37) */
+.v2-ex-card { margin-top: 10px; padding: 12px 14px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 20px; }
+.v2-ex-card summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; list-style: none; cursor: pointer; }
+.v2-ex-card summary::-webkit-details-marker { display: none; }
+.v2-ex-card summary strong { display: block; color: var(--v5-ink); font-size: 15px; }
+.v2-ex-card summary small { display: block; color: var(--v5-muted); font-size: 12px; }
+.v2-ex-card summary b { color: var(--v5-muted); transition: transform .2s ease; }
+.v2-ex-card details[open] summary b { transform: rotate(90deg); }
+.v2-ex-card p, .v2-ex-card li { color: var(--v5-ink); font-size: 13px; line-height: 1.5; }
+.v2-ex-card h4 { margin: 10px 0 2px; font-size: 13px; color: var(--v5-ink); }
+.v2-ex-card ol.v2-mama-list { padding-left: 20px; }
+.v2-ex-dose { font-weight: 700; }
+.v2-ex-add { width: 100%; margin-top: 10px; }

@@ -150,7 +150,11 @@ window.GugubooContent.mamaPregnancy = {
     evidence: "400 micrograms of folic acid every day … Take folic acid for the first 12 weeks of pregnancy. … 10 micrograms of vitamin D every day between early October and late March"
   },
   exercise: {
-    goal: "Približne 150 minút miernej aktivity týždenne – pokojne v kratších častiach. K tomu 2-krát týždenne posilňovanie. Ak s pohybom začínaš, stačí 10 minút denne a postupne pridávaj.",
+    // Doplnené 10. 11. 2026 z tej istej stránky NHS (stránka z 24. 9. 2026).
+    moveExamples: "Napríklad chôdza, plávanie alebo joga. Mierna aktivita je taká, pri ktorej sa ešte dá rozprávať, ale nie spievať.",
+    strengthExamples: "Napríklad joga, nosenie nákupu alebo detí; posilňovňa, ak tam chodíš už teraz.",
+    examplesEvidence: "Walking, swimming and yoga … can count towards the 150 minutes a week. … you should be able to talk but not sing. | Try to include 2 sessions of muscle strengthening exercises each week … yoga, carrying shopping and carrying children",
+    goal:"Približne 150 minút miernej aktivity týždenne – pokojne v kratších častiach. K tomu 2-krát týždenne posilňovanie. Ak s pohybom začínaš, stačí 10 minút denne a postupne pridávaj.",
     tips: [
       "Povedz trénerovi alebo inštruktorke, že si tehotná.",
       "Pi vodu a obleč sa tak, aby ti nebolo horúco.",

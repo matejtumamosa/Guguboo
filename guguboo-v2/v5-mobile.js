@@ -41,6 +41,7 @@
   const iconPaths = {
     home: "<path d='M3 11.5 12 4l9 7.5'/><path d='M5.5 10.5V20h13v-9.5'/><path d='M9 20v-6h6v6'/>",
     back: "<path d='m15 18-6-6 6-6'/>",
+    exercise: "<circle cx='12' cy='4.5' r='2'/><path d='M12 7.5v6.5M5 8.5l7 2 7-2M8.5 21l3.5-7 3.5 7'/>",
     cycle: "<circle cx='12' cy='12' r='9'/><path d='M12 7.5s-3.2 3.6-3.2 5.8a3.2 3.2 0 0 0 6.4 0c0-2.2-3.2-5.8-3.2-5.8Z'/>",
     user: "<circle cx='12' cy='8' r='4'/><path d='M4.5 21a7.5 7.5 0 0 1 15 0'/>",
     menu: "<path d='M4 7h16M4 12h16M4 17h16'/>",
@@ -170,7 +171,10 @@
       { id: "water", title: "Napila som sa", icon: "water", cadence: "day" },
       { id: "meal", title: "Najedla som sa", icon: "meal", cadence: "day" },
       { id: "fresh-air", title: "Bola som na vzduchu", icon: "weather", cadence: "day" },
-      { id: "stretch", title: "Jemné pretiahnutie", icon: "activity", cadence: "day" }
+      { id: "stretch", title: "Jemné pretiahnutie", icon: "activity", cadence: "day" },
+      // Upratanie 2.37 (Samuel 10. 11.): kroky s hodnotou z overeného obsahu NHS (content/mama-*.js) namiesto „Najedla som sa“.
+      { id: "vitamins", title: "Vitamíny", icon: "health", cadence: "day" },
+      { id: "exercises", title: "Cviky", icon: "exercise", cadence: "day" }
     ],
     health: [
       { id: "check-in", title: "Ako sa dnes cítim", icon: "health", cadence: "day" },
@@ -185,25 +189,43 @@
   const circleByStage = {
     expecting: {
       care: ["Oddych", "Odpočinok bez výčitiek.", { rest: "10 minút oddychu", nap: "Zdriemla som si", handover: "Niekto mi s niečím pomohol", quiet: "Chvíľa bez povinností" }],
-      movement: ["Telo", "Jedlo, vzduch a jemný pohyb.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemný pohyb" }],
+      movement: ["Telo", "Vitamíny, pohyb a vzduch.", { water: "Napila som sa", vitamins: "Vzala som si vitamíny", exercises: "Pohyb a posilňovanie", "fresh-air": "Bola som na vzduchu" }],
       health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     },
     born: {
       care: ["Zotavenie", "Oddych, spánok a telo po pôrode.", { rest: "Oddýchla som si", nap: "Zdriemla som si, keď spinkalo bábätko", handover: "Niekto ma vystriedal", quiet: "Chvíľa len pre mňa" }],
-      movement: ["Telo", "Jedlo, vzduch a jemné pretiahnutie.", { water: "Napila som sa", meal: "Najedla som sa", "fresh-air": "Bola som na vzduchu", stretch: "Jemné pretiahnutie" }],
+      movement: ["Telo", "Cviky na zotavenie a chvíľa vonku.", { water: "Napila som sa", exercises: "Cviky na zotavenie", "fresh-air": "Bola som na vzduchu" }],
       health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     }
   };
   // Pitný režim a nálada sú v okienku Mama, nie v kruhu (Samuel 16. 10.: každá vec na jednom správnom mieste).
   const circleGoalsByStage = {
-    expecting: { care: ["rest", "nap", "handover", "quiet"], movement: ["meal", "fresh-air", "stretch"], health: ["talk", "ask-help", "me-time"] },
-    born: { care: ["rest", "nap", "handover", "quiet"], movement: ["meal", "fresh-air", "stretch"], health: ["talk", "ask-help", "me-time"] }
+    expecting: { care: ["rest", "nap", "handover", "quiet"], movement: ["vitamins", "exercises", "fresh-air"], health: ["talk", "ask-help", "me-time"] },
+    born: { care: ["rest", "nap", "handover", "quiet"], movement: ["exercises", "fresh-air"], health: ["talk", "ask-help", "me-time"] }
   };
+  // Ktoré vitamíny práve platia (NHS, content/mama-tehotenstvo.js): kyselina listová prvých 12 týždňov,
+  // vitamín D od začiatku októbra do konca marca. Keď nič neplatí, krok Vitamíny sa neukáže.
+  function vitaminsNow() {
+    const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
+    const month = new Date().getMonth();
+    return [week && week <= 12 ? "kyselina listová" : "", month >= 9 || month <= 2 ? "vitamín D" : ""].filter(Boolean);
+  }
+  // Cviky (Samuel 10. 11.): jeden krok v kruhu, vnútri odporúčania NHS. Záznam: state.v5.exLog[deň][id] = počet.
+  // Tehotenstvo: pohyb po 10 minútach (cieľ ~150 min týždenne) a posilňovanie (2-krát týždenne).
+  // Po pôrode: panvové dno (aspoň 3-krát denne), cvik na brucho, kontrola brušných svalov.
+  const exToday = id => Number(((state.v5.exLog || {})[todayKey()] || {})[id] || 0);
+  function exWeek(id) {
+    const now = new Date(todayKey() + "T12:00:00");
+    const monday = new Date(now.getTime() - ((now.getDay() + 6) % 7) * 86400000);
+    return Object.entries(state.v5.exLog || {}).filter(([day]) => new Date(day + "T12:00:00") >= monday && new Date(day + "T12:00:00") <= now)
+      .reduce((sum, [, entry]) => sum + Number(entry?.[id] || 0), 0);
+  }
+  const exAnyToday = () => Object.values((state.v5.exLog || {})[todayKey()] || {}).some(count => Number(count) > 0);
   const allCircleGoals = Object.fromEntries(Object.values(adaptiveOGoals).flat().map(goal => [goal.id, goal]));
   // Texty v prvej osobe podľa rodiča: Otec → mužský rod, inak ženský (kruh je predovšetkým pohoda mamy).
   const maleGoalTitles = {
     "Zdriemla som si": "Zdriemol som si", "Zdriemla som si, keď spinkalo bábätko": "Zdriemol som si, keď spinkalo bábätko",
-    "Oddýchla som si": "Oddýchol som si", "Napila som sa": "Napil som sa", "Najedla som sa": "Najedol som sa",
+    "Oddýchla som si": "Oddýchol som si", "Napila som sa": "Napil som sa", "Najedla som sa": "Najedol som sa", "Vzala som si vitamíny": "Vzal som si vitamíny",
     "Bola som na vzduchu": "Bol som na vzduchu", "Ozvala som sa blízkemu": "Ozval som sa blízkemu",
     "Porozprávala som sa s blízkym": "Porozprával som sa s blízkym"
   };
@@ -212,7 +234,7 @@
     const stage = circleByStage[stageKey];
     const male = state.parentRole === "otec";
     Object.entries(circleGoalsByStage[stageKey]).forEach(([sectionId, ids]) => {
-      adaptiveOGoals[sectionId] = ids.map(id => allCircleGoals[id]).filter(Boolean);
+      adaptiveOGoals[sectionId] = ids.filter(id => id !== "vitamins" || vitaminsNow().length).map(id => allCircleGoals[id]).filter(Boolean);
     });
     adaptiveOSections.forEach(section => {
       const [label, description, titles] = stage[section.id] || [];
@@ -950,6 +972,7 @@
   function adaptiveOGoalDone(role, sectionId, goal) {
     if (goal.auto) return adaptiveOAutoDone(goal);
     if (goal.id === "water") return waterToday().count >= waterToday().goal;
+    if (goal.id === "exercises") return exAnyToday();
     // „Ako sa dnes cítim“ = zápis v súkromnom denníku dnes (denník ukladá len dátum, nie obsah).
     if (goal.id === "check-in") return state.v5.diaryLastEntry === todayKey();
     return Boolean(state.v5.adaptiveO.completed[adaptiveOCompletionKey(role, sectionId, goal)]);
@@ -1399,8 +1422,10 @@
     const progress = adaptiveOProgress(section.id, "mother");
     const goals = adaptiveOGoals[section.id] || [];
     subtitle.textContent = progress.done ? "Dnes " + progress.done + " z " + progress.total : "Vyber jeden malý krok";
-    back.hidden = true;
-    body.innerHTML = "<p class='v5-o-summary-copy'>" + escapeHtml(section.description) + "</p><div class='v5-quick-record-grid v5-o-status-grid" + (goals.length === 2 ? " is-two" : "") + "' id='v5OMenuGrid'>" + goals.map(goal => {
+    // Upratanie 2.37 (Samuel 10. 11.): Pohoda sa otvára v rovnakom okne ako Organizácia – šípka späť, priebeh, rovnaká veľkosť.
+    back.hidden = false;
+    byId("v5OMenu")?.classList.add("v2-o-sheet");
+    body.innerHTML = "<div class='v5-org-progress'><span style='--progress:" + Math.round(progress.total ? progress.done / progress.total * 100 : 0) + "%'></span></div><p class='v5-o-summary-copy'>" + escapeHtml(section.description) + "</p><div class='v5-quick-record-grid v5-o-status-grid" + (goals.length === 2 ? " is-two" : "") + "' id='v5OMenuGrid'>" + goals.map(goal => {
       const done = adaptiveOGoalDone("mother", section.id, goal);
       if (goal.id === "water") {
         const water = waterToday();
@@ -1411,9 +1436,19 @@
           "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
         ].join("");
       }
+      // Cviky: ťuknutie otvorí zoznam odporúčaných cvikov (NHS), na dlaždici je dnešný / týždenný stav.
+      if (goal.id === "exercises") {
+        const label = state.profile.status === "expecting" ? "Tento týždeň " + exWeek("move") + " / 150 min" : "Panvové dno dnes " + exToday("pelvic") + " / 3";
+        return [
+          "<button class='v5-quick-tile v5-o-day-row", done ? " is-done" : "", "' type='button' data-v2-ex-open aria-label='", escapeHtml(goal.title + " – " + label), "'>",
+          "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong><small>", escapeHtml(label), "</small>",
+          "<b aria-hidden='true'>›</b></button>"
+        ].join("");
+      }
+      const hint = goal.id === "vitamins" && !done ? "<small>" + escapeHtml(vitaminsNow().join(", ").replace(/^./, letter => letter.toUpperCase())) + "</small>" : "";
       return [
         "<button class='v5-quick-tile v5-o-day-row", done ? " is-done" : "", "' type='button' data-v5-o-complete='", goal.id, "' aria-pressed='", String(done), "'>",
-        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "check-in" ? "<small>Zapísať do denníka</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : "", "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "check-in" ? "<small>Zapísať do denníka</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : hint, "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
       ].join("");
     }).join("") + "</div>" + (goals.some(goal => goal.id === "water") ? waterSettingsHtml() : "");
   }
@@ -1478,6 +1513,44 @@
       (action.invite ? "<button class='v5-secondary' type='button' data-v5-org-invite>Pozvať partnera</button>" : "");
   }
 
+  // Obrazovka Cviky v kruhu Pohoda (Telo) – len overený obsah NHS z content/mama-*.js, so zdrojom.
+  function renderExercisesMenu() {
+    const expecting = state.profile.status === "expecting";
+    const content = expecting ? window.GugubooContent?.mamaPregnancy : window.GugubooContent?.mamaPostpartum;
+    byId("v5OMenuTitle").textContent = expecting ? "Pohyb a posilňovanie" : "Cviky na zotavenie";
+    byId("v5OMenuSubtitle").textContent = expecting ? "Odporúčania NHS pre tehotenstvo" : "Odporúčania NHS po pôrode";
+    byId("v5OMenuBack").hidden = false;
+    const list = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
+    const source = (url, reviewed, checked) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(checked) + " ↗</a>";
+    const card = (id, title, why, steps, dose, counter, addLabel) => [
+      "<section class='v2-ex-card'><details><summary><span class='v5-icon'>", icon("exercise"), "</span><span><strong>", escapeHtml(title), "</strong><small>", escapeHtml(counter), "</small></span><b aria-hidden='true'>›</b></summary>",
+      why ? "<p>" + escapeHtml(why) + "</p>" : "", steps?.length ? "<h4>Ako na to</h4><ol class='v2-mama-list'>" + steps.map(step => "<li>" + escapeHtml(step) + "</li>").join("") + "</ol>" : "",
+      dose ? "<p class='v2-ex-dose'>" + escapeHtml(dose) + "</p>" : "", "</details>",
+      addLabel ? "<button type='button' class='v5-secondary v2-ex-add' data-v2-ex-add='" + id + "'>" + escapeHtml(addLabel) + "</button>" : "",
+      "</section>"
+    ].join("");
+    if (expecting) {
+      const ex = content?.exercise;
+      if (!ex) { byId("v5OMenuBody").innerHTML = "<div class='v5-empty'>Obsah sa načítava…</div>"; return; }
+      byId("v5OMenuBody").innerHTML = [
+        card("move", "Pohyb", ex.goal, [], ex.moveExamples, "Tento týždeň " + exWeek("move") + " / 150 min", "+ 10 minút"),
+        card("strength", "Posilňovanie", "2-krát týždenne.", [], ex.strengthExamples, "Tento týždeň " + exWeek("strength") + " / 2", "+ Hotovo"),
+        "<div class='v2-calm-box'><strong>Bezpečne</strong>", list(ex.tips), "<h4>Vyhni sa</h4>", list(ex.avoid), "<p>", escapeHtml(ex.note), "</p></div>",
+        source(ex.source, ex.reviewed, content.checked)
+      ].join("");
+      return;
+    }
+    const ex = content?.exercises;
+    if (!ex) { byId("v5OMenuBody").innerHTML = "<div class='v5-empty'>Obsah sa načítava…</div>"; return; }
+    byId("v5OMenuBody").innerHTML = [
+      ex.items.map(item => card(item.id, item.title, item.why, item.steps, item.dose,
+        item.perDay > 1 ? "Dnes " + exToday(item.id) + " / " + item.perDay : item.perDay === 1 ? (exToday(item.id) ? "Dnes hotovo" : "Raz denne") : (exWeek(item.id) ? "Tento týždeň skontrolované" : "Pravidelne, napr. raz týždenne"),
+        item.perDay ? "+ Hotovo" : "+ Skontrolované")).join(""),
+      "<div class='v2-calm-box'><strong>Spočiatku sa vyhni</strong>", list(ex.avoid), "</div>",
+      source(ex.source, ex.reviewed, ex.checked)
+    ].join("");
+  }
+
   function renderOrganizationMenu(sectionId) {
     const section = organizationSections().find(item => item.id === sectionId) || organizationSections()[0];
     const progress = organizationProgress(section);
@@ -1489,6 +1562,7 @@
     byId("v5OMenuTitle").textContent = section.label;
     byId("v5OMenuSubtitle").textContent = progress.done + " z " + progress.total + " hotové";
     byId("v5OMenuBack").hidden = false;
+    byId("v5OMenu")?.classList.add("v2-o-sheet");
     // Všetky otvorené úlohy sú vidieť (Samuel 17. 10.: „vidím iba jednu, nedá sa vybrať“). Rozbalená je
     // vybraná úloha – predvolene prvá otvorená; ostatné sú riadky, ktoré sa ťuknutím rozbalia.
     const openTasks = section.tasks.filter(task => !state.checks[task[0]]);
@@ -2045,6 +2119,7 @@
     if (!overlay) return;
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
+    byId("v5OMenu")?.classList.remove("v2-o-sheet");
     byId("v5BottomBar")?.classList.remove("v5-hidden-for-modal");
     if (!byId("v5DrawerOverlay")?.classList.contains("open") && !byId("v5QuickRecordOverlay")?.classList.contains("open")) document.body.style.overflow = "";
   }
@@ -4398,6 +4473,17 @@
       if (currentView() === "v5Mama") renderMama();
       return announce(!wasDone && water.count >= water.goal ? "Denný cieľ pitia je splnený." : waterProgressText());
     }
+    if (event.target.closest("[data-v2-ex-open]")) return renderExercisesMenu();
+    const exAdd = event.target.closest("[data-v2-ex-add]");
+    if (exAdd) {
+      const id = exAdd.dataset.v2ExAdd;
+      const day = (state.v5.exLog ||= {})[todayKey()] ||= {};
+      day[id] = Number(day[id] || 0) + (id === "move" ? 10 : 1);
+      persist();
+      renderExercisesMenu();
+      renderHome();
+      return announce(id === "move" ? "Pridaných 10 minút pohybu." : "Zapísané.");
+    }
     const adaptiveComplete = event.target.closest("[data-v5-o-complete]");
     if (adaptiveComplete) {
       const sectionId = state.v5.adaptiveO.section;
@@ -4468,6 +4554,12 @@
         return;
       }
       if (state.v5.adaptiveO.modalSource === "organization") {
+        closeAdaptiveOMenu();
+        renderHome();
+        return;
+      }
+      // Pohoda: zo zoznamu krokov späť ku kruhu (rovnako ako Organizácia); z podobrazovky späť na zoznam.
+      if (state.v5.adaptiveO.modalSource === "circle" && byId("v5OMenuGrid")?.classList.contains("v5-o-status-grid")) {
         closeAdaptiveOMenu();
         renderHome();
         return;
