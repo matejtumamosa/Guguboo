@@ -1602,3 +1602,5 @@ body.v5-active.v5-app-window-open .view.active { width: min(calc(100vw - 20px), 
 html.v2-in-frame, html.v2-in-frame * { scrollbar-width: none; }
 html.v2-in-frame *::-webkit-scrollbar, html.v2-in-frame::-webkit-scrollbar { width: 0; height: 0; display: none; }
 html.v2-in-frame #welcomeCard { border-radius: 44px !important; overflow: hidden; }
+/* Rovnaké medzery medzi kartami domova (Samuel 10. 11.): medzeru robí len mriežka domova (14 px), nie karta Dnešný malý moment. */
+#v5Home > .v2-home-today > .v2-moment { margin-bottom: 0; }
