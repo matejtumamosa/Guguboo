@@ -1367,7 +1367,7 @@
       : "Momenty, kalendár, nákup a úrady";
     const count = (window.GugubooMoments?.collect?.() || []).length;
     target.innerHTML = [
-      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? (expecting ? "Bábätko" : state.profile.name || "Bábätko") : "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
+      "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? state.profile.name || "Bábätko" : [parentDisplayName(), state.profile.name].filter(Boolean).join(" a ") || "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
       baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>Zapísať spánok, kŕmenie alebo plienku</button>" : "",
       !baby ? "<button class='v5-drawer-emotional-card v2-hub-moments' type='button' data-v2-moments-open='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><small>Spoločný príbeh</small><strong>Naše momenty</strong><em>" + (count ? "Časová os · " + count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Časová os, prvé razy, albumy a kartičky") + "</em></span><b aria-hidden='true'>›</b></button>" : "",
       "<div class='v2-book-tools'>", keys.filter(key => key !== "memories").map(appRow).join(""), "</div>"

@@ -2,6 +2,18 @@
 
 Verzia 1.0 · 7. 11. 2026 · stav appky V2 2.35.0 · **len návrh na diskusiu, v aplikácii sa zatiaľ nič nemení**
 
+> ## Stav (10. 11. 2026) – lokálna vetva `v2-upratanie`, V2 2.37.x, NENASADENÉ
+> Samuel 7. 11.: „obe verzie (pred aj po pôrode) musia vyzerať rovnako“ a „celé spodné menu mi nepríde ako dôležité aplikácie“.
+> Preto namiesto 5 oblastí v zásuvke a 4 obľúbených (bod 8 z 28. 9.) je spravené:
+> - **Pevná spodná lišta:** Domov · Bábätko · (GuguChat) · Mama · Rodina – rovnaká v tehotenstve aj po pôrode, bez obľúbených a pripínania.
+> - **Bábätko** = tehotenstvo (Knižka, Aké veľké je bábätko, Príprava, Môj hlas) / po pôrode (Zapísať záznam, Zdravotná knižka, Spánok a zvuky, Aktivity, Niečo ma trápi).
+> - **Mama** = okno Mama (telo, pitie, nálada, menštruačný kalendár, denník).
+> - **Rodina** = Naše momenty, Kalendár, Nákup (+ Výbava), Úrady a doklady, Kontakty, Spoločné úlohy, (Praktické zoznamy), Cestovanie.
+> - **Hlavička domova** má v oboch fázach 6 dlaždíc s údajmi (tehotenstvo: Do termínu, Trimester, Veľkosť, Kontrola, Pitný režim, Otázky).
+> - Zdravotná knižka obsahuje Teplotu a merania aj Zúbky; jednotné názvy (sekcia 6); riadok Kalendára na domove.
+> - Kruh: pitie a nálada už berú údaje z Mamy a denníka (bez dvojitého zápisu) – bez zmeny.
+> - **Ostáva rozhodnúť:** Praktické zoznamy (zrušiť/presunúť), viditeľnosť podľa veku (hranice overiť zo zdroja), odstránenie starých aliasov (`diary`, `first100`, `health`, `growth`…), či má byť lišta viditeľná aj v oknách.
+
 Cieľ: aby rodič vždy vedel, **kde čo je**, nič nebolo na dvoch miestach ako dve rôzne veci
 a appka ukazovala len to, čo sa v danej fáze naozaj hodí.
 
