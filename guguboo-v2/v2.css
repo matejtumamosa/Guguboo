@@ -1577,3 +1577,6 @@ body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
 .v2-ex-card ol.v2-mama-list { padding-left: 20px; }
 .v2-ex-dose { font-weight: 700; }
 .v2-ex-add { width: 100%; margin-top: 10px; }
+
+/* Upratanie 2.37 (Samuel 10. 11.): bez tlačidiel pod kruhom – časti kruhu sú klikateľné samy (aj klávesnicou) */
+.v5-o-legend { display: none !important; }
