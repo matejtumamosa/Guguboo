@@ -189,12 +189,12 @@
   const circleByStage = {
     expecting: {
       care: ["Oddych", "Odpočinok bez výčitiek.", { rest: "10 minút oddychu", nap: "Zdriemla som si", handover: "Niekto mi s niečím pomohol", quiet: "Chvíľa bez povinností" }],
-      movement: ["Telo", "Vitamíny, pohyb a vzduch.", { water: "Napila som sa", vitamins: "Vzala som si vitamíny", exercises: "Pohyb a posilňovanie", "fresh-air": "Bola som na vzduchu" }],
+      movement: ["Telo", "Vitamíny, pohyb a vzduch.", { water: "Napila som sa", vitamins: "Vzala som si vitamíny", exercises: "Cviky", "fresh-air": "Bola som na vzduchu" }],
       health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     },
     born: {
-      care: ["Zotavenie", "Oddych, spánok a telo po pôrode.", { rest: "Oddýchla som si", nap: "Zdriemla som si, keď spinkalo bábätko", handover: "Niekto ma vystriedal", quiet: "Chvíľa len pre mňa" }],
-      movement: ["Telo", "Cviky na zotavenie a chvíľa vonku.", { water: "Napila som sa", exercises: "Cviky na zotavenie", "fresh-air": "Bola som na vzduchu" }],
+      care: ["Oddych", "Oddych a spánok, keď sa dá.", { rest: "Oddýchla som si", nap: "Zdriemla som si, keď spinkalo bábätko", handover: "Niekto ma vystriedal", quiet: "Chvíľa len pre mňa" }],
+      movement: ["Telo", "Cviky a chvíľa vonku.", { water: "Napila som sa", exercises: "Cviky", "fresh-air": "Bola som na vzduchu" }],
       health: ["Opora", "Kto je pri tebe a chvíľa pre seba.", { "check-in": "Ako sa dnes cítim", talk: "Porozprávala som sa s blízkym", "ask-help": "Požiadať o pomoc", "me-time": "10 minút pre seba" }]
     }
   };
@@ -1517,7 +1517,7 @@
   function renderExercisesMenu() {
     const expecting = state.profile.status === "expecting";
     const content = expecting ? window.GugubooContent?.mamaPregnancy : window.GugubooContent?.mamaPostpartum;
-    byId("v5OMenuTitle").textContent = expecting ? "Pohyb a posilňovanie" : "Cviky na zotavenie";
+    byId("v5OMenuTitle").textContent = expecting ? "Cviky v tehotenstve" : "Cviky po pôrode";
     byId("v5OMenuSubtitle").textContent = expecting ? "Odporúčania NHS pre tehotenstvo" : "Odporúčania NHS po pôrode";
     byId("v5OMenuBack").hidden = false;
     const list = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
