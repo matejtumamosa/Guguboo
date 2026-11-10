@@ -5,37 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Guguboo V2</title>
   <!-- V2 – rámček telefónu pre širokú obrazovku (Samuel 10. 11. 2026). Appka beží vo vnútri ako na mobile.
-       Telefón má vždy skutočnú veľkosť (bez zmenšovania – systémové okienka výberu a dátumu by inak vyskočili obrovské).
-       Výška 780–900 px; pri nižšom okne sa stránka s telefónom dá posunúť. -->
+       Telefón je vždy celý viditeľný: výška sa prispôsobí oknu (430 × 667 až 900, ako skutočné telefóny).
+       Zmenšuje sa len pri veľmi nízkom okne (< 707 px) – inak by systémové okienka výberu a dátumu vyskočili obrovské. -->
   <style>
     :root { color-scheme: light; }
-    html, body { margin: 0; min-height: 100%; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px 0;
-      box-sizing: border-box;
       background: radial-gradient(circle at 20% 15%, #f6f0ff 0, transparent 45%), radial-gradient(circle at 85% 85%, #fff1ec 0, transparent 45%), #fbf8f6;
+    }
+    .stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 430px;
+      height: var(--phone-h, 780px);
+      transform: translate(-50%, -50%) scale(var(--scale, 1));
     }
     .phone {
       display: block;
-      flex: 0 0 auto;
       width: 430px;
-      height: clamp(780px, calc(100vh - 40px), 900px);
+      height: 100%;
       border: 0;
       border-radius: 36px;
       background: #fff;
-      box-shadow: 0 30px 80px rgba(48, 36, 67, .18), 0 0 0 10px #fff, 0 0 0 11px rgba(123, 97, 200, .14);
+      box-shadow: 0 24px 60px rgba(48, 36, 67, .16), 0 0 0 8px #fff, 0 0 0 9px rgba(123, 97, 200, .14);
     }
   </style>
 </head>
 <body>
-  <iframe class="phone" src="app.html?frame=1" title="Guguboo" allow="microphone; camera; clipboard-write; web-share; fullscreen"></iframe>
+  <div class="stage"><iframe class="phone" src="app.html?frame=1" title="Guguboo" allow="microphone; camera; clipboard-write; web-share; fullscreen"></iframe></div>
   <script>
     // Hash (#...) z adresy pošli do appky v rámčeku.
     if (window.location.hash) document.querySelector(".phone").src = "app.html?frame=1" + window.location.hash;
+    function fit() {
+      const room = window.innerHeight - 40;
+      const height = Math.max(667, Math.min(900, room));
+      const scale = Math.min(1, room / height, (window.innerWidth - 40) / 430);
+      const stage = document.querySelector(".stage");
+      stage.style.setProperty("--phone-h", height + "px");
+      stage.style.setProperty("--scale", String(Math.max(.5, scale)));
+    }
+    fit();
+    window.addEventListener("resize", fit);
   </script>
 </body>
 </html>
