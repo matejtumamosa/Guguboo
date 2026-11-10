@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8">
   <script>
+    // V2 – vždy formát mobilu (Samuel 10. 11. 2026): na širokej obrazovke sa appka otvorí v rámčeku telefónu
+    // (frame.html), vo vnútri sa správa presne ako na mobile. Na telefóne sa nič nemení.
+    (function gugubooPhoneFrame() {
+      if (window.top === window.self && window.innerWidth > 560 && !/[?&]frame=1/.test(window.location.search)) {
+        window.location.replace("frame.html" + window.location.hash);
+      }
+    })();
+  </script>
+  <script>
     (function enforceSecureGugubooDomain() {
       var host = window.location.hostname.toLowerCase();
       if ((host === "guguboo.com" || host === "www.guguboo.com") &&
@@ -3101,7 +3110,7 @@
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.6">
+  <link rel="stylesheet" href="v2.css?v=2.37.8">
 </head>
 <body>
   <div class="app" id="app">
