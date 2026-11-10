@@ -3107,12 +3107,12 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "2.37.14-nahlad";</script>
+  <script>window.GUGUBOO_V2_VERSION = "2.37.16-nahlad";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=2.27.1">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=2.37.14">
+  <link rel="stylesheet" href="v2.css?v=2.37.16">
 </head>
 <body>
   <div class="app" id="app">
@@ -9954,5 +9954,36 @@ Otázky:
   <script src="activities-data.js?v=3"></script>
   <script src="teeth.js?v=1"></script>
   <script src="activities.js?v=4"></script>
+  <script>
+    // V2 (Samuel 10. 11. 2026): úvodné kroky sa na telefóne nikdy neposúvajú – keď sa obsah kroku nezmestí,
+    // jemne sa zmenší (najviac o 20 %). Posúvať sa dá len v samotnej appke.
+    (function fitWelcomeSteps() {
+      const card = document.getElementById("welcomeCard");
+      if (!card) return;
+      let busy = false;
+      function fit() {
+        if (busy) return;
+        busy = true;
+        const step = card.querySelector(".welcome-step.active");
+        document.querySelectorAll(".welcome-step").forEach(item => { if (item !== step) item.style.zoom = ""; });
+        if (!step || !document.body.classList.contains("welcome-mode") || window.innerWidth > 560) {
+          if (step) step.style.zoom = "";
+          busy = false;
+          return;
+        }
+        step.style.zoom = "";
+        const over = document.scrollingElement.scrollHeight - window.innerHeight;
+        if (over > 0) {
+          const height = step.getBoundingClientRect().height;
+          step.style.zoom = String(Math.max(0.8, (height - over - 4) / height));
+        }
+        requestAnimationFrame(() => { busy = false; });
+      }
+      new MutationObserver(() => requestAnimationFrame(fit)).observe(card, { attributes: true, subtree: true, attributeFilter: ["class", "data-step"] });
+      window.addEventListener("resize", () => requestAnimationFrame(fit));
+      document.fonts?.ready?.then(fit);
+      setTimeout(fit, 300);
+    })();
+  </script>
 </body>
 </html>

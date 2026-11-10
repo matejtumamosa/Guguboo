@@ -1604,3 +1604,7 @@ html.v2-in-frame *::-webkit-scrollbar, html.v2-in-frame::-webkit-scrollbar { wid
 html.v2-in-frame #welcomeCard { border-radius: 44px !important; overflow: hidden; }
 /* Rovnaké medzery medzi kartami domova (Samuel 10. 11.): medzeru robí len mriežka domova (14 px), nie karta Dnešný malý moment. */
 #v5Home > .v2-home-today > .v2-moment { margin-bottom: 0; }
+/* Úvod na telefóne bez posúvania: karta kroku 1 presne na výšku obrazovky aj s 10 px okrajom hlavného kontajnera. */
+@media (max-width: 560px) {
+  body.welcome-mode #welcomeCard[data-step="1"] { min-height: calc(100dvh - 20px) !important; height: calc(100dvh - 20px) !important; }
+}
