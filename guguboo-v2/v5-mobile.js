@@ -324,7 +324,6 @@
     { id: "family", label: "Rodina", shortLabel: "Rodina", description: "Rozdelenie úloh bez chaosu.", icon: "family", start: 150, tasks: [
       ["v5-post-night-plan", "Dohodnúť nočné striedanie", "moon", "Keď sa v noci striedate, obaja si aspoň trochu oddýchnete."],
       ["v5-post-shopping", "Spoločný nákupný zoznam", "shopping", "Jeden zoznam pre teba aj partnera, aby ste vedeli, čo už je kúpené, a nekupovali to isté dvakrát.", { feature: "shopping", label: "Vytvoriť zoznam", done: true, invite: true }],
-      ["v5-post-family-tasks", "Rozdeliť si úlohy", "family", "Kto čo urobí a kto koho zastúpi – v Spoločných úlohách to vidíte obaja.", { feature: "family", label: "Otvoriť Spoločné úlohy" }],
       ["v5-post-contacts", "Uložiť dôležité kontakty", "contacts", "Pediater, pôrodnica a blízki na jednom mieste, keď ich budeš potrebovať.", { feature: "contacts", label: "Otvoriť kontakty" }],
       ["v5-post-checkup", "Zapísať najbližšiu kontrolu", "calendar", "Termín kontroly v kalendári – nič netreba držať v hlave.", { feature: "calendar", label: "Zapísať do kalendára" }],
       // Robí sa raz – odfajkne sa samo, keď je kartička narodenia hotová (state.birthCard.complete).
@@ -846,19 +845,18 @@
     if (view === "guguChat") return "chat";
     const key = activeFeatureId();
     if (["v5Mama", "v5Period", "privateSpace"].includes(view) || ["mama", "period", "privateSpace"].includes(key)) return "mama";
-    if (["v5First100", "v5Cards"].includes(view)) return "moments";
+    if (view === "v5FamilyHub") return "family";
     if (view === "v5BabyHub" || view === "v5Flow") return "baby";
     const all = [...prenatalDrawerGroups, ...postpartumDrawerGroups];
-    if (all.some(([title, keys]) => title === "Bábätko" && keys.includes(key)) || ["teeth", "v5Care", "v5BabySize"].includes(view)) return "baby";
-    // Kalendár, Nákup, Kontakty, Úrady patria k Domovu (rad nástrojov pod kruhom).
-    if (["v5Calendar", "v5Utility", "v5Profiles"].includes(view)) return "home";
+    if (all.some(([title, keys]) => title === "Rodina" && keys.includes(key)) || ["v5First100", "v5Utility", "v5Profiles"].includes(view)) return "family";
+    if (all.some(([title, keys]) => title === "Bábätko" && keys.includes(key)) || ["teeth", "v5Care"].includes(view)) return "baby";
     return "";
   }
 
   function openTab(id) {
     closeDrawer();
     if (id === "home") return openHome();
-    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : "memories");
+    openFeature(id === "mama" ? "mama" : id === "baby" ? "babyHub" : "familyHub");
     // Z oblasti lišty vedie šípka späť vždy na Domov (nie na predchádzajúcu aplikáciu).
     history = ["home"];
   }
@@ -894,13 +892,13 @@
       "<button class='v5-bottom-action", tab === id ? " active" : "", "' type='button' data-v2-tab='", id, "' aria-label='", escapeHtml(label), "'",
       tab === id ? " aria-current='page'" : "", "><span class='v5-nav-icon'>", icon(iconName), "</span><span>", escapeHtml(label), "</span></button>"
     ].join("");
-    const favorites = [tabButton("home", "Domov", "home"), tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("moments", "Momenty", "memory")];
+    const favorites = [tabButton("home", "Domov", "home"), tabButton("baby", "Bábätko", "baby"), tabButton("mama", "Mama", "health"), tabButton("family", "Rodina", "family")];
     void visibleFavorites; void favoriteButton;
     byId("v5BottomBar").classList.add("v2-bottom-bar");
     // V2 (Samuel 28. 9.): bez rušivého tlačidla „Ďalšie aplikácie“ – zásuvka sa otvára potiahnutím lišty nahor.
     // Pre čítačky obrazovky ostáva neviditeľné tlačidlo.
     // Nenápadná úchytka (čiarka bez textu) – na počítači sa na ňu klikne, na mobile sa lišta potiahne.
-    byId("v5BottomBar").innerHTML = "" +
+    byId("v5BottomBar").innerHTML = "<button class='v2-bar-grip' type='button' data-v5-open-drawer aria-label='Ďalšie aplikácie' title='Ďalšie aplikácie'><span aria-hidden='true'></span></button>" +
       favorites.slice(0, 2).join("") + chatButton + favorites.slice(2).join("");
   }
 
@@ -1235,8 +1233,8 @@
     const weekBadgeInner = "<b>" + escapeHtml(pregnancyAvatar.week || "?") + "</b><small>týždeň</small>";
     const babyAvatar = expecting
       ? [
-          // Upratanie 2.38: týždeň je len údaj – vývoj bábätka je v časti Bábätko (spodná lišta), nie dvakrát.
-          "<span class='v5-baby-avatar v2-week-badge' role='img' aria-label='" + escapeHtml((pregnancyAvatar.week || "?") + ". týždeň tehotenstva") + "'>", weekBadgeInner, "</span>"
+          // Ťuknutie na týždeň rovno otvorí miniaplikáciu „Aké veľké je bábätko“.
+          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-feature='babySize' aria-label='Aké veľké je bábätko'>", weekBadgeInner, "</button>"
         ].join("")
       : state.profile.photo
         ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
@@ -1322,9 +1320,9 @@
       "</section>",
       // Citová karta „X. deň spolu“ hneď pod hlavičkou – je to hlavný citový údaj (Samuel 17. 10.).
       window.GugubooMoments?.homeCardHtml?.() || "",
+      // Upratanie 2.36: najbližší termín z Kalendára – nenápadný riadok pod Dnešným malým momentom.
+      "<div class='v2-home-cal'>", calendarCard, "</div>",
       renderAdaptiveOHome(),
-      // Upratanie 2.38: praktické nástroje majú jediné miesto – rad pod kruhom (Kalendár ukáže, koľko vecí je dnes).
-      toolsRowHtml(dueToday),
       homeTail
     ].join("");
   }
@@ -1378,32 +1376,6 @@
     ].join("")).join("");
   }
 
-  // Rad nástrojov na domove: Kalendár · Nákup · Kontakty · Úrady (jediné miesto, odkiaľ sa otvárajú).
-  function toolsRowHtml(dueToday) {
-    const shoppingOpen = (state.shopping || []).length;
-    const tools = [
-      ["calendar", "Kalendár", dueToday ? "Dnes " + dueToday : ""],
-      ["shopping", "Nákup", shoppingOpen ? String(shoppingOpen) : ""],
-      ["contacts", "Kontakty", ""],
-      ["administration", "Úrady", ""]
-    ];
-    return "<nav class='v2-home-tools' aria-label='Nástroje'>" + tools.map(([key, label, badge]) =>
-      "<button type='button' data-v5-feature='" + key + "'><span class='v5-icon'>" + icon(features[key].icon) + (badge ? "<i>" + escapeHtml(badge) + "</i>" : "") + "</span><span>" + escapeHtml(label) + "</span></button>"
-    ).join("") + "</nav>";
-  }
-
-  // Karta „tento týždeň“ v oblasti Bábätko (obsah NHS z content/pregnancy-weeks.js cez GugubooV2.babySize).
-  function weekCardHtml(week) {
-    const size = week ? window.GugubooV2?.babySize?.(Math.max(4, week)) : null;
-    if (!size) return "";
-    const first = String(size.baby || "").split(/(?<=[.!?])\s+/)[0] || "";
-    return [
-      "<button class='v2-hub-week' type='button' data-v5-feature='babySize'><span class='v2-hub-week-num'><b>", escapeHtml(size.week), "</b><small>týždeň</small></span>",
-      "<span class='v2-hub-week-copy'><strong>", escapeHtml([String(size.length || "").replace(/^približne\s+/i, "~"), size.comparison ? "ako " + size.comparison : ""].filter(Boolean).join(" · ") || "Vývoj tento týždeň"), "</strong>",
-      first ? "<small>" + escapeHtml(first) + "</small>" : "", "<em>Celý vývoj tento týždeň ›</em></span></button>"
-    ].join("");
-  }
-
   // Prehľad oblasti Bábätko / Rodina (z lišty) – rovnaký vzhľad ako okno Mama, obsah podľa fázy.
   function renderHubs() {
     const view = currentView();
@@ -1420,14 +1392,12 @@
     const pregnancyWeek = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
     const age = ageData();
     const subtitle = baby
-      ? (expecting ? (state.profile.due ? "Termín " + new Date(state.profile.due + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long" }) : "Tehotenstvo") : age?.label && !age.invalid ? age.label : "")
+      ? (expecting ? (pregnancyWeek ? pregnancyWeek + ". týždeň tehotenstva" : "Tehotenstvo") : age?.label && !age.invalid ? age.label : "")
       : "Momenty, kalendár, nákup a úrady";
     target.innerHTML = [
       "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? state.profile.name || "Bábätko" : [parentDisplayName(), state.profile.name].filter(Boolean).join(" a ") || "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
       baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>Zapísať spánok, kŕmenie alebo plienku</button>" : "",
-      // Tehotenstvo: vývoj tohto týždňa priamo tu – „Aké veľké je bábätko“ už nie je ďalší riadok ani tlačidlo na domove.
-      baby && expecting ? weekCardHtml(pregnancyWeek) : "",
-      "<div class='v2-book-tools'>", keys.filter(key => key !== "babySize").map(appRow).join(""), "</div>"
+      "<div class='v2-book-tools'>", keys.map(appRow).join(""), "</div>"
     ].join("");
   }
 
@@ -2169,8 +2139,6 @@
   }
 
   function openDrawer() {
-    // Upratanie 2.38 (Samuel 10. 11.): zásuvka zrušená – spodná lišta je jediná navigácia, nič sa neopakuje.
-    return;
     renderDrawer();
     const overlay = byId("v5DrawerOverlay");
     overlay.classList.add("open");
@@ -2737,7 +2705,7 @@
     ].join("") : [
       "<div class='v5-confirm'><div><span class='v5-confirm-mark'>✓</span><h2>", escapeHtml(message), "</h2><p>",
       escapeHtml(detail), "</p><div class='v5-actions' style='justify-content:center'><button class='v5-primary' type='button' data-v5-home>Späť domov</button>",
-      "</div></div></div>"
+      "<button class='v5-secondary' type='button' data-v5-open-drawer>Ďalšia funkcia</button></div></div></div>"
     ].join("");
     renderHome();
     renderBottomBar();

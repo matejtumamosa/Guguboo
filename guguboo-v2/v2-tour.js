@@ -72,9 +72,9 @@
         target: () => home?.querySelector(".v2-week-badge"),
         title: "Týždeň tehotenstva",
         items: () => [
-          { week: home?.querySelector(".v2-week-badge b")?.textContent || "?", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Veľkosť a čo sa práve vyvíja nájdeš dole v časti Bábätko." }
+          { week: home?.querySelector(".v2-week-badge b")?.textContent || "?", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Ťukni naň a otvorí sa Aké veľké je bábätko – veľkosť a čo sa práve vyvíja." }
         ],
-        try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature("babyHub") }
+        try: { label: "Otvoriť Aké veľké je bábätko", run: () => V5()?.openFeature("babySize") }
       } : {
         scroll: true,
         target: () => home?.querySelector(".v5-home-hero .v5-baby-avatar"),
@@ -90,7 +90,7 @@
         // Upratanie 2.36: rovnaké dlaždice ako po pôrode – údaje, ťuknutím otvoríš miesto, kam patria.
         items: [
           { icon: "calendar", name: "Do termínu a trimester", text: "koľko dní ostáva a kde v tehotenstve si." },
-          { icon: "baby", name: "Pohyby", text: "zápis pohybov bábätka jedným ťuknutím." },
+          { icon: "baby", name: "Pohyby", text: "zápis pohybov bábätka jedným ťuknutím. Aké veľké je bábätko, ukáže odznak s týždňom." },
           { icon: "book", name: "Kontrola a Otázky", text: "najbližšia kontrola a otázky pre lekára v Tehotenskej knižke." },
           { icon: "water", name: "Pitný režim", text: "koľko pohárov už máš dnes za sebou." }
         ],
@@ -148,13 +148,10 @@
       },
       {
         scroll: true,
-        target: () => home?.querySelector(".v2-home-tools"),
-        title: "Kalendár, Nákup, Kontakty, Úrady",
+        target: () => home?.querySelector(".v2-home-cal"),
+        title: "Kalendár",
         items: [
-          { icon: "calendar", name: "Kalendár", text: "všetky kontroly, prehliadky a pripomienky." },
-          { icon: "shopping", name: "Nákup", text: "spoločný zoznam aj výbava." },
-          { icon: "contacts", name: "Kontakty", text: "lekár, pôrodnica a blízki." },
-          { icon: "book", name: "Úrady", text: "čo treba vybaviť a kedy." }
+          { icon: "calendar", name: "Kalendár", text: "na domove vidíš najbližší termín – ťuknutím otvoríš všetky kontroly, prehliadky a pripomienky." }
         ],
         try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
       },
@@ -176,8 +173,8 @@
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
         after: expecting
-          ? "Bábätko: vývoj tento týždeň, Tehotenská knižka a príprava. Mama: všetko o tebe. Momenty: fotky, prvé razy a albumy."
-          : "Bábätko: Zdravotná knižka, spánok a aktivity. Mama: všetko o tebe. Momenty: fotky, prvé razy a albumy.",
+          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz."
+          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
         try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature?.("babyHub") }
       }
     ];

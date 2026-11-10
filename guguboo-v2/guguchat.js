@@ -197,7 +197,7 @@
     const soon = plan.what_is_coming;
     const later = plan.counts.later;
     return [
-      // Upratanie 2.38 (Samuel 10. 11.): karta „Tento týždeň“ (vývoj) už nie je na domove – je len v časti Bábätko.
+      weekHtml(ctx),
       "<section class='v2-journey' aria-label='Tvoj plán'>",
       "<header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
       now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je všetko podstatné hotové. Užívaj si to ❤️</p>",
@@ -368,7 +368,7 @@
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v spodnej lište: Domov, Bábätko, Mama a Momenty. Kalendár, Nákup, Kontakty a Úrady sú na domove pod kruhom." }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetky aplikácie uvidíš, keď potiahneš spodnú lištu nahor – sú zoradené ako spodná lišta: Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
   ];
 
   function navAnswer(t, ctx) {
@@ -378,11 +378,11 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Spodná lišta – Domov, Bábätko, Mama a Momenty; Kalendár, Nákup, Kontakty a Úrady sú na domove pod kruhom\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Zásuvka (potiahni lištu nahor) – Praktické a Spomienky\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
-          { label: "Mama", kind: "feature", value: "mama" },
+          { label: "Zásuvka", kind: "drawer", value: "" },
           { label: "Ukázať prehliadku", kind: "tour", value: "" }
         ]
       };
