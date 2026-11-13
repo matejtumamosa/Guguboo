@@ -299,7 +299,7 @@
     const size = week >= 4 ? window.GugubooV2?.babySize?.(week) : null;
     if (!size) return "";
     if (week === 20) return card("Míľnik", "✨", "Si v polovici tehotenstva", "Pozri, čo všetko už máte za sebou.", btn("Časová os", "data-v2-moments-open='timeline'", true));
-    return card("Tento týždeň · " + week + ". týždeň", size.emoji || "👶", size.comparison ? "Bábätko je veľké asi ako " + size.comparison : "Bábätko rastie", size.length ? size.length.charAt(0).toUpperCase() + size.length.slice(1) + "." : "", btn("Aké veľké je bábätko", "data-v5-feature='babySize'", true) + btn("Tvoje telo", "data-v2-deck-go='mama|[data-v2-mama-section=\"body\"]'"));
+    return card("Tento týždeň · " + week + ". týždeň", size.emoji || "👶", size.comparison ? "Bábätko je veľké asi ako " + size.comparison : "Bábätko rastie", size.length ? size.length.charAt(0).toUpperCase() + size.length.slice(1) + "." : "", btn("Tvoj týždeň", "data-v5-feature='babySize'", true) + btn("Tvoje telo", "data-v2-deck-go='mama|[data-v2-mama-section=\"body\"]'"));
   }
 
   // Okno „Pre teba dnes“ má len praktické karty (termín, súhrn dňa, tento týždeň). Citové veci – „Stalo sa už?“,

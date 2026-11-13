@@ -170,7 +170,7 @@
     const overlay = byId("v2AdminOverlay");
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
-    byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
+    if (!window.GugubooV5?.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal"); // Master: lišta ostáva, okno nad ňou
     document.body.style.overflow = "hidden";
     window.GugubooV2?.track?.("admin_overview");
   }

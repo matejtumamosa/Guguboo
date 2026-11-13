@@ -399,7 +399,7 @@
     { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otvoriť otázky", go: "pregnancy|[data-v5-book-section='questions']" },
     { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je v časti Bábätko (spodná lišta).", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
     { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Otvoriť Prípravu na pôrod", feature: "beforeBirth" },
-    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
+    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Otvoriť Tvoj týždeň", feature: "babySize" },
     { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama (spodná lišta) – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", feature: "period" },
     { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama (spodná lišta).", label: "Otvoriť Mamu", feature: "mama" },
     // Po pôrode
@@ -411,7 +411,7 @@
     { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko (spodná lišta).", label: "Otvoriť Aktivity", feature: "activities" },
     // Praktické
     { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Otvoriť Kalendár", feature: "calendar" },
-    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Dôležitých kontaktoch (časť Rodina).", label: "Otvoriť Kontakty", feature: "contacts" },
+    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Dôležitých kontaktoch (časť Rodina).", label: "Otvoriť Dôležité kontakty", feature: "contacts" },
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
@@ -425,7 +425,7 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Kruh na domove – kroky " + (pre ? "prípravy" : "organizácie") + " a pohoda\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Zásuvka (potiahni lištu nahor) – Praktické a Spomienky\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – kruh na domove, len pre tvoju pohodu\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Hľadaj (lupa vpravo hore) – všetko podľa skupín Bábätko, Mama a Rodina\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
@@ -574,11 +574,11 @@
     // Po pôrode je krvácanie niekoľko týždňov bežné – poplach len pri silnom/náhlom krvácaní (NHS).
     // Od 37. týždňa: „mám kontrakcie / začalo to“ bez varovných príznakov → pokojne, podľa pokynov pôrodnice (QA-21).
     if (pregnant && (ctx.pregnancy_week || 0) >= 37 && has(t, ["kontrakci", "zacalo to", "zacina porod", "porod zacal", "stahy"]) && !has(t, ["krvac", "plodova", "voda", "nehybe", "menej hybe", "malo sa hybe", "silna bolest", "mzitk", "rozmazane", "horuck"])) {
-      return { level: "support", text: "Pokojne. Postupuj podľa pokynov svojej pôrodnice – kedy prísť a koho volať ti povedali pri kontrole. Ak si nie si istá, zavolaj do pôrodnice, poradia ti, či už prísť.\n\nAk by sa pridalo krvácanie, odtiekla plodová voda, bábätko sa hýbe menej alebo ti je naozaj zle, volaj pôrodnicu hneď, prípadne 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
+      return { level: "support", text: "Pokojne. Postupuj podľa pokynov svojej pôrodnice – kedy prísť a koho volať ti povedali pri kontrole. Ak si nie si istá, zavolaj do pôrodnice, poradia ti, či už prísť.\n\nAk by sa pridalo krvácanie, odtiekla plodová voda, bábätko sa hýbe menej alebo ti je naozaj zle, volaj pôrodnicu hneď, prípadne 155.", actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
     }
     const normalBleeding = withBaby && has(t, ["krvac"]) && !has(t, ["siln", "velmi", "vela krv", "nahle", "zrazenin", "odpadn", "omdl", "zavrat", "toci", "slabo mi", "busi"]);
     if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "odtiekla mi voda", "odteka mi voda", "praskla mi voda", "plodovy vak", "voda mi odtiekla", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
-      return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
+      return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
     if (has(t, ["ublizit si", "nechcem zit", "zabit sa", "samovrazd"])) {
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
@@ -850,7 +850,7 @@
       if (kind === "birth") return window.GugubooBirth?.open();
       if (kind === "admin") return window.GugubooAdmin?.open(value);
       if (kind === "helpinfo") {
-        state.v2.chat.push({ role: "bot", text: "Ak by si niekedy potrebovala rýchlu pomoc, stačí zavolať. Kontakt na svoju pôrodnicu a lekára si môžeš uložiť v Kontaktoch, aby si ich mala po ruke.", actions: [{ label: "Záchranka 155", kind: "tel", value: "155" }, { label: "Tiesňová linka 112", kind: "tel", value: "112" }, { label: "Moje kontakty", kind: "feature", value: "contacts" }] });
+        state.v2.chat.push({ role: "bot", text: "Ak by si niekedy potrebovala rýchlu pomoc, stačí zavolať. Kontakt na svoju pôrodnicu a lekára si môžeš uložiť v Dôležitých kontaktoch, aby si ich mala po ruke.", actions: [{ label: "Záchranka 155", kind: "tel", value: "155" }, { label: "Tiesňová linka 112", kind: "tel", value: "112" }, { label: "Dôležité kontakty", kind: "feature", value: "contacts" }] });
         save();
         return render();
       }

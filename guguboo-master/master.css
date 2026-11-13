@@ -257,6 +257,8 @@ body.v5-active .v5-calendar-share { display: none !important; }
 .g2-plan-areas-list { display: flex; flex-direction: column; gap: 8px; }
 /* Detail úradu: lišta ostáva viditeľná pod oknom */
 body.v5-active #v2AdminOverlay { z-index: 177; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+/* QA-41: okno Úradov sa celé zmestí nad lištu (nič sa neodreže hore) */
+body.v5-active #v2AdminOverlay .v2-birth-sheet { max-height: calc(100dvh - 98px - env(safe-area-inset-bottom)); }
 /* Tvoj mesiac */
 .g2-month-kicker { display: block; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); margin-bottom: 4px; }
 .g2-month-nav { display: flex; justify-content: space-between; gap: 10px; }

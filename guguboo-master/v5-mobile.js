@@ -590,7 +590,7 @@
     v5Checklists: ["Praktické zoznamy", "Kategórie podľa situácie"],
     v5Prenatal: ["Príprava na pôrod", "Pôrodnica, taška a domov"],
     v5PregnancyBook: ["Tehotenská knižka", "Bábätko, mama a aktuálny týždeň"],
-    v5BabySize: ["Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
+    v5BabySize: [MASTER ? "Tvoj týždeň" : "Aké veľké je bábätko", "Veľkosť a vývoj tento týždeň"],
     v5Mama: ["Mama", "Tvoje telo, pitie a nálada"],
     v5Period: ["Menštruačný kalendár", "Zápis, odhad a prehľad"],
     v5BabyHub: ["Bábätko", "Všetko o bábätku na jednom mieste"],
@@ -822,9 +822,12 @@
     if (!birth || !Number.isFinite(birth.getTime())) return null;
     const days = Math.floor((Date.now() - birth.getTime()) / 86400000);
     if (days < 0 || days > 2192) return { days: null, label: "Skontrolovať dátum", invalid: true };
+    // QA-55: celé kalendárne mesiace (14 mesiacov od 13. 9. do 13. 11. = 14, nie 13 kvôli priemernej dĺžke mesiaca)
+    const now = new Date();
+    const months = (now.getFullYear() - birth.getFullYear()) * 12 + now.getMonth() - birth.getMonth() - (now.getDate() < birth.getDate() ? 1 : 0);
     return {
       days,
-      label: days < 56 ? Math.max(1, Math.ceil((days + 1) / 7)) + ". týždeň" : days < 730 ? Math.max(2, Math.floor(days / 30.4375)) + ". mesiac" : Math.floor(days / 365.25) + ". rok"
+      label: days < 56 ? Math.max(1, Math.ceil((days + 1) / 7)) + ". týždeň" : days < 730 ? Math.max(2, months) + ". mesiac" : Math.floor(days / 365.25) + ". rok"
     };
   }
 
@@ -1278,7 +1281,7 @@
     const babyAvatar = expecting
       ? [
           // Ťuknutie na týždeň rovno otvorí miniaplikáciu „Aké veľké je bábätko“.
-          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-feature='babySize' aria-label='Aké veľké je bábätko'>", weekBadgeInner, "</button>"
+          "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-feature='babySize' aria-label='Tvoj týždeň'>", weekBadgeInner, "</button>"
         ].join("")
       : state.profile.photo
         ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
@@ -1464,7 +1467,7 @@
   // Pevné: pole hľadania + krátke návrhy podľa obdobia. Posúva sa: skupiny Bábätko · Mama · Rodina (rovnaké poradie ako lišta),
   // VŠETKY funkcie bez hľadania, poradie podľa dôležitosti. Návrhy nemenia štruktúru – len ukazujú skratky na existujúce položky.
   const G2_GROUP = { "Bábätko": "baby", "Mama": "mama", "Rodina": "rod" };
-  const G2_STOP = new Set("babatko babatka babatku babatkom babo dieta dietatko dietata moje moja moj moju mam mame ma mi sa si je su co ako kde kedy preco kolko pre na do za od po pri a i v vo s so z zo k ku o to ten ta tu uz este len aj ale som sme ste chcem potrebujem treba nejako nieco".split(" "));
+  const G2_STOP = new Set("babatko babatka babatku babatkom babo dieta dietatko dietata moje moja moj moju mam mame ma mi sa si je su co ako kde kedy preco kolko pre na do za od po pri a i v vo s so z zo k ku o to ten ta tu uz este len aj ale som sme ste chcem potrebujem treba nejako nieco neviem tym tom aky aka ake velmi dost tak mame moze mozem rezim".split(" "));
   // Položka: id, názov, popis, ikona, skupina, atribúty, kľúčové slová (bez diakritiky; aj hovorové slová a časté preklepy).
   const g2Item = (id, label, sub, ic, group, attrs, keys) => ({ id, label, sub, ic, group, attrs, keys });
   const g2Feature = (key, group, keys, sub) => g2Item(key, features[key].label, sub || features[key].description, features[key].icon, group, "data-v5-feature='" + key + "'", keys);
@@ -1473,19 +1476,20 @@
     const days = ageData()?.days ?? 0;
     const baby = expecting ? [
       g2Feature("pregnancy", "Bábätko", "tehotenska knizka kontrola kontroly gynekolog gynekologicka vysledky ultrazvuk usg sono krv moc odbery prehliadka"),
-      g2Feature("babySize", "Bábätko", "tyzden tyzdne velkost vyvoj ovocie ako velke rastie"),
+      g2Feature("babySize", "Bábätko", "tyzden tyzdne velkost velky velke vyvoj ovocie ako velke rastie"),
       g2Item("moves", "Pohyby bábätka", "Zápis kopancov a pohybov", "wave", "Bábätko", "data-v5-book-section='moves'", "pohyby pohyb hybe kope kopanie kopance necitim nehybe"),
       g2Item("questions", "Otázky pre lekára", "Čo sa chceš opýtať na kontrole", "book", "Bábätko", "data-v5-book-section='questions'", "otazky otazka lekar gynekolog opytat zabudnem"),
-      g2Feature("beforeBirth", "Bábätko", "priprava porod porodnica taska taska do porodnice balit doklady prve dni domov vybava porodny plan"),
+      g2Feature("beforeBirth", "Bábätko", "priprava porod porodnica taska taska do porodnice balit doklady prve dni domov vybava porodny plan kontrakcie"),
       g2Feature("voice", "Bábätko", "hlas uspavanka nahravka nahrat spievat pesnicka")
     ] : [
-      g2Item("records", "Denné záznamy", "Kŕmenie, spánok, prebaľovanie, kúpanie, teplota", "sparkle", "Bábätko", "data-v5-open-record", "zapisat zaznam zaznamy kormenie dojcenie dojcit flasa flasu mlieko prsia papanie spanok spi zaspal prebalovanie prebalit plienky plienka kakanie kaka cikanie kupanie kupat teplota merat"),
-      g2Feature("care", "Bábätko", "trapi place plac placka neviem preco kolika koliky grckanie grcka vracia horucka teplota horuca nechce spat noc chory choroba lekar kasel nadcha vyrazky"),
+      g2Item("records", "Denné záznamy", "Kŕmenie, spánok, prebaľovanie, kúpanie, teplota", "sparkle", "Bábätko", "data-v5-open-record", "zapisat zaznam zaznamy kormenie dojcenie dojcit flasa flasu mlieko prsia papanie prikrm prikrmy prikrmovanie kasa kasicka spanok spi zaspal spankovy prebalovanie prebalit plienky plienka kakanie kaka stolica cikanie kupanie kupat teplota merat"),
+      g2Feature("care", "Bábätko", "trapi place plac placka plakanie kolika koliky grckanie grcka vracia horucka teplota horuca nechce spat nespi noc chory choroba lekar kasel nadcha vyrazky pupok zapcha hnacka stolica"),
       g2Feature("childBook", "Bábätko", "zdravotna knizka ockovanie ockovat rast vaha vazi vyska prehliadka pediater preventivna"),
-      g2Item("month", "Tvoj mesiac", "Čo bábätko práve objavuje", "baby", "Bábätko", "data-g2-month-open", "vyvoj mesiac mesiace vek co robi milniky sedi leze chodi hovori rozvoj usmev smeje pase"),
-      g2Feature("sounds", "Bábätko", "spanok spat uspavanka sum biely sum zaspavanie zvuky nechce spat uspat"),
+      g2Item("month", "Tvoj mesiac", "Čo bábätko práve objavuje", "baby", "Bábätko", "data-g2-month-open", "vyvoj mesiac mesiace vek co robi milniky sedi sedenie leze lezie lozi chodi kroky prve kroky hovori slova rozvoj usmev smeje pase"),
+      g2Feature("sounds", "Bábätko", "spanok spat spankovy rezim uspavanka sum biely sum zaspavanie zvuky nechce spat nespi uspat"),
       g2Feature("teeth", "Bábätko", "zubky zuby zub zubok cistenie rezu zubar"),
-      g2Feature("activities", "Bábätko", "hra hry hrat aktivity rozvoj zabava cvicenie co robit")
+      g2Feature("activities", "Bábätko", "hra hry hrat aktivity rozvoj zabava cvicenie co robit"),
+      g2Item("weather", "Počasie a oblečenie", "Ako obliecť bábätko von", "weather", "Bábätko", "data-v5-quick-feature='weather'", "pocasie oblecenie obliect von prechadzka zima teplo")
     ];
     const help = g2Item("help", "Keď je mi ťažko", "Nálada, únava a kde nájsť pomoc", "chat", "Mama",
       expecting ? "data-g2-chat='Je mi ťažko a potrebujem pomoc'" : "data-v2-mama-section='mood'",
@@ -1504,7 +1508,7 @@
     ].filter(Boolean);
     const rod = [
       g2Item("plan", "Plán", "Čo ťa čaká a čo vybaviť", "checklist", "Rodina", "data-g2-plan", "plan ulohy priprava co ma caka vybavit todo zoznam uloh"),
-      g2Feature("administration", "Rodina", "urad urady davky davka prispevok prispevky materske materska rodicovsky rodicovsky prispevok peniaze penazi financie pn nemocenske ocr rodny list doklady poistovna socialna poistovna"),
+      g2Feature("administration", "Rodina", "urad urady davky davka prispevok prispevky materske materska rodicovsky rodicovsky prispevok peniaze penazi financie pn nemocenske ocr rodny list doklady poistovna socialna poistovna jasle skolka navrat do prace praca"),
       g2Feature("calendar", "Rodina", "kalendar termin terminy pripomienka kontrola datum"),
       g2Feature("shopping", "Rodina", "nakup nakupny zoznam vybava kocik postielka autosedacka plienky kupit kupovat"),
       g2Feature("family", "Rodina", "partner manzel muz otec babka dedko ulohy rodina pomoc zastupit"),
@@ -1517,7 +1521,6 @@
     const extra = [
       g2Item("urgent", "Kontakty na pomoc", "Pediater, pohotovosť a blízki", "contacts", "Rodina", "data-v5-urgent", "pomoc pohotovost zachranka krvacanie bolest boli lekarska sluzba 155 112 linka"),
       g2Item("mamaHub", "Mama", "Tvoje telo, pitie a nálada", "health", "Mama", "data-v5-feature='mama'", "mama ja moje telo pitie nalada"),
-      expecting ? null : g2Item("weather", "Počasie a oblečenie", "Ako obliecť bábätko von", "weather", "Bábätko", "data-v5-quick-feature='weather'", "pocasie oblecenie obliect von prechadzka zima teplo"),
       g2Item("profile", "Nastavenia a profil", "Údaje o tebe a bábätku", "profile", "Rodina", "data-v5-feature='profiles'", "nastavenia profil udaje meno termin datum porodu narodenie zmenit nocny rezim"),
       expecting ? g2Item("announce", "Oznámiť tehotenstvo", "Kartička v Našich momentoch", "memory", "Rodina", "data-v5-feature='memories'", "oznamit oznamenie tehotenstvo karticka povedat rodine") : g2Item("announce", "Kartička narodenia", "V Našich momentoch", "memory", "Rodina", "data-v5-feature='memories'", "karticka narodenie oznamit oznamenie")
     ].filter(Boolean);
@@ -1547,7 +1550,8 @@
       for (const t of tokens) {
         if (t === w) { best = 3; break; }
         if (w.length >= 3 && t.length >= 4 && (t.startsWith(w) || (w.length >= 5 && t.length >= 5 && w.startsWith(t.slice(0, Math.max(5, t.length - 2)))))) best = Math.max(best, 2);
-        else if (w.length >= 4 && t.length >= 4 && g2Lev(w, t, w.length >= 7 ? 2 : 1) <= (w.length >= 7 ? 2 : 1)) best = Math.max(best, 1.5);
+        // QA-46: preklep len pri dlhších slovách s rovnakým začiatkom („matrska“ → materská), nie „kupanie“ → „kopanie“
+        else if (w.length >= 5 && t.length >= 5 && w.slice(0, 2) === t.slice(0, 2) && g2Lev(w, t, w.length >= 8 ? 2 : 1) <= (w.length >= 8 ? 2 : 1)) best = Math.max(best, 1.5);
       }
       total += best;
     }
@@ -1572,11 +1576,15 @@
     const admin = (window.GugubooContent?.lifeAdmin?.SK?.items || []).map(item => ({
       item: g2Item(item.id, item.title, "Úrady a doklady" + (item.last_checked ? " · overené " + item.last_checked.split("-").reverse().map(Number).join(". ") : ""), "book", "Rodina", "data-v2-admin-open='" + escapeHtml(item.id) + "'", ""),
       // názov má väčšiu váhu ako popis, aby „rodný list“ nenašiel „kyselinu listovú“
-      score: words.length ? g2Score(item.title, words) * 1.2 + g2Score(item.what || "", words) * .3 : 0
+      score: words.length ? (g2Score(item.title, words) * 1.2 || g2Score(item.what || "", words) * .3) : 0
     }));
-    const need = words.length > 1 ? 2.5 : 1.5;
-    const hits = [...pool, ...admin].filter(hit => hit.score >= need).sort((a, b) => b.score - a.score)
-      .filter((hit, index, all) => all.findIndex(other => other.item.label === hit.item.label) === index).slice(0, 5);
+    // QA-47: aj dlhšia veta nájde výsledok, ak sedí aspoň jedno dôležité slovo; slabšie zhody (< polovica najlepšej) sa nezobrazia.
+    let hits = [...pool, ...admin].filter(hit => hit.score >= 1.5)
+      .sort((a, b) => b.score - a.score || a.item.label.length - b.item.label.length) // QA-49: pri zhode kratší názov („Materské“ pred „Materské pre otca“)
+      .filter((hit, index, all) => all.findIndex(other => other.item.label === hit.item.label) === index);
+    if (hits.length) hits = hits.filter(hit => hit.score >= hits[0].score / 2).slice(0, 5);
+    // QA-46: pri vetách, ktoré môžu znamenať, že treba hneď niekoho kontaktovať, neponúkať nesúvisiace časti appky – GuguChat odpovie pokojne a ukáže kontakty.
+    if (/(odtiek|odteka|praskl|plodov|krvac|necitim pohyb|nehybe|kontrakc|mzitk|bezvedom|nedycha|zmodr)/.test(q)) hits = pool.filter(hit => hit.item.id === "urgent");
     return [
       "<button class='g2-ask-row' type='button' data-g2-chat='", escapeHtml(query.trim()), "'><span class='g2-ask-orb'>", icon("chat"), "</span><span><strong>Opýtať sa GuguChatu</strong><small>„", escapeHtml(query.trim()), "“ · odpovedá len z overeného obsahu, nediagnostikuje</small></span>›</button>",
       hits.length ? "<h3 class='g2-hits-head'>V appke</h3>" + hits.map(hit => g2Btn(hit.item, "g2-hit")).join("") : "<p class='g2-empty'>Samostatnú časť na to v appke nemám. Opýtaj sa GuguChatu, odpovie z overeného obsahu.</p>"
