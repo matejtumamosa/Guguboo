@@ -504,7 +504,7 @@
     "</header>"
   ].join(""));
 
-  home.insertAdjacentHTML("beforeend", "<div id='v5Home' aria-live='polite'></div>");
+  home.insertAdjacentHTML("beforeend", "<div id='v5Home'></div>");
   main.insertAdjacentHTML("beforeend", [
     "<section class='view' id='v5Flow'><div class='v5-flow' id='v5FlowContent'></div></section>",
     "<section class='view' id='v5Profiles'><div class='v5-flow' id='v5ProfilesContent'></div></section>",
@@ -1496,8 +1496,8 @@
       ["Plán", "data-g2-plan", "Rodina", "plan ulohy priprava co ma caka vybavit"],
       [expecting ? "Bežné ťažkosti v tehotenstve" : "", "data-v5-feature='mama'", "Mama", "nevolnost vracanie palenie zahy krce opuchy unava tazkosti"],
       [expecting ? "Jedlo, pohyb a vitamíny" : "", "data-v5-feature='mama'", "Mama", "vitaminy jedlo strava pohyb cvicenie kyselina listova"],
-      [expecting ? "" : "Zúbky", "data-v5-feature='teeth'", "Bábätko", "zubky zuby zub prvy zubok cistenie"],
-      [expecting ? "" : "Tvoj mesiac", "data-g2-month-open", "Bábätko", "vyvoj mesiac vek co robi milniky sedi leze chodi hovori rozvoj"]
+      [expecting ? "" : "Zúbky", "data-v5-feature='teeth'", "Bábätko", "zubky zuby zub zubok cistenie"],
+      [expecting ? "" : "Tvoj mesiac", "data-g2-month-open", "Bábätko", "vyvoj mesiac vek co robi milniky sedi leze chodi hovori rozvoj usmev prvy usmev smeje"]
     ].filter(([label, , , keys]) => label && matches(normalized(label + " " + keys)))
       .slice(0, 3)
       .map(([label, attrs, group]) => "<button class='g2-hit' type='button' " + attrs + "><span>" + dot(group) + "<strong>" + escapeHtml(label) + "</strong><small>" + group + "</small></span>›</button>");
@@ -2350,7 +2350,7 @@
   function openMonth() {
     let overlay = byId("g2MonthOverlay");
     if (!overlay) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='g2MonthOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2MonthTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-month-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2MonthTitle'>Tvoj mesiac</h2><p>Čo sa zvyčajne deje v tomto veku</p></div></div><div class='g2-window-body' id='g2MonthBody'></div></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='g2MonthOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2MonthTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-month-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2MonthTitle'>Tvoj mesiac</h2><p>Čo sa zvyčajne deje v tomto veku</p></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button></div><div class='g2-window-body' id='g2MonthBody'></div></div>");
       overlay = byId("g2MonthOverlay");
     }
     monthPeriodId = "";
@@ -2369,7 +2369,7 @@
   function openPlan() {
     let overlay = byId("g2PlanOverlay");
     if (!overlay) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='g2PlanOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2PlanTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-plan-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2PlanTitle'>Plán</h2><p>Všetko, čo sa oplatí pripraviť – v pokoji</p></div></div><div class='g2-window-body' id='g2PlanBody'></div></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='g2PlanOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2PlanTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-plan-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2PlanTitle'>Plán</h2><p>Všetko, čo sa oplatí pripraviť – v pokoji</p></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button></div><div class='g2-window-body' id='g2PlanBody'></div></div>");
       overlay = byId("g2PlanOverlay");
     }
     renderPlan();
@@ -5047,6 +5047,12 @@
       persist();
       return announce(state.v5.night ? "Nočný režim je zapnutý." : "Nočný režim je vypnutý.");
     }
+    // QA-29: ťuk na úlohu/aplikáciu v okne Plán alebo Tvoj mesiac zatvorí to okno, aby sa cieľ neotvoril pod ním.
+    if (event.target.closest("#g2PlanOverlay, #g2MonthOverlay") && event.target.closest("[data-v5-feature], [data-v2-journey-open], [data-v2-admin-open], [data-v2-birth-open], [data-v5-quick-feature], [data-g2-ask], [data-v5-book-section]")) {
+      closePlan(); closeMonth();
+    }
+    // Ťuk na lištu zatvorí okná Plán a Tvoj mesiac (stabilná navigácia).
+    if (event.target.closest("#v5BottomBar")) { closePlan(); closeMonth(); }
     // Master K-4: pole GuguChatu, okno Plán, výsledky hľadania.
     if (event.target.closest("[data-g2-ask]")) { openDrawer(); setTimeout(() => byId("g2Q")?.focus(), 320); return; }
     if (event.target.closest("[data-g2-plan-close]")) return closePlan();

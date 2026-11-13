@@ -553,14 +553,16 @@
     // 0. Kríza má absolútnu prednosť (oprava Master: predtým bola až za krvácaním – „krvácam a chcem umrieť“
     //    dostalo len pôrodnícku odpoveď). Žiadna improvizácia, len pokojná pomoc a overené kontakty.
     // Krízové vety v rôznych tvaroch a poradí slov (nezávislé QA-02): „chcem sa zabiť“, „chcem si ublížiť“, „chcem zmiznúť navždy“.
-    const harmWord = /(zabit|zabijem|ublizit|ublizim|umriet|zomriet|zmiznut navzdy|zmiznem navzdy|skoncit to|skoncit so zivotom)/.test(t);
-    const intentWord = /(chcem|chcela by som|idem|mam chut|uvazujem|myslim na|radsej by som)/.test(t);
-    const crisis = harmWord && intentWord && !/nechcem (sa |si )?(zabit|umriet|zomriet|ublizit)/.test(t);
+    const harmWord = /(zabit|zabijem|ublizit|ublizim|umriet|umrela|umrel|zomriet|zomrela|zmiznut navzdy|zmiznem navzdy|skoncit to|skoncit so zivotom)/.test(t);
+    const intentWord = /(chcem|chcela by som|idem|mam chut|uvazujem|myslim na|radsej by som|najradsej by som|kiezby som)/.test(t);
+    // „nechcem (už / ďalej / viac) žiť“, „nemá zmysel žiť“, „nemám pre čo žiť“ (QA-28) – aj s vloženými slovami.
+    const noLife = /(nechcem|nemam chut|nema zmysel|nemam preco|nemam pre co)( (uz|dalej|viac|vobec|ani))* (zit|zijem)/.test(t);
+    const crisis = noLife || (harmWord && intentWord && !/nechcem (sa |si )?(zabit|umriet|zomriet|ublizit)/.test(t));
     if (crisis || has(t, ["ublizit si", "ublizim si", "nechcem zit", "nechcem tu byt", "zabit sa", "zabijem sa", "samovrazd", "chcem umriet", "chcem zomriet", "skoncit so zivotom", "ublizit babatku", "ublizit dietatu", "ublizim babatku", "ublizim dietatu"])) {
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti alebo bábätku hrozí nebezpečenstvo, volaj 112. Ak sa potrebuješ s niekým porozprávať, Linka dôvery Nezábudka je k dispozícii nonstop a bezplatne: 0800 800 566.\n\nPovedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }, { label: "Linka Nezábudka", kind: "tel", value: "0800800566" }] };
     }
     // Strata tehotenstva alebo bábätka: len pokojná ľudská odpoveď, bez rád a bez ďalšieho obsahu (texty schváli psychológ).
-    if (has(t, ["potratil", "potrat", "stratila som babatko", "stratila som tehotenstvo", "mrtve narod", "babatko zomrelo", "zomrelo nam"])) {
+    if (has(t, ["potratil", "potrat", "prisla som o babatko", "prisla som o dieta", "stratila som dieta", "stratila som babatko", "stratila som tehotenstvo", "mrtve narod", "babatko zomrelo", "zomrelo nam"])) {
       return { level: "support", text: "Je mi to veľmi ľúto. Nemusíš teraz nič riešiť ani nikomu nič vysvetľovať.\n\nAk chceš, povedz to niekomu blízkemu. O tom, čo ďalej, sa môžeš porozprávať so svojím lekárom alebo pôrodnou asistentkou. Ak sa potrebuješ s niekým porozprávať hneď, Linka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.", actions: [{ label: "Linka Nezábudka", kind: "tel", value: "0800800566" }] };
     }
     // 1. Bezpečnosť má vždy prednosť.
@@ -575,14 +577,14 @@
       return { level: "support", text: "Pokojne. Postupuj podľa pokynov svojej pôrodnice – kedy prísť a koho volať ti povedali pri kontrole. Ak si nie si istá, zavolaj do pôrodnice, poradia ti, či už prísť.\n\nAk by sa pridalo krvácanie, odtiekla plodová voda, bábätko sa hýbe menej alebo ti je naozaj zle, volaj pôrodnicu hneď, prípadne 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
     }
     const normalBleeding = withBaby && has(t, ["krvac"]) && !has(t, ["siln", "velmi", "vela krv", "nahle", "zrazenin", "odpadn", "omdl", "zavrat", "toci", "slabo mi", "busi"]);
-    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
+    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "odtiekla mi voda", "odteka mi voda", "praskla mi voda", "plodovy vak", "voda mi odtiekla", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
       return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
     if (has(t, ["ublizit si", "nechcem zit", "zabit sa", "samovrazd"])) {
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
-    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "plakat", "plac", "je mi tazko", "potrebujem pomoc"])) {
+    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc"])) {
       return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "home" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
     }
 

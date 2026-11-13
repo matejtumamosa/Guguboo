@@ -263,3 +263,11 @@ body.v5-active #v2AdminOverlay { z-index: 177; padding-bottom: calc(86px + env(s
 .g2-month-nav .g2-btn { flex: 0 1 auto; padding: 0 16px; }
 .g2-month-doctor { background: var(--v5-surface-soft) !important; }
 #g2MonthOverlay .v2-week-strip b { font-size: 14px; }
+/* QA-31: lišta vždy nad oknami Plán a Tvoj mesiac; okná končia nad lištou */
+body.v5-active #v5BottomBar.g2-bar { z-index: 180; }
+.g2-window { bottom: 0; }
+.g2-window-body { padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important; }
+.g2-window-head .g2-win-search { margin-left: auto; }
+/* QA: stred kruhu – tmavý text na svetlom stredovom tlačidle (deň aj noc) */
+.g2-ring-center, .g2-ring-center strong, .g2-ring-center small { color: #29243a !important; }
+.g2-ring-center { background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.7), transparent 40%), linear-gradient(145deg, #ece6fb, #d9cff3) !important; }
