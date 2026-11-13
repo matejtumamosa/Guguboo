@@ -225,11 +225,12 @@
     if ((hour >= 22 || hour < 6) && ctx.life_stage !== "pregnancy") return ""; // v noci po pôrode žiadne úlohy
     const row = (label, title, attrs, later) => "<section class='g2-today g2-today-row' aria-label='" + esc(label) + "'><button class='g2-today-main' type='button' " + attrs + "><small>" + esc(label) + "</small><strong>" + esc(title) + "</strong></button>" +
       (later ? "<button class='g2-today-later' type='button' data-v2-journey-snooze='" + esc(later) + "'>Neskôr</button>" : "<span class='g2-today-arrow' aria-hidden='true'>›</span>") + "</section>";
-    // Od 37. týždňa je „vecou na dnes“ pokojný prechod „Bábätko je na svete?“ (jediný prechod na po pôrode).
+    // Samo 13. 11.: v riadku „Dnes“ je vždy vec, ktorú treba vybaviť, kúpiť alebo pripraviť.
+    // „Bábätko je na svete?“ len keď na dnes nič netreba (inak je v Pláne).
+    const item = plan.what_is_relevant_now.find(entry => !/na svete/i.test(entry.title || ""));
+    if (item) return row("Dnes stačí jedno", item.title, "data-v2-journey-open='" + esc(item.id) + "'", item.type === "task" ? item.id : "");
     if (plan.transition && (ctx.pregnancy_week || 0) >= 37) return row("Keď príde čas", "Bábätko je na svete?", "data-v2-birth-open", "");
-    const item = plan.what_is_relevant_now[0];
-    if (!item) return row("Dnes stačí jedno", "Na dnes nič netreba · celý plán", "data-g2-plan", "");
-    return row("Dnes stačí jedno", item.title, "data-v2-journey-open='" + esc(item.id) + "'", item.type === "task" ? item.id : "");
+    return row("Dnes stačí jedno", "Na dnes nič netreba · celý plán", "data-g2-plan", "");
   }
   function planHtml() {
     const plan = J.compute(state);
