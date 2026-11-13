@@ -32,7 +32,7 @@
       window: { anchor: "week", from: 18, to: 42 },
       title: "Nahraj bábätku svoj hlas",
       why: "Po narodení ti ho Guguboo pripraví pri zaspávaní. Stačí minúta.",
-      feature: "sounds", done: s => (s.lullabies || []).length > 0
+      feature: "voice", done: s => (s.lullabies || []).length > 0
     },
     {
       id: "preg.hospital", stage: "pregnancy", type: "task", priority: 80,

@@ -328,7 +328,8 @@
     const count = collect().length;
     const left = n => n + (n === 1 ? " deň" : n < 5 ? " dni" : " dní");
     const daysLine = !birth || day < 1 ? "" : day < 100 ? "Do 100 dní spolu: " + left(100 - day) : day < 365 ? "Do prvého roka: " + left(365 - day) : "Váš prvý rok je za vami";
-    const sub = [daysLine, count ? spomienky(count) : "Spomienky sa zapisujú samy"].filter(Boolean).join(" · ");
+    // Master: bez odpočtov a počtov (psychologický komfort) – len pokojná veta.
+    const sub = V5.MASTER ? (duePrompt() ? "Dnes je tu aj malý návrh" : expecting ? "Fotka bruška alebo jedna veta" : "Jedna fotka alebo jedna veta") : [daysLine, count ? spomienky(count) : "Spomienky sa zapisujú samy"].filter(Boolean).join(" · ");
 
     // Návrhy na dnes (zvýraznené hore v menu): otázka „Stalo sa už?“ a album k míľniku.
     // Oznámenie tehotenstva tu nie je – je ako úloha v Kruhu prípravy (Matej 4. 11.).
@@ -344,13 +345,13 @@
       row("pen", "Jedna veta", "data-v2-moment-go='text'"),
       row("sparkle", "Prvé razy", "data-v2-moments-open='firsts'"),
       row("sound", "Môj hlas pre bábätko", "data-v5-feature='voice'"),
-      row("memory", "Naše momenty", "data-v2-moments-open='timeline'", count ? String(count) : "")
+      row("memory", "Naše momenty", "data-v2-moments-open='timeline'", count && !V5.MASTER ? String(count) : "")
     ];
     return "<section class='v2-moment" + (momentMenuOpen ? " is-open" : "") + "'>" +
       "<button type='button' class='v2-moment-cta' data-v2-moment-toggle aria-expanded='" + momentMenuOpen + "' aria-controls='v2MomentMenu'>" +
       "<span class='v5-icon' aria-hidden='true'>" + V5.icon("memory") + "</span>" +
       "<span><strong>Dnešný malý moment</strong><small>" + esc(sub) + "</small></span>" +
-      (suggestions.length ? "<i class='v2-moment-badge'>" + suggestions.length + "</i>" : "") +
+      (suggestions.length && !V5.MASTER ? "<i class='v2-moment-badge'>" + suggestions.length + "</i>" : "") +
       "<b aria-hidden='true'><svg viewBox='0 0 24 24'><path d='m6 9 6 6 6-6'/></svg></b></button>" +
       "<div class='v2-moment-menu' id='v2MomentMenu'" + (momentMenuOpen ? "" : " hidden") + ">" + suggestions.join("") + rows.join("") + "</div>" +
       "</section>";

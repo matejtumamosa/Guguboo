@@ -45,6 +45,7 @@
   function openItem(item) {
     if (!item) return;
     track("journey_open", { id: item.id });
+    if (item.prep && V5.MASTER && V5.openPrep) return V5.openPrep(item.prep);
     if (item.prep && typeof window.openPrepSection === "function") return window.openPrepSection(item.prep);
     if (item.action === "quickRecord") return V5.openQuickRecord();
     if (item.action === "birth") return window.GugubooBirth?.open();
@@ -221,6 +222,10 @@
     if (ctx.life_stage === "setup") return homeJourneyHtml();
     const hour = new Date().getHours();
     if ((hour >= 22 || hour < 6) && ctx.life_stage !== "pregnancy") return ""; // v noci po pôrode žiadne úlohy
+    // Od 37. týždňa je „vecou na dnes“ pokojný prechod „Bábätko je na svete?“ (jediný prechod na po pôrode).
+    if (plan.transition && (ctx.pregnancy_week || 0) >= 37) {
+      return "<section class='g2-today'><small>Keď príde čas</small><h3>Bábätko je na svete?</h3><p>Daj vedieť a Guguboo sa prepne na prvé dni spolu. Dovtedy nič netreba.</p><div class='g2-today-actions'><button class='g2-btn g2-btn-primary' type='button' data-v2-birth-open>Áno, je tu</button></div><div class='g2-today-foot'><span>Ostatné počká.</span><button class='g2-link' type='button' data-g2-plan>Celý plán ›</button></div></section>";
+    }
     const item = plan.what_is_relevant_now[0];
     if (!item) return "<section class='g2-today'><small>Dnes stačí jedno</small><h3>Na dnes nič netreba.</h3><p>Ostatné počká. Keď príde čas, ozvem sa.</p><div class='g2-today-foot'><span></span><button class='g2-link' type='button' data-g2-plan>Celý plán ›</button></div></section>";
     return [
@@ -256,7 +261,7 @@
   }
 
   function betaFooterHtml() {
-    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sa po zatvorení okna vymažú</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button><button type='button' data-v2-tour-restart>Ukázať prehliadku</button><button type='button' data-v2-reset>Začať odznova</button></span></aside>";
+    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sa po zatvorení okna vymažú</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button>" + (V5.MASTER ? "" : "<button type='button' data-v2-tour-restart>Ukázať prehliadku</button><button type='button' data-v2-reset>Začať odznova</button>") + "</span></aside>";
   }
 
   // ——— Spätná väzba z bety (brief body 38–40) ———
@@ -558,7 +563,7 @@
     }
     // Po pôrode je krvácanie niekoľko týždňov bežné – poplach len pri silnom/náhlom krvácaní (NHS).
     const normalBleeding = withBaby && has(t, ["krvac"]) && !has(t, ["siln", "velmi", "vela krv", "nahle", "zrazenin", "odpadn", "omdl", "zavrat", "toci", "slabo mi", "busi"]);
-    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "kontrakci"])) {
+    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "kontrakci"])) {
       return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
     if (has(t, ["ublizit si", "nechcem zit", "zabit sa", "samovrazd"])) {
