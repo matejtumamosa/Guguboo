@@ -1397,7 +1397,8 @@
             const sBook = short("book", "g2-c-brand", "Zdravotná knižka", "prehliadky, očkovanie", "data-v5-feature='childBook'");
             const sAct = short("activity", "g2-c-mama", "Aktivity", "nápad na dnes", "data-v5-feature='activities'");
             const sCal = short("calendar", "g2-c-brand", "Kalendár", "termíny", "data-v5-feature='calendar'");
-            return days >= 365 ? [sAct, sCal, sBook] : days > 42 ? [sRec, sAct, sBook] : [sRec, sCare, sBook];
+            // Samo 13. 11.: „Keď sa bábätko trápi“ ostáva na domove celý 1. rok (vtedy je najviac neistoty); Zdravotná knižka je v Bábätku a vo Všetko.
+            return days >= 365 ? [sAct, sCal, sBook] : days > 42 ? [sRec, sCare, sAct] : [sRec, sCare, sBook];
           })();
       // Termín do 7 dní nahradí v riadku „Dnes“ úlohu (termín je v ten deň dôležitejší).
       const soonItem = openCalendar.find(item => { const t = new Date(item.date).getTime(); return t >= Date.now() - 36e5 && t - Date.now() <= 7 * 864e5; });
