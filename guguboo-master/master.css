@@ -543,3 +543,9 @@ body.v5-active .g2-hero-more { font-size: 24px !important; line-height: 1 !impor
 body.night .g2-bar-handle { background: #232838 !important; }
 .g2-askwrap .g2-ask { padding-right: 16px; }
 .g2-bar-handle { min-height: 0 !important; max-height: 22px !important; }
+/* Úchyt vnútri lišty (Samo 13. 11.: uško nad lištou pôsobilo nedokončene) – lišta vyzerá ako vyťahovací panel */
+#v5BottomBar.g2-bar { padding-top: 18px !important; }
+.g2-bar-handle { top: 0 !important; width: 120px !important; height: 18px !important; max-height: 18px !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.g2-bar-handle span { width: 40px !important; height: 4px !important; margin-top: 2px; }
+body.night .g2-bar-handle { background: transparent !important; }
+.g2-bar-handle { height: 13px !important; max-height: 13px !important; } .g2-bar-handle span { margin-top: 0 !important; }
