@@ -61,3 +61,21 @@ body.v5-active.night #v5Home .g2-hero .v5-baby-avatar:not(:has(img)) { backgroun
 /* QA-65: číslo týždňa v odznaku v noci */
 body.v5-active.night #v5Home .v2-week-badge { background: #3a3452 !important; }
 body.v5-active.night #v5Home .v2-week-badge :is(b, small) { color: #f5f2fb !important; }
+
+/* QA 1.6 – záverečný test */
+/* QA-80: karty, ktoré mali v noci denné svetlé pozadie so svetlým textom */
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water, .v2-size-dev) {
+  background: #2a2438 !important; background-image: none !important; color: var(--g2-ink) !important; border-color: rgba(255,255,255,.08) !important;
+}
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water, .v2-size-dev) :is(h1, h2, h3, p, strong, small, span, li, button:not(.g2-fruit-badge)) { color: var(--g2-ink) !important; background-color: transparent !important; }
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water) :is(small, .g2-approx, p) { color: var(--g2-muted) !important; }
+body.v5-active.night:not(.welcome-mode):not(.intro-only) .v2-size-kicker { color: var(--g2-brand-ink) !important; }
+/* QA-81: tlačidlá v GuguChate (aj krízové) v noci – tmavý text na svetlej fialovej */
+body.v5-active.night .v2-chat-action { background: #c6bcff !important; color: #1f1a2e !important; }
+/* QA-83: polia formulárov 16 px – iPhone pri písaní nepribližuje stránku */
+body.v5-active :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) { font-size: 16px !important; }
+/* QA-79: podnadpis na domove v jednom riadku (dlhé prirovnanie „(orientačne)“ inak posúvalo domov pri 568 px) */
+body.v5-active .g2-hero-sub { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.v5-active .g2-hero-text h1 { min-width: 0; }
+body.v5-active .g2-hero-text { grid-template-columns: minmax(0, 1fr) auto !important; }
+body.v5-active.night .v2-week-strip button:not(.is-selected) { background: #2a2438 !important; } body.v5-active.night .v2-week-strip button:not(.is-selected) :is(b, small) { color: var(--g2-ink) !important; }

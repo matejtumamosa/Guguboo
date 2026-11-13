@@ -402,7 +402,7 @@
     { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Prehliadky", go: "childBook|[data-v2-child-section='checks']" },
     { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Rast", go: "childBook|[data-v2-child-section='growth']" },
     { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je v časti Bábätko.", label: "Zdravotná knižka", feature: "childBook" },
-    { words: ["zubk", "zub"], stage: "post", text: "Zúbky nájdeš v Hľadaj (lupa vpravo hore) v skupine Bábätko.", label: "Zúbky", feature: "teeth" },
+    { words: ["zubk", "zub"], stage: "post", text: "Zúbky nájdeš vo Všetko (na domove) v skupine Bábätko.", label: "Zúbky", feature: "teeth" },
     { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko.", label: "Aktivity", feature: "activities" },
     // Praktické
     { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Kalendár", feature: "calendar" },
@@ -410,7 +410,7 @@
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Profily rodiny", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš pod lupou vpravo hore – zoradené ako Bábätko, Mama a Rodina.", label: "Všetko", kind: "drawer" }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš tlačidlom Všetko na domove – zoradené ako Bábätko, Mama a Rodina.", label: "Všetko", kind: "drawer" }
   ];
 
   function navAnswer(t, ctx) {
@@ -420,11 +420,11 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – kruh na domove, len pre tvoju pohodu\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Hľadaj (lupa vpravo hore) – všetko podľa skupín Bábätko, Mama a Rodina\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – kruh na domove, len pre tvoju pohodu\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Všetko (tlačidlo na domove) – všetko podľa skupín Bábätko, Mama a Rodina\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
-          { label: "Zásuvka", kind: "drawer", value: "" },
+          { label: "Všetko", kind: "drawer", value: "" },
           { label: "Ukázať prehliadku", kind: "tour", value: "" }
         ]
       };
@@ -712,7 +712,7 @@
     const soon = plan.what_is_coming[0];
     let text = "Ahoj" + name + ". Viem, kde na svojej ceste si: " + J.stageLabel(ctx) + ".";
     if (next) text += "\n\nTeraz by som začala týmto: " + next.title + ".";
-    if (soon) text += "\nO " + soon.startsInDays + " dní ťa čaká: " + soon.title + " – nemusíš to riešiť dnes, ozvem sa.";
+    if (soon) text += "\nO " + soon.startsInDays + (soon.startsInDays === 1 ? " deň" : soon.startsInDays < 5 ? " dni" : " dní") + " ťa čaká: " + soon.title + " – nemusíš to riešiť dnes, ozvem sa.";
     return { role: "bot", text, actions: next ? itemActions(next) : [] };
   }
 

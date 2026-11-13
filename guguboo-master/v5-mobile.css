@@ -2907,7 +2907,7 @@ body.v5-active:not(.welcome-mode):not(.intro-only) .main {
 }
 
 .v5-quick-tile .v5-icon svg { width: 19px; height: 19px; }
-.v5-quick-tile strong { overflow: hidden; max-width: 100%; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.v5-quick-tile strong { overflow: hidden; max-width: 100%; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 
 .v5-row-card {
   min-height: 66px;
