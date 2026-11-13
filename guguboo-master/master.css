@@ -483,3 +483,33 @@ body.v5-active .v2-week-strip .is-selected :is(b, small) { color: #fff !importan
 #welcome .welcome-story-step.active { animation: g2WelcomeFade .35s ease both !important; } /* bez transform – inak sa „fixed“ tlačidlá viažu na krok */
 @keyframes g2WelcomeFade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #welcome .welcome-story-step.active { animation: none !important; } }
+/* Úvod – krok „Koho spolu privítame?“ bez posúvania (Samo 13. 11.) */
+#welcome .welcome-story-step.active { padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important; }
+#welcome .welcome-story-step.active .welcome-story-actions { gap: 8px; padding-top: 10px; }
+#welcome .welcome-story-step.active .welcome-story-actions > button { min-height: 50px; }
+#welcome [data-welcome-step="5"] h2 { font-size: 24px !important; line-height: 1.2 !important; margin-bottom: 10px !important; }
+#welcome [data-welcome-step="5"] > .welcome-story-lead { display: none; }
+#welcome .welcome-baby-card { padding: 14px !important; gap: 12px !important; }
+#welcome .welcome-name-block { gap: 8px !important; }
+#welcome .welcome-friendly-field { gap: 6px !important; }
+#welcome .welcome-friendly-field :is(input, select) { min-height: 48px !important; padding-block: 0 !important; }
+#welcome .v2-choice-chips { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px !important; }
+#welcome .v2-choice-chip { min-height: 46px !important; padding: 6px 4px !important; justify-content: center !important; text-align: center; font-size: 14px !important; line-height: 1.15 !important; }
+#welcome .v2-choice-chip .v2-choice-dot { display: none !important; }
+#welcome .welcome-name-undecided { min-height: 36px; }
+/* Výber „ovocie/týždeň“ pre avatar už Master nepotrebuje (domov má odznak s ovocím) */
+#welcome #welcomeFruitAvatarChoice { display: none !important; }
+#welcome .welcome-baby-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; column-gap: 10px !important; }
+#welcome .welcome-baby-card > * { grid-column: 1 / -1; min-width: 0; }
+#welcome .welcome-baby-card > #welcomeDueBasisWrap { grid-column: 1; }
+#welcome .welcome-baby-card > #welcomeCycleWrap { grid-column: 2; align-self: end; }
+#welcome #welcomeDueResult { min-height: 0 !important; padding: 8px 12px !important; font-size: 14px !important; line-height: 1.3 !important; }
+#welcome [data-welcome-step="5"] h2 { margin-top: 0 !important; }
+#welcome .welcome-baby-card { row-gap: 10px !important; }
+#welcome [data-welcome-step="5"] h2 { margin-bottom: 6px !important; }
+#welcome .welcome-story-step.active { padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important; }
+#welcomeCard:has(.welcome-story-step.active) { padding-bottom: 0 !important; }
+/* Záver úvodu: náhľad starého domova a časová os sa v Masteri nezobrazujú (domov je iný); ostáva nadpis, veta a úprava údajov */
+#welcome .welcome-finish-step :is(.welcome-finish-preview, #welcomeFinishFirstStep) { display: none !important; }
+#welcome .welcome-story-choices { gap: 8px !important; }
+#welcome .welcome-story-choices .choice-card { min-height: 60px !important; padding-block: 10px !important; }
