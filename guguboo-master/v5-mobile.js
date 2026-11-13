@@ -1483,7 +1483,7 @@
         "<span class='g2-hero-more' aria-hidden='true'>›</span></button></div></section>"
       ].join("");
       // Samo 13. 11.: pole samo nehovorí, že ukáže aj ostatné časti → hľadanie a samostatné tlačidlo „Všetko“.
-      const askHtml = "<div class='g2-askwrap'><button class='g2-ask' type='button' data-g2-ask aria-label='Hľadaj alebo sa opýtaj GuguChatu'>" + icon("search") + "<span>Hľadaj alebo sa opýtaj</span></button><button class='g2-all' type='button' data-g2-all aria-label='Všetko v appke'>" + icon("grid") + "<span>Všetko</span></button></div>";
+      const askHtml = "<div class='g2-askwrap'><button class='g2-ask' type='button' data-g2-ask aria-label='Hľadaj alebo sa opýtaj GuguChatu'>" + icon("search") + "<span>Hľadaj alebo sa opýtaj</span></button></div>";
       const todayHtml = window.GugubooV2?.homeTodayHtml?.() || "";
       // JEDNO pevné poradie, jedna obrazovka bez posúvania: pole · hero · skratky · kruh (vyplní zvyšok) · jeden riadok „Dnes“.
       // Riadok „Dnes“: v noci po pôrode Spánok a zvuky, inak termín do 7 dní alebo jedna úloha. Moment len na vysokej obrazovke (inak v Našich momentoch).
