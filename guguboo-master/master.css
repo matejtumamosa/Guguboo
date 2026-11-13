@@ -255,3 +255,11 @@ body.v5-active.g2-window-with-bar .v5-universal-window-head { grid-template-colu
 body.night .g2-ring-center, body.night .g2-ring-center strong, body.night .g2-ring-center small { color: #29243a !important; }
 body.v5-active .v5-calendar-share { display: none !important; }
 .g2-plan-areas-list { display: flex; flex-direction: column; gap: 8px; }
+/* Detail úradu: lišta ostáva viditeľná pod oknom */
+body.v5-active #v2AdminOverlay { z-index: 177; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+/* Tvoj mesiac */
+.g2-month-kicker { display: block; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); margin-bottom: 4px; }
+.g2-month-nav { display: flex; justify-content: space-between; gap: 10px; }
+.g2-month-nav .g2-btn { flex: 0 1 auto; padding: 0 16px; }
+.g2-month-doctor { background: var(--v5-surface-soft) !important; }
+#g2MonthOverlay .v2-week-strip b { font-size: 14px; }

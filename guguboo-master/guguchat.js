@@ -65,7 +65,7 @@
   }
 
   // ——— Obsah (týždne tehotenstva, Life Admin) – dáta so zdrojom a dátumom kontroly ———
-  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js", "content/mama-po-porode.js", "content/dieta-sk.js", "content/vybava.js"];
+  const CONTENT_FILES = ["content/pregnancy-weeks.js", "content/life-admin-sk.js", "content/mama-tehotenstvo.js", "content/mama-po-porode.js", "content/dieta-sk.js", "content/vybava.js", "content/baby-months.js"];
   const loadScript = src => new Promise(resolve => {
     const script = document.createElement("script");
     script.src = src + "?v=" + (window.GUGUBOO_V2_VERSION || "2.35.0");
@@ -388,7 +388,7 @@
     { words: ["prve razy", "prvy raz", "prvy usmev", "prve kroky", "prve slovo"], text: "Prvé razy zapíšeš jedným ťuknutím v Naše momenty → Prvé razy.", label: "Otvoriť Prvé razy", go: "moments:firsts" },
     { words: ["uspavank", "nahravk", "nahrat hlas", "moj hlas", "nahrany hlas", "nahrane"], text: "Nahrávky tvojím hlasom sú v Môj hlas pre bábätko. Po narodení ich nájdeš aj pri Spánku → Zvuky.", label: "Otvoriť Môj hlas", feature: "voice" },
     { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník je v časti Mama (spodná lišta) – chránený PIN-om.", label: "Otvoriť denník", feature: "privateSpace" },
-    { words: ["oznamit tehotenstvo", "oznamenie tehotenstva", "oznamit blizkym", "kartick oznam"], stage: "pre", text: "Kartičku na oznámenie tehotenstva vytvoríš v kruhu Príprava → Vybaviť alebo priamo tu.", label: "Vytvoriť kartičku", feature: "announce" },
+    { words: ["oznamit tehotenstvo", "oznamenie tehotenstva", "oznamit blizkym", "kartick oznam"], stage: "pre", text: "Kartičku na oznámenie tehotenstva vytvoríš v Naše momenty alebo priamo tu.", label: "Vytvoriť kartičku", feature: "announce" },
     { words: ["kartick"], stage: "post", text: "Kartičku narodenia vytvoríš, upravíš alebo znova pošleš tu.", label: "Otvoriť kartičku", feature: "cards" },
     // Tehotenská knižka
     { words: ["sono", "ultrazvuk", "vysledk"], stage: "pre", text: "Výsledky vyšetrení (aj s fotkou sona) sú v Tehotenskej knižke → Výsledky vyšetrení.", label: "Otvoriť výsledky", go: "pregnancy|[data-v5-book-section='results']" },
@@ -570,6 +570,10 @@
       return { level: "urgent", text: "Pri tomto je najlepšie hneď sa spojiť s odborníkom.\n\nZavolaj 155 – operátor ťa pokojne prevedie tým, čo robiť. Priprav si adresu, kde si.", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
     }
     // Po pôrode je krvácanie niekoľko týždňov bežné – poplach len pri silnom/náhlom krvácaní (NHS).
+    // Od 37. týždňa: „mám kontrakcie / začalo to“ bez varovných príznakov → pokojne, podľa pokynov pôrodnice (QA-21).
+    if (pregnant && (ctx.pregnancy_week || 0) >= 37 && has(t, ["kontrakci", "zacalo to", "zacina porod", "porod zacal", "stahy"]) && !has(t, ["krvac", "plodova", "voda", "nehybe", "menej hybe", "malo sa hybe", "silna bolest", "mzitk", "rozmazane", "horuck"])) {
+      return { level: "support", text: "Pokojne. Postupuj podľa pokynov svojej pôrodnice – kedy prísť a koho volať ti povedali pri kontrole. Ak si nie si istá, zavolaj do pôrodnice, poradia ti, či už prísť.\n\nAk by sa pridalo krvácanie, odtiekla plodová voda, bábätko sa hýbe menej alebo ti je naozaj zle, volaj pôrodnicu hneď, prípadne 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
+    }
     const normalBleeding = withBaby && has(t, ["krvac"]) && !has(t, ["siln", "velmi", "vela krv", "nahle", "zrazenin", "odpadn", "omdl", "zavrat", "toci", "slabo mi", "busi"]);
     if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
       return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Moje kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
@@ -578,8 +582,8 @@
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
-    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "plakat", "plac"])) {
-      return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Kruh pohody", kind: "home" }] };
+    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "plakat", "plac", "je mi tazko", "potrebujem pomoc"])) {
+      return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "home" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
     }
 
     // 1b. Sprievodca appkou („kde sú fotky?“) – po bezpečnosti, pred ostatným.

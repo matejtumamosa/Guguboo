@@ -122,7 +122,7 @@
     const overlay = byId("v2AdminOverlay");
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
-    byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
+    if (!V5.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
     document.body.style.overflow = "hidden";
     window.GugubooV2?.track?.("admin_open", { id: adminId });
   }
@@ -146,7 +146,7 @@
     const planIds = new Set([...plan.what_is_relevant_now, ...plan.what_is_coming].map(item => item.adminId).filter(Boolean));
     const doneIds = new Set(plan.done.map(item => item.adminId).filter(Boolean));
     const forStage = relevant(stage === "setup" ? "pregnancy" : stage);
-    const later = allItems().filter(item => !forStage.includes(item));
+    const later = allItems().filter(item => !forStage.includes(item) && !(V5.MASTER && stage !== "pregnancy" && stagesFor(item).every(s => s === "pregnancy")));
     const group = (title, items, note) => items.length ? [
       "<section class='v2-admin-group'><h3>", esc(title), "</h3>", note ? "<p>" + esc(note) + "</p>" : "",
       items.map(item => "<button type='button' class='v2-admin-list-item' data-v2-admin-open='" + esc(item.id) + "'><span><strong>" + esc(item.title) + "</strong><small>" + esc(item.authority || item.who || "") + "</small></span><em>" +

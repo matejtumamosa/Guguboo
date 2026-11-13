@@ -115,7 +115,7 @@
     privateSpace: { label: "Môj súkromný denník", description: "Len pre teba, chránené PIN-om", icon: "lock", tier: "free", view: "privateSpace" },
     cards: { label: "Kartička narodenia", description: "Jednorazový výstup z profilu dieťaťa", icon: "cards", tier: "premium", view: "v5Cards" },
     pregnancy: { label: "Tehotenská knižka", description: "Bábätko, mama a aktuálny týždeň", icon: "book", tier: "free", view: "v5PregnancyBook" },
-    babySize: { label: "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
+    babySize: { label: MASTER ? "Tvoj týždeň" : "Aké veľké je bábätko", description: "Veľkosť a čo sa práve vyvíja", icon: "baby", tier: "free", view: "v5BabySize" },
     mama: { label: "Mama", description: "Tvoje telo, pitie a nálada", icon: "health", tier: "free", view: "v5Mama" },
     // Upratanie 2.36: pevná spodná lišta Domov · Bábätko · GuguChat · Mama · Rodina (rovnaká pred aj po pôrode).
     babyHub: { label: "Bábätko", description: "Všetko o bábätku na jednom mieste", icon: "baby", tier: "free", view: "v5BabyHub" },
@@ -1363,7 +1363,7 @@
         ? [
             short("calendar", "g2-c-brand", "Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { weekday: "long" }) : "pridať termín", nextVisit ? "data-v5-book-section='visits'" : "data-v5-feature='calendar'"),
             short("water", "g2-c-baby", "Pitie", water.count ? glasses(water.count) : "pridať pohár", "data-v5-water-add aria-label='Pridať pohár vody'"),
-            short("wave", "g2-c-mama", "Pohyby", lastMove ? "naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "zapísať", "data-v5-book-section='moves'")
+            pregnancyWeek && pregnancyWeek < 16 ? short("chat", "g2-c-mama", "Otázky", state.v5.pregnancyQuestions?.length ? state.v5.pregnancyQuestions.length + " pre lekára" : "zapísať otázku", "data-v5-book-section='questions'") : short("wave", "g2-c-mama", "Pohyby", lastMove ? "naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "zapísať", "data-v5-book-section='moves'")
           ]
         : (() => {
             // Skratky podľa veku (pevné 3 miesta, mení sa len obsah): 0–3 m zápisy, 3–12 m + Aktivity, 1–3 r Aktivity · Spánok · Kalendár.
@@ -1383,7 +1383,7 @@
         "<p>", escapeHtml(expecting ? (hw?.line || (pregnancyWeek ? pregnancyWeek + ". týždeň" : "")) : (age?.label && !age.invalid ? age.label : "")), "</p></div></div>",
         expecting
           ? "<div class='g2-hero-foot'><span class='g2-chip'>Termín " + escapeHtml(dueDateLabel) + "</span><button class='g2-link' type='button' data-v5-feature='babySize'>Tvoj týždeň ›</button></div>"
-          : "",
+          : "<div class='g2-hero-foot'><span></span><button class='g2-link' type='button' data-g2-month-open>Tvoj mesiac ›</button></div>",
         "</section>"
       ].join("");
       const askHtml = "<button class='g2-ask' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "<span>S čím ti môžem pomôcť?</span><span class='g2-ask-orb'>" + icon("chat") + "</span></button>";
@@ -1496,7 +1496,8 @@
       ["Plán", "data-g2-plan", "Rodina", "plan ulohy priprava co ma caka vybavit"],
       [expecting ? "Bežné ťažkosti v tehotenstve" : "", "data-v5-feature='mama'", "Mama", "nevolnost vracanie palenie zahy krce opuchy unava tazkosti"],
       [expecting ? "Jedlo, pohyb a vitamíny" : "", "data-v5-feature='mama'", "Mama", "vitaminy jedlo strava pohyb cvicenie kyselina listova"],
-      [expecting ? "" : "Zúbky", "data-v5-feature='teeth'", "Bábätko", "zubky zuby zub prvy zubok cistenie"]
+      [expecting ? "" : "Zúbky", "data-v5-feature='teeth'", "Bábätko", "zubky zuby zub prvy zubok cistenie"],
+      [expecting ? "" : "Tvoj mesiac", "data-g2-month-open", "Bábätko", "vyvoj mesiac vek co robi milniky sedi leze chodi hovori rozvoj"]
     ].filter(([label, , , keys]) => label && matches(normalized(label + " " + keys)))
       .slice(0, 3)
       .map(([label, attrs, group]) => "<button class='g2-hit' type='button' " + attrs + "><span>" + dot(group) + "<strong>" + escapeHtml(label) + "</strong><small>" + group + "</small></span>›</button>");
@@ -1511,7 +1512,7 @@
       return words.some(w => w.length > 3 && title.split(/\s+/).some(h => h.startsWith(stem(w)))) ? 1 : 0;
     };
     const admin = (window.GugubooContent?.lifeAdmin?.SK?.items || []).map(item => [adminScore(item), item]).filter(([s]) => s).sort((a, b) => b[0] - a[0]).map(([, item]) => item).slice(0, 4)
-      .map(item => "<button class='g2-hit' type='button' data-g2-close data-v2-admin-open='" + escapeHtml(item.id) + "'><span>" + dot("Rodina") + "<strong>" + escapeHtml(item.title) + "</strong><small>Úrady a doklady · overené " + escapeHtml(item.last_checked || "") + "</small></span>›</button>");
+      .map(item => "<button class='g2-hit' type='button' data-g2-close data-v2-admin-open='" + escapeHtml(item.id) + "'><span>" + dot("Rodina") + "<strong>" + escapeHtml(item.title) + "</strong><small>Úrady a doklady" + (item.last_checked ? " · overené " + escapeHtml(item.last_checked.split("-").reverse().map(Number).join(". ")) : "") + "</small></span>›</button>");
     return [
       "<button class='g2-ask-row' type='button' data-g2-chat='", escapeHtml(query.trim()), "'><span class='g2-ask-orb'>", icon("chat"), "</span><span><strong>Opýtať sa GuguChatu</strong><small>„", escapeHtml(query.trim()), "“ · odpovedá len z overeného obsahu, nediagnostikuje</small></span>›</button>",
       extraHits.length || featureHits.length || admin.length ? "<div class='g2-az-head'><small>V appke</small></div>" + extraHits.join("") + featureHits.join("") + admin.join("") : "<p class='g2-empty'>V appke som nič nenašla. Skús iné slovo alebo sa opýtaj GuguChatu.</p>"
@@ -1558,7 +1559,7 @@
     target.innerHTML = [
       "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? state.profile.name || "Bábätko" : [parentDisplayName(), state.profile.name].filter(Boolean).join(" a ") || "Rodina"), "</h1><p>", escapeHtml(subtitle), "</p></section>",
       baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>Zapísať spánok, kŕmenie alebo plienku</button>" : "",
-      "<div class='v2-book-tools'>", MASTER && !baby ? "<button type='button' data-g2-plan><span class='v5-icon'>" + icon("checklist") + "</span><span><strong>Plán</strong><small>Čo sa oplatí pripraviť – teraz a čoskoro</small></span><b aria-hidden='true'>›</b></button>" : "", keys.map(appRow).join(""), "</div>"
+      "<div class='v2-book-tools'>", MASTER && baby && !expecting ? "<button type='button' data-g2-month-open><span class='v5-icon'>" + icon("growth") + "</span><span><strong>Tvoj mesiac</strong><small>Čo sa zvyčajne deje v tomto veku</small></span><b aria-hidden='true'>›</b></button>" : "", MASTER && !baby ? "<button type='button' data-g2-plan><span class='v5-icon'>" + icon("checklist") + "</span><span><strong>Plán</strong><small>Čo sa oplatí pripraviť – teraz a čoskoro</small></span><b aria-hidden='true'>›</b></button>" : "", keys.map(appRow).join(""), "</div>"
     ].join("");
   }
 
@@ -2308,6 +2309,63 @@
     const areas = body.querySelector(".g2-plan-areas");
     if (areas) areas.outerHTML = "<div class='g2-plan-areas-list'><small class='g2-plan-areas-head'>Príprava podľa oblastí</small>" + organizationSections().map(section => "<button class='v5-row-card' type='button' data-g2-org='" + section.id + "'><span class='v5-icon'>" + icon(section.icon || "checklist") + "</span><div><strong>" + escapeHtml(section.label) + "</strong><span>" + escapeHtml(section.period || section.description || "") + "</span></div><span class='v5-row-arrow'>›</span></button>").join("") + "</div>";
   }
+  // ——— Tvoj mesiac (0–36 mesiacov, content/baby-months.js – len overené vety so zdrojom) ———
+  let monthPeriodId = "";
+  function monthPeriods() {
+    return (window.GugubooContent?.babyMonths?.periods || []).filter(p => p.verified !== false);
+  }
+  function currentMonthPeriod() {
+    const days = ageData()?.days ?? 0;
+    const months = days / 30.4375;
+    const periods = monthPeriods();
+    return periods.find(p => { const [a, b] = String(p.id).split("-").map(Number); return months >= a && months < b; }) || periods[periods.length - 1];
+  }
+  function renderMonth() {
+    const body = byId("g2MonthBody");
+    if (!body) return;
+    const periods = monthPeriods();
+    if (!periods.length) {
+      body.innerHTML = "<p class='g2-lead'>Obsah podľa veku práve dopĺňame z overených zdrojov. Zatiaľ nájdeš nápady v Aktivitách.</p><button class='v5-row-card' type='button' data-v5-feature='activities'><span class='v5-icon'>" + icon("activity") + "</span><div><strong>Aktivity</strong><span>Krátke spoločné chvíle podľa veku</span></div><span class='v5-row-arrow'>›</span></button>";
+      return;
+    }
+    const current = currentMonthPeriod();
+    const p = periods.find(x => x.id === monthPeriodId) || current;
+    const idx = periods.indexOf(p);
+    const meta = window.GugubooContent.babyMonths.meta || {};
+    const text = v => Array.isArray(v) ? v.map(x => (x && x.sk) || (typeof x === "string" ? x : "")).filter(Boolean) : v && v.sk ? [v.sk] : typeof v === "string" ? [v] : [];
+    const block = (title, v, cls) => { const lines = text(v); return lines.length ? "<section class='v2-size-dev " + (cls || "") + "'><h3>" + title + "</h3>" + lines.map(l => "<p>" + escapeHtml(l) + "</p>").join("") + "</section>" : ""; };
+    const strip = periods.map(x => "<button type='button' class='" + [x === p ? "is-selected" : "", x === current ? "is-current" : ""].join(" ").trim() + "' data-g2-month='" + escapeHtml(x.id) + "' aria-pressed='" + String(x === p) + "'><b>" + escapeHtml(String(x.id).replace("-", "–")) + "</b><small>" + (x === current ? "teraz" : "mes.") + "</small></button>").join("");
+    body.innerHTML = [
+      "<div class='v2-week-strip' role='group' aria-label='Vyber obdobie'>", strip, "</div>",
+      "<section class='g2-hero'><div class='g2-hero-text'><small class='g2-month-kicker'>", escapeHtml(String(p.id).replace("-", "–")), " mesiacov", p === current ? " · teraz" : "", "</small><h1>", escapeHtml(p.title || ""), "</h1></div></section>",
+      block("Čo sa zvyčajne deje", p.development),
+      block("Pre bežný deň", p.everyday),
+      block("Nápad na hru", p.play),
+      block("Kedy sa poradiť s pediatrom", p.talk_to_doctor, "g2-month-doctor"),
+      "<div class='g2-month-nav'>", idx > 0 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx - 1].id) + "'>‹ Predchádzajúce</button>" : "<span></span>", idx < periods.length - 1 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx + 1].id) + "'>Ďalšie ›</button>" : "<span></span>", "</div>",
+      (p.source_urls || []).length ? "<p class='g2-note'>Zdroj: " + (p.source_urls || []).map(u => "<a class='v2-source' href='" + escapeHtml(u) + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) + "</a>").join(", ") + (meta.last_checked ? " · overené " + escapeHtml(meta.last_checked.split("-").reverse().map(Number).join(". ")) : "") + ". Všeobecné informácie, nie zdravotná rada – každé dieťa má vlastné tempo.</p>" : ""
+    ].join("");
+    body.querySelector(".v2-week-strip .is-selected")?.scrollIntoView({ inline: "center", block: "nearest" });
+  }
+  function openMonth() {
+    let overlay = byId("g2MonthOverlay");
+    if (!overlay) {
+      document.body.insertAdjacentHTML("beforeend", "<div id='g2MonthOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2MonthTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-month-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2MonthTitle'>Tvoj mesiac</h2><p>Čo sa zvyčajne deje v tomto veku</p></div></div><div class='g2-window-body' id='g2MonthBody'></div></div>");
+      overlay = byId("g2MonthOverlay");
+    }
+    monthPeriodId = "";
+    renderMonth();
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    overlay.querySelector(".g2-window-body").scrollTop = 0;
+  }
+  function closeMonth() {
+    const overlay = byId("g2MonthOverlay");
+    if (!overlay) return;
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+
   function openPlan() {
     let overlay = byId("g2PlanOverlay");
     if (!overlay) {
@@ -2649,7 +2707,7 @@
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("contacts") + "</span><div><strong>" + escapeHtml(row.item.name || row.item.type || "Kontakt") + "</strong><span>" + escapeHtml([row.item.type, row.item.phone].filter(Boolean).join(" · ")) + "</span></div>" + utilityRemoveButton(section, row.index) + "</div>"
       ).join("") + "</div>" : "<div class='v5-empty'>Pridaj pediatra, lekáreň alebo človeka, ktorému môžeš zavolať.</div>") +
-        "<div class='v5-form-card'><label>Meno alebo názov<input id='v5UtilityName' maxlength='80' placeholder='napr. MUDr. Nováková'></label><label>Typ<select id='v5UtilityType'><option>Pediater</option><option>Lekáreň</option><option>Pohotovosť</option><option>Rodina</option><option>Iné</option></select></label><label>Telefón<input id='v5UtilityPhone' type='tel' maxlength='30' placeholder='+421…'></label></div>" +
+        "<div class='v5-form-card'><label>Meno alebo názov<input id='v5UtilityName' maxlength='80' placeholder='napr. MUDr. Nováková'></label><label>Typ<select id='v5UtilityType'><option>Pediater</option><option>Gynekológ</option><option>Pôrodnica</option><option>Pôrodná asistentka</option><option>Lekáreň</option><option>Pohotovosť</option><option>Rodina</option><option>Iné</option></select></label><label>Telefón<input id='v5UtilityPhone' type='tel' maxlength='30' placeholder='+421…'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='contacts'>Uložiť kontakt</button></div>";
     } else if (section === "products") {
       const rows = (state.productFavorites || []).map((item, index) => ({ item, index })).reverse();
@@ -2767,7 +2825,7 @@
           "<div class='v5-choice-grid'>" +
           choice("feed-breast", "Dojčenie", "Ľavý, pravý alebo oba.", "feeding") +
           choice("feed-bottle", "Fľaša", "Mlieko a množstvo.", "feeding") +
-          choice("feed-solids", "Príkrmy", "Jedlo a približná porcia.", "products") +
+          ((ageData()?.days ?? 999) >= 120 ? choice("feed-solids", "Príkrmy", "Jedlo a približná porcia.", "products") : "") +
           choice("feed-other", "Iné", "Krátky vlastný záznam.", "sparkle") +
           "</div>";
       } else if (flow.step === 1 && data.method === "breast") {
@@ -3692,7 +3750,7 @@
         flowHead("Mama", "Nálada a spánok", "Čo je po pôrode bežné a kedy si povedať o pomoc.", 0, 1),
         "<section class='v2-mama-card'><h3>Baby blues</h3><p>", escapeHtml(mood.blues), "</p></section>",
         "<div class='v2-calm-box'><strong>", escapeHtml(mood.signsIntro), "</strong>", bullets(mood.signs), "<p>", escapeHtml(mood.help), "</p>",
-        "<button type='button' class='v5-text-action' data-v5-urgent>Kontakty na pomoc</button></div>",
+        (MASTER ? "<button type='button' class='v5-text-action' data-v2-chat-ask='Je mi ťažko a potrebujem pomoc'>Kontakty na pomoc</button></div>" : "<button type='button' class='v5-text-action' data-v5-urgent>Kontakty na pomoc</button></div>"),
         source(mood.source, mood.reviewed),
         "<section class='v2-mama-card'><h3>Spánok a únava</h3>", bullets(mood.sleep), source(mood.sleepSource, mood.sleepReviewed), "</section>",
         "<div class='v2-book-tools'><button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Zapísať náladu</strong><small>Jedným ťuknutím v Mojom súkromnom denníku</small></span><b aria-hidden='true'>›</b></button></div>",
@@ -4992,6 +5050,10 @@
     // Master K-4: pole GuguChatu, okno Plán, výsledky hľadania.
     if (event.target.closest("[data-g2-ask]")) { openDrawer(); setTimeout(() => byId("g2Q")?.focus(), 320); return; }
     if (event.target.closest("[data-g2-plan-close]")) return closePlan();
+    if (event.target.closest("[data-g2-month-close]")) return closeMonth();
+    const g2Month = event.target.closest("[data-g2-month]");
+    if (g2Month) { monthPeriodId = g2Month.dataset.g2Month; return renderMonth(); }
+    if (event.target.closest("[data-g2-month-open]")) { closeDrawer(); return openMonth(); }
     if (event.target.closest("[data-g2-plan]")) { closeDrawer(); return openPlan(); }
     const g2Org = event.target.closest("[data-g2-org]");
     if (g2Org) return openOrganizationMenu(g2Org.dataset.g2Org || organizationSections()[0].id); // Plán ostáva pod oknom – Späť vráti do Plánu
@@ -5662,6 +5724,7 @@
     renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), rerenderPeriod: () => (currentView() === "v5Period" ? renderPeriod() : renderMama()), daySummaryData, calendarItems,
     // Master: položka Plánu otvorí detail jednej veci v novej appke (nie starú obrazovku V1 „Pred narodením“).
     openPrep(prep) {
+      if (prep === "doctor" && window.GugubooAdmin?.open) return window.GugubooAdmin.open("sk.process.vyber_pediatra");
       const checklist = { bag: "hospital", home: "home", equipment: "home", supplies: "home", doctor: "health" }[prep];
       if (checklist) return openChecklistCategory(checklist);
       openFeature("beforeBirth");
