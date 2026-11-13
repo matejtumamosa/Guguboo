@@ -513,3 +513,20 @@ body.v5-active .v2-week-strip .is-selected :is(b, small) { color: #fff !importan
 #welcome .welcome-finish-step :is(.welcome-finish-preview, #welcomeFinishFirstStep) { display: none !important; }
 #welcome .welcome-story-choices { gap: 8px !important; }
 #welcome .welcome-story-choices .choice-card { min-height: 60px !important; padding-block: 10px !important; }
+/* Samo 13. 11. (snímky): menej textu, nič nepreteká */
+body:has(#home.view.active) .g2-ring-center small { display: none !important; }
+body:has(#home.view.active) .g2-ring-center strong { font-size: 14px !important; }
+.g2-hero-text p { display: none !important; }
+.g2-short small { display: none !important; }
+.g2-short.is-running small { display: block !important; }
+.g2-size-milestone { margin: 10px 0 0 !important; text-align: left; font: 500 15px/22px Montserrat, "Segoe UI", system-ui, sans-serif !important; color: var(--v5-ink); }
+.v2-size-hero { overflow: hidden; }
+.g2-size-visual svg { overflow: hidden; }
+body.v5-active .g2-hero-more { font-size: 24px !important; line-height: 1 !important; color: var(--v5-muted) !important; }
+/* Vyššia obrazovka: kruh na celú šírku, legenda pod ním v jednom riadku (žiadne prázdne miesto v karte) */
+@media (min-height: 760px) {
+  body:has(#home.view.active) .g2-ring-card { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto minmax(0, 1fr) auto !important; }
+  body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; }
+  body:has(#home.view.active) .g2-ring-legend { grid-column: 1; grid-row: 3; flex-direction: row !important; justify-content: center; gap: 6px 14px !important; flex-wrap: wrap; }
+}
+.v2-size-hero .g2-size-visual { margin: 10px auto 6px !important; position: static !important; height: auto !important; width: auto !important; } .v2-size-hero .g2-size-visual .g2-baby-fig { display: block; position: static !important; margin: 0 auto !important; transform: none !important; }

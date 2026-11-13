@@ -1472,14 +1472,14 @@
         ? "<button class='v5-baby-avatar g2-fruit-badge' type='button' data-v5-feature='babySize' aria-label='Tvoj týždeň'>" + window.GugubooBabyFigure.fruitSvg(heroSize.comparison) + "</button>"
         : babyAvatar;
       const heroSub = heroSize
-        ? (heroSize.comparison ? "Veľké asi ako " + heroSize.comparison + (heroSize.approximate ? " (orientačne)" : "") : "") + (heroSize.length ? (heroSize.comparison ? " · " : "") + heroSize.length.replace(/^približne /, "") : "")
+        ? (heroSize.comparison ? "Asi ako " + heroSize.comparison : "") + (heroSize.length ? (heroSize.comparison ? " · " : "") + heroSize.length.replace(/^približne /, "") : "")
         : "";
       const heroHtml = [
         "<section class='g2-hero'><div class='g2-hero-top'>", expecting ? fruitBadge : babyAvatar,
         "<button class='g2-hero-text' type='button' ", expecting ? "data-v5-feature='babySize'" : "data-g2-month-open", "><h1>", escapeHtml(expecting ? (pregnancyWeek ? pregnancyWeek + ". týždeň" : "Tvoje bábätko") : (state.profile.name || "Bábätko")), "</h1>",
         "<span class='g2-hero-sub'>", escapeHtml(expecting ? (heroSub || "Termín " + dueDateLabel) : (age?.label && !age.invalid ? age.label : "")), "</span>",
         expecting && hw?.line ? "<p>" + escapeHtml(hw.line) + "</p>" : "",
-        "<span class='g2-hero-more'>", expecting ? "Ako rastie" : "Tvoj mesiac", " ›</span></button></div></section>"
+        "<span class='g2-hero-more' aria-hidden='true'>›</span></button></div></section>"
       ].join("");
       // Samo 13. 11.: pole samo nehovorí, že ukáže aj ostatné časti → hľadanie a samostatné tlačidlo „Všetko“.
       const askHtml = "<div class='g2-askwrap'><button class='g2-ask' type='button' data-g2-ask aria-label='Hľadaj alebo sa opýtaj GuguChatu'>" + icon("search") + "<span>Hľadaj alebo sa opýtaj</span></button><button class='g2-all' type='button' data-g2-all aria-label='Všetko v appke'>" + icon("grid") + "<span>Všetko</span></button></div>";
@@ -3884,7 +3884,7 @@
       "<div class='g2-size-line'>", figure ? "<span class='g2-fruit-badge' aria-hidden='true'>" + figure.fruitSvg(data.comparison) + "</span>" : "<span class='v2-size-emoji' aria-hidden='true'>" + data.emoji + "</span>",
       "<div>", data.comparison ? "<h2>Veľké asi ako " + escapeHtml(data.comparison) + (data.approximate ? " <span class='g2-approx'>(orientačne)</span>" : "") + "</h2>" : "<h2>Bábätko rastie</h2>",
       data.length ? "<p>" + escapeHtml(data.length.charAt(0).toUpperCase() + data.length.slice(1)) + "</p>" : "", "</div></div>",
-      MASTER && data.milestone ? "<span class='g2-size-chip'>" + escapeHtml(data.milestone) + "</span>" : "",
+      MASTER && data.milestone ? "<p class='g2-size-milestone'>" + escapeHtml(data.milestone) + "</p>" : "",
       "</section>",
       baby.length ? "<section class='v2-size-dev'><h3>Čo sa práve vyvíja</h3><ul class='g2-dots'>" + baby.map(sentence => "<li>" + escapeHtml(sentence) + "</li>").join("") + "</ul></section>" : "",
       MASTER && data.you ? "<section class='v2-size-dev'><h3>Ty a tvoje telo</h3><p>" + escapeHtml(split(data.you)[0] || "") + "</p><button type='button' class='g2-link' data-v2-mama-section='body'>Viac v Mame ›</button></section>" : "",

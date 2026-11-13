@@ -56,7 +56,7 @@
       "<circle cx='100' cy='100' r='90' fill='url(#" + id + "v)' stroke='" + (night ? "#5a4f78" : "#e6dcf8") + "' stroke-width='2'/>" +
       "<circle cx='100' cy='100' r='80' fill='none' stroke='#fff' stroke-opacity='" + (night ? .06 : .6) + "' stroke-width='6'/>" +
       "<circle cx='58' cy='54' r='5' fill='#fff' opacity='" + (night ? .12 : .7) + "'/><circle cx='148' cy='146' r='3.5' fill='#fff' opacity='" + (night ? .1 : .6) + "'/>" +
-      "<g class='g2-baby-breath'><g transform='translate(100 104) rotate(" + p.rot + ") scale(" + f(p.s * 1.55 * 100) / 100 + ")'>" + g + "</g></g></svg>";
+      "<clipPath id='" + id + "c'><circle cx='100' cy='100' r='86'/></clipPath><g clip-path='url(#" + id + "c)'><g class='g2-baby-breath'><g transform='translate(100 " + (p.rot > 90 ? 96 : 104) + ") rotate(" + p.rot + ") scale(" + f(p.s * 1.22 * 100) / 100 + ")'>" + g + "</g></g></g></svg>";
   }
 
   // ——— Okrúhle ovocie a zelenina (viewBox 48) ———

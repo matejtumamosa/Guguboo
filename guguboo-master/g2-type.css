@@ -79,3 +79,4 @@ body.v5-active .g2-hero-sub { display: block; min-width: 0; white-space: nowrap;
 body.v5-active .g2-hero-text h1 { min-width: 0; }
 body.v5-active .g2-hero-text { grid-template-columns: minmax(0, 1fr) auto !important; }
 body.v5-active.night .v2-week-strip button:not(.is-selected) { background: #2a2438 !important; } body.v5-active.night .v2-week-strip button:not(.is-selected) :is(b, small) { color: var(--g2-ink) !important; }
+body.v5-active .g2-hero-sub { white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow: clip !important; }
