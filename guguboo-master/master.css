@@ -466,3 +466,20 @@ body.night .g2-size-chip { background: #3a2a3a; color: #f0b0c6; }
 .v2-week-strip button > span .g2-fruit { width: 26px; height: 26px; display: block; margin: 0 auto; }
 body.v5-active .g2-hero-top .g2-fruit-badge { border-radius: 50% !important; }
 body.v5-active .v2-week-strip .is-selected :is(b, small) { color: #fff !important; }
+/* Úvod (Samo 13. 11.): potvrdzovacie tlačidlá vždy na tom istom mieste dole; nadpisy krokov zarovnané rovnako (vľavo) */
+#welcome .welcome-story-step.active { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+#welcome .welcome-story-step.active .welcome-story-actions {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 30; width: min(100%, 460px); margin: 0 !important;
+  padding: 12px max(16px, env(safe-area-inset-left)) calc(16px + env(safe-area-inset-bottom)); box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 10px;
+  background: linear-gradient(to bottom, rgba(251, 248, 247, 0), var(--v5-bg, #fbf8f7) 28%);
+}
+#welcome .welcome-story-step.active .welcome-story-actions > button { width: 100%; min-height: 52px; margin: 0 !important; }
+#welcome .welcome-story-step.active .welcome-story-actions > .primary { order: -1; }
+#welcome .welcome-story-step :is(h2, .welcome-story-lead) { text-align: left !important; }
+#welcome .welcome-friendly-field { font: 700 15px/20px Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }
+#welcome .welcome-story-step.active { transform: none !important; } /* transform by ukotvil „fixed“ tlačidlá k prvku namiesto obrazovky */
+#welcome .welcome-story-step.active .welcome-story-actions { top: auto !important; right: auto !important; position: fixed !important; bottom: 0 !important; }
+#welcome .welcome-story-step.active { animation: g2WelcomeFade .35s ease both !important; } /* bez transform – inak sa „fixed“ tlačidlá viažu na krok */
+@keyframes g2WelcomeFade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #welcome .welcome-story-step.active { animation: none !important; } }

@@ -3108,13 +3108,13 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "Master 1.6.1";</script>
+  <script>window.GUGUBOO_V2_VERSION = "Master 1.6.2";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=m1.6c">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
   <link rel="stylesheet" href="v2.css?v=m1.4">
-  <link rel="stylesheet" href="master.css?v=m1.6b">
+  <link rel="stylesheet" href="master.css?v=m1.6.2c">
   <link rel="stylesheet" href="g2-icons.css?v=m1.4">
   <link rel="stylesheet" href="g2-type.css?v=m1.6e">
 </head>
@@ -3221,10 +3221,10 @@
               <div class="welcome-profile-step">
                 <h2>Najprv niečo o tebe.</h2>
                 <div class="welcome-profile-fields">
-                  <label class="welcome-friendly-field"><span class="v5-sr-only">Meno alebo oslovenie</span>
+                  <label class="welcome-friendly-field">Ako ťa máme oslovovať?
                     <input id="welcomeUserName" autocomplete="name" placeholder="napr. Michaela" autofocus>
                   </label>
-                  <label class="welcome-friendly-field"><span class="v5-sr-only">Dátum narodenia</span>
+                  <label class="welcome-friendly-field">Tvoj dátum narodenia
                     <input id="welcomeUserBirth" type="date" autocomplete="bday">
                   </label>
                 </div>
@@ -10078,7 +10078,8 @@ Otázky:
       function measure() {
         const steps = [...card.querySelectorAll(".welcome-step")];
         if (measuring || !steps.length) return;
-        if (!document.body.classList.contains("welcome-mode") || Math.min(window.innerWidth, screen.width) > 560) {
+        // Master: tlačidlá sú pevne dole (Samo 13. 11.), zmenšovanie krokov by ich posúvalo – nepoužíva sa.
+        if (window.GugubooV5?.MASTER || !document.body.classList.contains("welcome-mode") || Math.min(window.innerWidth, screen.width) > 560) {
           steps.forEach(step => { step.style.zoom = ""; });
           return;
         }
