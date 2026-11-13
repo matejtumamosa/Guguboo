@@ -530,3 +530,9 @@ body.v5-active .g2-hero-more { font-size: 24px !important; line-height: 1 !impor
   body:has(#home.view.active) .g2-ring-legend { grid-column: 1; grid-row: 3; flex-direction: row !important; justify-content: center; gap: 6px 14px !important; flex-wrap: wrap; }
 }
 .v2-size-hero .g2-size-visual { margin: 10px auto 6px !important; position: static !important; height: auto !important; width: auto !important; } .v2-size-hero .g2-size-visual .g2-baby-fig { display: block; position: static !important; margin: 0 auto !important; transform: none !important; }
+/* Spodná lišta ako vyťahovacie menu (Samo 13. 11.): úchyt navrchu, potiahnutie nahor alebo ťuk otvorí Všetko */
+#v5BottomBar.g2-bar { touch-action: none; padding-top: 14px !important; }
+.g2-bar-handle { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 88px; height: 22px; border: 0; padding: 0; background: transparent; cursor: pointer; display: grid; place-items: center; z-index: 3; }
+.g2-bar-handle span { width: 44px; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--v5-muted) 45%, transparent); transition: width .2s, background .2s; }
+.g2-bar-handle:hover span, .g2-bar-handle:focus-visible span { width: 56px; background: var(--v5-brand-dark); }
+.g2-bar-handle::after { content: ""; position: absolute; inset: -10px -20px -6px; } /* väčšia dotyková plocha */

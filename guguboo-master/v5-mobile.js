@@ -977,7 +977,8 @@
     void chatButton;
     byId("v5BottomBar").classList.add("g2-bar");
     // Samuel 13. 11.: pilulka „Hľadať · Všetko“ prekrývala lištu → hľadanie je v hlavičke (lupa), zásuvka aj potiahnutím lišty nahor.
-    byId("v5BottomBar").innerHTML = favorites.join("");
+    // Samo 13. 11.: lišta sa dá vytiahnuť nahor (ako v starej verzii) – viditeľný úchyt otvorí Všetko ťuknutím aj potiahnutím, z každej obrazovky.
+    byId("v5BottomBar").innerHTML = "<button class='g2-bar-handle' type='button' data-g2-all aria-label='Všetko v appke – potiahni lištu nahor'><span aria-hidden='true'></span></button>" + favorites.join("");
   }
 
   function featureButton(key) {
