@@ -4936,7 +4936,7 @@
               </label>
             </div>
             <label>Postup / dôležitý detail
-              <textarea id="familyDetails" placeholder="napr. 120 ml, voda 40 °C, mlieko podľa návodu, po mliečku odgrgnúť a zapísať reakciu"></textarea>
+              <textarea id="familyDetails" placeholder="napr. 120 ml, mlieko pripraviť presne podľa návodu na balení, po mliečku odgrgnúť a zapísať reakciu"></textarea>
             </label>
             <div class="care-recipe">
               <h4>Presný návod pre toho, kto rutinu nepozná</h4>
@@ -4947,8 +4947,8 @@
                 <label>Množstvo
                   <input id="familyMilkAmount" placeholder="napr. 120 ml">
                 </label>
-                <label>Voda / teplota
-                  <input id="familyWaterTemp" placeholder="napr. voda cca 40 °C, podávať vlažné">
+                <label>Voda / príprava
+                  <input id="familyWaterTemp" placeholder="napr. presne podľa návodu na balení mlieka">
                 </label>
                 <label>Fľaša / cumlík
                   <input id="familyBottle" placeholder="napr. fľaša Avent, cumlík 1">
@@ -8689,7 +8689,7 @@ Otázky:
     const familyTaskDetails = {
       "Prevziať kúpanie": "Pripraviť uterák, čistú plienku, pyžamo a kozmetiku. Skontrolovať teplotu vody, kúpať pokojne a po kúpaní zapísať, či bola pokožka v poriadku.",
       "Ísť na prechádzku": "Zobrať kočík, náhradnú plienku, obrúsky, deku podľa počasia a telefón. Po návrate zapísať, kedy dieťa zaspalo alebo sa zobudilo.",
-      "Pripraviť fľašu": "Použiť presné mlieko, ktoré je uložené v nákupných produktoch. Dávku pripraviť podľa návodu, vodu nechať na bezpečnú teplotu a po kŕmení nechať odgrgnúť.",
+      "Pripraviť fľašu": "Použiť presné mlieko, ktoré je uložené v nákupných produktoch. Vodu aj prášok pripraviť presne podľa návodu na balení, vždy čerstvo na jedno kŕmenie. Mlieko neohrievať v mikrovlnke. Pred podaním skontrolovať teplotu kvapkou na vnútornú stranu zápästia: má byť teplé, nie horúce. Zvyšok po kŕmení vyliať a dieťa nechať odgrgnúť.",
       "Dať večerné mlieko": "Pripraviť presnú dávku mlieka, podať ho v bežnej večernej rutine, potom nechať odgrgnúť a zapísať, koľko dieťa vypilo.",
       "Prebrať uspávanie": "Prevziať večerný blok: stlmiť svetlo, pripraviť plienku/pyžamo, podľa potreby mlieko, krátky rituál, zvuk alebo nosenie. Zapísať, kedy dieťa zaspalo.",
       "Kúpiť plienky / drogériu": "Otvoriť nákupný zoznam a kúpiť presnú značku, veľkosť, typ alebo alternatívu uvedenú v zozname. Nekupovať inú receptúru mlieka bez dohody.",
@@ -8707,7 +8707,7 @@ Otázky:
       const parts = [
         $("familyMilkProduct").value.trim() ? `Produkt: ${$("familyMilkProduct").value.trim()}` : "",
         $("familyMilkAmount").value.trim() ? `Množstvo: ${$("familyMilkAmount").value.trim()}` : "",
-        $("familyWaterTemp").value.trim() ? `Voda / teplota: ${$("familyWaterTemp").value.trim()}` : "",
+        $("familyWaterTemp").value.trim() ? `Voda / príprava: ${$("familyWaterTemp").value.trim()}` : "",
         $("familyBottle").value.trim() ? `Fľaša / cumlík: ${$("familyBottle").value.trim()}` : "",
         $("familyAfterCare").value.trim() ? `Po úlohe: ${$("familyAfterCare").value.trim()}` : ""
       ].filter(Boolean);
@@ -8740,7 +8740,7 @@ Otázky:
       const task = $("familyTaskPreset").value;
       if (!$("familyDetails").value.trim()) $("familyDetails").value = familyTaskDetails[task] || "";
       if (!$("familyMilkAmount").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyMilkAmount").value = "doplň presnú dávku podľa dieťaťa";
-      if (!$("familyWaterTemp").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyWaterTemp").value = "podať v bežnej bezpečnej teplote podľa vašej rutiny";
+      if (!$("familyWaterTemp").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyWaterTemp").value = "presne podľa návodu na balení; pred podaním skontrolovať na zápästí (teplé, nie horúce)";
       if (!$("familyAfterCare").value.trim()) $("familyAfterCare").value = /mlieko|fľašu/i.test(task)
         ? "nechať odgrgnúť, chvíľu podržať vo zvislej polohe, zapísať koľko vypilo a či grckalo"
         : "zapísať iba dôležité veci, aby druhý rodič nemusel pátrať";

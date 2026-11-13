@@ -1,0 +1,13 @@
+name: Bezpečnosť obsahu
+on:
+  pull_request:
+  push:
+    branches: [main, vyvoj]
+jobs:
+  formula-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test textov o príprave umelého mlieka
+        shell: pwsh
+        run: ./tests/formula-safety.Tests.ps1
