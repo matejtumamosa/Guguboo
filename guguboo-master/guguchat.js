@@ -397,25 +397,25 @@
     { words: ["pohyb", "kopan"], stage: "pre", text: "Pohyby bábätka zapíšeš v Tehotenskej knižke → Pohyby bábätka.", label: "Otvoriť pohyby", go: "pregnancy|[data-v5-book-section='moves']" },
     { words: ["plan porodu"], stage: "pre", text: "Plán pôrodu je v Tehotenskej knižke.", label: "Otvoriť plán pôrodu", go: "pregnancy|[data-v5-book-section='birthplan']" },
     { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otvoriť otázky", go: "pregnancy|[data-v5-book-section='questions']" },
-    { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je prvé okienko na domove.", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
-    { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Mojej príprave.", label: "Otvoriť Moju prípravu", feature: "beforeBirth" },
-    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Aké veľké je bábätko ukazuje okienko Dieťa alebo krúžok s týždňom na domove.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
+    { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je v časti Bábätko (spodná lišta).", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
+    { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Otvoriť Prípravu na pôrod", feature: "beforeBirth" },
+    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Otvoriť Aké veľké je bábätko", feature: "babySize" },
     { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama (spodná lišta) – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", feature: "period" },
-    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v okienku Mama.", label: "Otvoriť Mamu", feature: "mama" },
+    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama (spodná lišta).", label: "Otvoriť Mamu", feature: "mama" },
     // Po pôrode
     { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Otvoriť očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
     { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Otvoriť prehliadky", go: "childBook|[data-v2-child-section='checks']" },
     { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Otvoriť rast", go: "childBook|[data-v2-child-section='growth']" },
-    { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je na domove v okienku s vekom bábätka.", label: "Otvoriť Zdravotnú knižku", feature: "childBook" },
-    { words: ["zubk", "zub"], stage: "post", text: "Zúbky sú v Zdravotnej knižke.", label: "Otvoriť Zúbky", feature: "teeth" },
+    { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je v časti Bábätko (spodná lišta).", label: "Otvoriť Zdravotnú knižku", feature: "childBook" },
+    { words: ["zubk", "zub"], stage: "post", text: "Zúbky nájdeš v Hľadaj (lupa vpravo hore) v skupine Bábätko.", label: "Otvoriť Zúbky", feature: "teeth" },
     { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko (spodná lišta).", label: "Otvoriť Aktivity", feature: "activities" },
     // Praktické
     { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Otvoriť Kalendár", feature: "calendar" },
-    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Kontaktoch.", label: "Otvoriť Kontakty", feature: "contacts" },
+    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Dôležitých kontaktoch (časť Rodina).", label: "Otvoriť Kontakty", feature: "contacts" },
     { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
     { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetky aplikácie uvidíš, keď potiahneš spodnú lištu nahor – sú zoradené ako spodná lišta: Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v Hľadaj (lupa vpravo hore) – zoradené ako spodná lišta: Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
   ];
 
   function navAnswer(t, ctx) {
@@ -598,7 +598,7 @@
     // a ponúknuť zapísanie otázky na najbližšiu prehliadku (s dátumom), aby na nič nezabudla.
     // Horúčka u bábätka do 3 mesiacov: bez diagnózy, len bezpečná všeobecná hranica (NHS: pod 3 mesiace a 38 °C a viac → hneď lekár).
     if (withBaby && ctx.baby_age_days !== null && ctx.baby_age_days < 91 && has(t, ["horuck", "teplot", "horuca", "horuci", "horuce", "38", "39", "40"])) {
-      return { level: "urgent", text: "Pri bábätku mladšom ako 3 mesiace je pri teplote 38 °C a viac správne ozvať sa hneď lekárovi – aj v noci (pohotovosť alebo 155). Netreba čakať, ako sa to vyvinie.\n\nDiagnózu ti na diaľku nedám, nechcem hádať.\n\n(Všeobecná informácia podľa NHS, nie lekárska rada.)", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Kontakty", kind: "feature", value: "contacts" }] };
+      return { level: "urgent", text: "Pri bábätku mladšom ako 3 mesiace je pri teplote 38 °C a viac správne ozvať sa hneď lekárovi – aj v noci (pohotovosť alebo 155). Netreba čakať, ako sa to vyvinie.\n\nDiagnózu ti na diaľku nedám, nechcem hádať.\n\n(Všeobecná informácia podľa NHS, nie lekárska rada.)", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Dôležité kontakty", kind: "feature", value: "contacts" }] };
     }
     if (has(t, ["vyrazk", "vyrazil", "flak", "horuck", "teplot", "kasl", "kasel", "nadch", "hnack", "zvraca", "vraca ", "alergi", "zihlav", "kolik", "neje", "nechce jest", "zltacz", "zlte", "pupok", "zapal", "bolest", "boli ho", "boli ju", "boli ma", "svrbi", "nespi", "stale place", "vela place"])) {
       const who = withBaby ? "pediatrovi" : "svojmu lekárovi alebo pôrodnej asistentke";
@@ -609,7 +609,7 @@
           "\n\nMôžem ti to zapísať do otázok na najbližšiu prehliadku, aby si na nič nezabudla.",
         actions: [
           { label: withBaby ? "Zapísať pre pediatra" : "Zapísať pre lekára", kind: withBaby ? "pedq" : "docq", value: question },
-          { label: "Kontakty", kind: "feature", value: "contacts" },
+          { label: "Dôležité kontakty", kind: "feature", value: "contacts" },
           { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }
         ]
       };
@@ -618,8 +618,8 @@
     // 2. Plán a úlohy.
     if (has(t, ["co ma caka", "co ma teraz", "co mam urobit", "co mam robit", "plan", "dalsi krok", "co teraz"])) return planAnswer(ctx, plan, "all");
     if (has(t, ["vybavit", "co musim", "co este", "uloh", "pripravit pred porodom"])) return planAnswer(ctx, plan, "tasks");
-    if (has(t, ["task", "zbal"])) return itemAnswer("preg.bag", "Taška do pôrodnice je v Mojej príprave.");
-    if (has(t, ["porodnic"])) return itemAnswer("preg.hospital", "Pôrodnicu si ulož v Mojej príprave.");
+    if (has(t, ["task", "zbal"])) return itemAnswer("preg.bag", "Taška do pôrodnice je v Príprave na pôrod.");
+    if (has(t, ["porodnic"])) return itemAnswer("preg.hospital", "Pôrodnicu si ulož v Príprave na pôrod.");
     if (has(t, ["pediatr", "detsky lekar"])) return withBaby ? itemAnswer("baby.pediatrician-visit", "") : itemAnswer("preg.pediatrician", "");
     if (has(t, ["vybav", "postielk", "spanie babatka", "kde bude spat"])) return itemAnswer("preg.sleep-place", "");
     if (has(t, ["kontakt", "gynekolog"])) return itemAnswer("preg.contacts", "");

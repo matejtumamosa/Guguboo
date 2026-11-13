@@ -181,6 +181,9 @@
     if (!trigger) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+    // Master 1.0: zo zásuvky – najprv ju zavri, inak by prehľad úradov ostal pod ňou.
+    const drawer = byId("v5DrawerOverlay");
+    if (drawer?.classList.contains("open")) { drawer.classList.remove("open"); drawer.setAttribute("aria-hidden", "true"); }
     window.GugubooV5.openHome();
     openOverview();
   }, true);
