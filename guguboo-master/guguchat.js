@@ -216,25 +216,20 @@
   }
 
   // ——— Master (K-4): na domove len JEDNA vec („Dnes stačí jedno“), celý zoznam v okne Plán ———
+  // Domov bez posúvania (Samo 13. 11.): „Dnes stačí jedno“ je jeden riadok – ťuk otvorí úlohu (tam je Pozrieť, Neskôr a celý plán).
   function homeTodayHtml() {
     const plan = J.compute(state);
     const ctx = plan.context;
     if (ctx.life_stage === "setup") return homeJourneyHtml();
     const hour = new Date().getHours();
     if ((hour >= 22 || hour < 6) && ctx.life_stage !== "pregnancy") return ""; // v noci po pôrode žiadne úlohy
+    const row = (label, title, attrs, later) => "<section class='g2-today g2-today-row' aria-label='" + esc(label) + "'><button class='g2-today-main' type='button' " + attrs + "><small>" + esc(label) + "</small><strong>" + esc(title) + "</strong></button>" +
+      (later ? "<button class='g2-today-later' type='button' data-v2-journey-snooze='" + esc(later) + "'>Neskôr</button>" : "<span class='g2-today-arrow' aria-hidden='true'>›</span>") + "</section>";
     // Od 37. týždňa je „vecou na dnes“ pokojný prechod „Bábätko je na svete?“ (jediný prechod na po pôrode).
-    if (plan.transition && (ctx.pregnancy_week || 0) >= 37) {
-      return "<section class='g2-today'><small>Keď príde čas</small><h3>Bábätko je na svete?</h3><p>Daj vedieť a Guguboo sa prepne na prvé dni spolu. Dovtedy nič netreba.</p><div class='g2-today-actions'><button class='g2-btn g2-btn-primary' type='button' data-v2-birth-open>Áno, je tu</button></div><div class='g2-today-foot'><span>Ostatné počká.</span><button class='g2-link' type='button' data-g2-plan>Celý plán ›</button></div></section>";
-    }
+    if (plan.transition && (ctx.pregnancy_week || 0) >= 37) return row("Keď príde čas", "Bábätko je na svete?", "data-v2-birth-open", "");
     const item = plan.what_is_relevant_now[0];
-    if (!item) return "<section class='g2-today'><small>Dnes stačí jedno</small><h3>Na dnes nič netreba.</h3><p>Ostatné počká. Keď príde čas, ozvem sa.</p><div class='g2-today-foot'><span></span><button class='g2-link' type='button' data-g2-plan>Celý plán ›</button></div></section>";
-    return [
-      "<section class='g2-today' aria-label='Dnes stačí jedno'><small>Dnes stačí jedno</small>",
-      "<h3>", esc(item.title), "</h3>", item.why ? "<p>" + esc(item.why) + "</p>" : "",
-      "<div class='g2-today-actions'><button class='g2-btn g2-btn-primary' type='button' data-v2-journey-open='", esc(item.id), "'>Pozrieť</button>",
-      item.type === "task" ? "<button class='g2-btn' type='button' data-v2-journey-snooze='" + esc(item.id) + "'>Neskôr</button>" : "",
-      "</div><div class='g2-today-foot'><span>Ostatné počká. Keď príde čas, ozvem sa.</span><button class='g2-link' type='button' data-g2-plan>Celý plán ›</button></div></section>"
-    ].join("");
+    if (!item) return row("Dnes stačí jedno", "Na dnes nič netreba · celý plán", "data-g2-plan", "");
+    return row("Dnes stačí jedno", item.title, "data-v2-journey-open='" + esc(item.id) + "'", item.type === "task" ? item.id : "");
   }
   function planHtml() {
     const plan = J.compute(state);

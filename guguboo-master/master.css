@@ -335,3 +335,101 @@ body.v5-active.night .g2-ring-center small { opacity: 1 !important; color: #3d36
 .g2-askwrap .g2-ask > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .g2-askwrap .g2-ask { padding: 0 12px; gap: 8px; }
 .g2-all { padding: 0 12px; gap: 6px; }
+
+/* ——— Domov bez posúvania (Samo 13. 11.; UX Architekt + UI Designer) ———
+   Výšku domova nastaví JS (--g2-home-h = priestor medzi hlavičkou a lištou). Kruh vyplní zvyšok.
+   Poistka: pri veľmi nízkej obrazovke (< 540 px) sa domov radšej posúva, než by sa niečo orezalo. */
+body:has(#home.view.active) main.main { padding-bottom: 0 !important; }
+body:has(#home.view.active) #home.view.active { height: var(--g2-home-h, auto); overflow: hidden; padding-top: 8px !important; box-sizing: border-box; }
+#v5Home { --g2-gap: 10px; }
+body:has(#home.view.active) #v5Home { height: 100%; display: flex; flex-direction: column; gap: var(--g2-gap) !important; }
+#v5Home > * { flex: 0 0 auto; }
+/* Hlavička na domove: jeden riadok */
+#v5Header[data-home="true"] { min-height: 0 !important; padding-top: 8px !important; padding-bottom: 4px !important; }
+#v5Header[data-home="true"] .v5-header-logo { display: none; }
+#v5Header[data-home="true"] #v5HeaderTitle { font-size: 19px !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#v5Header[data-home="true"] #v5HeaderSubtitle { font-size: 12.5px !important; }
+/* Hero: 72 px, celá textová časť je tlačidlo */
+.g2-hero { padding: 10px 14px !important; gap: 0 !important; border-radius: 20px !important; }
+.g2-hero-top { gap: 12px; }
+.g2-hero-top .v5-baby-avatar { width: 52px !important; height: 52px !important; border-radius: 16px !important; }
+.g2-hero-top .v5-baby-avatar b { font-size: 20px !important; line-height: 1 !important; }
+.g2-hero-top .v5-baby-avatar small { font-size: 9.5px !important; }
+.g2-hero-text { flex: 1 1 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; min-height: 52px; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.g2-hero-text h1 { grid-column: 1; margin: 0; font-size: 17px !important; line-height: 1.25 !important; font-weight: 800; color: var(--v5-ink); }
+.g2-hero-sub { grid-column: 1; font-size: 13px; font-weight: 600; color: var(--v5-muted); }
+.g2-hero-text p { grid-column: 1 / -1; display: none; margin: 6px 0 0 !important; font-size: 13.5px; line-height: 1.4; }
+.g2-hero-more { grid-column: 2; grid-row: 1 / span 2; font-size: 13px; font-weight: 800; color: var(--v5-brand-dark); white-space: nowrap; }
+/* Skratky: ikona + názov (popis len pri bežiacom zázname alebo na vysokej obrazovke) */
+.g2-short { min-height: 68px !important; padding: 8px 6px !important; gap: 4px !important; justify-content: center; }
+.g2-short .g2-short-ic { width: 32px !important; height: 32px !important; }
+.g2-short strong { font-size: 13px !important; line-height: 1.15; text-align: center; }
+.g2-short small { display: none; }
+.g2-short.is-running small { display: block; font-size: 11.5px; }
+/* Kruh vyplní zvyšok */
+body:has(#home.view.active) .g2-ring-card { flex: 1 1 0 !important; min-height: 150px !important; display: flex !important; flex-direction: column; padding: 10px 12px !important; overflow: hidden; }
+body:has(#home.view.active) .g2-ring-card .v5-o-layout { flex: 1 1 0; min-height: 0; container-type: size; display: flex !important; align-items: center; justify-content: center; margin: 0 !important; }
+body:has(#home.view.active) .g2-ring-card .v5-o-ring-wrap { width: min(100cqw, 100cqh, 290px) !important; }
+.g2-ring-legend { display: none; }
+.g2-ring-legend button { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 12px; background: transparent; color: var(--v5-ink); font: 700 15px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; text-align: left; }
+.g2-leg-dot { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; opacity: .75; }
+.g2-leg-dot.is-done { opacity: 1; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent), 0 0 10px rgba(0,0,0,.12); }
+.g2-leg-1 { background: #df91a8; } .g2-leg-2 { background: #e6955a; } .g2-leg-3 { background: #768fdd; }
+/* „Dnes“ ako jeden riadok */
+.g2-today-row { flex-direction: row !important; align-items: center; gap: 6px !important; min-height: 60px; padding: 6px 6px 6px 14px !important; border-radius: 18px !important; }
+.g2-today-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; min-height: 48px; justify-content: center; padding: 0; border: 0; background: transparent; color: var(--v5-ink); text-align: left; cursor: pointer; font: inherit; }
+.g2-today-main small { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); }
+.g2-today-main strong { font-size: 14px; font-weight: 700; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g2-today-later { flex: 0 0 auto; min-width: 64px; min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--v5-muted); font: 700 13px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+.g2-today-arrow { flex: 0 0 auto; width: 32px; text-align: center; font-size: 20px; color: var(--v5-muted); }
+:is(.g2-hero-text, .g2-today-main, .g2-today-later, .g2-ring-legend button):focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; border-radius: 12px; }
+/* Moment len na vysokej obrazovke; inak je v Našich momentoch */
+.g2-home-moment { display: none; }
+.g2-home-moment:empty { display: none !important; }
+
+/* Nižšia obrazovka (< 720 px): kruh vľavo, čitateľná legenda vpravo, popisy na oblúku skryté */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2-ring-card { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(120px, auto); grid-template-rows: auto 1fr; column-gap: 10px; }
+  body:has(#home.view.active) .g2-ring-card .g2-ring-head { grid-column: 1 / -1; }
+  body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; height: 100%; }
+  body:has(#home.view.active) .g2-ring-card .v2-o-label { display: none; }
+  body:has(#home.view.active) .g2-ring-legend { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+  body:has(#home.view.active) .g2-ring-head span { display: none; }
+}
+@media (max-height: 659px) {
+  #v5Home { --g2-gap: 8px; }
+  #v5Header[data-home="true"] #v5HeaderSubtitle { display: none; }
+  .g2-short { min-height: 56px !important; flex-direction: row !important; }
+  .g2-short .g2-short-ic { width: 26px !important; height: 26px !important; }
+  .g2-hero-top .v5-baby-avatar { width: 44px !important; height: 44px !important; }
+  .g2-hero-text { min-height: 44px; }
+  .g2-today-row { min-height: 54px; }
+}
+@media (min-height: 720px) { #v5Home { --g2-gap: 14px; } }
+@media (min-height: 820px) {
+  .g2-hero-text p { display: block; }
+  .g2-short small { display: block; font-size: 11.5px; }
+  .g2-home-moment { display: block; }
+}
+@media (max-height: 539px) {
+  body:has(#home.view.active) #home.view.active { height: auto; overflow: visible; }
+  body:has(#home.view.active) main.main { padding-bottom: 150px !important; }
+  body:has(#home.view.active) .g2-ring-card { flex: 0 0 auto !important; min-height: 200px !important; }
+}
+/* Noc: legenda a riadky cez tokeny */
+body.night .g2-ring-legend button, body.night .g2-today-main { color: var(--v5-ink); }
+/* Domov: kompaktná hlavička (jeden riadok) a stred kruhu úmerný kruhu (nezakryje diely) */
+#v5Header[data-home="true"] { padding-top: 10px !important; }
+#v5Header[data-home="true"] .v5-header-brand { min-height: 0 !important; padding: 8px 14px !important; }
+body:has(#home.view.active) .g2-ring-card .g2-ring-center { width: 31% !important; min-width: 0 !important; padding: 4px !important; }
+body:has(#home.view.active) .g2-ring-card .v5-o-celebration { display: none; }
+@container (max-height: 230px) {
+  .g2-ring-center small { display: none !important; }
+  .g2-ring-center strong { font-size: 12.5px !important; }
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-brand { min-height: 0 !important; padding: 9px 16px !important; }
+body.v5-active:has(#home.view.active) { padding-bottom: 0 !important; }
+body.v5-active #v5Header[data-home="true"] { padding-top: calc(10px + env(safe-area-inset-top)) !important; align-items: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { flex-direction: row !important; align-items: center !important; gap: 6px !important; }
+body:has(#home.view.active) .g2-ring-center strong { white-space: nowrap; }
+body:has(#home.view.active) #home.view.active { overflow: hidden auto; overscroll-behavior: contain; } /* poistka: posun len ak si používateľka sama rozbalí obsah (napr. moment) */
