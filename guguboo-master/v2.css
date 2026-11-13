@@ -1,0 +1,1660 @@
+/* GUGUBOO V2 – nové časti (Journey plán, GuguChat, beta). Používa tokeny z v5-mobile.css,
+   aby V2 pôsobila ako „moje Guguboo, len inteligentnejšie“ – vrátane nočného režimu. */
+
+/* ——— Spodná lišta: 2 obľúbené · GuguChat · 2 obľúbené ——— */
+body.v5-active #v5BottomBar.v2-bottom-bar {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 76px repeat(2, minmax(0, 1fr));
+  align-items: end;
+}
+
+body.v5-active #v5BottomBar.v2-bottom-bar {
+  min-height: calc(74px + env(safe-area-inset-bottom));
+  padding: 10px 10px calc(6px + env(safe-area-inset-bottom));
+  column-gap: 2px;
+}
+
+body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar.v2-bottom-bar .v5-bottom-action {
+  min-height: 52px;
+  font-size: 11px;
+  letter-spacing: -.01em;
+}
+
+.v2-chat-shutter {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  margin-top: -14px;
+  padding: 0 0 2px;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--v5-brand-dark);
+  background: none;
+  border: 0;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Vzor: spúšť fotoaparátu – biely prstenec a plný farebný stred, ktorý sa pri stlačení zmenší. */
+.v2-chat-shutter-ring {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  background: var(--v5-surface);
+  border: 3px solid color-mix(in srgb, var(--v5-brand) 26%, var(--v5-surface));
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(95, 79, 177, .28);
+}
+
+.v2-chat-shutter-core {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(145deg, #9483e6 0%, var(--v5-brand) 48%, var(--v5-peach) 100%);
+  border-radius: 50%;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+
+.v2-chat-shutter-core svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.v2-chat-shutter:active .v2-chat-shutter-core { transform: scale(.88); }
+.v2-chat-shutter:focus-visible .v2-chat-shutter-ring { outline: 3px solid var(--v5-brand); outline-offset: 3px; }
+.v2-chat-shutter.active .v2-chat-shutter-core { box-shadow: 0 0 0 4px var(--v5-brand-soft); }
+.v2-chat-shutter-label { line-height: 1; }
+
+/* ——— Editor spodného menu v zásuvke ——— */
+.v2-favorite-editor {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 17px;
+}
+
+.v2-favorite-editor summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.v2-favorite-editor summary::-webkit-details-marker { display: none; }
+.v2-favorite-editor summary > span:last-child { display: grid; gap: 2px; }
+.v2-favorite-editor summary small { color: var(--v5-muted); font-weight: 600; }
+.v2-favorite-hint { margin: 10px 0; color: var(--v5-muted); font-size: 13px; line-height: 1.4; }
+
+/* ——— Domov: plán TERAZ / ČOSKORO ——— */
+.v2-journey {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.v2-journey > header small {
+  color: var(--v5-brand-dark);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.v2-journey > header h2 { margin: 2px 0 0; font-size: 23px; letter-spacing: -.02em; }
+
+.v2-journey-card {
+  overflow: hidden;
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-radius);
+  box-shadow: 0 10px 28px rgba(58, 44, 83, .08);
+}
+
+.v2-journey-main {
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 16px;
+  align-items: center;
+  gap: 12px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: none;
+  border: 0;
+}
+
+.v2-journey-main .v5-icon { flex: 0 0 42px; width: 42px; height: 42px; border-radius: 14px; }
+.v2-journey-text { display: grid; flex: 1; gap: 3px; min-width: 0; }
+.v2-journey-text strong { font-size: 15px; line-height: 1.25; }
+.v2-journey-text small { color: var(--v5-muted); font-size: 13px; line-height: 1.35; }
+
+.v2-journey-moment { background: linear-gradient(135deg, color-mix(in srgb, var(--v5-peach) 22%, var(--v5-surface)), var(--v5-surface) 70%); }
+
+.v2-journey-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px 70px;
+  flex-wrap: wrap;
+}
+
+.v2-journey-actions button {
+  min-height: 36px !important;
+  padding: 6px 12px;
+  color: var(--v5-brand-dark);
+  background: var(--v5-brand-soft);
+  border: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.v2-journey-soon {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--v5-surface) 70%, transparent);
+  border: 1px dashed var(--v5-line);
+  border-radius: 20px;
+}
+
+.v2-journey-soon h3 { margin: 0 0 2px; color: var(--v5-muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+
+.v2-journey-soon button {
+  display: flex;
+  min-height: 44px;
+  padding: 6px 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: none;
+  border: 0;
+  font-weight: 700;
+}
+
+.v2-journey-soon em { flex: none; color: var(--v5-brand-dark); font-size: 12px; font-style: normal; font-weight: 800; }
+
+.v2-journey-later {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--v5-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.v2-journey-later button,
+.v2-beta-note button {
+  min-height: 40px !important;
+  padding: 6px 14px;
+  color: var(--v5-brand-dark);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.v2-journey-empty { margin: 0; padding: 16px; color: var(--v5-muted); background: var(--v5-surface); border-radius: var(--v5-radius); }
+
+.v2-beta-note {
+  display: flex;
+  margin: 18px 0 8px;
+  padding: 10px 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--v5-muted);
+  background: color-mix(in srgb, var(--v5-warning) 9%, var(--v5-surface));
+  border: 1px solid color-mix(in srgb, var(--v5-warning) 22%, transparent);
+  border-radius: 16px;
+  font-size: 12px;
+}
+
+.v2-beta-note strong { color: var(--v5-ink); }
+
+/* ——— GuguChat ——— */
+.v2-chat { display: grid; gap: 12px; padding-bottom: 12px; }
+
+.v2-chat-head { display: flex; align-items: center; gap: 12px; }
+.v2-chat-head img { width: 54px; height: auto; }
+.v2-chat-head div { display: grid; gap: 2px; }
+.v2-chat-head strong { font-size: 20px; }
+.v2-chat-head small { color: var(--v5-muted); font-size: 12px; line-height: 1.35; }
+
+.v2-chat-log { display: grid; gap: 10px; }
+
+.v2-msg {
+  max-width: 92%;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  border-radius: 20px;
+}
+
+.v2-msg p { margin: 0; }
+
+.v2-msg-user {
+  justify-self: end;
+  color: #fff;
+  background: var(--v5-brand);
+  border-bottom-right-radius: 6px;
+}
+
+.v2-msg-bot {
+  justify-self: start;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 8px 22px rgba(58, 44, 83, .06);
+}
+
+.v2-level-urgent { border: 1px solid color-mix(in srgb, var(--v5-brand) 35%, transparent); background: color-mix(in srgb, var(--v5-brand-soft) 55%, var(--v5-surface)); }
+.v2-level-support { background: color-mix(in srgb, var(--v5-peach) 16%, var(--v5-surface)); }
+.v2-level-unknown { background: var(--v5-surface-soft); }
+
+.v2-chat-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+.v2-chat-action {
+  display: inline-flex;
+  min-height: 38px !important;
+  padding: 7px 13px;
+  align-items: center;
+  color: var(--v5-brand-dark);
+  background: var(--v5-brand-soft);
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.v2-chat-action-urgent { color: #fff; background: var(--v5-brand-dark); }
+
+.v2-chat-help-link {
+  display: inline;
+  min-height: 0 !important;
+  padding: 0;
+  color: var(--v5-brand-dark);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.v2-chat-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.v2-chat-chips::-webkit-scrollbar { display: none; }
+.v2-chat-chips button {
+  flex: none;
+  min-height: 38px !important;
+  padding: 7px 13px;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.v2-chat-form { display: flex; gap: 8px; }
+.v2-chat-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 14px;
+  color: var(--v5-ink);
+  background: var(--v5-surface);
+  border: 1px solid var(--v5-line);
+  border-radius: 16px;
+  font: inherit;
+}
+
+.v2-chat-form .v5-primary { flex: none; min-height: 48px; }
+.v2-chat-disclaimer { margin: 0; color: var(--v5-muted); font-size: 12px; line-height: 1.4; }
+
+/* ——— Prechod „Bábätko je na svete“ ——— */
+.v2-birth-overlay {
+  position: fixed;
+  z-index: 260;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(41, 36, 58, .32);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.v2-birth-overlay.open { display: flex; }
+
+.v2-birth-sheet {
+  position: relative;
+  width: min(100%, 500px);
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 26px 20px calc(22px + env(safe-area-inset-bottom));
+  color: var(--v5-ink);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--v5-peach) 18%, var(--v5-surface)) 0%, var(--v5-surface) 38%);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -18px 50px rgba(41, 36, 58, .18);
+  animation: v2-sheet-in .28s ease-out;
+}
+
+@keyframes v2-sheet-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .v2-birth-sheet { animation: none; } }
+
+.v2-birth-close { position: absolute; top: 14px; right: 14px; }
+.v2-birth-head { display: grid; gap: 6px; margin-bottom: 16px; text-align: center; }
+.v2-birth-heart { font-size: 34px; line-height: 1; color: var(--v5-peach); }
+.v2-birth-head h2 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+.v2-birth-head p { margin: 0; color: var(--v5-muted); line-height: 1.45; }
+.v2-birth-form { display: grid; gap: 12px; }
+.v2-birth-form label { display: grid; gap: 6px; font-weight: 800; font-size: 14px; }
+.v2-birth-form input { min-height: 48px; padding: 10px 12px; font: inherit; color: var(--v5-ink); background: var(--v5-surface); border: 1px solid var(--v5-line); border-radius: 14px; }
+.v2-birth-form small { color: var(--v5-muted); font-weight: 600; }
+.v2-birth-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.v2-birth-error { margin: 0; color: var(--v5-warning); font-weight: 700; }
+.v2-birth-note { margin: 14px 0 0; color: var(--v5-muted); font-size: 13px; text-align: center; }
+.v2-birth-actions { display: grid; gap: 10px; }
+.v2-birth-actions button { min-height: 50px; }
+
+.v2-journey-transition {
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 16px;
+  align-items: center;
+  gap: 12px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--v5-peach) 26%, var(--v5-surface)), var(--v5-surface));
+  border: 1px solid color-mix(in srgb, var(--v5-peach) 45%, transparent);
+  border-radius: 20px;
+}
+
+.v2-journey-transition > span:first-child { font-size: 24px; color: var(--v5-peach); }
+.v2-journey-transition > span:nth-child(2) { display: grid; flex: 1; gap: 2px; }
+.v2-journey-transition small { color: var(--v5-muted); font-size: 12px; }
+
+.v2-help-contacts { display: grid; gap: 8px; margin: 12px 0; }
+.v2-help-contacts > * { display: flex; min-height: 48px; align-items: center; justify-content: center; text-decoration: none; }
+
+/* ——— Tento týždeň (tehotenstvo) ——— */
+.v2-week {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 4px;
+  padding: 18px;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--v5-brand-soft) 70%, var(--v5-surface)), var(--v5-surface) 65%);
+  border: 1px solid var(--v5-line);
+  border-radius: var(--v5-radius);
+  box-shadow: 0 10px 28px rgba(58, 44, 83, .07);
+}
+
+.v2-week > header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.v2-week > header small { flex-basis: 100%; color: var(--v5-brand-dark); font-size: 12px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.v2-week > header h2 { margin: 0; font-size: 23px; letter-spacing: -.02em; }
+.v2-week-size { color: var(--v5-muted); font-size: 13px; font-weight: 700; }
+.v2-week-milestone { margin: 0; color: var(--v5-brand-dark); font-weight: 800; font-size: 14px; }
+.v2-week-block { display: grid; gap: 3px; }
+.v2-week-block strong { font-size: 13px; color: var(--v5-muted); text-transform: uppercase; letter-spacing: .03em; }
+.v2-week-block p { margin: 0; line-height: 1.5; }
+.v2-week-more { display: grid; gap: 10px; }
+.v2-week-more summary { min-height: 40px; display: flex; align-items: center; color: var(--v5-brand-dark); font-weight: 800; cursor: pointer; }
+.v2-week-more[open] summary { margin-bottom: 4px; }
+.v2-week-tip p { color: var(--v5-ink); }
+.v2-source { justify-self: start; color: var(--v5-muted); font-size: 12px; text-decoration: none; border-bottom: 1px dotted currentColor; }
+
+/* ——— Life Admin detail ——— */
+.v2-admin-head { display: grid; gap: 6px; margin: 4px 36px 14px 0; }
+.v2-admin-head small { color: var(--v5-brand-dark); font-size: 12px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.v2-admin-head h2 { margin: 0; font-size: 24px; letter-spacing: -.02em; }
+.v2-admin-head p { margin: 0; color: var(--v5-muted); line-height: 1.45; }
+.v2-admin-status { margin: 0 0 12px; padding: 10px 12px; color: var(--v5-ink); background: color-mix(in srgb, var(--v5-warning) 10%, var(--v5-surface)); border-radius: 12px; font-size: 13px; }
+.v2-admin-rows { display: grid; gap: 12px; margin-bottom: 14px; }
+.v2-admin-row { display: grid; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid var(--v5-line); }
+.v2-admin-row:last-child { border-bottom: 0; }
+.v2-admin-row strong { color: var(--v5-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+.v2-admin-row p, .v2-admin-row ul { margin: 0; line-height: 1.5; }
+.v2-admin-row ul { padding-left: 18px; }
+.v2-admin-sheet .v2-source { display: inline-block; margin-bottom: 14px; }
+.v2-admin-sheet .v2-birth-actions a { display: flex; min-height: 50px; align-items: center; justify-content: center; text-decoration: none; }
+
+/* ——— Spätná väzba z bety ——— */
+.v2-beta-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.v2-birth-form fieldset { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
+.v2-birth-form legend { margin-bottom: 6px; font-weight: 800; font-size: 14px; }
+.v2-feedback-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.v2-feedback-option { position: relative; }
+.v2-feedback-option input { position: absolute; opacity: 0; }
+.v2-feedback-option span { display: inline-flex; min-height: 44px; padding: 8px 16px; align-items: center; background: var(--v5-surface); border: 1px solid var(--v5-line); border-radius: 999px; font-weight: 700; cursor: pointer; }
+.v2-feedback-option input:checked + span { color: #fff; background: var(--v5-brand); border-color: var(--v5-brand); }
+.v2-feedback-option input:focus-visible + span { outline: 3px solid var(--v5-brand); outline-offset: 2px; }
+.v2-birth-form textarea { padding: 10px 12px; font: inherit; color: var(--v5-ink); background: var(--v5-surface); border: 1px solid var(--v5-line); border-radius: 14px; resize: vertical; }
+
+.v2-admin-auto { color: var(--v5-success); background: color-mix(in srgb, var(--v5-success) 10%, var(--v5-surface)); font-weight: 700; }
+
+.v2-admin-group { display: grid; gap: 8px; margin-bottom: 18px; }
+.v2-admin-group h3 { margin: 0; font-size: 16px; }
+.v2-admin-group > p { margin: 0 0 4px; color: var(--v5-muted); font-size: 13px; line-height: 1.4; }
+.v2-admin-list-item { display: flex; width: 100%; min-height: 58px; padding: 10px 14px; align-items: center; justify-content: space-between; gap: 10px; color: var(--v5-ink); text-align: left; background: var(--v5-surface); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-admin-list-item > span { display: grid; gap: 2px; }
+.v2-admin-list-item small { color: var(--v5-muted); font-size: 12px; }
+.v2-admin-list-item em { flex: none; color: var(--v5-brand-dark); font-size: 12px; font-style: normal; font-weight: 800; }
+
+/* ——— Kruh: dve oddelené zobrazenia Príprava / Pohoda ——— */
+.v2-circle-tabs { display: flex; margin: 0 auto 6px; padding: 4px; width: fit-content; gap: 4px; background: var(--v5-surface-soft); border-radius: 999px; }
+.v2-circle-tabs button { min-height: 38px !important; padding: 6px 18px; color: var(--v5-muted); background: none; border: 0; border-radius: 999px; font-size: 13px; font-weight: 800; }
+.v2-circle-tabs button.active { color: var(--v5-brand-dark); background: var(--v5-surface); box-shadow: 0 4px 12px rgba(58, 44, 83, .1); }
+.v2-circle-hint { margin: 0 0 4px; color: var(--v5-muted); font-size: 12px; text-align: center; line-height: 1.4; }
+
+/* Odkaz na zdroj: globálne pravidlo .view a {min-height:44px} ho inak natiahne a čiara odskočí od textu. */
+.v2-source { min-height: 0 !important; padding: 2px 0; border-bottom: 0; text-decoration: underline dotted; text-underline-offset: 3px; line-height: 1.4; }
+
+/* ——— Úchytka zásuvky (bez textu) – nad stredom lišty, nad tlačidlom GuguChat ——— */
+body.v5-active #v5BottomBar.v2-bottom-bar .v2-chat-shutter { margin-top: -6px; }
+.v2-bar-grip {
+  position: absolute;
+  z-index: 4;
+  top: -22px;
+  left: 50%;
+  display: grid;
+  width: 64px;
+  min-height: 20px !important;
+  height: 20px;
+  padding: 0;
+  place-items: center;
+  transform: translateX(-50%);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.v2-bar-grip span {
+  width: 40px;
+  height: 5px;
+  background: color-mix(in srgb, var(--v5-muted) 45%, transparent);
+  border-radius: 999px;
+  transition: width .15s ease, background .15s ease;
+}
+.v2-bar-grip:hover span, .v2-bar-grip:focus-visible span { width: 52px; background: var(--v5-brand); }
+.v2-bar-grip:focus-visible { outline: 2px solid var(--v5-brand); outline-offset: 2px; border-radius: 999px; }
+
+/* ——— Číslo týždňa namiesto ovocného obrázka (pred narodením; po narodení je tu fotka dieťaťa) ——— */
+.v2-week-badge {
+  display: inline-grid !important;
+  place-content: center;
+  gap: 1px;
+  line-height: 1 !important;
+  color: var(--v5-brand-dark, #5b4ca3);
+  background: linear-gradient(145deg, #f3eeff, #fff1ea) !important;
+  background-image: linear-gradient(145deg, #f3eeff, #fff1ea) !important;
+  text-align: center;
+}
+.v2-week-badge b { font: 900 22px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: -.02em; }
+.v2-week-badge small { font: 800 8px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted, #7a7383); }
+.welcome-fruit-avatar-image.v2-week-badge b { font-size: 26px; }
+.fruit-icon.v2-week-badge { width: 88px; height: 88px; margin-inline: auto; border-radius: 28px; box-shadow: 0 12px 28px rgba(72, 55, 100, .12); }
+.fruit-icon.v2-week-badge b { font-size: 34px; }
+.baby-growth-fruit.v2-week-badge { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; }
+.baby-growth-fruit.v2-week-badge b { font-size: 12px; }
+.baby-growth-fruit.v2-week-badge small { display: none; }
+
+/* Tehotenská knižka: veľkosť z NHS priamo v hlavičke (bez obrázka ovocia). */
+.v5-book-hero { grid-template-columns: minmax(0, 1fr); }
+.v2-book-size {
+  display: grid;
+  gap: 3px;
+  width: fit-content;
+  margin-top: 12px !important;
+  padding: 9px 12px;
+  color: var(--v5-ink) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.3;
+  background: rgba(255, 255, 255, .72);
+  border-radius: 14px 14px 14px 5px;
+}
+.v2-book-size span { color: var(--v5-brand-dark, #5b4ca3); font-size: 9px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+/* Okienko po ťuknutí na týždeň: bez druhého odznaku (ten istý je hneď nad ním). */
+.v5-avatar-popover { grid-template-columns: minmax(0, 1fr); }
+
+/* ——— Organizácia: popis úlohy a zoznam položiek (fajka sa dá zrušiť) ——— */
+.v5-org-next-why { max-width: 320px; margin: -2px 0 0; color: var(--v5-muted); font-size: 13px; line-height: 1.45; }
+.v5-org-next-card .v5-secondary { width: min(100%, 320px); }
+.v5-o-modal-confirm .v5-secondary { margin-top: 8px; }
+.v5-org-task-list { display: grid; gap: 8px; margin-top: 12px; }
+.v5-org-task-list button {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 30px;
+  gap: 11px;
+  align-items: center;
+  min-height: 58px;
+  padding: 9px 12px;
+  color: var(--v5-ink);
+  text-align: left;
+  background: var(--v5-surface, #fff);
+  border: 1px solid var(--v5-line);
+  border-radius: 16px;
+}
+.v5-org-task-list .v5-icon { width: 40px; height: 40px; border-radius: 13px; }
+.v5-org-task-list strong { font-size: 14px; line-height: 1.3; }
+.v5-org-task-list b {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: #fff;
+  border: 2px solid var(--v5-line);
+  border-radius: 50%;
+}
+.v5-org-task-list button.is-done b { background: var(--v5-success, #3f9d6b); border-color: var(--v5-success, #3f9d6b); }
+.v5-org-task-list button.is-done strong { color: var(--v5-muted); }
+.v5-org-task-list + .v5-check-categories-button { margin-top: 12px; }
+
+/* ——— Kruh: výraznejšie a odlišné farby segmentov + názov na segmente (pripomienka #9) ———
+   1 = ružová (Oddych/Zotavenie), 2 = broskyňová (Telo/Výživa), 3 = modrá (Opora). */
+.v5-o-sector-base-1 { fill: #fcd9e3; opacity: 1; }
+.v5-o-sector-base-2 { fill: #fde4cc; opacity: 1; }
+.v5-o-sector-base-3 { fill: #dbe3fa; opacity: 1; }
+.v2-o-label { pointer-events: none; }
+.v2-o-label rect { fill: rgba(255, 255, 255, .92); stroke-width: 1.5; }
+.v2-o-label text { font: 900 17px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .01em; }
+.v2-o-label-1 rect { stroke: #e9a0b6; } .v2-o-label-1 text { fill: #a8486a; }
+.v2-o-label-2 rect { stroke: #eeb07a; } .v2-o-label-2 text { fill: #9a5a22; }
+.v2-o-label-3 rect { stroke: #98abe6; } .v2-o-label-3 text { fill: #3f57a8; }
+.v5-o-dot { background: #e98aa8; }
+.v5-o-movement .v5-o-dot, .v5-o-documents .v5-o-dot, .v5-o-hospital .v5-o-dot { background: #ee9f5f; }
+.v5-o-health .v5-o-dot, .v5-o-family .v5-o-dot, .v5-o-admin .v5-o-dot { background: #7d94dc; }
+.v5-o-legend-item.v5-o-movement { background: #fff6ee; border-color: rgba(238, 159, 95, .3); }
+.v5-o-legend-item.v5-o-health { background: #f1f4ff; border-color: rgba(125, 148, 220, .3); }
+.v5-o-simple-head.v5-o-movement { background: linear-gradient(145deg, #fff3e6, #fffaf5); border-color: rgba(238, 159, 95, .3); }
+.v5-o-simple-head.v5-o-health { background: linear-gradient(145deg, #eef2ff, #fbfcff); border-color: rgba(125, 148, 220, .3); }
+.v5-o-movement .v5-o-simple-icon { color: #a8622a; }
+.v5-o-health .v5-o-simple-icon { color: #4a62b0; }
+body.v5-active.night .v5-o-sector-base-1 { fill: #4a3040; }
+body.v5-active.night .v5-o-sector-base-2 { fill: #4a3a2c; }
+body.v5-active.night .v5-o-sector-base-3 { fill: #2f3650; }
+body.v5-active.night .v2-o-label rect { fill: rgba(30, 27, 40, .9); }
+
+/* ——— Pohoda: veľké „+“ / zelená fajka na karte, pitný režim (pripomienky #11, #12) ——— */
+.v5-o-day-row b { right: 9px; bottom: 5px; font-size: 22px; line-height: 1; }
+.v5-o-day-row.is-done b { color: #3f9d6b; }
+.v2-water-tile small { margin-top: 2px; color: var(--v5-ink); font-size: 9px; }
+.v2-water-bar { display: block; width: 72%; height: 5px; margin: 6px auto 0; overflow: hidden; background: rgba(125, 148, 220, .18); border-radius: 999px; }
+.v2-water-bar span { display: block; height: 100%; background: linear-gradient(90deg, #93a8e6, #5f7fd6); border-radius: inherit; transition: width .25s ease; }
+.v2-water-tile.is-done .v2-water-bar span { background: #3f9d6b; }
+.v2-water-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--v5-surface, #fff);
+  border: 1px solid var(--v5-line);
+  border-radius: 18px;
+}
+.v2-water-count { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 10px; align-items: center; text-align: center; }
+.v2-water-count button {
+  width: 44px;
+  height: 44px;
+  color: #4a62b0;
+  background: #eef2ff;
+  border: 0;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 900;
+}
+.v2-water-count button:disabled { opacity: .4; }
+.v2-water-count strong { color: var(--v5-ink); font-size: 24px; line-height: 1.1; }
+.v2-water-count small { display: block; color: var(--v5-muted); font-size: 11px; font-weight: 800; }
+.v2-water-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.v2-water-settings label { display: grid; gap: 4px; color: var(--v5-muted); font-size: 11px; font-weight: 800; }
+.v2-water-panel > p { margin: 0; color: var(--v5-muted); font-size: 11px; line-height: 1.45; }
+
+/* ——— Domov: Spánok/Kŕmenie/Prebalenie na dva riadky – trvanie veľké, čas menší (pripomienka #15) ——— */
+.v2-glance-time { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 11px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+
+/* ——— Organizácia: odkaz na overený detail dokladu (#16) ——— */
+.v5-org-info {
+  min-height: 0 !important;
+  padding: 6px 4px;
+  color: var(--v5-brand-dark, #5b4ca3);
+  background: none;
+  border: 0;
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
+}
+.v5-org-info-list { display: grid; width: min(100%, 320px); gap: 6px; }
+.v5-org-info-list .v5-org-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  text-align: left;
+  text-decoration: none;
+  background: rgba(255, 255, 255, .8);
+  border: 1px solid var(--v5-line);
+  border-radius: 12px;
+}
+
+/* ——— Denný súhrn (#13) ——— */
+.v2-summary-card.is-ready { background: linear-gradient(135deg, #f3eeff, #fff3ea); border-color: rgba(123, 107, 200, .3); }
+.v2-summary-nav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; margin-top: 6px; text-align: center; }
+.v2-summary-nav strong { color: var(--v5-ink); font-size: 16px; text-transform: capitalize; }
+.v2-summary-nav button { width: 44px; height: 44px; color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border: 0; border-radius: 50%; font-size: 22px; font-weight: 900; }
+.v2-summary-nav button:disabled { opacity: .35; }
+.v2-summary-empty { margin: 10px 2px 0; color: var(--v5-muted); font-size: 13px; line-height: 1.45; }
+.v2-summary-block { margin-top: 12px; padding: 12px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 18px; }
+.v2-summary-block h3 { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; color: var(--v5-ink); font-size: 14px; }
+.v2-summary-block h3 svg { width: 18px; height: 18px; }
+.v2-summary-block > p { margin: 8px 0 0; color: var(--v5-muted); font-size: 12px; }
+.v2-summary-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.v2-summary-stats div { display: grid; gap: 2px; padding: 8px 6px; text-align: center; background: #faf8ff; border-radius: 12px; }
+.v2-summary-stats b { color: var(--v5-ink); font-size: 17px; line-height: 1.15; }
+.v2-summary-stats span { color: var(--v5-muted); font-size: 10px; font-weight: 800; }
+.v2-summary-cheer { margin: 14px 4px 4px; color: var(--v5-brand-dark, #5b4ca3); font-size: 16px; font-weight: 900; text-align: center; }
+.v2-summary-time { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; color: var(--v5-muted); font-size: 12px; font-weight: 800; }
+.v2-summary-note { margin: 8px 4px 0; color: var(--v5-muted); font-size: 11px; line-height: 1.45; text-align: center; }
+body.v5-active.night .v2-summary-stats div { background: rgba(255, 255, 255, .05); }
+.v2-summary-block h3 svg { fill: none; stroke: var(--v5-brand-dark, #5b4ca3); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.v2-summary-time select { width: auto; min-width: 96px; }
+
+/* ——— Onboarding: krajina – jeden výber, poloha len ako voliteľná skratka ——— */
+.v2-location-card { display: grid; gap: 10px; }
+.v2-location-card #welcomeLocateBtn { min-height: 36px; font-size: 13px; }
+.v2-location-card #welcomeLocateBtn::before { content: "⌖ "; text-decoration: none; }
+.v2-location-card .welcome-location-status { margin: 0; padding-top: 10px; border-top: 1px solid var(--v5-line, rgba(101, 87, 132, .12)); font-size: 12px; }
+.v2-location-card .welcome-location-status:empty { display: none; }
+
+/* Názvy segmentov po oblúku kruhu – bez rámčekov. */
+.v2-o-label text { font: 900 18px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .12em; }
+.v2-o-label-1 text { fill: #b14d70; }
+.v2-o-label-2 text { fill: #a3602a; }
+.v2-o-label-3 text { fill: #4560b0; }
+body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .82); }
+
+/* Tlačidlá pod kruhom majú farbu svojho segmentu podľa poradia – v Pohode, Príprave aj Organizácii. */
+.v5-o-legend-item.v2-o-legend-1 { background: #fff4f7; border-color: rgba(233, 138, 168, .3); }
+.v5-o-legend-item.v2-o-legend-2 { background: #fff6ee; border-color: rgba(238, 159, 95, .3); }
+.v5-o-legend-item.v2-o-legend-3 { background: #f1f4ff; border-color: rgba(125, 148, 220, .3); }
+.v2-o-legend-1 .v5-o-dot { background: #e98aa8; }
+.v2-o-legend-2 .v5-o-dot { background: #ee9f5f; }
+.v2-o-legend-3 .v5-o-dot { background: #7d94dc; }
+body.v5-active.night .v5-o-legend-item.v2-o-legend-1 { background: rgba(233, 138, 168, .12); }
+body.v5-active.night .v5-o-legend-item.v2-o-legend-2 { background: rgba(238, 159, 95, .12); }
+body.v5-active.night .v5-o-legend-item.v2-o-legend-3 { background: rgba(125, 148, 220, .12); }
+
+/* Názvy v kruhu: písmo appky (Montserrat), jemnejšie a svetlejšie. */
+.v2-o-label text { font: 600 17px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .04em; }
+.v2-o-label-1 text { fill: #cf7d98; }
+.v2-o-label-2 text { fill: #cf8a4f; }
+.v2-o-label-3 text { fill: #7088cf; }
+
+/* ——— Jednotný vzhľad okien (Samuel 11. 10.) ———
+   Celostránkové okná (profily, nákup, cestovanie, GuguChat, staré obrazovky…) dostanú rovnakú
+   hlavičku ako moderné okná (Kalendár, Súhrn dňa): veľký názov vľavo, okrúhle tlačidlá späť a ×,
+   bez nálepky „Aplikácia“, bez zdvojeného obrovského nadpisu a bez pruhu pri jednokrokových oknách. */
+body.v5-active .v5-universal-window-head {
+  min-height: 68px;
+  margin: 0 -14px 6px;
+  padding: 12px 14px 8px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 12px;
+  border-bottom: 0;
+}
+body.v5-active .v5-universal-window-head > div { text-align: left; }
+body.v5-active .v5-universal-window-head small { display: none; }
+body.v5-active .v5-universal-window-head strong {
+  margin: 0;
+  color: var(--v5-ink);
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+}
+body.v5-active .v5-universal-back,
+body.v5-active .v5-universal-cancel {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+}
+body.v5-active .v5-universal-back span { display: none; }
+body.v5-active .v5-universal-back svg { width: 18px; height: 18px; }
+body.v5-active .v5-universal-cancel { font-size: 22px; }
+
+/* Obsah okna: názov je už v hlavičke – nálepku skryť, nadpis zmenšiť na podnadpis. */
+body.v5-app-window-open .view.active .v5-flow-head .v5-eyebrow { display: none; }
+body.v5-app-window-open .view.active .v5-flow-head { margin-top: 2px; }
+body.v5-app-window-open .view.active .v5-flow-head h1 { margin: 0 0 4px; font-size: 20px; line-height: 1.22; letter-spacing: -.005em; }
+body.v5-app-window-open .view.active .v5-flow-head p { margin: 0; font-size: 13px; line-height: 1.45; }
+/* Pruh priebehu má zmysel len pri viacerých krokoch. */
+body.v5-app-window-open .view.active .v5-flow-progress[style="--steps:1"] { display: none; }
+/* Staré obrazovky v okne: nadpisy panelov v rovnakej veľkosti ako v nových oknách. */
+body.v5-app-window-open .view.active .panel h3 { margin-bottom: 6px; font-size: 19px; line-height: 1.25; letter-spacing: -.005em; }
+body.v5-app-window-open .view.active .panel h3 + .muted,
+body.v5-app-window-open .view.active .panel h3 + p { font-size: 13px; }
+/* Staré „karty s číslom“ (Aktuálne údaje a pod.) – kompaktne po dvoch, ako dlaždice na domove. */
+body.v5-app-window-open .view.active .age-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+body.v5-app-window-open .view.active .age-card { min-height: 0; padding: 10px 12px; border-radius: 14px; }
+body.v5-app-window-open .view.active .age-card b { font-size: 18px; line-height: 1.2; }
+body.v5-app-window-open .view.active .age-card span { font-size: 11px; }
+/* GuguChat v okne: názov je už v hlavičke okna – pod ňou len krátky popis. */
+body.v5-app-window-open .view.active .v2-chat-head img,
+body.v5-app-window-open .view.active .v2-chat-head strong { display: none; }
+body.v5-app-window-open .view.active .v2-chat-head { padding-top: 0; }
+body.v5-app-window-open .view.active .v2-chat-head small { font-size: 13px; }
+/* Dlhý názov okna sa zalomí na dva riadky namiesto „Pomoc a staro…“. */
+body.v5-active .v5-universal-window-head strong {
+  display: -webkit-box;
+  font-size: 22px;
+  white-space: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ——— Miniaplikácia „Aké veľké je bábätko“ ——— */
+.v2-size-nav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; text-align: center; }
+.v2-size-nav strong { color: var(--v5-ink); font-size: 16px; }
+.v2-size-nav button { width: 44px; height: 44px; color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border: 0; border-radius: 50%; font-size: 22px; font-weight: 900; }
+.v2-size-nav button:disabled { opacity: .35; }
+.v2-size-hero { display: grid; justify-items: center; gap: 6px; margin-top: 12px; padding: 22px 16px; text-align: center; background: linear-gradient(145deg, #f3eeff, #fff3ea); border: 1px solid var(--v5-line); border-radius: 26px; }
+.v2-size-emoji { display: grid; width: 116px; height: 116px; place-items: center; font-size: 68px; line-height: 1; background: rgba(255, 255, 255, .85); border-radius: 50%; box-shadow: 0 12px 28px rgba(72, 58, 103, .1); }
+.v2-size-hero h2 { margin: 8px 0 0; color: var(--v5-ink); font-size: 22px; line-height: 1.2; }
+.v2-size-hero p { margin: 0; color: var(--v5-ink); font-size: 15px; font-weight: 700; }
+.v2-size-hero small { color: var(--v5-muted); font-size: 11px; }
+.v2-size-dev { margin-top: 12px; padding: 14px 16px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 20px; }
+.v2-size-dev h3 { margin: 0 0 8px; color: var(--v5-ink); font-size: 16px; }
+.v2-size-dev p { position: relative; margin: 0 0 8px; padding-left: 16px; color: var(--v5-ink); font-size: 14px; line-height: 1.45; }
+.v2-size-dev p::before { content: ""; position: absolute; top: 8px; left: 2px; width: 6px; height: 6px; background: var(--v5-brand, #7b6bc8); border-radius: 50%; }
+#v5BabySizeContent > .v5-secondary { width: 100%; margin-top: 12px; }
+button.v2-book-size { border: 0; text-align: left; cursor: pointer; }
+
+/* ——— Kalendár: jedno miesto pre všetky termíny a pripomienky ——— */
+.v2-cal-tabs { margin: 4px auto 0; }
+.v2-cal-add { width: 100%; margin-top: 12px; }
+.v2-cal-group { margin-top: 16px; }
+.v2-cal-group h3 { margin: 0 0 8px; color: var(--v5-ink); font-size: 15px; text-transform: none; }
+.v2-cal-group h3::first-letter { text-transform: uppercase; }
+.v2-cal-group > p { margin: -4px 0 8px; color: var(--v5-muted); font-size: 12px; }
+.v2-cal-item { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 11px; align-items: start; margin-bottom: 8px; padding: 11px 12px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-cal-item .v5-icon { width: 40px; height: 40px; border-radius: 13px; }
+.v2-cal-item strong { display: block; color: var(--v5-ink); font-size: 14px; line-height: 1.3; }
+.v2-cal-item small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12px; }
+.v2-cal-item.is-done strong { color: var(--v5-muted); text-decoration: line-through; }
+.v2-cal-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.v2-cal-actions button { min-height: 32px !important; padding: 5px 11px; color: var(--v5-brand-dark, #5b4ca3); background: #f3f0ff; border: 0; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.v2-cal-actions .v2-cal-delete { margin-left: auto; color: var(--v5-muted); background: transparent; font-size: 18px; }
+.v2-cal-done { margin-top: 16px; padding: 4px 12px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-cal-done summary { padding: 10px 0; color: var(--v5-muted); font-size: 13px; font-weight: 800; cursor: pointer; }
+.v2-cal-note { margin: 16px 4px 0; color: var(--v5-muted); font-size: 11px; line-height: 1.45; text-align: center; }
+.v2-cal-month-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-top: 14px; text-align: center; }
+.v2-cal-month-head strong { color: var(--v5-ink); font-size: 16px; text-transform: capitalize; }
+.v2-cal-month-head button { width: 44px; height: 44px; color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border: 0; border-radius: 50%; font-size: 22px; font-weight: 900; }
+.v2-cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 10px; text-align: center; }
+.v2-cal-grid b { padding: 4px 0; color: var(--v5-muted); font-size: 11px; }
+.v2-cal-grid button { position: relative; min-height: 40px !important; aspect-ratio: 1; padding: 0; color: var(--v5-ink); background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 12px; font-size: 13px; font-weight: 700; }
+.v2-cal-grid button i { position: absolute; bottom: 5px; left: 50%; width: 6px; height: 6px; transform: translateX(-50%); background: var(--v5-brand, #7b6bc8); border-radius: 50%; }
+.v2-cal-grid button.is-today { border-color: var(--v5-brand, #7b6bc8); }
+.v2-cal-grid button.is-selected { color: #fff; background: var(--v5-brand, #7b6bc8); }
+.v2-cal-grid button.is-selected i { background: #fff; }
+.v2-cal-home-today { border-color: rgba(123, 107, 200, .35); background: linear-gradient(135deg, #f3eeff, #fff); }
+.v2-cal-item { position: relative; padding-right: 40px; }
+.v2-cal-actions .v2-cal-delete { position: absolute; top: 6px; right: 6px; width: 32px; margin: 0; padding: 0; }
+
+/* ——— Súkromný denník: otázka na dnes, listy pre bábätko, filter ——— */
+.private-prompt-card { background: linear-gradient(145deg, #f3eeff, #fff4ec); }
+.private-prompt-card > small { color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.private-prompt-card h2 { margin: 6px 0 12px !important; font-size: 18px !important; line-height: 1.35; }
+.private-prompt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.private-prompt-actions button { padding: 9px 16px; border: 1px solid var(--private-line, var(--v5-line)); border-radius: 999px; background: #fff; color: var(--v5-ink); font-weight: 800; }
+.private-prompt-actions .private-primary { border: 0; color: #fff; background: var(--private-accent, var(--v5-brand)); }
+.private-letter-button { width: 100%; margin-top: 12px; padding: 12px 14px; color: #8a4f66; background: rgba(255, 255, 255, .85); border: 1px dashed rgba(207, 125, 152, .55); border-radius: 14px; font-weight: 800; text-align: left; }
+.private-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.private-filter button { padding: 7px 13px; color: var(--v5-ink); background: #fff; border: 1px solid var(--private-line, var(--v5-line)); border-radius: 999px; font-size: 13px; font-weight: 700; }
+.private-filter button[aria-pressed="true"] { color: var(--v5-brand-dark, #5b4ca3); background: #f1edff; border-color: var(--v5-brand, #7b6bc8); }
+.private-letter { border-color: rgba(207, 125, 152, .4); background: #fff9fb; }
+.private-entry-prompt { display: block; margin-bottom: 6px; color: var(--v5-muted); font-size: 13px; }
+.private-muted { color: var(--v5-muted); }
+.v2-summary-diary { width: 100%; margin-top: 10px; }
+
+/* ——— Zoznamy Prípravy: skupiny a zdroj ——— */
+.v2-check-lead { margin: 4px 2px 0; color: var(--v5-muted); font-size: 13px; }
+.v2-check-group { display: flex; justify-content: space-between; align-items: baseline; margin: 14px 2px 2px; color: var(--v5-ink); font-size: 15px; }
+.v2-check-group:first-child { margin-top: 4px; }
+.v2-check-group small { color: var(--v5-muted); font-size: 12px; font-weight: 800; }
+.v5-checklist-detail > .v2-source { display: block; margin: 10px 2px 0; }
+/* Dlhé zoznamy: kompaktné riadky namiesto veľkých kartičiek. */
+body.v5-active .v5-check-items { gap: 6px; }
+body.v5-active .v5-check-item-card { min-height: 0 !important; padding: 10px 12px !important; gap: 12px; border-radius: 14px; }
+body.v5-active .v5-check-item-card strong { font-size: 14px; font-weight: 600; line-height: 1.35; }
+body.v5-active .v5-check-item-card .v5-check-toggle { width: 26px; height: 26px; min-width: 26px; border-radius: 8px; }
+
+/* ——— Prehliadka domova pri prvom otvorení ——— */
+.v2-tour { position: fixed; inset: 0; z-index: 400; display: none; }
+.v2-tour.open { display: block; }
+.v2-tour-spot { position: fixed; border-radius: 24px; box-shadow: 0 0 0 9999px rgba(26, 20, 40, .62), 0 0 0 3px rgba(255, 255, 255, .9); transition: top .25s ease, left .25s ease, width .25s ease, height .25s ease; pointer-events: none; }
+.v2-tour-card { position: fixed; left: 50%; width: min(calc(100% - 32px), 380px); transform: translateX(-50%); padding: 16px 16px 14px; color: var(--v5-ink); background: #fffafd; border-radius: 22px; box-shadow: 0 24px 60px rgba(20, 14, 36, .35); transition: top .25s ease; }
+.v2-tour-card small { color: var(--v5-brand-dark, #5b4ca3); font-size: 11px; font-weight: 900; letter-spacing: .06em; }
+.v2-tour-card h2 { margin: 4px 0 6px; font-size: 19px; line-height: 1.2; }
+.v2-tour-card p { margin: 0; color: var(--v5-muted); font-size: 14px; line-height: 1.45; }
+.v2-tour-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+.v2-tour-skip { min-height: 40px !important; padding: 6px 10px; color: var(--v5-muted); background: none; border: 0; font-weight: 800; }
+.v2-tour-actions .v5-primary { min-width: 120px; }
+body.v2-tour-open { overflow: hidden; }
+body.v5-active.night .v2-tour-card { background: #2a2536; }
+/* Úvodné okienko prehliadky: stmavené pozadie, × na zavretie. */
+.v2-tour.is-intro { background: rgba(26, 20, 40, .62); }
+.v2-tour.is-intro .v2-tour-card { padding-top: 20px; text-align: center; }
+.v2-tour.is-intro .v2-tour-card h2 { font-size: 22px; }
+.v2-tour-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; min-height: 36px !important; padding: 0; color: var(--v5-muted); background: transparent; border: 0; border-radius: 50%; font-size: 22px; line-height: 1; }
+.v2-tour-card small, .v2-tour-card h2 { padding-right: 28px; }
+.v2-tour.is-intro .v2-tour-card small, .v2-tour.is-intro .v2-tour-card h2 { padding: 0 28px; }
+
+/* ——— Domov: pozdrav namiesto loga, iniciály rodiča namiesto ikony ——— */
+body.v5-active #v5Header[data-home="true"] .v5-header-logo { display: none; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title { display: block; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 24px; font-weight: 900; line-height: 1.15; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 3px; color: var(--v5-muted); font-size: 14px; font-weight: 600; }
+.v2-initials { display: grid; width: 100%; height: 100%; place-items: center; color: var(--v5-brand-dark, #5b4ca3); font-size: 17px; font-weight: 900; letter-spacing: .02em; line-height: 1; }
+
+/* ——— Domov: pozdrav v rámčeku na stred, vpravo nočný režim + menu (☰) ——— */
+body.v5-active #v5Header[data-home="true"] { align-items: stretch; gap: 10px; }
+body.v5-active #v5Header[data-home="true"] .v5-back { display: none; }
+body.v5-active #v5Header[data-home="true"] .v5-header-brand {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  place-items: center;
+  padding: 12px 14px;
+  text-align: center;
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid var(--v5-line);
+  border-radius: 22px;
+  box-shadow: 0 10px 26px rgba(72, 55, 100, .07);
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-title { width: 100%; text-align: center; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { font-size: 20px; line-height: 1.2; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { font-size: 13px; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+body.v5-active #v5Header[data-home="true"] [data-v5-feature="profiles"] { display: inline-flex !important; }
+body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: rgba(255, 255, 255, .06); }
+
+/* ——— Pozdrav na domove – doladený rámček (prebíja predchádzajúce pravidlá) ——— */
+body.v5-active #v5Header[data-home="true"] .v5-header-brand {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: 14px 18px !important;
+  overflow: hidden;
+  text-align: center !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f6f1ff 58%, #fff3ec 100%);
+  border: 1px solid rgba(123, 107, 200, .16);
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(72, 55, 100, .08);
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-brand::after {
+  content: "";
+  position: absolute;
+  top: -34px;
+  right: -26px;
+  width: 96px;
+  height: 96px;
+  background: radial-gradient(circle, rgba(244, 170, 190, .28), transparent 70%);
+  pointer-events: none;
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-title { position: relative; z-index: 1; display: block !important; width: 100%; margin: 0 auto; text-align: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title::before { display: block; margin-bottom: 3px; font-size: 18px; line-height: 1; }
+body.v5-active #v5Header[data-home="true"][data-daypart="morning"] .v5-header-title::before { content: "☀"; color: #e8a33b; }
+body.v5-active #v5Header[data-home="true"][data-daypart="day"] .v5-header-title::before { content: "🌤"; }
+body.v5-active #v5Header[data-home="true"][data-daypart="evening"] .v5-header-title::before { content: "☾"; color: #7b6bc8; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { display: block; width: 100%; text-align: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 20px; font-weight: 900; line-height: 1.2; letter-spacing: -.01em; overflow-wrap: anywhere; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { margin-top: 4px; color: var(--v5-muted); font-size: 13px; font-weight: 600; white-space: normal; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { justify-content: space-between; }
+body.v5-active.night #v5Header[data-home="true"] .v5-header-brand { background: linear-gradient(135deg, #2b2638, #2a2440); border-color: rgba(255, 255, 255, .08); }
+/* Pozdrav zarovnaný vľavo (Samuel 16. 10.). */
+body.v5-active #v5Header[data-home="true"] .v5-header-brand { align-items: flex-start !important; text-align: left !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-title,
+body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
+body.v5-active #v5Header[data-home="true"] .v5-header-title span { text-align: left !important; }
+/* Bez symbolu dennej doby nad pozdravom – mýlil sa s tlačidlom nočného režimu. */
+body.v5-active #v5Header[data-home="true"] .v5-header-title::before { content: none !important; display: none !important; }
+/* Viac miesta nad rámčekom pozdravu. */
+body.v5-active #v5Header[data-home="true"] { padding-top: max(22px, calc(env(safe-area-inset-top) + 14px)) !important; }
+
+/* ——— Domov: rovnaká medzera (14 px) medzi všetkými kartami, aj pod rámčekom pozdravu ——— */
+body.v5-active #v5Home { row-gap: 14px !important; gap: 14px !important; }
+body.v5-active #v5Home > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+body.v5-active #v5Header[data-home="true"] { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
+body.v5-active #home.view { padding-top: 14px !important; }
+
+/* ——— Úvod: prihlásenie (prototyp) ——— */
+.v2-account-actions { display: grid !important; width: min(100%, 360px); gap: 10px; margin-inline: auto; }
+.v2-account-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 18px;
+  color: #241f33;
+  background: #fff;
+  border: 1px solid rgba(101, 87, 132, .2);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(72, 55, 100, .07);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.v2-account-button svg { width: 20px; height: 20px; flex: 0 0 20px; }
+.v2-account-apple { color: #fff; background: #111; border-color: #111; }
+.v2-account-guest { min-height: 44px; padding: 8px; color: var(--v5-brand-dark, #5b4ca3); background: none; border: 0; font: inherit; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.v2-account-note { margin: 2px 0 0; color: #7a7383; font-size: 11px; line-height: 1.4; text-align: center; }
+
+/* ——— Okienká po úvode (upozornenia, Zoznám sa): ikona, tlačidlá pod sebou ——— */
+.v2-tour-icon:empty { display: none; }
+.v2-tour-icon { display: grid; width: 56px; height: 56px; margin: 0 auto 10px; place-items: center; color: var(--v5-brand-dark, #5b4ca3); background: linear-gradient(145deg, #f1ebff, #ffeef3); border-radius: 18px; box-shadow: 0 8px 20px rgba(123, 107, 200, .16); }
+.v2-tour-icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.v2-tour.is-intro .v2-tour-card { padding: 22px 20px 16px; }
+.v2-tour.is-intro .v2-tour-card p { font-size: 14px; }
+.v2-tour-note:empty { display: none; }
+.v2-tour-note { display: block; margin-top: 8px; color: var(--v5-muted); font-size: 11px !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+.v2-tour.is-intro .v2-tour-actions { flex-direction: column-reverse; align-items: stretch; gap: 4px; margin-top: 16px; }
+.v2-tour.is-intro .v2-tour-actions .v5-primary { width: 100%; min-height: 50px; }
+.v2-tour.is-intro .v2-tour-skip { min-height: 40px !important; }
+.v2-tour-card .v2-tour-note { color: var(--v5-muted) !important; text-transform: none; }
+
+/* ——— Úvodná obrazovka: nič sa neprekrýva (Samuel 16. 10.) ———
+   Kruhy za logom sa riadia výškou svojej plochy (nepretečú na nápis), hviezdička mimo nálepky „Plán“. */
+@media (max-width: 960px) {
+  .welcome-first-visual { overflow: visible; }
+  .welcome-first-halo-a { width: auto !important; height: min(100%, 270px); max-width: 82%; aspect-ratio: 1; }
+  .welcome-first-halo-b { width: auto !important; height: min(78%, 210px); max-width: 65%; aspect-ratio: 1; }
+  .welcome-first-logo-cloud { max-height: 78%; }
+  .welcome-first-spark-a { top: auto !important; right: auto !important; bottom: 6% !important; left: 8% !important; font-size: 22px !important; }
+  .welcome-first-spark-b { bottom: auto !important; left: auto !important; top: 4% !important; right: 30% !important; }
+}
+.welcome-first-copy { position: relative; z-index: 2; }
+@media (max-width: 480px) {
+  .welcome-first-logo-cloud { width: min(210px, 60%) !important; padding: 16px 14px !important; }
+  .welcome-first-orbit-c { bottom: -8% !important; right: 0 !important; }
+}
+
+/* ——— Úvod: kalkulačka termínu pôrodu ——— */
+#welcomeCard .welcome-friendly-field select {
+  width: 100%;
+  min-height: 54px;
+  padding: 13px 40px 13px 15px;
+  color: #342f40;
+  background: rgba(255, 255, 255, .9) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b6bc8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center / 18px;
+  border: 1px solid rgba(101, 87, 132, .17);
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(72, 55, 100, .05);
+  font: inherit;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+#welcomeCard .welcome-friendly-field select:focus { border-color: #8171ce; outline: 3px solid rgba(129, 113, 206, .16); }
+.v2-due-result { margin: 4px 2px 0; padding: 12px 14px; color: #40394c; background: linear-gradient(135deg, #f3eeff, #fff4ee); border: 1px solid rgba(123, 107, 200, .18); border-radius: 15px; font-size: 13px; line-height: 1.45; text-align: left; }
+.v2-due-result b { color: var(--v5-brand-dark, #5b4ca3); }
+
+/* ——— Aké veľké je bábätko: pás týždňov, bábätko + tvoje telo ——— */
+.v2-week-strip { display: flex; gap: 8px; margin: 4px -16px 0; padding: 6px 16px 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.v2-week-strip::-webkit-scrollbar { display: none; }
+.v2-week-strip button {
+  display: grid;
+  flex: 0 0 54px;
+  justify-items: center;
+  gap: 1px;
+  min-height: 74px !important;
+  padding: 7px 4px;
+  color: var(--v5-ink);
+  background: var(--v5-surface, #fff);
+  border: 1px solid var(--v5-line);
+  border-radius: 16px;
+  scroll-snap-align: center;
+}
+.v2-week-strip button span { font-size: 18px; line-height: 1.1; }
+.v2-week-strip button b { font-size: 16px; line-height: 1.1; }
+.v2-week-strip button small { color: var(--v5-muted); font-size: 9px; font-weight: 800; text-transform: uppercase; }
+.v2-week-strip button.is-current { border-color: var(--v5-brand, #7b6bc8); }
+.v2-week-strip button.is-current small { color: var(--v5-brand-dark, #5b4ca3); }
+.v2-week-strip button.is-selected { color: #fff; background: linear-gradient(145deg, #8b7bd6, #6c5bc4); border-color: transparent; box-shadow: 0 8px 18px rgba(108, 91, 196, .3); }
+.v2-week-strip button.is-selected small { color: rgba(255, 255, 255, .85); }
+.v2-week-today { display: block; min-height: 32px !important; margin: 0 auto 2px; padding: 4px 10px; color: var(--v5-brand-dark, #5b4ca3); background: none; border: 0; font-size: 13px; font-weight: 800; }
+.v2-size-note { margin: 4px 2px 0; color: var(--v5-muted); font-size: 12px; }
+.v2-size-kicker { color: var(--v5-brand-dark, #5b4ca3) !important; font-size: 11px !important; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.v2-size-dev h3 { display: flex; align-items: center; gap: 6px; }
+.v2-size-mom { background: linear-gradient(145deg, #fff6f9, #fff); border-color: rgba(233, 138, 168, .3); }
+.v2-size-mom p::before { background: #e98aa8 !important; }
+.v2-size-tip { background: #fffaf0; border-color: rgba(238, 159, 95, .3); }
+.v2-size-tip p::before { background: #ee9f5f !important; }
+
+/* ——— Tehotenská knižka: hlavička s faktami, veľkosť, nástroje, zápisy z kontrol ——— */
+.v2-book-hero { display: grid; gap: 12px; padding: 18px 16px; background: linear-gradient(145deg, #f0eaff, #fff2ed); border: 1px solid var(--v5-line); border-radius: 26px; }
+.v2-book-hero > small { color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.v2-book-hero h1 { margin: -6px 0 0; color: var(--v5-ink); font-size: 28px; line-height: 1.1; }
+.v2-book-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.v2-book-facts div { display: grid; gap: 2px; padding: 10px 8px; background: rgba(255, 255, 255, .8); border-radius: 14px; }
+.v2-book-facts b { color: var(--v5-ink); font-size: 16px; line-height: 1.2; }
+.v2-book-facts span { color: var(--v5-muted); font-size: 10px; font-weight: 800; }
+.v2-book-size-card { display: grid; grid-template-columns: 52px minmax(0, 1fr) 16px; gap: 12px; align-items: center; width: 100%; padding: 10px 12px; color: var(--v5-ink); text-align: left; background: #fff; border: 1px solid var(--v5-line); border-radius: 18px; box-shadow: 0 8px 20px rgba(72, 55, 100, .06); }
+.v2-book-size-emoji { display: grid; width: 52px; height: 52px; place-items: center; font-size: 30px; background: #faf7ff; border-radius: 16px; }
+.v2-book-size-card small { display: block; color: var(--v5-brand-dark, #5b4ca3); font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.v2-book-size-card strong { display: block; font-size: 15px; }
+.v2-book-size-card em { display: block; color: var(--v5-muted); font-size: 12px; font-style: normal; }
+.v2-book-size-card b, .v2-book-tools b { color: var(--v5-muted); font-size: 20px; }
+.v2-book-tools { display: grid; gap: 8px; margin-top: 12px; }
+.v2-book-tools button { display: grid; grid-template-columns: 40px minmax(0, 1fr) 16px; gap: 12px; align-items: center; width: 100%; min-height: 64px; padding: 10px 12px; color: var(--v5-ink); text-align: left; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 18px; }
+.v2-book-tools .v5-icon { width: 40px; height: 40px; border-radius: 13px; }
+.v2-book-tools strong { display: block; font-size: 14px; }
+.v2-book-tools small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-add { width: 100%; margin-top: 4px; }
+.v2-visit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.v2-visit-hint { margin: -2px 2px 0; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-list { display: grid; gap: 10px; margin-top: 12px; }
+.v2-visit-card { padding: 12px 14px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 18px; }
+.v2-visit-card header { display: grid; grid-template-columns: minmax(0, 1fr) 32px; column-gap: 8px; align-items: center; }
+.v2-visit-card header strong { color: var(--v5-ink); font-size: 15px; }
+.v2-visit-card header span { grid-column: 1; color: var(--v5-muted); font-size: 12px; }
+.v2-visit-card header button { grid-column: 2; grid-row: 1 / span 2; width: 32px; height: 32px; min-height: 32px !important; padding: 0; color: var(--v5-muted); background: none; border: 0; font-size: 18px; }
+.v2-visit-values { display: flex; gap: 8px; margin-top: 10px; }
+.v2-visit-values span { display: grid; padding: 6px 10px; color: var(--v5-muted); background: #faf7ff; border-radius: 12px; font-size: 10px; font-weight: 800; }
+.v2-visit-values b { color: var(--v5-ink); font-size: 15px; }
+.v2-visit-card p { margin: 10px 0 0; color: var(--v5-ink); font-size: 14px; line-height: 1.45; }
+.v2-book-hero h1 { margin: 0; }
+.v2-book-facts b { font-size: 17px; white-space: nowrap; }
+
+/* ——— Tehotenská knižka: skupiny, graf, pohyby, prehľad pre lekára ——— */
+.v2-book-group { margin: 18px 4px 8px; color: var(--v5-muted); font-size: 11px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.v2-book-group + .v2-book-tools { margin-top: 0; }
+.v2-book-doctor { width: 100%; margin-top: 16px; }
+.v2-weight-chart { width: 100%; height: auto; margin-top: 4px; }
+.v2-weight-chart text { fill: var(--v5-ink); font: 700 11px Montserrat, sans-serif; }
+.v2-weight-chart .v2-chart-week { fill: var(--v5-muted); font-size: 10px; }
+.v2-weight-change { margin: 6px 0 0 !important; padding: 0 !important; color: var(--v5-ink) !important; font-weight: 800; }
+.v2-weight-change::before { display: none !important; }
+.v2-pressure-list { display: grid; gap: 6px; }
+.v2-pressure-list div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; background: #faf7ff; border-radius: 12px; font-size: 13px; }
+.v2-pressure-list span { color: var(--v5-muted); }
+.v2-pressure-list b { color: var(--v5-ink); text-align: right; }
+.v2-calm-box { margin-top: 12px; padding: 14px 16px; background: #f4f8ff; border: 1px solid rgba(125, 148, 220, .3); border-radius: 18px; }
+.v2-calm-box strong { color: var(--v5-ink); font-size: 14px; }
+.v2-calm-box p { margin: 6px 0 8px; color: var(--v5-ink); font-size: 13px; line-height: 1.5; }
+.v2-result-photo { width: 100%; max-height: 260px; margin-top: 10px; object-fit: contain; background: #faf7ff; border-radius: 12px; }
+.v2-doctor-block { margin-top: 12px; padding: 12px 14px; background: var(--v5-surface, #fff); border: 1px solid var(--v5-line); border-radius: 16px; }
+.v2-doctor-block h3 { margin: 0 0 6px; color: var(--v5-brand-dark, #5b4ca3); font-size: 12px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.v2-doctor-block p { margin: 4px 0; color: var(--v5-ink); font-size: 14px; line-height: 1.45; }
+
+/* 2.15.0: výber fotky výsledku ako tlačidlo namiesto natívneho poľa */
+.v2-photo-field { display: grid; gap: 8px; }
+.v2-photo-field > span { font-weight: 700; font-size: 14px; color: var(--v5-ink, #2b2240); }
+.v2-photo-pick { position: relative; display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 10px 14px; border: 1.5px dashed rgba(123, 97, 200, .45); border-radius: 16px; background: rgba(123, 97, 200, .06); color: #6a4fc4; font-weight: 700; font-size: 14px; text-align: center; cursor: pointer; overflow: hidden; }
+.v2-photo-pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.v2-photo-pick span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+/* 2.16.0: okienko Mama */
+.v2-mama-hero h1 { margin: 0; }
+.v2-mama-hero p { margin: 6px 0 0; color: var(--v5-muted); font-size: 14px; }
+.v2-mama-water { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin: 14px 0 4px; padding: 14px 16px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 22px; box-shadow: 0 8px 22px rgba(60, 40, 120, .06); }
+.v2-mama-water > .v2-mama-water-open { display: grid; gap: 3px; min-width: 0; }
+.v2-mama-water strong { font-size: 15px; color: var(--v5-ink); }
+.v2-mama-water small { color: var(--v5-muted); font-size: 12.5px; }
+.v2-mama-water .v2-water-bar { margin-top: 4px; }
+.v2-mama-water > [data-v5-water-add] { width: 46px; height: 46px; border-radius: 50%; border: 0; background: linear-gradient(135deg, #7b61c8, #a57ad8); color: #fff; font-size: 22px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px rgba(123, 97, 200, .3); }
+.v2-mama-troubles { display: grid; gap: 10px; margin-top: 6px; }
+.v2-mama-trouble { background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 20px; padding: 0 16px; }
+.v2-mama-trouble summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; min-height: 58px; list-style: none; cursor: pointer; }
+.v2-mama-trouble summary::-webkit-details-marker { display: none; }
+.v2-mama-trouble summary > span { font-size: 22px; }
+.v2-mama-trouble summary strong { font-size: 15px; color: var(--v5-ink); }
+.v2-mama-trouble summary b { color: var(--v5-muted); transition: transform .2s; }
+.v2-mama-trouble[open] summary b { transform: rotate(90deg); }
+.v2-mama-trouble[open] { padding-bottom: 14px; }
+.v2-mama-trouble h4, .v2-mama-card h4 { margin: 12px 0 4px; font-size: 13px; color: var(--v5-ink); }
+.v2-mama-list { margin: 4px 0 8px; padding-left: 18px; color: var(--v5-ink); font-size: 14px; line-height: 1.5; }
+.v2-mama-list li + li { margin-top: 4px; }
+.v2-mama-trouble .v2-calm-box { margin: 8px 0 10px; }
+.v2-mama-trouble .v2-calm-box .v2-mama-list { font-size: 13px; }
+.v2-mama-card { margin-top: 12px; padding: 16px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 22px; }
+.v2-mama-card h3 { margin: 0 0 6px; font-size: 16px; color: var(--v5-ink); }
+.v2-mama-card p { margin: 6px 0; font-size: 14px; line-height: 1.5; color: var(--v5-ink); }
+.v2-mama-card .v2-mama-muted, .v2-mama-muted { color: var(--v5-muted); font-size: 13px; }
+.v2-size-mama-link { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 14px 16px; background: #fff; border: 1px solid rgba(123, 97, 200, .16); border-radius: 20px; text-align: left; cursor: pointer; font: inherit; }
+.v2-size-mama-link > span:first-child { font-size: 24px; }
+.v2-size-mama-link strong { display: block; font-size: 15px; color: var(--v5-ink); }
+.v2-size-mama-link small { color: var(--v5-muted); font-size: 12.5px; }
+.v2-size-mama-link b { color: var(--v5-muted); }
+.v2-mama-water-open { display: grid; gap: 3px; min-width: 0; width: auto; height: auto; padding: 0; box-shadow: none; color: inherit; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
+#v5MamaContent > .v2-source { display: block; width: fit-content; margin: 12px 4px 0; }
+#v2TourText { white-space: pre-line; }
+
+/* 2.17.1: okienka Tehotenská knižka / Mama / Dieťa – len ikona a názov, bez popisu */
+.v5-glance.v2-glance-named { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 92px; }
+.v5-glance.v2-glance-named .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v5-glance.v2-glance-named .v5-icon svg { width: 19px; height: 19px; }
+.v5-glance.v2-glance-named strong { font-size: 14.5px; line-height: 1.2; color: var(--v5-ink); hyphens: none; }
+/* Domov pred pôrodom: okienka len s piktogramom (ako náhľad v úvode), vysvetlenie je v sprievodcovi. */
+.v5-glance.v2-glance-icon-only { align-items: center; justify-content: center; min-height: 72px; }
+.v5-glance.v2-glance-icon-only .v5-icon { width: 46px; height: 46px; border-radius: 15px; }
+.v5-glance.v2-glance-icon-only .v5-icon svg { width: 25px; height: 25px; }
+.v2-tour-items { display: grid; gap: 10px; white-space: normal; }
+.v2-tour-item { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; }
+.v2-tour-item > span:last-child { padding-top: 6px; }
+.v2-tour-item.no-icon > span:last-child { padding-top: 0; }
+.v2-tour-item .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v2-tour-item .v5-icon svg { width: 19px; height: 19px; }
+.v2-tour-item b { color: var(--v5-ink); font-weight: 700; }
+.v2-tour-item.no-icon { grid-template-columns: minmax(0, 1fr); }
+.v2-tour-lead, .v2-tour-after { display: block; }
+.v2-tour-lead { margin-bottom: 8px; }
+.v2-tour-after { margin-top: 10px; }
+/* Mini odznak = zmenšený .v2-week-badge z domova (rovnaké farby, pomer písma 22 : 8). */
+.v2-tour-week { display: grid; place-content: center; justify-items: center; gap: 1px; width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(145deg, #f3eeff, #fff1ea); box-shadow: 0 0 0 2px #fff, 0 4px 10px rgba(72, 55, 100, .12); line-height: 1; text-align: center; }
+.v2-tour-week-num { color: var(--v5-brand-dark, #5b4ca3); font: 900 14px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: -.02em; }
+.v2-tour-week-label { color: var(--v5-muted, #7a7383); font: 800 5px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+.v2-tour-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.v2-tour-chip { display: grid; justify-items: center; gap: 4px; min-width: 0; }
+.v2-tour-chip .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v2-tour-chip .v5-icon svg { width: 19px; height: 19px; }
+.v2-tour-chip b { max-width: 100%; overflow: hidden; color: var(--v5-ink); font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 2.18.0: Zdravotná knižka dieťaťa, súkromie */
+.v2-account-note b { color: var(--v5-ink); font-weight: 700; }
+.v2-check-progress { display: inline-block; margin-left: 4px; padding: 2px 8px; border-radius: 999px; background: rgba(123, 97, 200, .12); color: #6a4fc4; font-size: 12px; font-weight: 700; }
+.v2-vaccine-list { margin-top: 12px; }
+.v2-vaccine-list > div { align-items: center; }
+.v2-vaccine-list button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(123, 97, 200, .08); color: var(--v5-muted); font-size: 18px; cursor: pointer; flex: none; }
+#v5ChildBookContent > .v2-calm-box { margin: 4px 0 12px; }
+#v5ChildBookContent .v2-book-doctor { width: 100%; margin-top: 16px; }
+
+/* 2.19.0: Oznámiť tehotenstvo */
+.v2-ann-preview { margin: 6px 0 14px; padding: 12px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 24px; box-shadow: 0 10px 26px rgba(60, 40, 120, .07); }
+.v2-ann-preview canvas { display: block; width: 100%; max-width: 320px; height: auto; margin: 0 auto; border-radius: 16px; }
+.v2-ann-share { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.v2-ann-share > button { width: 100%; margin: 0; }
+.v2-ann-form h3 { margin: 14px 0 8px; font-size: 15px; color: var(--v5-ink); }
+.v2-ann-form h3:first-child { margin-top: 0; }
+.v2-ann-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.v2-ann-chip { min-height: 38px; padding: 8px 14px; border: 1px solid rgba(123, 97, 200, .22); border-radius: 999px; background: #fff; color: var(--v5-ink); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.v2-ann-chip.is-active { background: #6a4fc4; border-color: #6a4fc4; color: #fff; }
+.v2-ann-privacy { margin: 10px 0; }
+.v2-ann-privacy label { display: grid; gap: 4px; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--v5-ink); }
+.v2-ann-privacy input[type=range] { width: 100%; accent-color: #6a4fc4; }
+.v2-ann-check { display: flex !important; align-items: center; gap: 10px; font-weight: 600; }
+.v2-ann-check input { width: 20px; height: 20px; accent-color: #6a4fc4; }
+.v2-ann-home { position: relative; margin: 0 0 14px; }
+.v2-ann-home-open { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; width: 100%; padding: 14px 52px 14px 16px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(123, 97, 200, .16); border-radius: 22px; text-align: left; font: inherit; cursor: pointer; }
+.v2-ann-home-open > span:first-child { font-size: 26px; }
+.v2-ann-home-open strong { display: block; font-size: 15px; color: var(--v5-ink); }
+.v2-ann-home-open small { color: var(--v5-muted); font-size: 12.5px; }
+.v2-ann-home-close { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .8); color: var(--v5-muted); font-size: 18px; cursor: pointer; }
+.v2-ann-intro { margin: 2px 4px 10px; color: var(--v5-muted); font-size: 14px; }
+.v2-ann-crop { display: block; width: 100%; height: auto; margin: 10px 0 4px; border-radius: 12px; background: #000; }
+
+/* 2.20.0: Okná v jemnom štýle domova (Samuel 17. 10.: „prudko fialová nie je pekná, vychádzaj z domovskej obrazovky,
+   pozor aj na font všade“). Tlačidlá pastelové ako karty na domove, jednotné hrúbky písma Montserrat. */
+body:not(.night) .v5-primary {
+  color: #4a3c8c;
+  background: linear-gradient(135deg, #ece6ff 0%, #fbeef0 100%);
+  border: 1px solid rgba(117, 96, 181, .16);
+  box-shadow: 0 8px 22px rgba(76, 61, 103, .08);
+}
+body:not(.night) .v5-primary:active { transform: translateY(1px); box-shadow: 0 4px 12px rgba(76, 61, 103, .08); }
+body:not(.night) .v5-primary[disabled] { color: #7a7090; background: #f3f0fa; box-shadow: none; }
+body:not(.night) .v5-secondary {
+  color: #5f4fb1;
+  background: rgba(255, 255, 255, .86);
+  border: 1px solid rgba(111, 91, 163, .14);
+  box-shadow: 0 6px 18px rgba(76, 61, 103, .05);
+}
+.v5-primary, .v5-secondary, .v5-text-action { font-weight: 700; font-size: 15px; letter-spacing: 0; }
+.v5-universal-window-head strong { font-weight: 800; font-size: 21px; letter-spacing: -.01em; }
+.v5-flow-head h1, .v2-book-hero h1, .v2-mama-hero h1 { font-weight: 800; letter-spacing: -.01em; }
+.v2-book-group { font-weight: 800; }
+.v2-book-tools button strong { font-size: 15px; font-weight: 700; }
+.v2-book-tools button small { font-size: 12.5px; }
+.v5-book-note { font-size: 12px !important; line-height: 1.45; }
+/* Ďalšie sýte fialové prvky z posledných verzií → jemné */
+body:not(.night) .v2-mama-water > [data-v5-water-add] { color: #5f4fb1; background: linear-gradient(135deg, #ece6ff, #fbeef0); border: 1px solid rgba(117, 96, 181, .18); box-shadow: 0 6px 16px rgba(76, 61, 103, .08); }
+body:not(.night) .v2-ann-chip.is-active { color: #4a3c8c; background: #ece6ff; border-color: rgba(117, 96, 181, .35); }
+body:not(.night) .v2-photo-pick { color: #5f4fb1; }
+
+/* 2.20.2: Bez bielych obdĺžnikov za tlačidlami a pod nadpisom okna (Samuel 17. 10.) – lepkavé pásy sú priesvitné
+   a rozmazané, takže splývajú s farebným pozadím karty/okna. */
+body:not(.night) .welcome-story-actions {
+  background: transparent !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body:not(.night) .welcome-story-actions .ghost {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+body:not(.night) .v5-universal-window-head {
+  background: rgba(255, 251, 250, .46) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+  box-shadow: none;
+  border-bottom: 0;
+}
+#welcomeCard .v5-glance dt:empty { display: none; }
+
+/* 2.21.0: Prehliadka – „Vyskúšať“ a „Pokračovať v prehliadke“ */
+.v2-tour-try { width: 100%; min-height: 44px; margin: 4px 0 10px; border: 1px dashed rgba(117, 96, 181, .35); border-radius: 14px; background: rgba(236, 230, 255, .55); color: #4a3c8c; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.v2-tour-try[hidden] { display: none; }
+.v2-tour-resume { position: fixed; left: 50%; bottom: calc(108px + env(safe-area-inset-bottom)); z-index: 90; display: none; align-items: center; gap: 4px; padding: 5px; transform: translateX(-50%); background: rgba(255, 255, 255, .9); border: 1px solid rgba(117, 96, 181, .18); border-radius: 999px; box-shadow: 0 10px 28px rgba(76, 61, 103, .16); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.v2-tour-resume.open { display: flex; }
+.v2-tour-resume [data-v2-tour-resume] { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: linear-gradient(135deg, #ece6ff, #fbeef0); color: #4a3c8c; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.v2-tour-resume-close { width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; color: #777184; font-size: 18px; cursor: pointer; }
+
+/* 2.21.0: Zásuvka – názvy celé (2 riadky), špendlík v pravom hornom rohu, neprekrýva text */
+#v5Drawer .v5-drawer-pin { top: 8px; bottom: auto; right: 8px; }
+#v5Drawer .v5-drawer-app strong,
+#v5Drawer .v5-drawer-app-wrap.is-priority .v5-drawer-app strong {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; white-space: normal; text-overflow: clip;
+  padding: 0 8px; text-align: center; font-size: 12.5px; font-weight: 700; line-height: 1.22;
+}
+
+/* 2.22.2: Vybaviť/Domov/Taška – všetky úlohy viditeľné, ostatné ako riadky */
+.v2-org-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-top: 8px; padding: 12px 14px; background: rgba(255, 255, 255, .86); border: 1px solid rgba(111, 91, 163, .12); border-radius: 16px; text-align: left; font: inherit; cursor: pointer; }
+.v2-org-row .v5-icon { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: #f1edff; color: #5f4fb1; }
+.v2-org-row .v5-icon svg { width: 18px; height: 18px; }
+.v2-org-row strong { font-size: 14.5px; font-weight: 700; color: var(--v5-ink); }
+.v2-org-row b { color: var(--v5-muted); }
+.v5-org-next-card + .v2-org-row, .v2-org-row + .v5-org-next-card { margin-top: 10px; }
+
+/* 2.23.0: Časová os spomienok + „deň spolu“ na domove */
+.v2-tl-group { margin-top: 14px; }
+.v2-tl-group h3 { margin: 0 4px 10px; color: var(--v5-muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.v2-tl { position: relative; margin: 0; padding: 0 0 0 4px; list-style: none; }
+.v2-tl::before { content: ""; position: absolute; top: 18px; bottom: 18px; left: 22px; width: 2px; background: linear-gradient(#e6defc, #fbe3e3); border-radius: 2px; }
+.v2-tl-item { position: relative; display: grid; grid-template-columns: 40px 1fr; gap: 10px; margin-bottom: 10px; }
+.v2-tl-dot { position: relative; z-index: 1; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #fff; border: 1px solid rgba(117, 96, 181, .16); box-shadow: 0 4px 12px rgba(76, 61, 103, .07); font-size: 18px; }
+.v2-tl-card { padding: 11px 14px; background: rgba(255, 255, 255, .9); border: 1px solid rgba(111, 91, 163, .11); border-radius: 18px; }
+.v2-tl-card strong { display: block; font-size: 14.5px; font-weight: 700; color: var(--v5-ink); }
+.v2-tl-card small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12px; }
+.v2-tl-card p { margin: 6px 0 0; font-size: 13px; color: var(--v5-ink); line-height: 1.4; }
+.v2-tl-card img { display: block; width: 100%; max-height: 220px; object-fit: cover; margin-top: 8px; border-radius: 12px; }
+.v2-tl-empty { margin: 0 4px; color: var(--v5-muted); font-size: 13px; line-height: 1.45; }
+.v2-days-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin: 0 0 14px; padding: 14px 16px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .14); border-radius: 22px; text-align: left; font: inherit; cursor: pointer; }
+.v2-days-card > span:first-child { font-size: 26px; }
+.v2-days-card strong { display: block; font-size: 16px; font-weight: 800; color: var(--v5-ink); }
+.v2-days-card small { color: var(--v5-muted); font-size: 12.5px; }
+.v2-days-card b { color: var(--v5-muted); }
+
+/* 2.24.0: „Stalo sa už?“ a Prvé razy */
+.v2-ask-card { position: relative; margin: 0 0 14px; padding: 16px 16px 14px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .14); border-radius: 22px; }
+.v2-ask-card > small { display: block; color: #6a4fc4; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.v2-ask-title { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.v2-ask-title span { font-size: 28px; }
+.v2-ask-title strong { font-size: 17px; font-weight: 800; color: var(--v5-ink); line-height: 1.25; }
+.v2-ask-card p { margin: 6px 0 12px; color: var(--v5-muted); font-size: 13px; line-height: 1.45; }
+.v2-ask-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.v2-ask-actions button { min-height: 44px; margin: 0; padding: 8px 10px; font-size: 14px; }
+.v2-ask-never { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .7); color: var(--v5-muted); font-size: 17px; cursor: pointer; }
+.v2-ask-date { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin-top: 10px; }
+.v2-ask-date label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--v5-ink); }
+.v2-ask-date button { min-height: 46px; margin: 0; }
+.v2-first-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+.v2-first-grid button { display: grid; justify-items: center; gap: 4px; min-height: 112px; padding: 12px 10px; text-align: center; }
+.v2-first-grid .v2-first-emoji { font-size: 26px; }
+.v2-first-grid strong { font-size: 13px; font-weight: 700; line-height: 1.25; }
+.v2-first-grid small { font-size: 11.5px; color: var(--v5-muted); }
+.v2-first-grid button.is-saved { background: linear-gradient(135deg, #f1ecff, #fff0ec) !important; border-color: rgba(117, 96, 181, .3) !important; }
+.v2-first-grid button.is-saved small { color: #5f4fb1; font-weight: 600; }
+.v2-ask-date[hidden] { display: none; }
+
+/* 2.25.0: Zásuvka Praktické | Spomienky */
+.v2-drawer-tabs { margin: 0 auto 12px; }
+.v2-drawer-hint { margin: -2px 4px 10px; color: var(--v5-muted); font-size: 13px; text-align: center; }
+#v5Drawer .v5-drawer-emotional-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-bottom: 12px; padding: 14px 16px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .16); border-radius: 22px; text-align: left; }
+#v5Drawer .v5-drawer-emotional-card small { display: block; color: #6a4fc4; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+#v5Drawer .v5-drawer-emotional-card strong { display: block; font-size: 16px; font-weight: 800; color: var(--v5-ink); }
+#v5Drawer .v5-drawer-emotional-card em { font-style: normal; font-size: 12.5px; color: var(--v5-muted); }
+
+/* 2.26.0: Albumy */
+.v2-album-list { display: grid; gap: 10px; margin-top: 8px; }
+.v2-album-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; background: rgba(255, 255, 255, .9); border: 1px solid rgba(111, 91, 163, .12); border-radius: 20px; text-align: left; font: inherit; cursor: pointer; }
+.v2-album-row.is-locked { opacity: .62; cursor: default; }
+.v2-album-cover { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #f1ecff, #fff0ec); font-size: 26px; }
+.v2-album-row strong { display: block; font-size: 15.5px; font-weight: 800; color: var(--v5-ink); }
+.v2-album-row small { color: var(--v5-muted); font-size: 12.5px; }
+.v2-album-row b { color: var(--v5-muted); }
+.v2-album-head { margin: 4px 0 14px; padding: 22px 18px; text-align: center; background: linear-gradient(135deg, #f3edff, #ffefe9); border: 1px solid rgba(117, 96, 181, .12); border-radius: 26px; }
+.v2-album-head > span { font-size: 44px; }
+.v2-album-head h1 { margin: 6px 0 2px; font-size: 26px; font-weight: 800; color: var(--v5-ink); }
+.v2-album-head p { margin: 0; color: #6a4fc4; font-size: 13.5px; font-weight: 600; }
+.v2-album-keep { float: right; display: flex; align-items: center; gap: 6px; margin: -2px 0 4px 8px; font-size: 11.5px; font-weight: 600; color: var(--v5-muted); }
+.v2-album-keep input { width: 18px; height: 18px; accent-color: #6a4fc4; }
+.v2-tl-item.is-hidden .v2-tl-card { opacity: .45; }
+.v2-tl-item.is-hidden .v2-tl-card img { filter: grayscale(1); }
+#v2AlbumPrint { display: none; }
+@media print {
+  body.v2-printing-album > *:not(#v2AlbumPrint) { display: none !important; }
+  body.v2-printing-album #v2AlbumPrint { display: block !important; }
+  body.v2-printing-album #v2AlbumPrint img { width: 100%; height: auto; }
+}
+
+/* 2.26.3: Ukážka domova v úvode – celé texty (Samuel 4. 11.: „Tehotenská kn…“, „37. týždeň · n…“) */
+.welcome-finish-preview .v5-glance dd { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.25; font-size: 13.5px; }
+.welcome-finish-preview .v5-glance { min-height: 64px; display: flex; align-items: center; }
+.welcome-finish-preview .v5-home-person,
+.welcome-finish-preview .v5-home-person > div { min-width: 0; }
+.welcome-finish-preview .v5-home-person h3,
+.welcome-finish-preview .v5-home-person p { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.3; }
+/* Len piktogramy – názov ostáva pre čítačky obrazovky. */
+.welcome-finish-preview .v5-glance.v2-glance-named { align-items: center; justify-content: center; min-height: 72px; }
+.welcome-finish-preview .v5-glance.v2-glance-named dt:empty { display: none; }
+.welcome-finish-preview .v5-glance.v2-glance-named .v5-icon { width: 46px; height: 46px; border-radius: 15px; }
+.welcome-finish-preview .v5-glance.v2-glance-named .v5-icon svg { width: 25px; height: 25px; }
+.welcome-finish-preview .v5-glance.v2-glance-named dd { position: absolute; width: 1px; height: 1px; overflow: hidden !important; clip: rect(0 0 0 0); white-space: nowrap !important; }
+
+/* Úvod: motivačná karta „Začíname spoločnú cestu“ (namiesto Prvý krok) */
+.welcome-journey-card { display: grid; gap: 10px; margin-top: 12px; padding: 16px 18px 18px; background: linear-gradient(135deg, rgba(240, 235, 255, .95), rgba(255, 238, 243, .92) 60%, rgba(255, 244, 232, .9)); border: 1px solid rgba(123, 107, 200, .14); border-radius: 24px; box-shadow: 0 15px 40px rgba(72, 55, 100, .07); text-align: center; overflow: hidden; }
+.welcome-journey-art { display: block; width: 100%; height: auto; overflow: visible; }
+.welcome-journey-card.is-born .only-expecting,
+.welcome-journey-card:not(.is-born) .only-born { display: none; }
+.welcome-journey-track { fill: none; stroke: rgba(129, 113, 206, .25); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 2 9; }
+.welcome-journey-progress { fill: none; stroke: url(#welcomeJourneyGradient); stroke-width: 5; stroke-linecap: round; }
+.welcome-journey-start { fill: #8171ce; }
+.welcome-journey-goal circle,
+.welcome-journey-node circle { fill: #fff; stroke: rgba(240, 127, 152, .35); stroke-width: 1.5; filter: drop-shadow(0 6px 12px rgba(240, 127, 152, .25)); }
+.welcome-journey-heart { fill: #f07f98; }
+.welcome-journey-here { fill: #fff; stroke: #8171ce; stroke-width: 2.5; }
+.welcome-journey-start-label { fill: #d4627d; }
+.welcome-journey-marker-halo { fill: rgba(129, 113, 206, .18); animation: welcome-journey-pulse 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.welcome-journey-marker-dot { fill: #6a4fc4; stroke: #fff; stroke-width: 3; }
+.welcome-journey-sparkle { fill: #f6c89f; opacity: .9; }
+.welcome-journey-label { fill: #6a4fc4; font: 800 11px Montserrat, ui-sans-serif, system-ui, sans-serif; }
+.welcome-journey-goal-label { fill: #d4627d; }
+.welcome-journey-copy { display: grid; gap: 4px; }
+.welcome-journey-copy small { color: #8171ce; font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.welcome-journey-copy strong { color: var(--v5-ink); font: 900 22px/1.15 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: -.02em; }
+.welcome-journey-copy span { color: #665d75; font-size: 13px; font-weight: 600; line-height: 1.45; }
+@keyframes welcome-journey-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .welcome-journey-marker-halo { animation: none; } }
+
+/* 2.27.0: Môj hlas pre bábätko */
+.v2-voice-card { margin-top: 12px; padding: 16px; background: rgba(255, 255, 255, .9); border: 1px solid rgba(111, 91, 163, .12); border-radius: 24px; text-align: center; }
+.v2-voice-card .v2-ann-chips { justify-content: center; }
+.v2-voice-name { display: grid; gap: 4px; margin: 4px 0 14px; text-align: left; font-size: 13px; font-weight: 600; color: var(--v5-ink); }
+.v2-voice-record { display: grid; place-items: center; width: 96px; height: 96px; margin: 6px auto 8px; border: 0; border-radius: 50%; background: linear-gradient(135deg, #ece6ff, #fbeef0); box-shadow: 0 10px 26px rgba(76, 61, 103, .16), inset 0 0 0 6px rgba(255, 255, 255, .7); color: #e0708f; font-size: 34px; cursor: pointer; }
+.v2-voice-record.is-recording { color: #5f4fb1; font-size: 26px; animation: v2VoicePulse 1.4s ease-in-out infinite; }
+@keyframes v2VoicePulse { 0%, 100% { box-shadow: 0 10px 26px rgba(76, 61, 103, .16), 0 0 0 0 rgba(224, 112, 143, .35); } 50% { box-shadow: 0 10px 26px rgba(76, 61, 103, .16), 0 0 0 14px rgba(224, 112, 143, 0); } }
+@media (prefers-reduced-motion: reduce) { .v2-voice-record.is-recording { animation: none; } }
+.v2-voice-time { margin: 0; color: var(--v5-muted); font-size: 13px; font-weight: 600; }
+.v2-voice-preview { display: grid; gap: 6px; margin: 6px 0 12px; }
+.v2-voice-preview audio { width: 100%; }
+.v2-voice-msg { margin: 10px 0 0; color: #5f4fb1; font-size: 13px; font-weight: 600; }
+.v2-voice-list > div { align-items: center; gap: 10px; }
+.v2-voice-list > div > span { flex: 1; }
+.v2-voice-play { width: 38px; height: 38px; border: 0; border-radius: 50%; background: linear-gradient(135deg, #ece6ff, #fbeef0); color: #5f4fb1; font-size: 14px; cursor: pointer; flex: none; }
+.v2-voice-del { width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(123, 97, 200, .08); color: var(--v5-muted); font-size: 18px; cursor: pointer; flex: none; }
+.v2-ask-actions.v2-ask-actions-2 { grid-template-columns: 1fr auto; }
+
+/* 2.28.0: Nová kartička narodenia */
+.v2-bc-swatches { display: flex; gap: 12px; margin-bottom: 10px; }
+.v2-bc-swatch { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; background: linear-gradient(135deg, var(--sw1) 0 50%, var(--sw2) 50% 100%); box-shadow: 0 0 0 1px rgba(111, 91, 163, .2), 0 4px 10px rgba(76, 61, 103, .1); cursor: pointer; }
+.v2-bc-swatch.is-active { box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(117, 96, 181, .55); }
+.v2-bc-form h3 { margin-top: 16px; }
+
+/* 2.28.4: Nápisy v kruhu hrubé ako meno dieťaťa a viditeľne ohnuté po oblúku (Samuel 4. 11.) */
+.v2-o-label text { font: 900 20px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; letter-spacing: .16em; }
+.v2-o-label-1 text { fill: #b14d70; }
+.v2-o-label-2 text { fill: #a3602a; }
+.v2-o-label-3 text { fill: #4560b0; }
+body.v5-active.night .v2-o-label text { fill: rgba(255, 255, 255, .86); }
+/* 2.28.5: svetlejšie nápisy v kruhu (Samuel 4. 11.) */
+.v2-o-label text { font-weight: 800; }
+.v2-o-label-1 text { fill: #d28ba3; }
+.v2-o-label-2 text { fill: #d6995f; }
+.v2-o-label-3 text { fill: #8299d8; }
+
+/* 2.29.1: kartička narodenia – údaje a 3 tlačidlá */
+.v2-bc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 10px; margin-bottom: 6px; }
+.v2-bc-fields label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--v5-ink); min-width: 0; }
+.v2-bc-fields label:nth-last-child(-n+2) { grid-column: 1 / -1; }
+.v2-bc-fields input { min-width: 0; width: 100%; }
+.v2-ann-share.v2-bc-share { grid-template-columns: 1.3fr 1fr 1fr; }
+
+/* 2.32.0: Okno „Pre teba dnes“ – posúvateľné karty pod hlavičkou domova */
+.v2-deck { margin: 0 0 14px; }
+.v2-deck-head { display: flex; align-items: baseline; justify-content: space-between; margin: 0 6px 8px; }
+.v2-deck-head strong { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--v5-muted); }
+.v2-deck-head span { font-size: 12px; font-weight: 700; color: #6a4fc4; }
+.v2-deck-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.v2-deck-track::-webkit-scrollbar { display: none; }
+.v2-deck-slide { flex: 0 0 100%; scroll-snap-align: start; display: flex; }
+.v2-deck-slide > * { flex: 1; margin: 0 !important; }
+.v2-deck-card { display: flex; flex-direction: column; min-height: 168px; }
+.v2-deck-card .v2-deck-actions { margin-top: auto; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.v2-deck-dots { display: flex; justify-content: center; gap: 7px; margin-top: 9px; }
+.v2-deck-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(117, 96, 181, .22); cursor: pointer; transition: width .2s, background .2s; }
+.v2-deck-dots button.is-active { width: 20px; border-radius: 999px; background: rgba(117, 96, 181, .65); }
+.v2-days-card.v2-deck-card { min-height: 0; }
+/* Okno nesmie roztiahnuť domov do šírky – posúva sa len vnútri. */
+.v2-deck { min-width: 0; max-width: 100%; overflow: hidden; }
+.v2-deck-track { width: 100%; min-width: 0; }
+.v2-deck-slide { min-width: 0; }
+.v2-deck-dots button { min-height: 0 !important; min-width: 0 !important; height: 8px !important; box-shadow: none !important; }
+
+/* Tlačidlo „Dnešný malý moment“ pod oknom Pre teba dnes – po ťuknutí sa rozbalí menu momentov. */
+.v2-moment { margin: 0 0 14px; min-width: 0; }
+.v2-moment-cta { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto auto; align-items: center; gap: 12px; width: 100%; padding: 12px 16px 12px 12px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .18); border-radius: 22px; text-align: left; font: inherit; color: var(--v5-ink); cursor: pointer; }
+.v2-moment-cta .v5-icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: #fff; color: #d4627d; box-shadow: 0 4px 12px rgba(212, 98, 125, .16); }
+.v2-moment-cta .v5-icon svg { width: 22px; height: 22px; }
+.v2-moment-cta strong { display: block; font-size: 16px; font-weight: 800; }
+.v2-moment-cta small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 12.5px; }
+.v2-moment-cta b { display: grid; color: #6a4fc4; transition: transform .2s ease; }
+.v2-moment-cta b svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.v2-moment.is-open .v2-moment-cta b { transform: rotate(180deg); }
+.v2-moment-badge { display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #f07f98; color: #fff; font: 800 11px/1 Montserrat, ui-sans-serif, system-ui, sans-serif; font-style: normal; }
+.v2-moment-menu { display: grid; gap: 6px; margin-top: 8px; padding: 8px; background: rgba(255, 255, 255, .9); border: 1px solid rgba(117, 96, 181, .12); border-radius: 20px; }
+.v2-moment-menu[hidden] { display: none; }
+.v2-moment-menu .v2-ask-card { margin: 0 0 4px; }
+.v2-moment-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 6px 8px; background: none; border: 0; border-radius: 14px; text-align: left; font: inherit; font-size: 14.5px; font-weight: 700; color: var(--v5-ink); cursor: pointer; }
+.v2-moment-row:hover { background: rgba(123, 97, 200, .06); }
+.v2-moment-row .v5-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.v2-moment-row .v5-icon svg { width: 19px; height: 19px; }
+.v2-moment-row em { padding: 3px 9px; border-radius: 999px; background: rgba(123, 97, 200, .1); color: #6a4fc4; font-size: 12px; font-style: normal; font-weight: 800; }
+.v2-moment-row.is-suggestion { background: linear-gradient(135deg, #fbeef3, #fff4ec); }
+.v2-moment-row.is-suggestion .v5-icon { background: #fff; color: #d4627d; }
+
+/* ——— Menštruačný kalendár v okienku Mama (2.34.0) ——— */
+.v2-per-status { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 16px 18px; background: linear-gradient(135deg, #fff4f6, #fdf0f7); border: 1px solid rgba(214, 120, 150, .2); border-radius: 22px; }
+.v2-per-status strong { display: block; color: var(--v5-ink); font-size: 18px; font-weight: 800; }
+.v2-per-status small { display: block; margin-top: 2px; color: var(--v5-muted); font-size: 13px; line-height: 1.4; }
+.v2-per-drop { flex: 0 0 auto; width: 40px; height: 40px; background: #fbe3ea; border-radius: 50%; position: relative; }
+.v2-per-drop::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; background: #e58aa3; border-radius: 0 50% 50% 50%; transform: translate(-50%, -40%) rotate(45deg); }
+.v2-per-status.is-on .v2-per-drop { background: #f6c9d6; }
+.v2-per-actions { display: flex; gap: 8px; margin-top: 10px; }
+.v2-per-actions > button { flex: 1 1 0; min-width: 0; }
+.v2-per-grid button:disabled { opacity: .38; }
+.v2-per-grid button.is-period { color: #7a2a44; background: #f6c9d6; border-color: #f6c9d6; }
+.v2-per-grid button.is-period.is-light { background: #fbe3ea; border-color: #fbe3ea; }
+.v2-per-grid button.is-period.is-heavy { color: #fff; background: #e58aa3; border-color: #e58aa3; }
+.v2-per-grid button.is-spot { box-shadow: inset 0 0 0 2px #f6c9d6; }
+.v2-per-grid button.is-predicted { border: 1.5px dashed #e58aa3; background: #fff8fa; }
+.v2-per-grid button.is-today { border-color: var(--v5-brand, #7b6bc8); }
+.v2-per-grid button.is-selected { color: #fff; background: var(--v5-brand, #7b6bc8); border-color: var(--v5-brand, #7b6bc8); }
+.v2-per-grid button i { background: #b0607c; }
+.v2-per-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; color: var(--v5-muted); font-size: 12px; }
+.v2-per-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.v2-per-legend i { width: 12px; height: 12px; border-radius: 4px; }
+.v2-per-legend i.is-period { background: #f6c9d6; }
+.v2-per-legend i.is-spot { box-shadow: inset 0 0 0 2px #f6c9d6; }
+.v2-per-legend i.is-predicted { border: 1.5px dashed #e58aa3; }
+.v2-per-day h3 { margin: 0; font-size: 16px; color: var(--v5-ink); }
+.v2-per-day h3::first-letter { text-transform: uppercase; }
+.v2-per-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.v2-per-chips button { min-height: 38px !important; padding: 0 14px; color: var(--v5-ink); background: #f7f5fc; border: 1px solid rgba(123, 97, 200, .14); border-radius: 999px; font: inherit; font-size: 13px; font-weight: 700; }
+.v2-per-chips button.active { color: #5b4ca3; background: #ece7ff; border-color: #c9bdf5; }
+.v2-per-chips button.flow-spot.active, .v2-per-chips button.flow-light.active { color: #7a2a44; background: #fbe3ea; border-color: #f2b9c9; }
+.v2-per-chips button.flow-medium.active { color: #7a2a44; background: #f6c9d6; border-color: #eba6ba; }
+.v2-per-chips button.flow-heavy.active { color: #fff; background: #e58aa3; border-color: #e58aa3; }
+.v2-per-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.v2-per-tiles div { min-width: 0; padding: 12px 10px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 18px; text-align: center; }
+.v2-per-tiles small { display: block; color: var(--v5-muted); font-size: 11px; line-height: 1.3; }
+.v2-per-tiles strong { display: block; margin: 4px 0 2px; color: var(--v5-ink); font-size: 17px; font-weight: 800; }
+.v2-per-tiles em { display: block; color: var(--v5-muted); font-size: 11px; font-style: normal; }
+.v2-per-history { margin-top: 12px; }
+.v2-per-history ul { margin: 6px 0 4px; padding: 0; list-style: none; }
+.v2-per-history li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 0; border-top: 1px solid rgba(123, 97, 200, .1); font-size: 14px; color: var(--v5-ink); }
+.v2-per-history li small { grid-column: 1 / -1; color: var(--v5-muted); font-size: 12px; }
+.v2-per-first { margin: 12px 4px 0; color: var(--v5-ink); font-size: 14px; }
+.v2-per-tools { display: grid; gap: 12px; }
+.v2-per-toggle { display: flex; align-items: flex-start; gap: 12px; }
+.v2-per-toggle input { flex: 0 0 auto; width: 22px; height: 22px; margin-top: 2px; accent-color: #7b6bc8; }
+.v2-per-toggle strong { display: block; color: var(--v5-ink); font-size: 14px; }
+.v2-per-toggle small { display: block; color: var(--v5-muted); font-size: 12px; line-height: 1.4; }
+.v2-per-info-title { margin: 20px 4px 4px; color: var(--v5-ink); font-size: 16px; }
+.v2-per-grid button.is-predicted:disabled { opacity: 1; color: #b0607c; }
+.v2-per-toggle strong { font-weight: 700; }
+.v2-per-toggle small { font-weight: 500; }
+
+/* ——— Upratanie 2.36: zásuvka podľa oblastí, kalendár na domove ——— */
+#v5Drawer .v2-drawer-group { margin: 0 0 18px; }
+#v5Drawer .v2-drawer-group h3 { margin: 0 4px 8px; color: var(--v5-muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+#v5Drawer .v2-drawer-group .v5-drawer-emotional-card { margin-bottom: 0; }
+.v2-home-cal { margin: 12px 0 0; }
+.v2-home-cal .v5-row-card { width: 100%; min-height: 0; padding: 12px 14px; background: rgba(255, 255, 255, .72); border: 1px solid rgba(123, 97, 200, .12); border-radius: 18px; box-shadow: none; }
+.v2-home-cal .v5-row-card strong { font-size: 14px; }
+.v2-home-cal .v5-row-card span:not(.v5-icon) { font-size: 12px; }
+
+/* ——— Upratanie 2.37: pevná lišta Domov · Bábätko · GuguChat · Mama · Rodina, prehľady oblastí ——— */
+.v2-hub-record { width: 100%; margin-top: 12px; }
+.v2-hub-moments { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 14px 16px; color: var(--v5-ink); background: linear-gradient(135deg, #f6f0ff, #fff1ec); border: 1px solid rgba(117, 96, 181, .16); border-radius: 22px; text-align: left; font: inherit; }
+.v2-hub-moments small { display: block; color: var(--v5-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.v2-hub-moments strong { display: block; font-size: 17px; }
+.v2-hub-moments em { display: block; color: var(--v5-muted); font-size: 13px; font-style: normal; }
+#v5Drawer .v5-drawer-pin { display: none; }
+
+/* Upratanie 2.37: Pohoda a Organizácia v rovnako veľkom okne */
+#v5OMenu.v2-o-sheet { min-height: min(620px, calc(100dvh - 32px)); }
+
+/* Cviky v kruhu Pohoda (2.37) */
+.v2-ex-card { margin-top: 10px; padding: 12px 14px; background: #fff; border: 1px solid rgba(123, 97, 200, .14); border-radius: 20px; }
+.v2-ex-card summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; list-style: none; cursor: pointer; }
+.v2-ex-card summary::-webkit-details-marker { display: none; }
+.v2-ex-card summary strong { display: block; color: var(--v5-ink); font-size: 15px; }
+.v2-ex-card summary small { display: block; color: var(--v5-muted); font-size: 12px; }
+.v2-ex-card summary b { color: var(--v5-muted); transition: transform .2s ease; }
+.v2-ex-card details[open] summary b { transform: rotate(90deg); }
+.v2-ex-card p, .v2-ex-card li { color: var(--v5-ink); font-size: 13px; line-height: 1.5; }
+.v2-ex-card h4 { margin: 10px 0 2px; font-size: 13px; color: var(--v5-ink); }
+.v2-ex-card ol.v2-mama-list { padding-left: 20px; }
+.v2-ex-dose { font-weight: 700; }
+.v2-ex-add { width: 100%; margin-top: 10px; }
+
+/* Upratanie 2.37 (Samuel 10. 11.): bez tlačidiel pod kruhom – časti kruhu sú klikateľné samy (aj klávesnicou) */
+.v5-o-legend { display: none !important; }
+
+/* ——— Vždy formát mobilu (Samuel 10. 11. 2026): na širokej obrazovke úzky stĺpec v strede, nie roztiahnutá appka ——— */
+body.v5-active:not(.welcome-mode):not(.intro-only) .app {
+  width: min(100%, 460px) !important;
+  max-width: 460px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+body.v5-active:not(.welcome-mode):not(.intro-only) .main {
+  max-width: 460px !important;
+  padding-inline: 16px !important;
+}
+#v5BottomBar { width: min(calc(100% - 24px), 440px) !important; }
+#v5Drawer, #v5QuickRecord { width: min(100%, 460px) !important; }
+.v5-care-grid { grid-template-columns: minmax(0, 1fr) !important; }
+.v5-care-option:last-child { grid-column: auto !important; }
+body.v5-active.v5-app-window-open .view.active { width: min(calc(100vw - 20px), 460px) !important; max-width: 460px !important; }
+
+/* V rámčeku telefónu (frame.html) bez sivého posuvníka – posúvanie funguje ďalej (Samuel 10. 11. 2026) */
+html.v2-in-frame, html.v2-in-frame * { scrollbar-width: none; }
+html.v2-in-frame *::-webkit-scrollbar, html.v2-in-frame::-webkit-scrollbar { width: 0; height: 0; display: none; }
+html.v2-in-frame #welcomeCard { border-radius: 44px !important; overflow: hidden; }
+/* Rovnaké medzery medzi kartami domova (Samuel 10. 11.): medzeru robí len mriežka domova (14 px), nie karta Dnešný malý moment. */
+#v5Home > .v2-home-today > .v2-moment { margin-bottom: 0; }
+/* Úvod na telefóne bez posúvania: karta kroku 1 presne na výšku obrazovky aj s 10 px okrajom hlavného kontajnera. */
+@media (max-width: 560px) {
+  body.welcome-mode #welcomeCard[data-step="1"] { min-height: calc(100dvh - 20px) !important; height: calc(100dvh - 20px) !important; }
+}
+
+/* Výber „Ako poznáš termín pôrodu?“ – tlačidlá namiesto systémového okienka (Samuel 10. 11. 2026) */
+.v2-native-hidden { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important; overflow: hidden !important; }
+.v2-choice-chips { display: grid; gap: 8px; margin-top: 8px; }
+.v2-choice-chip { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .18); border-radius: 18px; font: inherit; font-size: 15px; font-weight: 700; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+.v2-choice-chip:hover { border-color: rgba(123, 97, 200, .4); }
+.v2-choice-chip.active { background: #f4f0ff; border-color: #7b6bc8; box-shadow: 0 6px 18px rgba(123, 97, 200, .14); }
+.v2-choice-dot { flex: 0 0 auto; width: 20px; height: 20px; border: 2px solid rgba(123, 97, 200, .45); border-radius: 50%; background: #fff; }
+.v2-choice-chip.active .v2-choice-dot { border-color: #7b6bc8; background: radial-gradient(circle, #7b6bc8 0 45%, #fff 50%); }
+/* Domov: hlavička s pozdravom sa posúva s obsahom – karta s menom pod ňu nezachádza a nič sa neoreže (Samuel 10. 11.). */
+body.v5-active #v5Header[data-home="true"] { position: relative !important; top: auto !important; }
+/* Spodná lišta: aktívne tlačidlo bez fialového podsvietenia (Samuel 10. 11.) – vyzerá ako ostatné. */
+#v5BottomBar .v5-bottom-action.active { color: var(--v5-muted) !important; background: transparent !important; box-shadow: none !important; }
+#v5BottomBar .v5-bottom-action.active .v5-nav-icon { color: inherit !important; background: transparent !important; box-shadow: none !important; }
+/* Kompaktné tlačidlá termínu; pri výpočte (viac polí) bez ozdobnej kartičky, aby sa krok zmestil bez posúvania. */
+.v2-choice-chips { gap: 6px; margin-top: 6px; }
+.v2-choice-chip { min-height: 42px; padding: 8px 14px; font-size: 14px; border-radius: 14px; }
+.v2-choice-dot { width: 18px; height: 18px; }
+.welcome-step:has(#welcomeCycleWrap:not(.hidden)) .welcome-fruit-avatar-card,
+.welcome-step:has(#welcomeDueBasisWrap:not(.hidden)) .welcome-fruit-avatar-card { display: none !important; }
+
+/* Vlastný výber zospodu (krajina, dĺžka cyklu) namiesto systémového zoznamu (Samuel 10. 11.) */
+.v2-select-button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 50px; padding: 10px 16px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .18); border-radius: 16px; font: inherit; font-size: 15px; font-weight: 700; text-align: left; cursor: pointer; }
+.v2-select-button b { color: #7b6bc8; font-size: 18px; line-height: 1; }
+.v2-picker { position: fixed; inset: 0; z-index: 400; display: flex; align-items: flex-end; justify-content: center; background: rgba(40, 33, 51, .32); }
+.v2-picker-panel { width: min(100%, 460px); max-height: 70vh; display: flex; flex-direction: column; background: #fffafd; border-radius: 26px 26px 0 0; box-shadow: 0 -12px 40px rgba(48, 36, 67, .2); }
+.v2-picker-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 8px; }
+.v2-picker-head strong { color: var(--v5-ink, #2f2a3a); font-size: 17px; }
+.v2-picker-close { width: 40px; height: 40px; color: var(--v5-muted, #756e7d); background: #f4f0ff; border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; }
+.v2-picker-list { display: grid; gap: 6px; padding: 6px 14px 18px; overflow-y: auto; }
+.v2-picker-item { min-height: 46px; padding: 10px 14px; color: var(--v5-ink, #2f2a3a); background: #fff; border: 1.5px solid rgba(123, 97, 200, .12); border-radius: 14px; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.v2-picker-item.active { background: #f4f0ff; border-color: #7b6bc8; font-weight: 800; }
+/* Stabilné tlačidlá – rovnaká veľkosť a okraj, nech je vybrané alebo nie; bez čierneho rámčeka pri ťuknutí. */
+.v2-choice-chip { border-width: 1.5px !important; }
+.v2-choice-chip:focus { outline: none; }
+.v2-choice-chip:focus-visible, .v2-select-button:focus-visible, .v2-picker-item:focus-visible { outline: 2px solid rgba(123, 97, 200, .5); outline-offset: 2px; }
+/* Posledný krok úvodu: náhľad domova má 6 dlaždíc – karta cesty a medzery kompaktnejšie, aby sa úvod nemusel zmenšovať. */
+.welcome-finish-step #welcomeFinishFirstStep { min-height: 0 !important; gap: 4px !important; padding: 12px 16px 14px !important; }
+.welcome-finish-step .welcome-journey-art { height: 100px !important; min-height: 0 !important; }
+.welcome-finish-step .welcome-story-lead { margin-bottom: 12px !important; }
+.welcome-finish-step .welcome-finish-actions { margin-top: 12px !important; }
+.welcome-finish-step .welcome-finish-facts:empty { display: none !important; }
+.welcome-finish-preview .v5-glance { padding: 8px 10px !important; min-height: 0 !important; }
+/* Náhľad domova v poslednom kroku úvodu – názov nad hodnotou, presne ako dlaždice na domove (Samuel 10. 11.). */
+.welcome-finish-preview .v5-glance { display: block !important; text-align: left; }
+.welcome-finish-preview .v5-glance dt,
+.welcome-finish-preview .v5-glance dd { display: block; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.welcome-finish-preview .v5-glance dt { color: var(--v5-muted); font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.welcome-finish-preview .v5-glance dd { margin-top: 3px; color: var(--v5-ink); font-size: 15px; font-weight: 800; }
+.welcome-finish-preview #welcomeFinishBabyMeta { display: none !important; }
