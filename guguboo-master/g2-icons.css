@@ -1,0 +1,51 @@
+/* Guguboo Master – jednotné ikony (Phosphor Icons, MIT, (c) 2023 Phosphor Icons, https://github.com/phosphor-icons/core).
+   Ikony sú výplne vo viewBox 0 0 256 256 (nie ťahy) → prebijeme staré pravidlá stroke / fill:none.
+   Veľkosti: lišta 24 · hlavička a skratky 22 · riadky a dlaždice 20 · inline 16.
+   Farba: vždy currentColor – určuje ju rodič (farba skupiny, ink alebo muted).
+   Štýl: Regular všade; Duotone (icon(name, "duo"), 20 % podklad) pre skratky domova a dlaždice zásuvky. */
+
+svg.ph, svg.ph * { fill: currentColor !important; stroke: none !important; }
+svg.ph { flex: 0 0 auto; width: 20px; height: 20px; overflow: visible; }
+
+/* 24 – spodná lišta */
+.v5-nav-icon svg.ph { width: 24px !important; height: 24px !important; }
+
+/* 22 – hlavička, tlačidlá okien, skratky domova */
+.v5-icon-button svg.ph,
+.v5-universal-back svg.ph,
+.g2-win-search svg.ph,
+.g2-short-ic svg.ph,
+.g2-short .g2-short-ic svg.ph { width: 22px !important; height: 22px !important; }
+
+/* 20 – riadky, dlaždice, pole Hľadaj, Všetko */
+.v5-icon svg.ph,
+.g2-tile-ic svg.ph,
+.g2-ask > svg.ph,
+.g2-search > svg.ph,
+.g2-all svg.ph,
+.v2-org-row .v5-icon svg.ph,
+.v2-tour-item .v5-icon svg.ph,
+.v2-tour-chip .v5-icon svg.ph,
+.v2-moment-row .v5-icon svg.ph,
+.v5-quick-tile .v5-icon svg.ph,
+.v5-growth-field .v5-icon svg.ph,
+.v5-glance.v2-glance-named .v5-icon svg.ph,
+.v5-mini-profile svg.ph,
+.v2-moment-cta .v5-icon svg.ph { width: 20px !important; height: 20px !important; }
+
+/* 16 – inline (nadpisy sekcií, pripnutie, malé kruhy) */
+.g2-sec-ic svg.ph,
+.v5-drawer-pin svg.ph,
+#v5Drawer .v5-drawer-pin svg.ph,
+.g2-ask-orb svg.ph,
+.v2-summary-block h3 svg.ph,
+.v2-moment-cta b svg.ph,
+.v5-check-categories-button svg.ph { width: 16px !important; height: 16px !important; }
+
+/* Nízka obrazovka: skratka je v riadku s kruhom 26 px → ikona 20 */
+@media (max-height: 659px) {
+  .g2-short .g2-short-ic svg.ph { width: 20px !important; height: 20px !important; }
+}
+
+/* Farby, ktoré boli doteraz v stroke */
+.v2-summary-block h3 svg.ph { color: var(--v5-brand-dark, #5b4ca3); }

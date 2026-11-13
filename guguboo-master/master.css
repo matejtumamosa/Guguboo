@@ -433,3 +433,12 @@ body.v5-active #v5Header[data-home="true"] { padding-top: calc(10px + env(safe-a
 body.v5-active #v5Header[data-home="true"] .v5-header-actions { flex-direction: row !important; align-items: center !important; gap: 6px !important; }
 body:has(#home.view.active) .g2-ring-center strong { white-space: nowrap; }
 body:has(#home.view.active) #home.view.active { overflow: hidden auto; overscroll-behavior: contain; } /* poistka: posun len ak si používateľka sama rozbalí obsah (napr. moment) */
+/* QA-64: legenda vedľa kruhu pri každej výške (popisy na oblúku boli pri malom kruhu nečitateľné) */
+body:has(#home.view.active) .g2-ring-card { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(120px, auto); grid-template-rows: auto 1fr; column-gap: 10px; }
+body:has(#home.view.active) .g2-ring-card .g2-ring-head { grid-column: 1 / -1; }
+body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; height: 100%; }
+body:has(#home.view.active) .g2-ring-card .v2-o-label { display: none; }
+body:has(#home.view.active) .g2-ring-legend { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+/* Kruh má prednosť pred momentom aj na vysokej obrazovke (QA-64/66): moment je v Našich momentoch, veta o týždni ostáva */
+@media (min-height: 820px) { .g2-home-moment { display: none !important; } }
+@media (min-height: 720px) { .g2-hero-text p { display: block; } }
