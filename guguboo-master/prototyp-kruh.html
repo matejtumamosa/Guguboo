@@ -183,16 +183,19 @@ function requests() {
   if (phase === "preg") return ["Môžeš dnes nakúpiť namiesto mňa? Potrebujem si oddýchnuť.", "Môžeš dnes pripraviť večeru? Ďakujem.", "Môžeš sa dnes postarať o domácnosť, kým si ľahnem s nohami hore?"].concat(week() >= 28 ? ["Pomôžeš mi tento týždeň pripraviť miesto, kde bude bábätko spať?"] : []);
   return ["Môžeš na 20 minút prevziať bábätko? Potrebujem si ľahnúť.", "Dnes nestíham jedlo. Môžeš cestou niečo kúpiť alebo uvariť?", "Môžeš ísť dnes s kočíkom von? Potrebujem chvíľu ticha.", "Vymeníme sa dnes v noci pri vstávaní?"];
 }
+const CAUTION = "Ak ťa pri cvičení niečo bolí, krvácaš alebo ti nie je dobre, prestaň a poraď sa so svojím gynekológom alebo pôrodnou asistentkou.";
 const friendMsgs = ["Myslím na teba. Máš dnes chvíľu na telefonát?", "Potrebujem sa s niekým porozprávať. Zavoláš mi, keď budeš mať chvíľu?"];
 
 /* —— sekcie —— */
 function section(k) {
   if (k === "rest") return open("Oddych", act("breath", "◌", "Dýchaj so mnou", "1 minúta, len sleduj krúžok") + act("nap", "☾", "Zdriemni si so šumom", "šum sa pomaly zosilní, potom sám stíchne") + (night ? "" : act("quiet", "⏱", "Chvíľa ticha", "5, 10 alebo 15 minút")));
   if (k === "sup") return open("Opora", act("ask", "✉", "Poprosiť o pomoc", "hotová prosba, upravíš a pošleš") + (night ? "" : act("friend", "♡", "Napísať blízkemu", "krátka správa")) + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"));
+  // Posudok Content & Safety (13. 11.): v kruhu len činnosť, informácie (telo, ťažkosti, vitamíny, kontrola) sú v Mame – kruh nie je zdravotná poradňa.
   if (k === "body") {
-    if (phase === "preg") return open("Telo", act("pw-you", "◐", "Tvoje telo tento týždeň", week() + ". týždeň") + act("pw-troubles", "?", "Niečo ma trápi", "nevoľnosť, pálenie záhy, kŕče, opuchy…") + (night ? "" : act("pw-move", "↟", "Pohyb, ktorý je v pohode", "čo áno a čomu sa vyhnúť")));
-    const d = days(), third = d < 36 ? act("pp-tired", "☾", "Keď si unavená", "spánok a oddych po pôrode") : d < 64 ? act("pp-check", "✓", "Pred kontrolou po pôrode", "čo sa na nej preberá") : act("pp-gap", "◎", "Kontrola brušných svalov", "okolo 8. týždňa po pôrode");
-    return open("Telo", act("pp-pelvic", "↟", "Panvové dno so mnou", "krok za krokom") + act("pp-troubles", "?", "Niečo ma trápi", "krvácanie, stehy, prsia…") + third);
+    const mamaLink = `<button class="act" type="button" data-a="mama"><i aria-hidden="true">›</i><span>Viac o tele v Mame<small>tvoje telo, ťažkosti, jedlo a pohyb</small></span></button>`;
+    if (night) return open("Telo", `<p class="lead">V noci nič necvič. Skús radšej Oddych.</p>` + act("breath", "◌", "Dýchaj so mnou", "1 minúta") + mamaLink);
+    if (phase === "preg") return open("Telo", act("walk", "↟", "Krátka prechádzka", "10 minút, časovač ťa upozorní") + mamaLink);
+    return open("Telo", act("pp-pelvic", "↟", "Panvové dno so mnou", "krok za krokom") + mamaLink);
   }
 }
 function centerTap() {
@@ -243,13 +246,24 @@ function doAct(a) {
   }
   if (a === "pw-move") { const e = C.mamaPregnancy?.exercise || {}; open("Pohyb, ktorý je v pohode", `<div class="info"><p style="margin:0">${esc(e.moveExamples)}</p></div>` + (e.tips ? `<div class="info"><h3>Ako na to</h3><ul>${e.tips.map(x => `<li>${esc(Array.isArray(x) ? x.join(" – ") : x)}</li>`).join("")}</ul></div>` : "") + (e.avoid ? `<div class="info"><h3>Čomu sa vyhnúť</h3><ul>${e.avoid.map(x => `<li>${esc(Array.isArray(x) ? x.join(" – ") : x)}</li>`).join("")}</ul></div>` : "") + `<p class="small">${esc(e.note || "")}</p>` + source(e.source, e.reviewed)); }
   /* Telo – po pôrode */
-  if (a === "pp-pelvic" || a === "pp-gap") {
-    const ex = C.mamaPostpartum?.exercises, it = ex?.items?.find(x => x.id === (a === "pp-pelvic" ? "pelvic" : "gap")); if (!it) return;
+  if (a === "pp-pelvic") {
+    // Bezpečnostný rámec: po cisárskom reze sa cviky neponúkajú automaticky; appka nikdy netvrdí, že je cvičenie „bezpečné“.
+    return open("Panvové dno so mnou", `<p class="lead">Rodila si cisárskym rezom?</p>` + act("pp-cs", "•", "Áno", "") + act("pp-pelvic-go", "•", "Nie", "") + `<p class="small">Nič sa neukladá – pýtame sa len teraz.</p>`);
+  }
+  if (a === "pp-cs") return open("Panvové dno", `<div class="info"><p style="margin:0">Po cisárskom reze sa o tom, kedy a ako začať cvičiť, poraď so svojím gynekológom alebo pôrodnou asistentkou.</p></div>` + act("breath", "◌", "Zatiaľ si skús chvíľu dýchať", "1 minúta") + `<button class="act" type="button" data-a="mama"><i aria-hidden="true">›</i><span>Telo po pôrode v Mame</span></button>`);
+  if (a === "pp-pelvic-go") {
+    const ex = C.mamaPostpartum?.exercises, it = ex?.items?.find(x => x.id === "pelvic"); if (!it) return;
     let i = 0; const render = () => { const long = /10 sekúnd|do 10/.test(it.steps[i]);
-      $("shB").innerHTML = `<p class="lead">${esc(it.why)}</p><div class="info step"><p class="small" style="margin:0 0 6px">Krok ${i + 1} z ${it.steps.length}</p>${esc(it.steps[i])}${long ? `<div class="timer" id="hold">10</div><button class="btn ghost" type="button" data-a="hold">Spustiť 10 sekúnd</button>` : ""}</div>${i < it.steps.length - 1 ? `<button class="btn" type="button" data-a="next">Ďalej</button>` : `<div class="info"><p style="margin:0">${esc(it.dose)}</p></div>`}<div class="info"><h3>Zatiaľ vynechaj</h3><ul>${(ex.avoid || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>${source(ex.source, ex.reviewed)}`; };
+      $("shB").innerHTML = `<p class="lead">${esc(it.why)}</p><div class="info step"><p class="small" style="margin:0 0 6px">Krok ${i + 1} z ${it.steps.length}</p>${esc(it.steps[i])}${long ? `<div class="timer" id="hold">10</div><button class="btn ghost" type="button" data-a="hold">Spustiť 10 sekúnd</button>` : ""}</div>${i < it.steps.length - 1 ? `<button class="btn" type="button" data-a="next">Ďalej</button>` : `<div class="info"><p style="margin:0">${esc(it.dose)}</p></div>`}<div class="info"><h3>Zatiaľ vynechaj</h3><ul>${(ex.avoid || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul></div><p class="small">${esc(CAUTION)}</p>${source(ex.source, ex.reviewed)}<p class="small">Podľa NHS (Spojené kráľovstvo). Na Slovensku sa poraď so svojím gynekológom alebo pôrodnou asistentkou.</p>`; };
     open(it.title, ""); render(); doAct.next = () => { i = Math.min(i + 1, it.steps.length - 1); render(); };
   }
   if (a === "next") doAct.next?.();
+  if (a === "mama") { close(); toast("V appke sa otvorí Mama › Tvoje telo (overený obsah so zdrojom)."); }
+  if (a === "walk") {
+    const e = C.mamaPregnancy?.exercise || {};
+    open("Krátka prechádzka", `<div class="timer" id="tm">10:00</div><button class="btn" type="button" data-a="walk-go">Ideme von</button><div class="info" style="margin-top:12px"><p style="margin:0">${esc(e.moveExamples || "")}</p><p class="small" style="margin:8px 0 0">Ak máš zdravotné obmedzenie alebo komplikácie v tehotenstve, najprv sa poraď so svojím gynekológom.</p></div><p class="small">${esc(CAUTION)}</p>${source(e.source, e.reviewed)}<p class="small">Podľa NHS (Spojené kráľovstvo). Na Slovensku sa poraď so svojím gynekológom.</p>`);
+  }
+  if (a === "walk-go") { let s = 600; audio(); clearInterval(timer); const show = () => $("tm").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); show(); timer = setInterval(() => { s--; show(); if (s <= 0) { clearInterval(timer); chime(); $("tm").textContent = "Pekná prechádzka"; } }, 1000); }
   if (a === "hold") { let s = 10; clearInterval(timer); timer = setInterval(() => { s--; $("hold").textContent = s; if (s <= 0) { clearInterval(timer); $("hold").textContent = "Uvoľni"; chime(); } }, 1000); }
   if (a === "pp-tired") { const m = C.mamaPostpartum?.mood || {}; open("Keď si unavená", `<div class="info"><ul>${(m.sleep || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>${source(m.sleepSource, m.sleepReviewed)}</div>` + act("ask", "✉", "Poprosiť o postráženie", "hotová prosba")); }
   if (a === "pp-check") { const c = C.mamaPostpartum?.check || {}; open("Pred kontrolou po pôrode", `<div class="info"><p style="margin:0">${esc(c.when)}</p></div><div class="info"><h3>Čo sa na nej preberá</h3><ul>${(c.items || []).map(x => `<li>${esc(Array.isArray(x) ? x.join(" – ") : x)}</li>`).join("")}</ul></div>` + source(c.source, c.reviewed)); }
