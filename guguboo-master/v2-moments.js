@@ -123,7 +123,7 @@
     };
     const expecting = state.profile?.status === "expecting";
     return [
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Naša časová os</h1><p>Spomienky sa sem zapisujú samy – zo sona, pohybov, kartičky, narodenia či prvých razov. Nič nemusíš písať.</p></header>",
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Naša časová os</h1><p>Zapisujú sa samy.</p></header>",
       group("post", "Spolu", expecting ? "" : "Prvé spoločné chvíle sa objavia tu."),
       group("pre", "Čakanie na teba", "Prvé spomienky pribudnú, keď si napríklad zapíšeš sono alebo prvé pohyby v Tehotenskej knižke."),
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
@@ -202,9 +202,9 @@
     };
     const block = (phase, title) => "<h3 class='v2-book-group'>" + title + "</h3><div class='v5-first-moments-grid v2-first-grid'>" + CATALOG.filter(item => item.phase === phase).map(tile).join("") + "</div>";
     return [
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Prvé razy</h1><p>Ťukni na okamih, keď sa stane – dátum a čas sa uložia samy a objavia sa v časovej osi. Opätovným ťuknutím ho zrušíš.</p></header>",
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Prvé razy</h1><p>Druhým ťuknutím zrušíš.</p></header>",
       expecting ? block("pre", "Čakanie na teba") + block("post", "Po narodení") : block("post", "Spolu") + block("pre", "Z čakania"),
-      "<p class='v5-book-note'>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (míľniky, ktoré do daného veku zvládne väčšina detí), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p>",
+      "<details class='v5-book-note'><summary>Prečo sa appka pýta?</summary><p>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (míľniky, ktoré do daného veku zvládne väčšina detí), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p></details>",
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
     ].join("");
   }

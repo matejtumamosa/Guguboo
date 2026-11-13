@@ -87,6 +87,8 @@
   function detailHtml(item) {
     const partial = item.verification_status === "partial";
     const unverified = item.verification_status === "needs_source";
+    const more = [row("Kto to vybavuje", item.who), row("Doklady", item.documents), row("Ako postupovať", item.how), row("Kde", item.where), row("Čo potom", item.next)].join("");
+    const moreHtml = more ? "<details class='v2-admin-more'><summary>Ako to vybaviť</summary><div class='v2-admin-rows'>" + more + "</div></details>" : "";
     return [
       "<header class='v2-admin-head'><small>", esc(item.authority || item.who || "Úrady a doklady"), "</small><h2 id='v2AdminTitle'>", esc(item.title), "</h2>",
       item.what ? "<p>" + esc(item.what) + "</p>" : "", "</header>",
@@ -95,21 +97,18 @@
         : partial ? "<p class='v2-admin-status'>Časť údajov ešte overujeme – pri detailoch sa riaď oficiálnou stránkou.</p>" : "",
       "<div class='v2-admin-rows'>",
       row("Prečo", item.why),
-      row("Kto to vybavuje", item.who),
       row("Kedy", item.when?.text),
       row("Termín", item.deadline),
       row("Komu patrí", item.eligibility),
       row("Suma", item.amount),
-      row("Doklady", item.documents),
-      row("Ako postupovať", item.how),
-      row("Kde", item.where),
-      row("Čo potom", item.next),
       "</div>",
+      // Text 1.5 (Samo 13. 11.): podrobnosti ostávajú celé, len v ďalšej úrovni.
+      moreHtml,
       item.source_url ? "<a class='v2-source' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(item.official_source || "oficiálna stránka") + " · kontrola " + esc(formatDate(item.last_checked)) + " ↗</a>" : "",
       "<div class='v2-birth-actions'>",
       item.source_url ? "<a class='v5-primary' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Otvoriť oficiálnu stránku</a>" : "",
-      "<button class='v5-secondary' type='button' data-v2-admin-remind='", esc(item.id), "'>Pripomeň mi o týždeň</button>",
-      "<button class='v5-secondary' type='button' data-v2-admin-done='", esc(item.id), "'>✓ Už mám vybavené</button>",
+      "<button class='v5-secondary' type='button' data-v2-admin-remind='", esc(item.id), "'>Pripomeň o týždeň</button>",
+      "<button class='v5-secondary' type='button' data-v2-admin-done='", esc(item.id), "'>✓ Vybavené</button>",
       "</div>",
       "<p class='v2-birth-note'>Guguboo nenahrádza právne poradenstvo. O nároku vždy rozhoduje príslušný úrad.</p>"
     ].join("");
@@ -157,10 +156,10 @@
     const automatic = forStage.filter(isAutomatic);
     return [
       "<header class='v2-admin-head'><small>Úrady a doklady · ", esc(module.meta?.country || ""), "</small><h2 id='v2AdminTitle'>Čo sa ťa týka</h2>",
-      "<p>Len to, čo je pre tvoje obdobie dôležité. Všetko z oficiálnych stránok úradov, kontrola ", esc(formatDate(module.meta?.last_checked)), ".</p></header>",
-      group("Na vybavenie", toDo, "Guguboo ti každú vec pripomenie v pláne, keď príde jej čas."),
-      group("Toto sa vybaví samo", automatic, "Nemusíš nič podávať – len aby si vedela, čo sa deje."),
-      group("Neskôr", later, "Zatiaľ to nemusíš riešiť."),
+      "<p>Z oficiálnych stránok úradov · kontrola ", esc(formatDate(module.meta?.last_checked)), ".</p></header>",
+      group("Na vybavenie", toDo, ""),
+      group("Toto sa vybaví samo", automatic, ""),
+      group("Neskôr", later, ""),
       "<p class='v2-birth-note'>Guguboo nenahrádza právne poradenstvo. O nároku vždy rozhoduje príslušný úrad.</p>"
     ].join("");
   }

@@ -187,7 +187,7 @@
         ? "<button type='button' class='v5-secondary' data-v2-period-end>Menštruácia skončila</button>"
         : "<button type='button' class='v5-primary' data-v2-period-today='" + esc(p.days[s.ongoing.end]?.flow || "medium") + "'>Áno, aj dnes</button><button type='button' class='v5-secondary' data-v2-period-end>Už skončila</button>";
     } else {
-      if (s.late > 0) { title = "Mešká " + dni(s.late); sub = "Oproti odhadu z tvojich cyklov. Odhad je len orientačný."; }
+      if (s.late > 0) { title = dni(s.late) + " po odhade"; sub = "Odhad z tvojich cyklov je len orientačný."; }
       else if (s.next) { const left = diff(t, s.next); title = left === 0 ? "Môže prísť dnes" : "O " + dni(left); sub = "Ďalšia menštruácia asi " + short(s.next) + " · odhad"; }
       else if (s.last) { title = "Prvá zapísaná " + short(s.last.start); sub = "Odhad ďalšej ukážeme po druhej zapísanej menštruácii."; }
       else { title = "Zatiaľ nič zapísané"; sub = birthDays !== null && birthDays < 42 ? "Krvácanie v prvých týždňoch po pôrode nie je menštruácia – zapíš až tú." : "Keď začne menštruácia, stačí ťuknúť nižšie."; }

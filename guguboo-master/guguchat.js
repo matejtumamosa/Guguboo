@@ -179,7 +179,7 @@
       "<span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       item.type === "task" ? [
         "<div class='v2-journey-actions'>",
-        "<button type='button' data-v2-journey-done='", esc(item.id), "'>✓ Už mám</button>",
+        "<button type='button' data-v2-journey-done='", esc(item.id), "'>✓ Vybavené</button>",
         "<button type='button' data-v2-journey-snooze='", esc(item.id), "'>Pripomeň o týždeň</button>",
         "</div>"
       ].join("") : "",
@@ -207,7 +207,7 @@
         soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
         "</div>"
       ].join("") : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Daj vedieť a Guguboo sa prepne na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
       "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí zatiaľ nemusíš riešiť. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
       // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
       "</footer>",
@@ -242,9 +242,9 @@
       "<section class='v2-journey g2-plan-list' aria-label='Plán'><header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
       now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na teraz nič netreba.</p>",
       soon.length ? "<div class='v2-journey-soon'><h3>Čoskoro</h3>" + soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>" + (item.startsInDays <= 7 ? "budúci týždeň" : "o pár týždňov") + "</em></button>").join("") + "</div>" : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Daj vedieť a Guguboo sa prepne na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
-      "<footer class='v2-journey-later'><span>", plan.counts.later ? "Ďalšie veci zatiaľ nemusíš riešiť. Keď príde čas, ozvem sa." : "Zvyšok počká.", "</span></footer></section>",
-      "<button class='v5-row-card g2-plan-areas' type='button' data-g2-org><span class='v5-icon'>", icon("checklist"), "</span><div><strong>Príprava podľa oblastí</strong><span>Vybaviť, domov, doklady a blízki – všetky kroky</span></div><span class='v5-row-arrow'>›</span></button>"
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      "</section>",
+      "<button class='v5-row-card g2-plan-areas' type='button' data-g2-org><span class='v5-icon'>", icon("checklist"), "</span><div><strong>Príprava podľa oblastí</strong><span>Domov, taška, doklady</span></div><span class='v5-row-arrow'>›</span></button>"
     ].join("");
   }
   // Pre hero domova: prvá veta o bábätku z overeného obsahu týždňa (NHS).
@@ -345,9 +345,9 @@
     const lines = tasks.slice(0, 4).map(item => "• " + item.title + (item.horizon === "soon" ? " (o " + item.startsInDays + " dní)" : ""));
     const intro = focus === "tasks"
       ? (tasks.length === 1 ? "Z dôležitých vecí ti zostáva jedna." : "Z dôležitých vecí ti zostávajú " + tasks.length + ".")
-      : "Podľa toho, kde na svojej ceste si (" + J.stageLabel(ctx) + "), je teraz dôležité:";
+      : "Teraz je dôležité:";
     return {
-      text: intro + "\n" + lines.join("\n") + "\n\nNajbližšie bude vhodné vyriešiť: " + first.title + ".",
+      text: intro + "\n" + lines.join("\n"),
       item: first.id,
       actions: itemActions(first)
     };
@@ -356,8 +356,8 @@
   function itemActions(item) {
     const list = [{ label: "Začať", kind: "open", value: item.id }, { label: "Vysvetli mi to", kind: "explain", value: item.id }];
     if (item.type === "task") {
-      list.push({ label: "Pripomeň mi", kind: "remind", value: item.id });
-      list.push({ label: "Už mám vybavené", kind: "done", value: item.id });
+      list.push({ label: "Pripomeň o týždeň", kind: "remind", value: item.id });
+      list.push({ label: "✓ Vybavené", kind: "done", value: item.id });
     }
     return list;
   }
@@ -378,39 +378,39 @@
   const NAV_INTENT = ["kde ", "kde?", "ako ", "otvor", "najdem", "najst", "chcem", "ukaz", "zapis", "zapisat", "pridat", "pridam", "nahra", "mozem", "potrebujem", "zobraz", "pozriet", "pozriem", "vytvor", "spravit", "urobit"];
   const NAV = [
     // Spomienky
-    { words: ["album"], text: "Albumy (Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok) sú v Naše momenty.", label: "Otvoriť albumy", go: "moments:albums" },
-    { words: ["fotk", "fotograf", "spomien", "moment", "casova os", "casovu os"], text: "Fotky a spomienky sú v Naše momenty – v časovej osi sa zapisujú samy.", label: "Otvoriť časovú os", go: "moments:timeline" },
-    { words: ["prve razy", "prvy raz", "prvy usmev", "prve kroky", "prve slovo"], text: "Prvé razy zapíšeš jedným ťuknutím v Naše momenty → Prvé razy.", label: "Otvoriť Prvé razy", go: "moments:firsts" },
-    { words: ["uspavank", "nahravk", "nahrat hlas", "moj hlas", "nahrany hlas", "nahrane"], text: "Nahrávky tvojím hlasom sú v Môj hlas pre bábätko. Po narodení ich nájdeš aj pri Spánku → Zvuky.", label: "Otvoriť Môj hlas", feature: "voice" },
-    { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník je v časti Mama (spodná lišta) – chránený PIN-om.", label: "Otvoriť denník", feature: "privateSpace" },
+    { words: ["album"], text: "Albumy (Naše čakanie, 100 dní spolu, Moje prvé, Prvý rok) sú v Naše momenty.", label: "Albumy", go: "moments:albums" },
+    { words: ["fotk", "fotograf", "spomien", "moment", "casova os", "casovu os"], text: "Fotky a spomienky sú v Naše momenty – v časovej osi sa zapisujú samy.", label: "Časová os", go: "moments:timeline" },
+    { words: ["prve razy", "prvy raz", "prvy usmev", "prve kroky", "prve slovo"], text: "Prvé razy zapíšeš jedným ťuknutím v Našich momentoch.", label: "Prvé razy", go: "moments:firsts" },
+    { words: ["uspavank", "nahravk", "nahrat hlas", "moj hlas", "nahrany hlas", "nahrane"], text: "Nahrávky tvojím hlasom sú v Môj hlas pre bábätko. Po narodení ich nájdeš aj v Spánku a zvukoch.", label: "Môj hlas pre bábätko", feature: "voice" },
+    { words: ["dennik", "nalad", "list babatku", "listy babatku"], text: "Môj súkromný denník je v časti Mama – chránený PIN-om.", label: "Môj súkromný denník", feature: "privateSpace" },
     { words: ["oznamit tehotenstvo", "oznamenie tehotenstva", "oznamit blizkym", "kartick oznam"], stage: "pre", text: "Kartičku na oznámenie tehotenstva vytvoríš v Naše momenty alebo priamo tu.", label: "Vytvoriť kartičku", feature: "announce" },
-    { words: ["kartick"], stage: "post", text: "Kartičku narodenia vytvoríš, upravíš alebo znova pošleš tu.", label: "Otvoriť kartičku", feature: "cards" },
+    { words: ["kartick"], stage: "post", text: "Kartičku narodenia vytvoríš, upravíš alebo znova pošleš tu.", label: "Kartička narodenia", feature: "cards" },
     // Tehotenská knižka
-    { words: ["sono", "ultrazvuk", "vysledk"], stage: "pre", text: "Výsledky vyšetrení (aj s fotkou sona) sú v Tehotenskej knižke → Výsledky vyšetrení.", label: "Otvoriť výsledky", go: "pregnancy|[data-v5-book-section='results']" },
-    { words: ["zapis z kontrol", "zapisy z kontrol", "zapisat kontrol", "z kontroly"], stage: "pre", text: "Zápisy z kontrol sú v Tehotenskej knižke.", label: "Otvoriť zápisy z kontrol", go: "pregnancy|[data-v5-book-section='visits']" },
-    { words: ["hmotnost", "tlak"], stage: "pre", text: "Hmotnosť a tlak sa ukazujú v Tehotenskej knižke zo zápisov z kontrol.", label: "Otvoriť hmotnosť a tlak", go: "pregnancy|[data-v5-book-section='weight']" },
-    { words: ["pohyb", "kopan"], stage: "pre", text: "Pohyby bábätka zapíšeš v Tehotenskej knižke → Pohyby bábätka.", label: "Otvoriť pohyby", go: "pregnancy|[data-v5-book-section='moves']" },
-    { words: ["plan porodu"], stage: "pre", text: "Plán pôrodu je v Tehotenskej knižke.", label: "Otvoriť plán pôrodu", go: "pregnancy|[data-v5-book-section='birthplan']" },
-    { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otvoriť otázky", go: "pregnancy|[data-v5-book-section='questions']" },
-    { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je v časti Bábätko (spodná lišta).", label: "Otvoriť Tehotenskú knižku", feature: "pregnancy" },
-    { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Otvoriť Prípravu na pôrod", feature: "beforeBirth" },
-    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Otvoriť Tvoj týždeň", feature: "babySize" },
-    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama (spodná lišta) – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Otvoriť menštruačný kalendár", feature: "period" },
-    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama (spodná lišta).", label: "Otvoriť Mamu", feature: "mama" },
+    { words: ["sono", "ultrazvuk", "vysledk"], stage: "pre", text: "Výsledky vyšetrení (aj s fotkou sona) sú v Tehotenskej knižke.", label: "Výsledky vyšetrení", go: "pregnancy|[data-v5-book-section='results']" },
+    { words: ["zapis z kontrol", "zapisy z kontrol", "zapisat kontrol", "z kontroly"], stage: "pre", text: "Zápisy z kontrol sú v Tehotenskej knižke.", label: "Zápisy z kontrol", go: "pregnancy|[data-v5-book-section='visits']" },
+    { words: ["hmotnost", "tlak"], stage: "pre", text: "Hmotnosť a tlak sa ukazujú v Tehotenskej knižke zo zápisov z kontrol.", label: "Hmotnosť a tlak", go: "pregnancy|[data-v5-book-section='weight']" },
+    { words: ["pohyb", "kopan"], stage: "pre", text: "Pohyby bábätka zapíšeš v Tehotenskej knižke.", label: "Pohyby bábätka", go: "pregnancy|[data-v5-book-section='moves']" },
+    { words: ["plan porodu"], stage: "pre", text: "Plán pôrodu je v Tehotenskej knižke.", label: "Plán pôrodu", go: "pregnancy|[data-v5-book-section='birthplan']" },
+    { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otázky pre lekára", go: "pregnancy|[data-v5-book-section='questions']" },
+    { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je v časti Bábätko.", label: "Tehotenská knižka", feature: "pregnancy" },
+    { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Príprava na pôrod", feature: "beforeBirth" },
+    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Tvoj týždeň", feature: "babySize" },
+    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Menštruačný kalendár", feature: "period" },
+    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama.", label: "Mama", feature: "mama" },
     // Po pôrode
-    { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Otvoriť očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
-    { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Otvoriť prehliadky", go: "childBook|[data-v2-child-section='checks']" },
-    { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Otvoriť rast", go: "childBook|[data-v2-child-section='growth']" },
-    { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je v časti Bábätko (spodná lišta).", label: "Otvoriť Zdravotnú knižku", feature: "childBook" },
-    { words: ["zubk", "zub"], stage: "post", text: "Zúbky nájdeš v Hľadaj (lupa vpravo hore) v skupine Bábätko.", label: "Otvoriť Zúbky", feature: "teeth" },
-    { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko (spodná lišta).", label: "Otvoriť Aktivity", feature: "activities" },
+    { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
+    { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Prehliadky", go: "childBook|[data-v2-child-section='checks']" },
+    { words: ["rast", "vaha", "vyska", "dlzka", "meran"], stage: "post", text: "Rast (hmotnosť a dĺžka v grafe) je v Zdravotnej knižke dieťaťa.", label: "Rast", go: "childBook|[data-v2-child-section='growth']" },
+    { words: ["zdravotn"], stage: "post", text: "Zdravotná knižka dieťaťa je v časti Bábätko.", label: "Zdravotná knižka", feature: "childBook" },
+    { words: ["zubk", "zub"], stage: "post", text: "Zúbky nájdeš v Hľadaj (lupa vpravo hore) v skupine Bábätko.", label: "Zúbky", feature: "teeth" },
+    { words: ["aktivit", "hrat sa", "hry "], stage: "post", text: "Aktivity podľa veku sú v časti Bábätko.", label: "Aktivity", feature: "activities" },
     // Praktické
-    { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Otvoriť Kalendár", feature: "calendar" },
-    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Dôležitých kontaktoch (časť Rodina).", label: "Otvoriť Dôležité kontakty", feature: "contacts" },
-    { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Otvoriť Nákup", feature: "shopping" },
-    { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Otvoriť profil", feature: "profiles" },
+    { words: ["kalendar", "termin", "pripomien"], text: "Všetky termíny a pripomienky sú v Kalendári.", label: "Kalendár", feature: "calendar" },
+    { words: ["kontakt", "telefon"], text: "Kontakty na lekára, pôrodnicu a blízkych sú v Dôležitých kontaktoch (časť Rodina).", label: "Dôležité kontakty", feature: "contacts" },
+    { words: ["nakup", "nakupn"], text: "Spoločný nákupný zoznam je v Nákupe.", label: "Nákup", feature: "shopping" },
+    { words: ["profil", "nastaven", "zmenit meno", "zmenit udaje", "upravit udaje"], text: "Profil (tvoj aj bábätka) a nastavenia otvoríš cez ☰ vpravo hore.", label: "Profily rodiny", feature: "profiles" },
     { words: ["nocny rezim", "tmavy rezim"], text: "Nočný režim zapneš tlačidlom 🌙 vpravo hore na domove." },
-    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš v Hľadaj (lupa vpravo hore) – zoradené ako spodná lišta: Bábätko, Mama a Rodina.", label: "Otvoriť zásuvku", kind: "drawer" }
+    { words: ["zasuvk", "vsetky aplikacie", "dalsie aplikacie", "menu"], text: "Všetko nájdeš pod lupou vpravo hore – zoradené ako Bábätko, Mama a Rodina.", label: "Všetko", kind: "drawer" }
   ];
 
   function navAnswer(t, ctx) {
@@ -674,7 +674,7 @@
       }
       return {
         level: "admin",
-        text: "Úrady a príspevky chcem robiť poriadne: každú informáciu len z oficiálneho zdroja a s dátumom overenia. Tento prehľad pre tvoju situáciu práve pripravujeme.\n\nDovtedy nájdeš presné a aktuálne pravidlá priamo na oficiálnych stránkach:",
+        text: "Tento prehľad ešte pripravujeme – len z oficiálnych zdrojov. Zatiaľ nájdeš pravidlá tu:",
         actions: [
           { label: OFFICIAL.slovensko[0], kind: "link", value: OFFICIAL.slovensko[1] },
           { label: OFFICIAL.socpoist[0], kind: "link", value: OFFICIAL.socpoist[1] },
@@ -684,7 +684,7 @@
     }
 
     // 7. Zdvorilosti.
-    if (has(t, ["ahoj", "dobry den", "cau", "zdravim"])) return { text: "Ahoj! Som GuguChat. Poradím ti, čo je teraz dôležité, a pomôžem ti to rovno vybaviť. Na čo sa chceš opýtať?", actions: [{ label: "Čo ma teraz čaká?", kind: "ask", value: "Čo ma teraz čaká?" }] };
+    if (has(t, ["ahoj", "dobry den", "cau", "zdravim"])) return { text: "Ahoj, som GuguChat. S čím ti môžem pomôcť?", actions: [{ label: "Čo ma teraz čaká?", kind: "ask", value: "Čo ma teraz čaká?" }] };
     if (has(t, ["dakujem", "vdaka", "super"])) return { text: "Rado sa stalo ❤️ Keď budeš niečo potrebovať, som tu.", actions: [] };
 
     // 8. Neviem – úprimne a zapíšem ako medzeru v znalostiach.
@@ -737,7 +737,7 @@
     }
     target.innerHTML = [
       "<div class='v2-chat'>",
-      "<header class='v2-chat-head'><img src='guguboo-logo-3d-pastel-v2.png' alt=''><div><strong>GuguChat</strong><small>", esc(J.stageLabel(plan.context)), " · odpovedám z overeného obsahu Guguboo</small></div></header>",
+      "<header class='v2-chat-head'><img src='guguboo-logo-3d-pastel-v2.png' alt=''><div><small>", esc(J.stageLabel(plan.context)), " · z overeného obsahu</small></div></header>",
       "<div class='v2-chat-log' id='v2ChatLog' aria-live='polite'>", state.v2.chat.map(messageHtml).join(""), "</div>",
       "<div class='v2-chat-chips'>", chips(plan.context).map(chip => "<button type='button' data-v2-chat-ask='" + esc(chip) + "'>" + esc(chip) + "</button>").join(""), "</div>",
       "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš, čo riešiš…'><button class='v5-primary' type='submit'>Poslať</button></form>",
@@ -823,7 +823,7 @@
         const day = new Date().toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" });
         (state.v5[listKey] ||= []).push(day + ": " + value);
         V5.persist();
-        state.v2.chat.push({ role: "bot", text: "Zapísané: „" + value + "“. Nájdeš to v " + (kind === "pedq" ? "Zdravotnej knižke → Otázky pre pediatra" : "Tehotenskej knižke → Otázky pre lekára") + ".", actions: [{ label: "Otvoriť otázky", kind: "go", value: kind === "pedq" ? "childBook|[data-v2-child-section='questions']" : "pregnancy|[data-v5-book-section='questions']" }] });
+        state.v2.chat.push({ role: "bot", text: "Zapísané: „" + value + "“. Nájdeš to v " + (kind === "pedq" ? "Otázkach pre pediatra" : "Otázkach pre lekára") + ".", actions: [{ label: "Otvoriť otázky", kind: "go", value: kind === "pedq" ? "childBook|[data-v2-child-section='questions']" : "pregnancy|[data-v5-book-section='questions']" }] });
         save();
         return render();
       }
