@@ -187,3 +187,8 @@ body.v5-active main, body.v5-active .view { scroll-padding-bottom: calc(120px + 
 .g2-size-fruit { position: absolute; right: -6px; bottom: 6px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 34px; background: var(--v5-surface); box-shadow: 0 6px 18px rgba(58, 44, 83, .12); }
 .g2-hide-art { display: flex !important; width: 100%; justify-content: center; margin: 4px 0 0 !important; color: var(--v5-muted) !important; font-weight: 700 !important; }
 @media (prefers-reduced-motion: reduce) { .g2-baby-body { animation: none; } }
+
+/* Samuel 13. 11.: bez pilulky na lište – lišta má bežnú výšku; lupa v hlavičke mimo domova. */
+body.v5-active #v5BottomBar.v2-bottom-bar.g2-bar { padding-top: 10px !important; }
+#v5Header[data-home='true'] .g2-head-search { display: none; }
+.g2-head-search svg { stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }

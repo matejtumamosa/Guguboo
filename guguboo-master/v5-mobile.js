@@ -495,6 +495,8 @@
     "<div class='v5-header-brand'><img class='v5-header-logo' src='guguboo-logo-3d-pastel-v2.png' alt='Guguboo'><div class='v5-header-title'><strong id='v5HeaderTitle'>Domov</strong><span id='v5HeaderSubtitle'>Dnešný rodinný prehľad</span></div></div>",
     "<div class='v5-header-actions'>",
     "<button class='v5-icon-button' type='button' data-v5-home aria-label='Domov'>" + icon("home") + "</button>",
+    // Master: hľadanie a otázky vždy na rovnakom mieste v hlavičke (na domove je namiesto neho pole „S čím ti môžem pomôcť?“).
+    "<button class='v5-icon-button g2-head-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button>",
     "<button class='v5-icon-button' type='button' data-v5-night aria-label='Nočný režim' aria-pressed='false'>" + icon("moon") + "</button>",
     "<button class='v5-icon-button v2-menu-button' type='button' data-v5-feature='profiles' aria-label='Menu – profil a nastavenia'>" + icon("menu") + "</button>",
     "</div>",
@@ -905,8 +907,8 @@
     // Master K-4 (Samuel 13. 11.): 4 položky bez GuguChatu (ten je na domove ako pole) + viditeľné „Hľadať · Všetko“ na okraji lišty.
     void chatButton;
     byId("v5BottomBar").classList.add("g2-bar");
-    byId("v5BottomBar").innerHTML = "<button class='g2-bar-grip' type='button' data-v5-open-drawer aria-haspopup='dialog'>" + icon("search") + "<span>Hľadať · Všetko</span></button>" +
-      favorites.join("");
+    // Samuel 13. 11.: pilulka „Hľadať · Všetko“ prekrývala lištu → hľadanie je v hlavičke (lupa), zásuvka aj potiahnutím lišty nahor.
+    byId("v5BottomBar").innerHTML = favorites.join("");
   }
 
   function featureButton(key) {
