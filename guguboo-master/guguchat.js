@@ -584,7 +584,7 @@
       return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
-    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc"])) {
+    if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc", "som na dne", "nema to zmysel", "nevladzem", "uz nevladzem"])) {
       return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "home" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
     }
 
@@ -597,7 +597,7 @@
     // 1d. Príznaky (bod 3): nikdy nediagnostikovať. Pokojne odporučiť lekára, povedať, kedy volať 155,
     // a ponúknuť zapísanie otázky na najbližšiu prehliadku (s dátumom), aby na nič nezabudla.
     // Horúčka u bábätka do 3 mesiacov: bez diagnózy, len bezpečná všeobecná hranica (NHS: pod 3 mesiace a 38 °C a viac → hneď lekár).
-    if (withBaby && ctx.baby_age_days !== null && ctx.baby_age_days < 91 && has(t, ["horuck", "teplot", "38", "39", "40"])) {
+    if (withBaby && ctx.baby_age_days !== null && ctx.baby_age_days < 91 && has(t, ["horuck", "teplot", "horuca", "horuci", "horuce", "38", "39", "40"])) {
       return { level: "urgent", text: "Pri bábätku mladšom ako 3 mesiace je pri teplote 38 °C a viac správne ozvať sa hneď lekárovi – aj v noci (pohotovosť alebo 155). Netreba čakať, ako sa to vyvinie.\n\nDiagnózu ti na diaľku nedám, nechcem hádať.\n\n(Všeobecná informácia podľa NHS, nie lekárska rada.)", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Kontakty", kind: "feature", value: "contacts" }] };
     }
     if (has(t, ["vyrazk", "vyrazil", "flak", "horuck", "teplot", "kasl", "kasel", "nadch", "hnack", "zvraca", "vraca ", "alergi", "zihlav", "kolik", "neje", "nechce jest", "zltacz", "zlte", "pupok", "zapal", "bolest", "boli ho", "boli ju", "boli ma", "svrbi", "nespi", "stale place", "vela place"])) {
@@ -605,7 +605,7 @@
       return {
         level: "support",
         text: "Pri tom, čo opisuješ, sa oplatí ozvať " + who + " – poradí ti, či treba prísť a čo robiť. Diagnózu ti na diaľku nedám, nechcem hádať.\n\n" +
-          (withBaby ? "Ak sa pridá ťažké dýchanie, opuch pier či jazyka alebo je bábätko nezvyčajne malátne, volaj 155." : "Ak sa cítiš naozaj zle, volaj 155.") +
+          (withBaby ? "Ak by sa pridalo ťažké dýchanie, opuch pier či jazyka alebo by bolo bábätko nezvyčajne malátne, vtedy volaj 155." : "Ak sa cítiš naozaj zle, volaj 155.") +
           "\n\nMôžem ti to zapísať do otázok na najbližšiu prehliadku, aby si na nič nezabudla.",
         actions: [
           { label: withBaby ? "Zapísať pre pediatra" : "Zapísať pre lekára", kind: withBaby ? "pedq" : "docq", value: question },

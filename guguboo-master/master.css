@@ -271,3 +271,5 @@ body.v5-active #v5BottomBar.g2-bar { z-index: 180; }
 /* QA: stred kruhu – tmavý text na svetlom stredovom tlačidle (deň aj noc) */
 .g2-ring-center, .g2-ring-center strong, .g2-ring-center small { color: #29243a !important; }
 .g2-ring-center { background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.7), transparent 40%), linear-gradient(145deg, #ece6fb, #d9cff3) !important; }
+body.v5-active.night .g2-ring-center { background: #ece6fb !important; }
+body.v5-active.night .g2-ring-center small { opacity: 1 !important; color: #3d3650 !important; }
