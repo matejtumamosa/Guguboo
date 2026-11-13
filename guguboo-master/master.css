@@ -249,3 +249,9 @@ body.v5-active.g2-window-with-bar #v5BottomBar { z-index: 180; visibility: visib
 body.v5-active.g2-window-with-bar.v5-app-window-open .view.active { bottom: calc(86px + env(safe-area-inset-bottom)) !important; }
 body.v5-active.g2-window-with-bar .v5-universal-window-head { grid-template-columns: 67px minmax(0, 1fr) 46px 46px !important; }
 .g2-win-search svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Nezávislé QA 13. 11.: Plán nad oknami sekcií (pod lištou), nočný kontrast stredu kruhu, zdieľanie bez servera skryté. */
+.g2-window { z-index: 176 !important; }
+body.night .g2-ring-center, body.night .g2-ring-center strong, body.night .g2-ring-center small { color: #29243a !important; }
+body.v5-active .v5-calendar-share { display: none !important; }
+.g2-plan-areas-list { display: flex; flex-direction: column; gap: 8px; }

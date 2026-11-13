@@ -1361,7 +1361,7 @@
       const short = (iconName, cls, label, status, attrs, running) => "<button class='g2-short " + cls + (running ? " is-running" : "") + "' type='button' " + attrs + "><span class='g2-short-ic'>" + icon(iconName) + "</span><strong>" + escapeHtml(label) + "</strong><small>" + escapeHtml(status) + "</small></button>";
       const shorts = expecting
         ? [
-            short("calendar", "g2-c-brand", "Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { weekday: "long" }) : "pridať termín", "data-v5-book-section='visits'"),
+            short("calendar", "g2-c-brand", "Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { weekday: "long" }) : "pridať termín", nextVisit ? "data-v5-book-section='visits'" : "data-v5-feature='calendar'"),
             short("water", "g2-c-baby", "Pitie", water.count ? glasses(water.count) : "pridať pohár", "data-v5-water-add aria-label='Pridať pohár vody'"),
             short("wave", "g2-c-mama", "Pohyby", lastMove ? "naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "zapísať", "data-v5-book-section='moves'")
           ]
@@ -1492,7 +1492,11 @@
       ["Kontakty na pomoc", "data-v5-feature='contacts'", "Rodina", "pomoc krvacanie bolest boli bojim lekar pohotovost kontakt"],
       ["Úrady a dávky", "data-v5-feature='administration'", "Rodina", "peniaze davky prispevok financie materska rodicovsky urad"],
       ["Nákup a výbava", "data-v5-feature='shopping'", "Rodina", "kocik postielka autosedacka vybava kupit nakup plienky"],
-      ["Praktické zoznamy", "data-v5-feature='checklists'", "Rodina", "zoznam checklist taska porodnica doklady"]
+      ["Praktické zoznamy", "data-v5-feature='checklists'", "Rodina", "zoznam checklist taska porodnica doklady"],
+      ["Plán", "data-g2-plan", "Rodina", "plan ulohy priprava co ma caka vybavit"],
+      [expecting ? "Bežné ťažkosti v tehotenstve" : "", "data-v5-feature='mama'", "Mama", "nevolnost vracanie palenie zahy krce opuchy unava tazkosti"],
+      [expecting ? "Jedlo, pohyb a vitamíny" : "", "data-v5-feature='mama'", "Mama", "vitaminy jedlo strava pohyb cvicenie kyselina listova"],
+      [expecting ? "" : "Zúbky", "data-v5-feature='teeth'", "Bábätko", "zubky zuby zub prvy zubok cistenie"]
     ].filter(([label, , , keys]) => label && matches(normalized(label + " " + keys)))
       .slice(0, 3)
       .map(([label, attrs, group]) => "<button class='g2-hit' type='button' " + attrs + "><span>" + dot(group) + "<strong>" + escapeHtml(label) + "</strong><small>" + group + "</small></span>›</button>");
@@ -1887,7 +1891,7 @@
     const goal = adaptiveOGoals.health.find(item => item.id === "ask-help");
     state.v5.adaptiveO.completed[adaptiveOCompletionKey("mother", "health", goal)] = true;
     persist();
-    completeAdaptiveOModal("Prosba je uložená.", "Partner ju nájde medzi rodinnými úlohami.");
+    completeAdaptiveOModal("Prosba je uložená.", MASTER ? "Povedz ju aj nahlas blízkemu – zdieľanie medzi telefónmi v tejto bete zatiaľ nefunguje." : "Partner ju nájde medzi rodinnými úlohami.");
     announce("Prosba o pomoc bola uložená pre partnera.");
   }
 
@@ -2276,7 +2280,7 @@
     renderHome();
     // Prekresliť aj pôvodnú obrazovku „Rast a váha“, aby história hneď obsahovala nové meranie.
     if (typeof window.render === "function") window.render();
-    completeAdaptiveOModal("Meranie je uložené.", "", "<button class='v5-secondary' type='button' data-v5-feature='growth'>Zobraziť históriu rastu</button>");
+    completeAdaptiveOModal("Meranie je uložené.", "", MASTER ? "" : "<button class='v5-secondary' type='button' data-v5-feature='growth'>Zobraziť históriu rastu</button>");
     announce("Meranie bolo uložené.");
   }
 
@@ -2298,7 +2302,11 @@
   // Okno Plán (Master): jeden zoznam úloh – Teraz, Čoskoro + príprava podľa oblastí (bývalý kruh Príprava).
   function renderPlan() {
     const body = byId("g2PlanBody");
-    if (body) body.innerHTML = window.GugubooV2?.planHtml?.() || "";
+    if (!body) return;
+    body.innerHTML = window.GugubooV2?.planHtml?.() || "";
+    // Všetky oblasti prípravy (QA-11): každá samostatne, nie len prvá.
+    const areas = body.querySelector(".g2-plan-areas");
+    if (areas) areas.outerHTML = "<div class='g2-plan-areas-list'><small class='g2-plan-areas-head'>Príprava podľa oblastí</small>" + organizationSections().map(section => "<button class='v5-row-card' type='button' data-g2-org='" + section.id + "'><span class='v5-icon'>" + icon(section.icon || "checklist") + "</span><div><strong>" + escapeHtml(section.label) + "</strong><span>" + escapeHtml(section.period || section.description || "") + "</span></div><span class='v5-row-arrow'>›</span></button>").join("") + "</div>";
   }
   function openPlan() {
     let overlay = byId("g2PlanOverlay");
@@ -3067,7 +3075,7 @@
         "</div></details>",
         "</div><div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-child-profile'>Uložiť profil dieťaťa</button>",
         // Kartička narodenia je úloha v kruhu Organizácia → Rodina (jedno miesto, robí sa raz).
-        "<button class='v5-secondary' type='button' data-v5-action='open-original-child-profile'>Rozšírené pôrodné údaje</button></div>"
+        (MASTER ? "" : "<button class='v5-secondary' type='button' data-v5-action='open-original-child-profile'>Rozšírené pôrodné údaje</button>") + "</div>"
       ].join("");
     } else if (tab === "family") {
       content = [
@@ -3090,7 +3098,7 @@
         ["Udalosti", (state.reminders || []).length]
       ];
       content = "<div class='v5-list'>" + summary.map(item => "<div class='v5-row-card'><span class='v5-icon'>" + icon("checklist") + "</span><div><strong>" + item[0] + "</strong><span>" + item[1] + " uložených položiek</span></div></div>").join("") + "</div>" +
-        "<div class='v5-info-box'><strong>Súkromie</strong><br>Bez reklám. Tvoje údaje nepredávame ani nesledujeme. Údaje tejto prototypovej verzie zostávajú v tomto prehliadači. Môj súkromný denník je navyše chránený vlastným PIN-om.</div>" +
+        "<div class='v5-info-box'><strong>Súkromie</strong><br>Bez reklám. Tvoje údaje nepredávame ani nesledujeme. V tejto bete sa údaje ukladajú len v tomto okne prehliadača a po jeho zatvorení sa vymažú. Môj súkromný denník je navyše chránený vlastným PIN-om.</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť súkromný denník</button></div>";
     }
     target.innerHTML = flowHead("Profily rodiny", "Údaje stačí zadať raz.", "Guguboo ich použije iba tam, kde sú potrebné. Rodina má jeden spoločný pohľad.", 0, 1) +
@@ -4985,7 +4993,8 @@
     if (event.target.closest("[data-g2-ask]")) { openDrawer(); setTimeout(() => byId("g2Q")?.focus(), 320); return; }
     if (event.target.closest("[data-g2-plan-close]")) return closePlan();
     if (event.target.closest("[data-g2-plan]")) { closeDrawer(); return openPlan(); }
-    if (event.target.closest("[data-g2-org]")) { closePlan(); return openOrganizationMenu(organizationSections()[0].id); }
+    const g2Org = event.target.closest("[data-g2-org]");
+    if (g2Org) return openOrganizationMenu(g2Org.dataset.g2Org || organizationSections()[0].id); // Plán ostáva pod oknom – Späť vráti do Plánu
     const g2Chat = event.target.closest("[data-g2-chat]");
     if (g2Chat) { closeDrawer(); return window.GugubooV2?.openChat?.(g2Chat.dataset.g2Chat || ""); }
     if (event.target.closest("[data-g2-close]")) closeDrawer();
@@ -5243,7 +5252,9 @@
       const time = byId("v5TemperatureTime").value ? new Date(byId("v5TemperatureTime").value) : new Date();
       state.events.push({ id: createId(), type: "Teplota", value: value.toFixed(1).replace(".", ",") + " °C", note: byId("v5TemperatureNote").value.trim(), author: "rodina", created: time.toISOString() });
       if (typeof save === "function") save(); else persist();
-      completeFlow("Meranie teploty je uložené.", "Ak máš pochybnosti, obráť sa na pediatra.");
+      const ageDaysNow = ageData()?.days;
+      // Bábätko do 3 mesiacov a 38 °C a viac: rovnaká bezpečná všeobecná hranica ako v GuguChate (NHS), bez diagnózy.
+      completeFlow("Meranie teploty je uložené.", ageDaysNow !== null && ageDaysNow !== undefined && ageDaysNow < 91 && value >= 38 ? "Pri bábätku mladšom ako 3 mesiace je pri teplote 38 °C a viac správne ozvať sa hneď lekárovi – aj v noci (pohotovosť alebo 155). Všeobecná informácia podľa NHS, nie lekárska rada." : "Ak máš pochybnosti, obráť sa na pediatra.");
       return announce("Teplota bola uložená.");
     }
     if (action === "save-bath") {
@@ -5319,7 +5330,7 @@
       persist();
       return announce("Poznámka pre mamu je uložená v spoločnej príprave.");
     }
-    if (action === "open-prenatal-original") return routeTo("beforeBirth");
+    if (action === "open-prenatal-original") return MASTER ? openChecklistCategory("hospital") : routeTo("beforeBirth");
     if (action === "open-original-sounds") {
       closeAdaptiveOMenu();
       return routeTo("sounds");
