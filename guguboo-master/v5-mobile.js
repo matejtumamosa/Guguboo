@@ -1475,10 +1475,11 @@
     const q = normalized(query).trim();
     const dot = group => "<i class='g2-dot g2-dot-" + G2_GROUP[group] + "' aria-hidden='true'></i>";
     if (!q) {
-      const all = groups.flatMap(([group, keys]) => keys.map(key => [features[key].label, "data-v5-feature='" + key + "'", group]));
-      all.push(["Plán", "data-g2-plan", "Rodina"], ["GuguChat", "data-g2-chat=''", "Rodina"]);
+      // Bez posúvania (Samo 13. 11., UX + UI): A–Z max. 14 položiek. Mama je v lište, GuguChat je samotné pole – oboje ostáva vo výsledkoch hľadania.
+      const all = groups.flatMap(([group, keys]) => keys.filter(key => key !== "mama").map(key => [features[key].label, "data-v5-feature='" + key + "'", group]));
+      all.push(["Plán", "data-g2-plan", "Rodina"]);
       all.sort((a, b) => a[0].localeCompare(b[0], "sk"));
-      return "<div class='g2-az-head'><small>Všetko A–Z</small><span class='g2-legend'>" + Object.keys(G2_GROUP).map(g => "<span>" + dot(g) + g + "</span>").join("") + "</span></div><div class='g2-az'>" +
+      return "<div class='g2-az-head'><span class='g2-legend'>" + Object.keys(G2_GROUP).map(g => "<span>" + dot(g) + g + "</span>").join("") + "</span></div><div class='g2-az'>" +
         all.map(([label, attrs, group]) => "<button type='button' " + attrs + ">" + dot(group) + escapeHtml(label) + "</button>").join("") + "</div>";
     }
     const words = q.split(/\s+/).filter(Boolean);
@@ -1529,8 +1530,9 @@
     if (MASTER) {
       byId("v5DrawerTitle").textContent = "Opýtaj sa alebo hľadaj";
       const lead = byId("v5DrawerTitle").nextElementSibling;
-      if (lead) lead.textContent = "Funkcie, úrady a dávky. Na otázky odpovedá GuguChat z overeného obsahu.";
-      scroll.innerHTML = "<form class='g2-search' id='g2SearchForm' role='search'>" + icon("search") + "<input id='g2Q' type='search' autocomplete='off' enterkeyhint='search' placeholder='Napr. rodičovský príspevok, uspávanka, taška' aria-label='Opýtaj sa alebo hľadaj'></form><div id='g2Results'>" + g2Results("") + "</div>";
+      if (lead) lead.textContent = "";
+      byId("v5Drawer")?.classList.add("g2-drawer");
+      scroll.innerHTML = "<form class='g2-search' id='g2SearchForm' role='search'>" + icon("search") + "<input id='g2Q' type='search' autocomplete='off' enterkeyhint='search' placeholder='Napr. príspevok, uspávanka, taška' aria-label='Opýtaj sa alebo hľadaj funkciu, úrad, dávku'></form><div id='g2Results'>" + g2Results("") + "</div>";
       return;
     }
     // Zásuvka = „všetko na jednom mieste“ (bez obľúbených a pripínania – lišta je pevná).

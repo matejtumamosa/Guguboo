@@ -273,3 +273,24 @@ body.v5-active #v5BottomBar.g2-bar { z-index: 180; }
 .g2-ring-center { background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.7), transparent 40%), linear-gradient(145deg, #ece6fb, #d9cff3) !important; }
 body.v5-active.night .g2-ring-center { background: #ece6fb !important; }
 body.v5-active.night .g2-ring-center small { opacity: 1 !important; color: #3d3650 !important; }
+
+/* ——— Zásuvka bez posúvania (Samo 13. 11.; UX Architekt + UI Designer) ——— */
+#v5Drawer.g2-drawer { max-height: min(calc(100dvh - 24px), 820px); padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+#v5Drawer.g2-drawer .v5-drawer-handle { flex-basis: 20px; }
+#v5Drawer.g2-drawer .v5-drawer-head { padding-bottom: 8px; min-height: 44px; }
+#v5Drawer.g2-drawer .v5-drawer-head h2 { font-size: 20px; }
+#v5Drawer.g2-drawer .v5-drawer-head p { display: none; }
+/* obsah sa zmestí, takže sa nič neposúva; „auto“ je len poistka, aby sa nikdy nič neorezalo */
+#v5Drawer.g2-drawer .v5-drawer-scroll { overflow: auto; padding: 2px 1px 4px; }
+#v5Drawer.g2-drawer .g2-search { min-height: 48px; margin-bottom: 10px; }
+#v5Drawer.g2-drawer .g2-az-head { margin: 0 0 8px; min-height: 20px; }
+#v5Drawer.g2-drawer .g2-legend { flex-wrap: wrap; font-size: 13px; }
+/* nízke okno (napr. 568 px s lištami prehliadača): menšie medzery, aby sa nič neposúvalo */
+@media (max-height: 600px) {
+  #v5Drawer.g2-drawer .g2-az { gap: 4px 8px; }
+  #v5Drawer.g2-drawer .g2-search { margin-bottom: 8px; }
+}
+/* extrémne nízke okno: bez legendy */
+@media (max-height: 520px) {
+  #v5Drawer.g2-drawer .g2-az-head { display: none; }
+}
