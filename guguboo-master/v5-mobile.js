@@ -83,6 +83,7 @@
     pen: "<path d='M4 20h4L19 9l-4-4L4 16Z'/><path d='m13.5 6.5 4 4'/>",
     chat: "<path d='M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.3A2.5 2.5 0 0 1 4 13.5Z'/><path d='M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01'/>",
     pin: "<path d='m14.5 3.5 6 6-3.2 1.1-3.7 3.7-.2 4.1-1.7 1.7-3.3-5.5-5.5-3.3 1.7-1.7 4.1-.2 3.7-3.7Z'/><path d='m8.4 15.6-5 5'/>",
+    grid: "<rect x='4' y='4' width='6.5' height='6.5' rx='1.8'/><rect x='13.5' y='4' width='6.5' height='6.5' rx='1.8'/><rect x='4' y='13.5' width='6.5' height='6.5' rx='1.8'/><rect x='13.5' y='13.5' width='6.5' height='6.5' rx='1.8'/>",
     more: "<circle cx='5' cy='5' r='1.5'/><circle cx='12' cy='5' r='1.5'/><circle cx='19' cy='5' r='1.5'/><circle cx='5' cy='12' r='1.5'/><circle cx='12' cy='12' r='1.5'/><circle cx='19' cy='12' r='1.5'/><circle cx='5' cy='19' r='1.5'/><circle cx='12' cy='19' r='1.5'/><circle cx='19' cy='19' r='1.5'/>"
   };
   const icon = name => "<svg viewBox='0 0 24 24' aria-hidden='true'>" + (iconPaths[name] || iconPaths.sparkle) + "</svg>";
@@ -1389,7 +1390,8 @@
           : "<div class='g2-hero-foot'><span></span><button class='g2-link' type='button' data-g2-month-open>Tvoj mesiac ›</button></div>",
         "</section>"
       ].join("");
-      const askHtml = "<button class='g2-ask' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "<span>S čím ti môžem pomôcť?</span><span class='g2-ask-orb'>" + icon("chat") + "</span></button>";
+      // Samo 13. 11.: pole samo nehovorí, že ukáže aj ostatné časti → hľadanie a samostatné tlačidlo „Všetko“.
+      const askHtml = "<div class='g2-askwrap'><button class='g2-ask' type='button' data-g2-ask aria-label='Hľadaj alebo sa opýtaj GuguChatu'>" + icon("search") + "<span>Hľadaj alebo sa opýtaj</span></button><button class='g2-all' type='button' data-g2-all aria-label='Všetko v appke'>" + icon("grid") + "<span>Všetko</span></button></div>";
       const todayHtml = window.GugubooV2?.homeTodayHtml?.() || "";
       // JEDNO pevné poradie pre všetky obdobia (nezávislá UX kontrola 13. 11.): pole · hero · skratky · kruh · dnes · termín · moment.
       // V noci po pôrode: pole · hero · skratky · Spánok a zvuky · kruh (bez úloh, termínov a momentu).
@@ -5156,6 +5158,7 @@
     if (event.target.closest("#v5BottomBar")) { closePlan(); closeMonth(); }
     // Master K-4: pole GuguChatu, okno Plán, výsledky hľadania.
     if (event.target.closest("[data-g2-ask]")) { openDrawer(); setTimeout(() => byId("g2Q")?.focus(), 320); return; }
+    if (event.target.closest("[data-g2-all]")) return openDrawer();
     if (event.target.closest("[data-g2-plan-close]")) return closePlan();
     if (event.target.closest("[data-g2-month-close]")) return closeMonth();
     const g2Month = event.target.closest("[data-g2-month]");

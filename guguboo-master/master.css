@@ -321,3 +321,17 @@ body.v5-active.night .g2-ring-center small { opacity: 1 !important; color: #3d36
 :is(.g2-tile, .g2-chips button, .g2-drawer-foot button):focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
 :is(.g2-tile, .g2-chips button):active { transform: scale(.98); }
 @media (prefers-reduced-motion: reduce) { .g2-tile, .g2-chips button, #g2DrawerFixed { transition: none !important; transform: none !important; } }
+/* Domov: hľadanie + samostatné „Všetko“ (Samo 13. 11.) */
+.g2-askwrap { display: flex; gap: 8px; align-items: stretch; }
+.g2-askwrap .g2-ask { flex: 1 1 auto; min-width: 0; padding-right: 14px; }
+.g2-all {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 7px; min-height: 54px; padding: 0 16px; border: 0; border-radius: 18px; cursor: pointer;
+  background: var(--g2-brand-strong, #6a5bbf); color: #fff; font: 800 14px/1 Montserrat, "Segoe UI", system-ui, sans-serif;
+  box-shadow: 0 6px 18px rgba(58, 44, 83, .12);
+}
+.g2-all svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.g2-all:focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
+.g2-all:active { transform: scale(.98); }
+.g2-askwrap .g2-ask > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.g2-askwrap .g2-ask { padding: 0 12px; gap: 8px; }
+.g2-all { padding: 0 12px; gap: 6px; }
