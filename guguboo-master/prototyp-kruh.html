@@ -10,6 +10,7 @@
 <script src="content/pregnancy-weeks.js"></script>
 <script src="content/mama-tehotenstvo.js"></script>
 <script src="content/mama-po-porode.js"></script>
+<script src="content/baby-months.js"></script>
 <style>
 :root { --bg: #fbf8f7; --surface: #fff; --soft: #f6f2ff; --ink: #29243a; --muted: #5d5768; --line: #e9e3f3; --brand: #6a5bbf; --brand-ink: #5f4fb1;
   --rest: #e9a3b8; --body: #f0b07c; --sup: #93a8e6; --f: Montserrat, "Segoe UI", system-ui, sans-serif; }
@@ -197,6 +198,7 @@ const friendMsgs = ["Myslím na teba. Máš dnes chvíľu na telefonát?", "Potr
 
 /* —— sekcie (finálne riešenie 14. 11.: Samo – stred okamžitá pomoc bez otázok; Telo = 3 priamo použiteľné nástroje) —— */
 const MP = () => C.mamaPregnancy || {}, MPP = () => C.mamaPostpartum || {};
+const safeSleep = () => { for (const p of (C.babyMonths?.periods || [])) for (const sec of Object.values(p)) if (Array.isArray(sec)) for (const it of sec) if (it?.sk && /^Keď je ospalé, polož ho na chrbát/.test(it.sk)) return it.sk; return ""; };
 const tr = (src, id) => (src.troubles || []).find(t => t.id === id) || { tips: [] };
 function section(k) {
   // Oddych: v tehotenstve cez deň bez zdriemnutia (NHS: popoludní a večer radšej nespi) – šum len v noci a po pôrode.
@@ -286,25 +288,26 @@ function doAct(a) {
     const sw = tr(MP(), "swelling"), ti = tr(MP(), "tiredness");
     open("Nohy hore", `<p class="lead">Ľahni si alebo si sadni a nohy si polož vyššie.</p><div class="chips">${[10, 20].map((m, i) => `<button class="pill" type="button" data-q="${m}" aria-pressed="${i === 0}">${m} min</button>`).join("")}</div><div class="timer" id="tm">10:00</div><button class="btn" type="button" data-a="quiet-go">Začať</button>` +
       `<div class="info" style="margin-top:12px"><ul><li>${esc(sw.tips[2] || "")}</li><li>${esc(ti.tips[0] || "")}</li></ul></div>` +
-      `<details class="info"><summary>Kedy zavolať lekárovi</summary><p class="small">${esc(sw.doctorIntro || "")}</p><ul>${(sw.doctor || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>${source(sw.source, sw.reviewed)}`);
+      `<details class="info"><summary>Kedy zavolať lekárovi</summary><p class="small">${esc(sw.doctorIntro || "")}</p><ul>${(sw.doctor || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>${source(sw.source, sw.reviewed)}${source(ti.source, ti.reviewed)}`);
   }
   if (a === "sleep") {
     const ti = tr(MP(), "tiredness"), hb = tr(MP(), "heartburn");
     steps("Uložiť sa na spánok", [{ html: esc(ti.tips[1] || "") }, { html: esc(hb.tips[1] || "") }],
-      `<button class="btn" type="button" data-a="nap-go20">Spustiť šum na zaspávanie</button><button class="btn ghost" type="button" data-a="close">Bez šumu</button>${source(ti.source, ti.reviewed)}`);
+      // Kontrola obsahu: šum na zaspávanie len v noci (NHS: popoludní a večer radšej nespi).
+      (night ? `<button class="btn" type="button" data-a="nap-go20">Spustiť šum na zaspávanie</button><button class="btn ghost" type="button" data-a="close">Bez šumu</button>` : `<button class="btn" type="button" data-a="close">Hotovo</button>`) + source(ti.source, ti.reviewed) + source(hb.source, hb.reviewed));
   }
   if (a === "nap-go20") { close(); startNoise(20); }
   /* —— Telo: po pôrode —— */
   if (a === "feed") {
     const back = (tr(MPP(), "pelvic").tips[3] || "").split(",")[0], water = tr(MPP(), "toilet").tips[0] || "";
-    const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah. " + water, "Telefón a nabíjačka na dosah."];
+    const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah.", "Telefón a nabíjačka na dosah."];
     open("Pohodlne pri kŕmení", `<p class="lead">Kým začneš, usaď sa:</p>` + items.map((x, i) => `<button class="check" type="button" data-check="${i}" aria-pressed="false"><span class="box" aria-hidden="true"></span><span>${esc(x)}</span></button>`).join("") +
-      act("breath", "◌", "Dýchaj so mnou", "1 minúta, kým sa bábätko prisaje") + `<p class="small">Odškrtnutie sa nikam neukladá – je len pre teba teraz.</p>${source(MPP().troubles?.find(t => t.id === "pelvic")?.source, MPP().troubles?.find(t => t.id === "pelvic")?.reviewed)}`);
+      act("breath", "◌", "Dýchaj so mnou", "1 minúta, kým začneš") + `<p class="small">Odškrtnutie sa nikam neukladá – je len pre teba teraz.</p>${source(MPP().troubles?.find(t => t.id === "pelvic")?.source, MPP().troubles?.find(t => t.id === "pelvic")?.reviewed)}`);
   }
   if (a === "shower") {
     const st = tr(MPP(), "stitches");
     open("Sprcha len pre mňa", `<p class="lead">Daj si 15 minút len pre seba.</p><div class="info"><p style="margin:0">${esc(st.tips[0] || "")}</p></div>` +
-      act("shower-ask", "✉", "Poprosiť o 15 minút", "hotová prosba, pošleš cez telefón") + act("shower-go", "⏱", "Spustiť 15 minút", "na konci zaznie jemný tón") + source(st.source, st.reviewed));
+      act("shower-ask", "✉", "Poprosiť o 15 minút", "hotová prosba, pošleš cez telefón") + (safeSleep() ? `<p class="small" style="margin:8px 2px">Ak bábätko nikto nestráži: ${esc(safeSleep())}</p>` : "") + act("shower-go", "⏱", "Spustiť 15 minút", "na konci zaznie jemný tón") + source(st.source, st.reviewed) + (safeSleep() ? `<p class="src">Bezpečný spánok: CDC (Learn the Signs)</p>` : ""));
   }
   if (a === "shower-ask") {
     const msg = "Postrážiš mi bábätko 15 minút? Idem sa osprchovať.";
@@ -314,7 +317,9 @@ function doAct(a) {
   if (a === "pwalk") {
     const cs = tr(MPP(), "csection"), sl = MPP().mood || {};
     open("Pokojná prechádzka", `<div class="chips">${[10, 20].map((m, i) => `<button class="pill" type="button" data-q="${m}" aria-pressed="${i === 0}">${m} min</button>`).join("")}</div><div class="timer" id="tm">10:00</div><button class="btn" type="button" data-a="quiet-go">Ideme von</button>` +
-      `<div class="info" style="margin-top:12px"><ul><li>${esc(cs.tips[2] || "")}</li><li>${esc(cs.tips[1] || "")}</li><li>${esc((sl.sleep || [])[2] || "")}</li></ul></div><p class="small">${esc(CAUTION)}</p>${source(cs.source, cs.reviewed)}`);
+      `<div class="info" style="margin-top:12px"><ul><li>${esc(cs.tips[2] || "")}</li><li>${esc(cs.tips[1] || "")}</li><li>${esc((sl.sleep || [])[2] || "")}</li></ul></div>` +
+      (() => { const se = tr(MPP(), "serious"); return se.doctor?.length ? `<details class="info"><summary>Kedy sa ozvať hneď</summary><p class="small">${esc(se.doctorIntro || "")}</p><ul>${se.doctor.map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""; })() +
+      source(cs.source, cs.reviewed) + source(sl.sleepSource, sl.sleepReviewed));
   }
   if (a === "mama") { close(); toast("V appke sa otvorí Mama › Tvoje telo (overený obsah so zdrojom)."); }
   if (a === "walk") {
