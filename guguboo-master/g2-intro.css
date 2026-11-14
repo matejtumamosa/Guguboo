@@ -1,0 +1,434 @@
+/* GUGUBOO MASTER 1.9 – nový úvod (g2-intro.js). Štýly sú prevzaté zo schváleného prototypu prototyp-uvod.html,
+   obmedzené na #g2Intro, aby nezasahovali do appky. Úvod je pevná vrstva cez celú obrazovku – nič sa neposúva, tlačidlá sú dole. */
+  #g2Intro {
+    --lav: #7b6bc8;
+    --lav-dark: #5f4fb1;
+    --lav-btn: #6a5abd;          /* biely text 5,5 : 1 */
+    --lav-soft: #f1edfc;
+    --lav-line: #e3dcf7;
+    --pink: #f6d9e3;
+    --pink-soft: #fdf0f4;
+    --ink: #29243a;
+    --muted: #5d5768;            /* na #fbf8f7 ≈ 6,6 : 1 */
+    --bg: #fbf8f7;
+    --card: #ffffff;
+    --radius-lg: 24px;
+    --radius: 18px;
+    --radius-sm: 14px;
+    --shadow: 0 10px 30px rgba(95, 79, 177, .08), 0 2px 6px rgba(41, 36, 58, .04);
+    --item: 44px;                /* výška položky v otočnom výbere = dotyková plocha */
+    --rows: 5;
+    --dur: 260ms;
+  }
+  #g2Intro, #g2Intro * { box-sizing: border-box; }
+  #g2Intro [hidden] { display: none !important; }
+  #g2Intro {
+    font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--ink);
+    background: #f3eff6;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #g2Intro button, #g2Intro input { font: inherit; color: inherit; }
+  #g2Intro button { cursor: pointer; }
+  #g2Intro :focus-visible { outline: 3px solid var(--lav-dark); outline-offset: 2px; border-radius: 12px; }
+  #g2Intro h1:focus, #g2Intro h1:focus-visible { outline: none; }
+  #g2Intro .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ——— Rám appky ——— */
+  #g2Intro {
+    position: relative;
+    max-width: 460px;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 60% at 50% -10%, #efe9fb 0%, rgba(239, 233, 251, 0) 60%),
+      radial-gradient(90% 50% at 100% 105%, var(--pink-soft) 0%, rgba(253, 240, 244, 0) 70%),
+      var(--bg);
+  }
+  @media (min-width: 520px) {
+    #g2Intro { box-shadow: 0 0 0 1px rgba(95, 79, 177, .06), 0 20px 60px rgba(41, 36, 58, .08); }
+  }
+
+  /* ——— Hlavička: malé logo + tenká lišta priebehu ——— */
+  #g2Intro .top {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: max(14px, env(safe-area-inset-top)) 24px 4px;
+  }
+  #g2Intro .top img { height: 28px; width: auto; display: block; }
+  #g2Intro .progress { display: flex; gap: 6px; width: 120px; transition: opacity var(--dur); }
+  #g2Intro .progress span { flex: 1; height: 4px; border-radius: 4px; background: var(--lav-line); transition: background var(--dur); }
+  #g2Intro .progress span.on { background: var(--lav); }
+  #g2Intro .progress.off { opacity: 0; }
+
+  /* ——— Obrazovky ——— */
+  #g2Intro .stage { position: relative; flex: 1; min-height: 0; }
+  #g2Intro .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px;
+    padding: 8px 24px;
+    text-align: center;
+    opacity: 0; visibility: hidden;
+    transform: translateX(24px);
+    transition: opacity calc(var(--dur) * .5) ease, transform calc(var(--dur) * .5) ease, visibility 0s linear calc(var(--dur) * .5);
+  }
+  #g2Intro .screen.on { opacity: 1; visibility: visible; transform: none; transition: opacity var(--dur) ease calc(var(--dur) * .45), transform var(--dur) ease calc(var(--dur) * .45), visibility 0s; }
+  #g2Intro .screen.left { transform: translateX(-24px); }
+  #g2Intro h1 { margin: 0; font-size: 25px; line-height: 1.22; font-weight: 750; letter-spacing: -.01em; text-wrap: balance; }
+  #g2Intro .sub { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.45; max-width: 320px; text-wrap: balance; }
+  #g2Intro .head { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+
+  /* ——— Spodok: tlačidlá vždy na rovnakom mieste ——— */
+  #g2Intro .bottom {
+    flex: none;
+    display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+    padding: 8px 24px max(14px, env(safe-area-inset-bottom));
+  }
+  #g2Intro .btn {
+    min-height: 54px; border: 0; border-radius: 18px;
+    background: var(--lav-btn); color: #fff;
+    font-size: 17px; font-weight: 700; letter-spacing: .01em;
+    box-shadow: 0 8px 18px rgba(95, 79, 177, .22);
+    transition: transform 120ms ease, background var(--dur), box-shadow var(--dur), opacity var(--dur);
+  }
+  #g2Intro .btn:active { transform: scale(.985); }
+  #g2Intro .btn[aria-disabled="true"] { background: #cfc8ea; color: #fff; box-shadow: none; cursor: default; }
+  #g2Intro .slot { height: 44px; display: flex; align-items: center; justify-content: center; }
+  #g2Intro .link {
+    min-height: 44px; padding: 0 14px; border: 0; background: none;
+    color: var(--lav-dark); font-weight: 600; font-size: 15px;
+    border-radius: 12px;
+  }
+  #g2Intro .link.muted { color: var(--muted); font-weight: 600; }
+  #g2Intro .note { margin: 0; font-size: 14px; color: var(--muted); text-align: center; }
+
+  /* ——— 1 Háčik ——— */
+  #g2Intro .hero { position: relative; width: 236px; height: 236px; flex: none; }
+  #g2Intro .hero-ring {
+    position: absolute; inset: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fff 0%, #f7f2fd 55%, #ece4fa 100%);
+    border: 2px solid #e8e0f8;
+    box-shadow: inset 0 0 0 10px rgba(255, 255, 255, .55), var(--shadow);
+  }
+  #g2Intro .hero-ring::after {
+    content: ""; position: absolute; inset: -12px; border-radius: 50%;
+    border: 1.5px dashed #ddd2f5;
+  }
+  #g2Intro .hero-art { position: absolute; inset: 52px; }
+  #g2Intro .hero-art > div { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: scale(.8); transition: opacity 700ms ease, transform 700ms ease; }
+  #g2Intro .hero-art > div.on { opacity: 1; transform: scale(1); }
+  #g2Intro .hero-art svg { width: 100%; height: 100%; }
+  #g2Intro .hero-art .baby svg { width: 150%; height: 150%; margin: -25%; }
+  #g2Intro .chip {
+    position: absolute; padding: 7px 13px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--lav-line);
+    font-size: 14px; font-weight: 600; color: var(--ink);
+    box-shadow: 0 6px 14px rgba(95, 79, 177, .08);
+    white-space: nowrap;
+  }
+  #g2Intro .chip i { font-style: normal; color: var(--lav-dark); margin-right: 5px; }
+  #g2Intro .chip.c1 { top: 10px; left: -14px; }
+  #g2Intro .chip.c2 { top: 92px; right: -30px; }
+  #g2Intro .chip.c3 { bottom: 6px; left: 6px; }
+  #g2Intro .float { animation: g2i-float 6s ease-in-out infinite; }
+  #g2Intro .chip.c2.float { animation-delay: -2s; }
+  #g2Intro .chip.c3.float { animation-delay: -4s; }
+  @keyframes g2i-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  #g2Intro .hook h1 { font-size: 27px; max-width: 320px; }
+
+  /* ——— 2 Obdobie: dve veľké karty ——— */
+  #g2Intro .choices { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 6px; }
+  #g2Intro .choice {
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; min-height: 76px; padding: 14px 16px;
+    border-radius: var(--radius); border: 2px solid transparent;
+    background: var(--card); box-shadow: var(--shadow);
+    text-align: left; font-size: 17px; font-weight: 700;
+    transition: border-color var(--dur), background var(--dur);
+  }
+  #g2Intro .choice .ico {
+    flex: none; width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 22px;
+    background: var(--lav-soft); color: var(--lav-dark);
+  }
+  #g2Intro .choice.b .ico { background: var(--pink-soft); color: #a8476a; }
+  #g2Intro .choice .txt { flex: 1; }
+  #g2Intro .choice .txt small { display: block; font-size: 14px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+  #g2Intro .choice .tick {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid #cfc6ec; display: grid; place-items: center; color: #fff;
+    transition: background var(--dur), border-color var(--dur);
+  }
+  #g2Intro .choice[aria-checked="true"] { border-color: var(--lav); background: #fcfbff; }
+  #g2Intro .choice[aria-checked="true"] .tick { background: var(--lav-btn); border-color: var(--lav-btn); }
+  #g2Intro .choice .tick svg { width: 14px; height: 14px; opacity: 0; }
+  #g2Intro .choice[aria-checked="true"] .tick svg { opacity: 1; }
+
+  /* ——— 3 Otočný výber dátumu ——— */
+  #g2Intro .picker-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+  #g2Intro .picker-label { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0; }
+  #g2Intro .picker {
+    position: relative; display: grid; grid-template-columns: 70px 1fr 92px; gap: 4px;
+    width: 100%; max-width: 330px;
+    padding: 0 8px; border-radius: var(--radius);
+    background: var(--card); box-shadow: var(--shadow);
+  }
+  #g2Intro .picker::before {                       /* pás vybranej hodnoty */
+    content: ""; position: absolute; left: 8px; right: 8px;
+    top: calc(50% - var(--item) / 2); height: var(--item);
+    border-radius: 12px; background: var(--lav-soft);
+    pointer-events: none;
+  }
+  #g2Intro .wheel {
+    position: relative;
+    height: calc(var(--item) * var(--rows));
+    overflow-y: auto; overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    padding: calc(var(--item) * (var(--rows) - 1) / 2) 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 32%, #000 68%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 32%, #000 68%, transparent 100%);
+    touch-action: pan-y;
+  }
+  #g2Intro .wheel::-webkit-scrollbar { display: none; }
+  #g2Intro .wheel:focus-visible { outline: none; }
+  #g2Intro .wheel:focus-visible + .ring, #g2Intro .picker .col:focus-within .ring { opacity: 1; }
+  #g2Intro .col { position: relative; }
+  #g2Intro .col .ring {                               /* fokus pre klávesnicu */
+    position: absolute; left: 0; right: 0; top: calc(50% - var(--item) / 2); height: var(--item);
+    border: 3px solid var(--lav-dark); border-radius: 12px; opacity: 0; pointer-events: none;
+  }
+  #g2Intro .opt {
+    height: var(--item); display: flex; align-items: center; justify-content: center;
+    scroll-snap-align: center;
+    font-size: 17px; font-weight: 500; color: #8a8494;
+    user-select: none; cursor: pointer;
+    transition: color 120ms, font-weight 120ms;
+  }
+  #g2Intro .opt.sel { color: var(--ink); font-weight: 700; }
+  #g2Intro .opt.out { color: #c9c4d1; }
+
+  /* živý náhľad */
+  #g2Intro .preview {
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; max-width: 330px; min-height: 76px; padding: 10px 16px 10px 10px;
+    border-radius: var(--radius); background: linear-gradient(135deg, #fff 0%, #fbf7ff 100%);
+    border: 1px solid var(--lav-line);
+    text-align: left;
+  }
+  #g2Intro .preview .pic {
+    flex: none; width: 58px; height: 58px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fff, #f3edfc);
+    display: grid; place-items: center; overflow: hidden;
+  }
+  #g2Intro .preview .pic svg { width: 46px; height: 46px; }
+  #g2Intro .preview .pic svg.g2-baby-fig { width: 62px; height: 62px; }
+  #g2Intro .preview .pic.pop { animation: g2i-pop 420ms ease; }
+  @keyframes g2i-pop { 0% { transform: scale(.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  #g2Intro .preview b { display: block; font-size: 18px; font-weight: 750; line-height: 1.25; }
+  #g2Intro .preview span { display: block; font-size: 14px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+  #g2Intro .preview .due { color: var(--ink); font-weight: 600; }
+  #g2Intro .alt-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 4px; margin-top: -4px; }
+  #g2Intro .cycle { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; font-size: 15px; color: var(--muted); }
+  #g2Intro .cycle strong { color: var(--ink); font-weight: 700; }
+  #g2Intro .step {
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--lav-line);
+    background: #fff; color: var(--lav-dark); font-size: 22px; font-weight: 600; line-height: 1;
+    display: grid; place-items: center;
+  }
+  #g2Intro .step[disabled] { color: #c9c4d1; cursor: default; }
+  #g2Intro .tiny { margin: -6px 0 0; font-size: 14px; color: var(--muted); }
+
+  /* ——— 4 Oslovenie ——— */
+  #g2Intro .fields { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 4px; text-align: left; }
+  #g2Intro .field label { display: block; font-size: 14px; font-weight: 600; color: var(--muted); margin: 0 0 6px 4px; }
+  #g2Intro .input {
+    display: flex; align-items: center; gap: 10px;
+    min-height: 54px; padding: 0 16px; border-radius: var(--radius-sm);
+    background: #fff; border: 1.5px solid var(--lav-line);
+    transition: border-color var(--dur);
+  }
+  #g2Intro .input:focus-within { border-color: var(--lav); }
+  #g2Intro .input input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-size: 17px; font-weight: 600; padding: 14px 0; }
+  #g2Intro .input input::placeholder { color: #8a8494; font-weight: 500; }
+  #g2Intro .input input:disabled { color: var(--muted); }
+  #g2Intro .input .avatar { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--lav-soft); display: grid; place-items: center; }
+  #g2Intro .input .avatar svg { width: 26px; height: 26px; }
+  #g2Intro .check {
+    display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 4px;
+    border: 0; background: none; font-size: 15px; font-weight: 600; color: var(--ink); text-align: left;
+  }
+  #g2Intro .check .box {
+    flex: none; width: 24px; height: 24px; border-radius: 8px; border: 2px solid #b9afe0; background: #fff;
+    display: grid; place-items: center; transition: background var(--dur), border-color var(--dur);
+  }
+  #g2Intro .check .box svg { width: 14px; height: 14px; opacity: 0; }
+  #g2Intro .check[aria-checked="true"] .box { background: var(--lav-btn); border-color: var(--lav-btn); }
+  #g2Intro .check[aria-checked="true"] .box svg { opacity: 1; }
+  #g2Intro .sub.size { color: var(--ink); font-weight: 600; margin-top: -4px; max-width: 350px; }
+  #g2Intro .country { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  #g2Intro .country .link { font-size: 14px; padding: 0 8px; }
+
+  /* ——— 5 Aha moment ——— */
+  #g2Intro .aha { gap: 12px; }
+  #g2Intro .big {
+    position: relative; width: 168px; height: 168px; flex: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fff 0%, #f7f1fd 55%, #ebe2fa 100%);
+    border: 2px solid #e8e0f8;
+    box-shadow: inset 0 0 0 10px rgba(255, 255, 255, .6), 0 18px 40px rgba(95, 79, 177, .14);
+    display: grid; place-items: center;
+  }
+  #g2Intro .big::before {
+    content: ""; position: absolute; inset: -14px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(246, 217, 227, .55) 0%, rgba(246, 217, 227, 0) 70%);
+    z-index: -1;
+  }
+  #g2Intro .big .art { width: 112px; height: 112px; display: grid; place-items: center; }
+  #g2Intro .big .art svg { width: 100%; height: 100%; }
+  #g2Intro .big .art svg.g2-baby-fig { width: 160px; height: 160px; }
+  #g2Intro .big .age { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+  #g2Intro .big .age b { font-size: 54px; font-weight: 800; color: var(--lav-dark); letter-spacing: -.02em; }
+  #g2Intro .big .age span { font-size: 16px; font-weight: 700; color: var(--muted); margin-top: 6px; }
+  #g2Intro .big .wk {
+    position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+    padding: 6px 14px; border-radius: 999px; background: var(--lav-btn); color: #fff;
+    font-size: 14px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 14px rgba(95, 79, 177, .25);
+  }
+  #g2Intro .grow .big { animation: g2i-grow 900ms cubic-bezier(.2, .8, .2, 1.1) both; }
+  #g2Intro .grow .big .art, #g2Intro .grow .big .age { animation: g2i-grow 1100ms 120ms cubic-bezier(.2, .8, .2, 1.2) both; }
+  #g2Intro .grow .big.breathe { animation: g2i-grow 900ms cubic-bezier(.2, .8, .2, 1.1) both, g2i-breathe 5s 1.2s ease-in-out infinite; }
+  @keyframes g2i-grow { 0% { transform: scale(.55); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes g2i-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+  #g2Intro .kicker { margin: 6px 0 -4px; font-size: 15px; font-weight: 700; color: var(--lav-dark); }
+  #g2Intro .aha h1 { margin-top: 8px; }
+  #g2Intro .fact { margin: 0; font-size: 15px; color: var(--muted); max-width: 340px; line-height: 1.45; }
+  #g2Intro .fact .src { display: inline-block; margin-left: 4px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  #g2Intro .today {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: var(--radius); background: #fff; box-shadow: var(--shadow);
+    text-align: left; margin-top: 2px;
+  }
+  #g2Intro .today .dot { flex: none; width: 42px; height: 42px; border-radius: 14px; background: var(--pink-soft); display: grid; place-items: center; color: #a8476a; font-size: 20px; }
+  #g2Intro .today .t { flex: 1; min-width: 0; }
+  #g2Intro .today .lbl { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--lav-dark); }
+  #g2Intro .today .demo { font-size: 14px; font-weight: 600; color: var(--muted); padding: 0 6px; border-radius: 6px; background: #f3f0ee; }
+  #g2Intro .today strong { display: block; font-size: 16px; font-weight: 700; line-height: 1.3; margin-top: 2px; }
+  #g2Intro .today p { margin: 2px 0 0; font-size: 14px; color: var(--muted); line-height: 1.35; }
+
+  /* ——— Vlastné okno (bez systémových dialógov) ——— */
+  #g2Intro .sheet-bg { position: absolute; inset: 0; background: rgba(41, 36, 58, .28); opacity: 0; visibility: hidden; transition: opacity var(--dur), visibility 0s linear var(--dur); z-index: 5; }
+  #g2Intro .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+    padding: 10px 20px max(18px, env(safe-area-inset-bottom));
+    background: #fff; border-radius: 26px 26px 0 0;
+    box-shadow: 0 -10px 40px rgba(41, 36, 58, .14);
+    transform: translateY(105%); transition: transform var(--dur) ease;
+    text-align: center;
+  }
+  #g2Intro .sheet-open .sheet-bg { opacity: 1; visibility: visible; transition: opacity var(--dur); }
+  #g2Intro .sheet-open .sheet { transform: none; }
+  #g2Intro .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: #e2dcef; margin: 0 auto 14px; }
+  #g2Intro .sheet h2 { margin: 0 0 6px; font-size: 19px; font-weight: 750; }
+  #g2Intro .sheet p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+  #g2Intro .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  #g2Intro .opts button {
+    min-height: 52px; border-radius: 14px; border: 1.5px solid var(--lav-line); background: #fff;
+    font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+  }
+  #g2Intro .opts button[aria-checked="true"] { border-color: var(--lav); background: var(--lav-soft); }
+  #g2Intro .opts button span { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+  /* ——— Nižšie obrazovky (iPhone SE 667) ——— */
+  @media (min-height: 800px) {
+    #g2Intro .hero { width: 264px; height: 264px; }
+    #g2Intro .hero-art { inset: 58px; }
+    #g2Intro .chip.c2 { top: 104px; }
+    #g2Intro .big { width: 184px; height: 184px; }
+    #g2Intro .big .art { width: 124px; height: 124px; }
+  }
+  @media (max-height: 760px) {
+    #g2Intro { --rows: 3; }
+    #g2Intro h1 { font-size: 22px; }
+    #g2Intro .hook h1 { font-size: 23px; }
+    #g2Intro .screen { gap: 11px; }
+    #g2Intro .hero { width: 200px; height: 200px; }
+    #g2Intro .hero-art { inset: 44px; }
+    #g2Intro .chip.c2 { top: 78px; }
+    #g2Intro .big { width: 140px; height: 140px; }
+    #g2Intro .big .art { width: 92px; height: 92px; }
+    #g2Intro .big .art svg.g2-baby-fig { width: 132px; height: 132px; }
+    #g2Intro .big .age b { font-size: 44px; }
+    #g2Intro .choice { min-height: 70px; }
+    #g2Intro .preview { min-height: 68px; }
+    #g2Intro .top { gap: 8px; }
+    #g2Intro .today { padding: 10px 12px; }
+  }
+  @media (max-height: 700px) {
+    #g2Intro .screen.calc .sub { display: none; }       /* pri výpočte stačí popis nad výberom */
+    #g2Intro .screen.calc { gap: 9px; }
+    #g2Intro .sub { font-size: 15px; }
+    #g2Intro .fact { font-size: 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #g2Intro { --dur: 1ms; }
+    #g2Intro .float, #g2Intro .grow .big, #g2Intro .grow .big .art, #g2Intro .grow .big .age, #g2Intro .grow .big.breathe, #g2Intro .preview .pic.pop { animation: none !important; }
+    #g2Intro .hero-art > div { transition: none; }
+    #g2Intro .screen, #g2Intro .screen.left { transform: none; }
+  }
+
+/* ——— Napojenie na appku ——— */
+#g2Intro { position: fixed !important; top: 0; bottom: 0; left: 0; right: 0; z-index: 300; width: 100%; max-width: 460px; margin: 0 auto; height: auto !important; color: var(--ink); font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.45; text-align: left; }
+#welcome:has(#g2Intro) > :not(#g2Intro) { display: none !important; }
+body.g2-intro-on { overflow: hidden !important; }
+body.g2-intro-on :is(#v5BottomBar, #v5Header, .v2-tour-resume) { display: none !important; }
+#g2Intro button { min-height: 0; margin: 0; text-transform: none; letter-spacing: normal; }
+#g2Intro h1 { color: var(--ink); text-align: center; }
+#g2Intro .btn { width: 100%; min-height: 54px; }
+#g2Intro .today .dot svg { width: 22px; height: 22px; fill: currentColor; }
+#g2Intro .today { text-align: left; }
+#g2Intro .fact .src { white-space: nowrap; }
+/* nízka obrazovka (568 px): menší háčik a aha, aby sa nič neposúvalo */
+@media (max-height: 620px) {
+  #g2Intro { --rows: 3; --item: 40px; }
+  #g2Intro h1 { font-size: 20px; }
+  #g2Intro .hook h1 { font-size: 21px; }
+  #g2Intro .sub { font-size: 15px; }
+  #g2Intro .screen { gap: 8px; }
+  #g2Intro .hero { width: 150px; height: 150px; }
+  #g2Intro .hero-art { inset: 34px; }
+  #g2Intro .chip { padding: 5px 10px; }
+  #g2Intro .chip.c2 { top: 56px; right: -40px; }
+  #g2Intro .big { width: 104px; height: 104px; }
+  #g2Intro .big .art { width: 70px; height: 70px; }
+  #g2Intro .big .art svg.g2-baby-fig { width: 100px; height: 100px; }
+  #g2Intro .big .age b { font-size: 34px; }
+  #g2Intro .choice { min-height: 60px; padding: 10px 14px; }
+  #g2Intro .preview { min-height: 60px; padding: 6px 12px 6px 8px; }
+  #g2Intro .preview .pic { width: 48px; height: 48px; }
+  #g2Intro .today { padding: 8px 10px; }
+  #g2Intro .today p { display: none; }
+  #g2Intro .fact { font-size: 14px; line-height: 1.35; }
+  #g2Intro .fields { gap: 6px; }
+  #g2Intro .input { min-height: 48px; }
+  #g2Intro .top { padding-top: 10px; gap: 6px; }
+  #g2Intro .top img { height: 24px; }
+  #g2Intro .bottom { padding-bottom: 10px; }
+  #g2Intro .btn { min-height: 50px; }
+  #g2Intro .screen.calc .sub, #g2Intro .screen[data-screen="date"] .sub { display: none; }
+  #g2Intro .alt-links { flex-wrap: nowrap; margin-top: -6px; }
+  #g2Intro .alt-links .link { font-size: 14px; padding: 0 8px; }
+  #g2Intro .cycle { min-height: 40px; }
+}
