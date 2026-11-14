@@ -48,134 +48,75 @@
     const expecting = state.profile?.status === "expecting";
     const home = homeEl();
     const V5 = () => window.GugubooV5;
+    // Master (Samo 14. 11.): prehliadka opisuje SÚČASNÝ domov – hľadanie, týždeň/bábätko, skratky, Čas pre teba, Dnes, lišta.
     return [
       ...setupSteps(),
       {
         intro: true,
         target: () => null,
-        title: "Zoznám sa s aplikáciou",
+        title: "Zoznám sa s Guguboo",
         icon: "spark",
-        text: "Ukážem ti, čo je kde na domove. Pri dôležitých veciach si to môžeš hneď vyskúšať a potom pokračovať."
+        text: "Ukážem ti domov. Je to len pár vecí a všetko si môžeš hneď vyskúšať."
       },
       {
         top: true,
         target: () => document.querySelector("#v5Header [data-v5-night]")?.parentElement,
-        title: "Menu a Nočný režim",
-        // Názvy a piktogramy v celom sprievodcovi = tie isté ako v appke (ikony z GugubooV5.icon, lišta a týždeň z domova).
+        title: "Menu a nočný režim",
         items: [
-          { icon: "menu", name: "Menu", text: "tvoj profil, profil bábätka, rodina a nastavenia." },
+          { icon: "menu", name: "Menu", text: "tvoj profil, bábätko a nastavenia." },
           { icon: "moon", name: "Nočný režim", text: "stlmí farby, keď si hore v noci." }
         ]
       },
-      expecting ? {
-        scroll: true,
-        target: () => home?.querySelector(".v2-week-badge"),
-        title: "Týždeň tehotenstva",
-        items: () => [
-          { week: home?.querySelector(".v2-week-badge b")?.textContent || "?", name: "Týždeň", text: "ukazuje, v ktorom týždni si. Ťukni naň a otvorí sa Aké veľké je bábätko – veľkosť a čo sa práve vyvíja." }
-        ],
-        try: { label: "Otvoriť Aké veľké je bábätko", run: () => V5()?.openFeature("babySize") }
-      } : {
-        scroll: true,
-        target: () => home?.querySelector(".v5-home-hero .v5-baby-avatar"),
-        title: "Fotka bábätka",
+      {
+        target: () => home?.querySelector(".g2-askwrap"),
+        title: "Hľadaj alebo sa opýtaj",
         items: [
-          { icon: "baby", name: "Fotka bábätka", text: "ťukni na tento krúžok a pridaj fotku. Uvidíš ju vždy na domove." }
-        ]
+          { icon: "search", name: "Hľadaj", text: "napíš, čo sa deje alebo čo hľadáš. Nájdeš to v appke a GuguChat odpovie z overených zdrojov." }
+        ],
+        try: { label: "Vyskúšať hľadanie", run: () => home?.querySelector("[data-g2-ask]")?.click() }
       },
       expecting ? {
-        scroll: true,
-        target: () => home?.querySelector(".v5-glance-strip"),
-        title: "Prehľad na jeden pohľad",
-        // Upratanie 2.36: rovnaké dlaždice ako po pôrode – údaje, ťuknutím otvoríš miesto, kam patria.
+        target: () => home?.querySelector(".g2-hero"),
+        title: "Tvoj týždeň",
         items: [
-          { icon: "calendar", name: "Do termínu a trimester", text: "koľko dní ostáva a kde v tehotenstve si." },
-          { icon: "baby", name: "Pohyby", text: "zápis pohybov bábätka jedným ťuknutím. Aké veľké je bábätko, ukáže odznak s týždňom." },
-          { icon: "book", name: "Kontrola a Otázky", text: "najbližšia kontrola a otázky pre lekára v Tehotenskej knižke." },
-          { icon: "water", name: "Pitný režim", text: "koľko pohárov už máš dnes za sebou." }
+          { icon: "baby", name: "Týždeň a veľkosť", text: "ovocie ukazuje, aké veľké je bábätko. Ťukni a uvidíš, ako práve rastie." }
         ],
-        try: { label: "Otvoriť Tehotenskú knižku", run: () => V5()?.openFeature("pregnancy") }
+        try: { label: "Otvoriť Tvoj týždeň", run: () => V5()?.openFeature("babySize") }
       } : {
-        scroll: true,
-        target: () => home?.querySelector(".v5-glance-strip"),
-        title: "Rýchle záznamy",
+        target: () => home?.querySelector(".g2-hero"),
+        title: "Tvoje bábätko",
         items: [
-          { icon: "moon", name: "Spánok", text: "spustíš alebo doplníš jedným ťuknutím." },
-          { icon: "feeding", name: "Kŕmenie", text: "dojčenie, fľaša alebo príkrm." },
-          { icon: "diaper", name: "Prebalenie", text: "kedy dieťa cikalo alebo kakalo." },
-          { icon: "growth", name: "Výška a Váha", text: "ukladajú sa do rastu." },
-          { icon: "book", name: "Zdravotná knižka", text: "prehliadky, očkovanie a prehľad pre pediatra." }
+          { icon: "baby", name: "Vek a Tvoj mesiac", text: "ťukni a uvidíš, čo bábätko práve objavuje. Na krúžok môžeš pridať fotku." }
         ],
-        try: { label: "Otvoriť Zdravotnú knižku", run: () => V5()?.openFeature("childBook") }
+        try: { label: "Otvoriť Tvoj mesiac", run: () => home?.querySelector("[data-g2-month-open]")?.click() }
       },
       {
-        scroll: true,
-        target: () => home?.querySelector(".v2-home-today"),
-        title: "Dnešný malý moment",
-        items: [
-          { icon: "memory", name: "Dnešný malý moment", text: "ťukni a rozbalí sa: Fotka dňa, Jedna veta, Prvé razy, Môj hlas pre bábätko a Naše momenty. Občas sa tu jemne opýtame „Stalo sa už?“." }
-        ],
-        try: {
-          label: "Otvoriť Dnešný malý moment",
-          stay: true,
-          run: () => { const cta = home?.querySelector("[data-v2-moment-toggle]"); if (cta?.getAttribute("aria-expanded") !== "true") cta?.click(); }
-        }
-      },
-      {
-        scroll: true,
-        target: () => home?.querySelector(".v5-circle-mode") || home?.querySelector("[data-v5-circle-mode]")?.parentElement,
-        title: expecting ? "Príprava a Pohoda" : "Organizácia a Pohoda",
-        lead: "Prepínač nad kruhom:",
-        items: expecting
-          ? [{ name: "Príprava", text: "kroky pred pôrodom." }, { name: "Pohoda", text: "malé veci len pre teba – oddych, telo, opora." }]
-          : [{ name: "Organizácia", text: "praktické veci po pôrode." }, { name: "Pohoda", text: "malé veci len pre teba." }],
-        try: {
-          label: "Prepnúť",
-          stay: true,
-          run: () => {
-            const other = (state.v5.circleMode === "wellbeing") ? "organize" : "wellbeing";
-            home?.querySelector("[data-v5-circle-mode='" + other + "']")?.click();
-          }
-        }
-      },
-      {
-        scroll: true,
-        target: () => home?.querySelector(".v5-o-ring-wrap") || home?.querySelector(".v5-o-card"),
-        title: expecting ? "Kruh prípravy a pohody" : "Kruh organizácie a pohody",
+        target: () => home?.querySelector(".g2-shorts"),
+        title: "Tri skratky",
         text: expecting
-          ? "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako oznámiť tehotenstvo blízkym. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
-          : "Ťukni na farebnú časť kruhu a uvidíš jej kroky – aj jednorazové veci ako kartičku narodenia. Kruh sa vypĺňa s každým hotovým krokom a tlačidlo v strede ukáže, čo ďalej."
+          ? "Veci, ktoré teraz potrebuješ najčastejšie. Menia sa podľa týždňa."
+          : "Veci, ktoré teraz potrebuješ najčastejšie, napríklad denné záznamy. Menia sa, ako bábätko rastie."
       },
       {
-        scroll: true,
-        target: () => home?.querySelector(".v2-home-cal"),
-        title: "Kalendár",
-        items: [
-          { icon: "calendar", name: "Kalendár", text: "na domove vidíš najbližší termín – ťuknutím otvoríš všetky kontroly, prehliadky a pripomienky." }
-        ],
-        try: { label: "Otvoriť Kalendár", run: () => V5()?.openFeature("calendar") }
+        target: () => home?.querySelector(".g2-ring-card"),
+        title: "Čas pre teba",
+        text: "Malé veci len pre teba – oddych, telo a opora. Bez povinností a bez počítania. Ťukni na farebný diel."
       },
       {
-        target: () => document.querySelector("#v5BottomBar .v2-chat-shutter"),
-        title: "GuguChat",
-        items: [
-          { icon: "chat", name: "GuguChat", text: "keď nevieš, čo ďalej, opýtaj sa. Odpovedá z overených zdrojov a ukáže ďalší krok." }
-        ],
-        try: { label: "Otvoriť GuguChat", run: () => document.querySelector("#v5BottomBar .v2-chat-shutter")?.click() }
+        target: () => home?.querySelector(".g2-today-row"),
+        title: "Dnes stačí jedno",
+        text: "Jedna vec, ktorú treba vybaviť, kúpiť alebo pripraviť. Ostatné počká v Pláne. Môžeš ju odložiť tlačidlom Neskôr."
       },
       {
         target: () => byId("v5BottomBar"),
         title: "Spodná lišta",
         lead: "Dole sú 4 časti appky – pred aj po pôrode rovnaké:",
-        // Presne to, čo je v lište (ikona aj názov).
         chips: () => [...document.querySelectorAll("#v5BottomBar .v5-bottom-action")].map(button => ({
           iconHtml: button.querySelector(".v5-nav-icon")?.innerHTML || "",
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
-        after: expecting
-          ? "Bábätko otvorí Tehotenskú knižku, vývoj bábätka a prípravu, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz."
-          : "Bábätko otvorí Zdravotnú knižku, spánok a aktivity, Mama všetko o tebe, Rodina Naše momenty, kalendár, nákup a úrady. Keď potiahneš lištu nahor, uvidíš všetko naraz.",
-        try: { label: "Otvoriť Bábätko", run: () => V5()?.openFeature?.("babyHub") }
+        after: "Potiahni lištu nahor alebo ťukni na čiarku navrchu a uvidíš všetko v appke.",
+        try: { label: "Ukázať všetko", run: () => document.querySelector("#v5BottomBar .g2-bar-handle")?.click() }
       }
     ];
   }
