@@ -477,6 +477,7 @@
   // ——— Obrazovka 2 ———
   root.querySelectorAll(".choice").forEach(c => c.addEventListener("click", () => {
     S.stage = c.dataset.choice;
+    root.querySelector(".g2i-hint")?.remove();
     root.querySelectorAll(".choice").forEach(x => x.setAttribute("aria-checked", String(x === c)));
     renderFooter();
   }));
@@ -556,10 +557,10 @@
       big.className = "big breathe";
       big.innerHTML = "<div class='art'>" + (info.comparison ? Fig.fruitSvg(info.comparison) : info.early ? SEED : Fig.babySvg(info.week)) + "</div><span class='wk'>" + info.week + ". týždeň</span>";
       title = (mom ? mom + ", si" : "Si") + " v " + info.week + ". týždni.";
-      const who = baby || "Bábätko";
+      // QA S9: bez rodu podľa mena („Ema je veľké“) – veta vždy o bábätku.
       sizeLine = info.early ? "" : info.comparison
-        ? who + " je " + (info.approximate ? "orientačne veľké ako " : "veľké asi ako ") + info.comparison + (info.length ? ", " + info.length : "") + "."
-        : info.length ? who + " meria " + info.length + "." : "";
+        ? (baby ? baby + " – " : "Bábätko je ") + (info.approximate ? "orientačne ako " : "asi ako ") + info.comparison + (info.length ? ", " + info.length : "") + "."
+        : info.length ? (baby ? baby + " – " : "Bábätko meria ") + info.length + "." : "";
       const line = weekLine(info.week);
       fact = line ? esc(line) + "<span class='src'>Zdroj: NHS</span>" : "";
       step = firstStep();
@@ -603,6 +604,7 @@
       s.inert = !on;
     });
     S.screen = i;
+    keepHistory();
     renderFooter();
     hero(name === "hook");
     if (name === "date") Object.values(P).forEach(p => { if (!p.el.hidden) p.show(true); });
@@ -616,6 +618,8 @@
   function next() {
     const name = ORDER[S.screen];
     if (name === "stage" && !S.stage) {
+      // QA N9: slovné vysvetlenie, nie len skok fokusu
+      if (!root.querySelector(".g2i-hint")) root.querySelector(".choices").insertAdjacentHTML("afterend", "<p class='note g2i-hint' role='alert'>Vyber, prosím, jednu možnosť.</p>");
       const c = root.querySelector(".choice"); c.focus();
       return;
     }
@@ -623,6 +627,20 @@
     show(S.screen + 1, 1);
   }
   function back() { if (S.screen > 0) show(S.screen - 1, -1); }
+
+  // Master 1.9.2 (QA S6): systémové späť (Android, gesto, prehliadač) robí v úvode krok späť ako tlačidlo Späť.
+  // Kým nie si na prvej obrazovke, v histórii je jedna poistka; späť ju spotrebuje a poistka sa vráti.
+  function keepHistory() {
+    try {
+      if (welcome.classList.contains("active") && S.screen > 0 && !(window.history.state && window.history.state.g2intro)) window.history.pushState({ g2intro: 1 }, "");
+    } catch (error) { /* bez histórie (sandbox) systémové späť len opustí stránku */ }
+  }
+  window.addEventListener("popstate", () => {
+    if (!welcome.classList.contains("active")) return;
+    if (root.classList.contains("sheet-open")) { closeSheet(); setTimeout(keepHistory, 0); return; }
+    if (S.screen > 0) back();
+    setTimeout(keepHistory, 0);
+  });
   // Úvod vždy od začiatku; ak už údaje existujú (návrat do úvodu), predvyplnia sa.
   function restart() {
     const has = typeof state !== "undefined" && state.onboarded;

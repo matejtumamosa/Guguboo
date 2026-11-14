@@ -615,7 +615,7 @@
     "<div id='v5OMenuBody'><div class='v5-quick-record-grid v5-o-menu-grid' id='v5OMenuGrid'></div></div></aside></div>",
     "<div id='v5DrawerOverlay' aria-hidden='true'>",
     "<aside id='v5Drawer' role='dialog' aria-modal='true' aria-labelledby='v5DrawerTitle'>",
-    "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť ďalšie aplikácie'></button>",
+    "<button class='v5-drawer-handle' type='button' data-v5-close-drawer aria-label='Zatvoriť hľadanie'></button>",
     "<div class='v5-drawer-head'><div><h2 id='v5DrawerTitle'>Ďalšie aplikácie</h2><p>Vyber jednu aplikáciu.</p></div>",
     "<button class='v5-icon-button' type='button' data-v5-close-drawer aria-label='Zatvoriť'>×</button></div>",
     "<div class='v5-drawer-scroll' id='v5DrawerScroll'></div>",
@@ -898,8 +898,7 @@
 
   function dueText() {
     if (!state.profile.due) return "Doplň termín";
-    const due = new Date(state.profile.due + "T12:00:00");
-    const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
+    const days = window.GugubooJourney?.dueDays?.(state.profile.due) ?? NaN;
     if (!Number.isFinite(days)) return "Doplň termín";
     if (days > 1) return days + " dní do termínu";
     if (days === 1) return "Zajtra je termín";
@@ -1173,7 +1172,10 @@
     if (!MASTER || !home || !home.classList.contains("active")) return;
     const bar = byId("v5BottomBar");
     const top = home.getBoundingClientRect().top + window.scrollY;
-    const barTop = bar && bar.offsetHeight ? bar.getBoundingClientRect().top : window.innerHeight;
+    let barTop = bar && bar.offsetHeight ? bar.getBoundingClientRect().top : window.innerHeight;
+    // QA 1.9 S4: bežiaci spánok/kŕmenie má pás nad lištou – domov končí nad ním, nič neprekryje.
+    const timers = byId("v5PersistentTimers");
+    if (timers && timers.classList.contains("active") && timers.offsetHeight) barTop = Math.min(barTop, timers.getBoundingClientRect().top);
     // Master 1.8: 12 px nad lištou – posledný riadok („Dnes stačí jedno“) nezaniká v tieni lišty ani na 375 × 667.
     document.documentElement.style.setProperty("--g2-home-h", Math.max(0, Math.floor(barTop - top - 12)) + "px");
   }
@@ -1683,6 +1685,14 @@
     if (hits.length) hits = hits.filter(hit => hit.score >= hits[0].score / 2).slice(0, 5);
     // QA-46: pri vetách, ktoré môžu znamenať, že treba hneď niekoho kontaktovať, neponúkať nesúvisiace časti appky – GuguChat odpovie pokojne a ukáže kontakty.
     if (/(odtiek|odteka|praskl|plodov|krvac|necitim pohyb|nehybe|kontrakc|mzitk|bezvedom|nedycha|zmodr)/.test(q)) hits = pool.filter(hit => hit.item.id === "urgent");
+    // QA 1.9 S7: krízové vety („nechcem už žiť“…) – rovnaká pokojná pomoc ako v GuguChate hneď navrchu, bez nesúvisiacich výsledkov.
+    let crisis = null;
+    try { crisis = window.GugubooV2?.answer?.(query, { dryRun: true }); } catch (_) { crisis = null; }
+    if (crisis && crisis.level === "urgent" && /112/.test(crisis.text || "") && /Nezábudka/.test(crisis.text || "")) {
+      const calls = (crisis.actions || []).filter(action => action.kind === "tel");
+      return "<section class='g2-crisis' role='alert'><p>" + escapeHtml(crisis.text).replace(/\n\n/g, "</p><p>") + "</p><div class='g2-crisis-calls'>" +
+        calls.map(action => "<a class='g2-btn g2-btn-primary' href='tel:" + escapeHtml(action.value) + "'>" + escapeHtml(action.label) + "</a>").join("") + "</div></section>";
+    }
     return [
       "<button class='g2-ask-row' type='button' data-g2-chat='", escapeHtml(query.trim()), "'><span class='g2-ask-orb'>", icon("chat"), "</span><span><strong>Opýtať sa GuguChatu</strong><small>„", escapeHtml(query.trim()), "“</small></span>›</button>",
       hits.length ? "<h3 class='g2-hits-head'>V appke</h3>" + hits.map(hit => g2Btn(hit.item, "g2-hit")).join("") : "<p class='g2-empty'>Samostatnú časť na to nemám. Skús GuguChat vyššie.</p>"
@@ -3313,7 +3323,9 @@
         detail: "Beží " + formatDuration(Date.now() - new Date(state.v5.feedingTimer.start).getTime())
       });
     }
+    const wasActive = target.classList.contains("active");
     target.classList.toggle("active", timers.length > 0);
+    if (wasActive !== timers.length > 0) requestAnimationFrame(g2FitHome); // QA 1.9 S4
     target.innerHTML = timers.map(timer => [
       "<div class='v5-timer-pill'><span class='v5-timer-icon'>", icon(timer.icon), "</span><div><strong>",
       escapeHtml(timer.title), "</strong><span>", escapeHtml(timer.detail), "</span></div><button type='button' data-v5-stop-timer='",
@@ -4300,7 +4312,7 @@
     const back = "<button class='v5-check-categories-button' type='button' data-v5-book-home>" + icon("back") + " Tehotenská knižka</button>";
     const dateLabel = value => new Date(value + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" });
     if (section === "home") {
-      const daysLeft = state.profile.due ? Math.ceil((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
+      const daysLeft = state.profile.due ? Math.round((new Date(state.profile.due + "T00:00:00") - new Date(todayKey() + "T00:00:00")) / 86400000) : null;
       const trimester = !week ? "" : week < 13 ? "1." : week < 28 ? "2." : "3.";
       // Len zdravotné termíny (kontroly, lekár) – nie úlohy ako kartička narodenia.
       const next = calendarItems().find(item => !item.completedAt && !item.virtual && new Date(item.date).getTime() >= Date.now() && (item.type === "Zdravie" || item.source === "prenatal-visit" || /kontrol|lekár|gynek|ultrazvuk|poradň/i.test(item.title || "")));
@@ -5404,7 +5416,7 @@
     if (event.target.closest("[data-v2-visit-save]")) {
       const date = byId("v2VisitDate")?.value || todayKey();
       const due = state.profile.due ? new Date(state.profile.due + "T00:00:00") : null;
-      const visitWeek = due ? Math.max(1, Math.min(42, 40 - Math.floor(Math.ceil((due - new Date(date + "T00:00:00")) / 86400000) / 7))) : null;
+      const visitWeek = due ? Math.max(1, Math.min(42, 40 - Math.floor(Math.round((due - new Date(date + "T00:00:00")) / 86400000) / 7))) : null;
       const nextDate = byId("v2VisitNext")?.value || "";
       state.v5.prenatalVisits ||= [];
       state.v5.prenatalVisits.push({

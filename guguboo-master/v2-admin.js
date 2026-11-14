@@ -133,6 +133,17 @@
     ].join("");
   }
 
+  // Prehľad aj detail vždy začínajú nadpisom (posun sa nastaví aj po vykreslení – okno je už viditeľné).
+  function resetScroll() {
+    const reset = () => {
+      const body = byId("v2AdminBody");
+      if (body) body.scrollTop = 0;
+      byId("v2AdminOverlay")?.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
+    };
+    reset();
+    requestAnimationFrame(reset);
+  }
+
   function open(adminId) {
     const item = allItems().find(entry => entry.id === adminId);
     if (!item) return;
@@ -146,6 +157,7 @@
     body.scrollTop = 0;
     overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
     overlay.classList.add("open");
+    resetScroll(); // Master 1.9.2 (QA S3): až po otvorení – pri zatvorenom okne sa posun neuplatní
     overlay.setAttribute("aria-hidden", "false");
     if (!V5.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
     document.body.style.overflow = "hidden";
@@ -203,6 +215,7 @@
     const overlay = byId("v2AdminOverlay");
     overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0); byId("v2AdminBody").scrollTop = 0;
     overlay.classList.add("open");
+    resetScroll();
     overlay.setAttribute("aria-hidden", "false");
     if (!window.GugubooV5?.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal"); // Master: lišta ostáva, okno nad ňou
     document.body.style.overflow = "hidden";

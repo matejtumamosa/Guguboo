@@ -25,7 +25,8 @@
       window: { anchor: "week", from: 1, to: 42 },
       title: "Ulož kontakt na gynekológa",
       why: "Keď ich budeš potrebovať, nemusíš nič hľadať.",
-      feature: "contacts", done: s => (s.contacts || []).length > 0
+      // QA N2: splnené až kontaktom na gynekológa alebo pôrodnicu (nie hocijakým kontaktom)
+      feature: "contacts", done: s => (s.contacts || []).some(contact => /gynek|pôrod|porod/i.test(String(contact.type || "") + " " + String(contact.name || "")))
     },
     {
       id: "preg.voice", stage: "pregnancy", type: "moment", priority: 45,
@@ -136,6 +137,16 @@
     return Number.isFinite(date.getTime()) ? date : null;
   };
   const daysBetween = (from, to) => Math.floor((to.getTime() - from.getTime()) / DAY);
+  // Master 1.9.2 (QA S2): JEDEN výpočet pre celú appku – kalendárne dni medzi dneškom a termínom (bez hodín a letného času).
+  // Používa ho Plán, Domov, Tvoj týždeň, knižky, GuguChat aj úvod (app.html → pregnancyWeek / calcDueDays).
+  function calendarDueDays(dueValue, now = new Date()) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(dueValue || ""));
+    if (!m) return null;
+    return Math.round((Date.UTC(+m[1], +m[2] - 1, +m[3]) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / DAY);
+  }
+  function weekFromDueDays(dueDays) {
+    return dueDays === null || !Number.isFinite(dueDays) ? null : Math.min(42, Math.max(1, 40 - Math.floor(dueDays / 7)));
+  }
   const asArray = value => Array.isArray(value) ? value : [value];
 
   function journeyState(s) {
@@ -159,10 +170,9 @@
       ctx.baby_age_days = age;
       ctx.life_stage = age <= 42 ? "postpartum" : age <= 365 ? "baby" : "parenthood";
     } else if (due) {
-      const dueDays = Math.ceil((due.getTime() - now.getTime()) / DAY);
+      const dueDays = calendarDueDays(profile.due, now);
       ctx.due_days = dueDays;
-      // Rovnaký výpočet ako vo V1 (pregnancyWeek), aby sa týždne nerozchádzali.
-      ctx.pregnancy_week = Math.min(42, Math.max(1, 40 - Math.floor(dueDays / 7)));
+      ctx.pregnancy_week = weekFromDueDays(dueDays);
       ctx.life_stage = "pregnancy";
     }
     return ctx;
@@ -269,5 +279,5 @@
     return "Nastavme tvoju cestu";
   }
 
-  window.GugubooJourney = { items: JOURNEY_ITEMS, context, compute, markDone, undo, snooze, item, stageLabel, registerItems, LIMITS };
+  window.GugubooJourney = { items: JOURNEY_ITEMS, dueDays: calendarDueDays, pregnancyWeek: (value, now) => weekFromDueDays(calendarDueDays(value, now)), context, compute, markDone, undo, snooze, item, stageLabel, registerItems, LIMITS };
 })();

@@ -68,6 +68,22 @@
   }
 
   // ——— Fokus ———
+  // Master 1.9.2 (QA S8): fokus sa nesmie stratiť na <body> – po „Zahodiť a odísť“ ani po uložení formulára (obsah sa prekreslí).
+  function focusLost() {
+    const active = document.activeElement;
+    return !active || active === document.body || active === document.documentElement || !visible(active);
+  }
+  function recoverFocus() {
+    if (!focusLost() || confirmOpen()) return;
+    const top = topLayer();
+    if (top) return focusInto(byId(top.id));
+    const view = activeView();
+    const head = view?.querySelector(":scope > .v5-universal-window-head strong");
+    if (head && visible(head)) { head.setAttribute("tabindex", "-1"); return head.focus({ preventScroll: true }); }
+    // len tlačidlo alebo odkaz – pole by na telefóne otvorilo klávesnicu
+    const first = Array.from((view || document).querySelectorAll("button, [href]")).find(visible);
+    first?.focus?.({ preventScroll: true });
+  }
   const visible = el => Boolean(el && el.isConnected && (el.offsetParent || el.getClientRects().length) && !el.closest("[aria-hidden='true'], [inert]"));
   function signature(el) {
     if (!el || !el.attributes) return "";
@@ -108,10 +124,11 @@
     const entry = opened.get(layer.id);
     opened.delete(layer.id);
     layout();
-    const lost = !document.activeElement || document.activeElement === document.body || el.contains(document.activeElement);
+    const lost = focusLost() || el.contains(document.activeElement);
     if (lost) setTimeout(() => {
       const top = topLayer();
-      if (top) return focusInto(byId(top.id));
+      // QA N3: okno nad oknom – fokus späť na prvok v spodnom okne, ktorý ho otvoril (nie na jeho nadpis).
+      if (top) return visible(entry?.opener) && byId(top.id).contains(entry.opener) ? entry.opener.focus({ preventScroll: true }) : focusInto(byId(top.id));
       restoreFocus(entry, activeView() || document);
     }, 30);
   }
@@ -183,7 +200,7 @@
     box.classList.remove("open");
     const action = pending;
     pending = null;
-    if (discard && action) action();
+    if (discard && action) { action(); setTimeout(recoverFocus, 80); }
     else if (visible(stayFocus)) stayFocus.focus();
     setTimeout(ensureSentinel, 0);
     return true;
@@ -208,7 +225,9 @@
     "[data-v5-window-back]", "[data-v5-window-cancel]", "#v5BottomBar button:not(.g2-bar-handle)",
     "[data-g2-plan-close]", "[data-g2-month-close]", "[data-g2-win-close]", "[data-v2-admin-close]", "[data-v2-admin-step-back]", "[data-v2-admin-back]",
     "[data-v5-o-back]", "[data-v5-close-o]", "[data-v5-close-record]", "[data-v5-close-drawer]",
-    "#v5Drawer [data-g2-go]", "#v5Drawer [data-v5-feature]", "#v5Drawer [data-g2-chat]"
+    "#v5Drawer [data-g2-go]", "#v5Drawer [data-v5-feature]", "#v5Drawer [data-g2-chat]",
+    // QA N4: prechod na inú časť knižky alebo Mamy (napr. „Zrušiť“ v novom zápise) – rozpísané sa nestratí bez otázky
+    ".view.active [data-v5-book-section]", ".view.active [data-v2-child-section]", ".view.active [data-v2-mama-section]"
   ].join(", ");
   const BACKDROPS = new Set(["v5OOverlay", "v5QuickRecordOverlay", "v5DrawerOverlay", "v2AdminOverlay"]);
   document.addEventListener("click", event => {
@@ -297,6 +316,9 @@
   }
   function afterInteraction() {
     setTimeout(() => { checkView(); ensureSentinel(); }, 0);
+    // Len keď ťuknutý prvok zmizol (uloženie prekreslilo obsah, okno sa zavrelo) – inak fokus nechávame tak.
+    const clicked = lastActivator;
+    setTimeout(() => { if (clicked && !visible(clicked)) recoverFocus(); }, 120);
   }
   // Zmenu obrazovky sledujeme priamo (aj keď ju spustí kód, nie ťuk).
   let viewCheckQueued = false;

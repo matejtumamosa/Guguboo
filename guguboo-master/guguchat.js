@@ -539,7 +539,8 @@
     return null;
   }
 
-  function answer(question) {
+  // options.dryRun: len zistiť odpoveď (napr. hľadanie pri písaní) – nič nezapisovať do medzier ani štatistík.
+  function answer(question, options = {}) {
     const t = norm(question);
     const plan = J.compute(state);
     const ctx = plan.context;
@@ -689,8 +690,8 @@
     if (has(t, ["dakujem", "vdaka", "super"])) return { text: "Rado sa stalo ❤️ Keď budeš niečo potrebovať, som tu.", actions: [] };
 
     // 8. Neviem – úprimne a zapíšem ako medzeru v znalostiach.
-    state.v2.gaps.push({ q: question, stage: ctx.life_stage, at: new Date().toISOString() });
-    track("chat_gap");
+    if (!options.dryRun) state.v2.gaps.push({ q: question, stage: ctx.life_stage, at: new Date().toISOString() });
+    if (!options.dryRun) track("chat_gap");
     return {
       level: "unknown",
       text: "Na toto zatiaľ nemám overenú odpoveď. Otázku som si zapísala.\n\nAk ide o zdravie, najlepšie ti poradí tvoj lekár.",
