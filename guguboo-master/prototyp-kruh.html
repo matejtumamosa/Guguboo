@@ -16,6 +16,15 @@
 body.night { --bg: #141826; --surface: #212638; --soft: #2a2f42; --ink: #f5f2fb; --muted: #c9c3d8; --line: #343a50; --brand-ink: #c6bcff; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+.link-row { display: block; width: 100%; min-height: 44px; margin-top: 4px; border: 0; background: transparent; color: var(--brand-ink); font: 700 15px/1 var(--f); text-align: left; padding: 10px 4px; cursor: pointer; }
+.check { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; margin-bottom: 8px; border-radius: 16px; border: 0; background: var(--surface); color: var(--ink); text-align: left; font: 600 16px/1.35 var(--f); cursor: pointer; }
+.check .box { flex: 0 0 24px; height: 24px; border-radius: 8px; box-shadow: inset 0 0 0 2px var(--brand); }
+.check[aria-pressed="true"] .box { background: var(--brand); box-shadow: none; }
+.check[aria-pressed="true"] { opacity: .75; }
+.pulse { width: 110px; height: 110px; margin: 16px auto 4px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #fff, #c9bdf3); font: 800 18px/1 var(--f); color: #29243a; transition: transform .45s ease; }
+.pulse.down { transform: scale(.82); }
+details.info summary { cursor: pointer; font-weight: 700; min-height: 32px; }
+@media (prefers-reduced-motion: reduce) { .pulse { transition: none; } }
 html, body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16px/1.5 var(--f); }
 body { padding: 0 16px calc(24px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; transition: background .3s; }
 .ctl { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: calc(10px + env(safe-area-inset-top)) 0 10px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
@@ -186,25 +195,32 @@ function requests() {
 const CAUTION = "Ak ťa pri cvičení niečo bolí, krvácaš alebo ti nie je dobre, prestaň a poraď sa so svojím gynekológom alebo pôrodnou asistentkou.";
 const friendMsgs = ["Myslím na teba. Máš dnes chvíľu na telefonát?", "Potrebujem sa s niekým porozprávať. Zavoláš mi, keď budeš mať chvíľu?"];
 
-/* —— sekcie —— */
+/* —— sekcie (finálne riešenie 14. 11.: Samo – stred okamžitá pomoc bez otázok; Telo = 3 priamo použiteľné nástroje) —— */
+const MP = () => C.mamaPregnancy || {}, MPP = () => C.mamaPostpartum || {};
+const tr = (src, id) => (src.troubles || []).find(t => t.id === id) || { tips: [] };
 function section(k) {
-  if (k === "rest") return open("Oddych", act("breath", "◌", "Dýchaj so mnou", "1 minúta, len sleduj krúžok") + act("nap", "☾", "Zdriemni si so šumom", "šum sa pomaly zosilní, potom sám stíchne") + (night ? "" : act("quiet", "⏱", "Chvíľa ticha", "5, 10 alebo 15 minút")));
+  // Oddych: v tehotenstve cez deň bez zdriemnutia (NHS: popoludní a večer radšej nespi) – šum len v noci a po pôrode.
+  if (k === "rest") return open("Oddych", act("breath", "◌", "Dýchaj so mnou", "1 minúta, len sleduj krúžok") + (night || phase === "born" ? act("nap", "☾", phase === "born" && !night ? "Zdriemni si, kým spí" : "Šum na zaspávanie", "šum sa pomaly zosilní, potom sám stíchne") : "") + (night ? "" : act("quiet", "⏱", "Chvíľa ticha", "5, 10 alebo 15 minút")));
   if (k === "sup") return open("Opora", act("ask", "✉", "Poprosiť o pomoc", "hotová prosba, upravíš a pošleš") + (night ? "" : act("friend", "♡", "Napísať blízkemu", "krátka správa")) + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"));
-  // Posudok Content & Safety (13. 11.): v kruhu len činnosť, informácie (telo, ťažkosti, vitamíny, kontrola) sú v Mame – kruh nie je zdravotná poradňa.
   if (k === "body") {
-    const mamaLink = `<button class="act" type="button" data-a="mama"><i aria-hidden="true">›</i><span>Viac o tele v Mame<small>tvoje telo, ťažkosti, jedlo a pohyb</small></span></button>`;
-    if (night) return open("Telo", `<p class="lead">V noci nič necvič. Skús radšej Oddych.</p>` + act("breath", "◌", "Dýchaj so mnou", "1 minúta") + mamaLink);
-    if (phase === "preg") return open("Telo", act("walk", "↟", "Krátka prechádzka", "10 minút, časovač ťa upozorní") + mamaLink);
-    return open("Telo", act("pp-pelvic", "↟", "Panvové dno so mnou", "krok za krokom") + mamaLink);
+    const mamaLink = `<button class="link-row" type="button" data-a="mama">Viac o tele v Mame ›</button>`;
+    if (phase === "preg") return open("Telo", act("cramp", "↯", "Kŕč v nohe", "pomôžem ti hneď") + (night ? "" : act("legs", "⇡", "Nohy hore", "10 alebo 20 minút, čas postrážim ja")) + act("sleep", "☾", "Uložiť sa na spánok", "pohodlne na boku, potom šum") + mamaLink);
+    return open("Telo", act("feed", "♡", "Pohodlne pri kŕmení", "usaď sa, kým začneš") + (night ? "" : act("shower", "≈", "Sprcha len pre mňa", "15 minút, nikam sa neponáhľaš") + act("pwalk", "↟", "Pokojná prechádzka", "10 alebo 20 minút von")) + mamaLink);
   }
 }
+/* Stred: okamžitá pomoc bez otázok a bez hodnotenia nálady. */
 function centerTap() {
-  if (night) return open("Nočná chvíľka", act("nap", "☾", "Šum na zaspávanie", "pomaly sa zosilní, 20 minút", true) + act("breath", "◌", "Dýchaj so mnou", "1 minúta") + (phase === "born" ? act("ask-night", "✉", "Vymeníme sa pri ďalšom zobudení?", "prosba blízkemu") : ""));
-  const order = { "Unavená": phase === "born" ? "nap" : "nap", "Napätá": "breath", "Smutná": "friend", "V pohode": "quiet" };
-  const first = mood ? order[mood] : (phase === "born" ? "nap" : "breath");
-  const big = { breath: ["◌", "Dýchaj so mnou", "1 minúta"], nap: ["☾", phase === "born" ? "Zdriemni si, kým spí" : "Zdriemni si so šumom", "šum sa pomaly zosilní"], friend: ["♡", "Napísať blízkemu", "krátka správa"], quiet: ["⏱", "Chvíľa ticha", "5, 10 alebo 15 minút"] }[first];
-  open("Čo ti teraz pomôže?", act(first, big[0], big[1], big[2], true) + act("ask", "✉", "Poprosiť o pomoc", "hotová prosba") + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc") +
-    `<p class="small" style="margin:14px 0 4px">Chceš povedať, ako sa máš? (nepovinné, nič sa neukladá)</p><div class="moods">${["Unavená", "Napätá", "Smutná", "V pohode"].map(m => `<button type="button" data-mood="${m}" aria-pressed="${m === mood}">${m}</button>`).join("")}</div>`);
+  if (night) return open("Nočná chvíľka", act("nap", "☾", "Šum na zaspávanie", "pomaly sa zosilní", true) + act("breath", "◌", "Dýchaj so mnou", "1 minúta") + (phase === "born" ? act("ask-night", "✉", "Vymeníme sa pri ďalšom zobudení?", "prosba blízkemu") : act("cramp", "↯", "Kŕč v nohe", "pomôžem ti hneď")));
+  const big = phase === "born" ? ["nap", "☾", "Zdriemni si, kým spí", "šum sa pomaly zosilní"] : ["breath", "◌", "Dýchaj so mnou", "1 minúta"];
+  open("Teraz pre teba", act(big[0], big[1], big[2], big[3], true) + act("ask", "✉", "Poprosiť o pomoc", "hotová prosba") + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"));
+}
+function steps(title, list, after) {
+  let i = 0; const render = () => {
+    $("shB").innerHTML = `<div class="info step"><p class="small" style="margin:0 0 6px">${i + 1} z ${list.length}</p>${list[i].html}</div>` +
+      (i < list.length - 1 ? `<button class="btn" type="button" data-a="next">Ďalej</button>` : (after || `<button class="btn" type="button" data-a="close">Hotovo</button>`));
+    list[i].onShow?.();
+  };
+  open(title, ""); render(); doAct.next = () => { i = Math.min(i + 1, list.length - 1); render(); };
 }
 
 /* —— akcie —— */
@@ -258,6 +274,48 @@ function doAct(a) {
     open(it.title, ""); render(); doAct.next = () => { i = Math.min(i + 1, it.steps.length - 1); render(); };
   }
   if (a === "next") doAct.next?.();
+  if (a === "close") { close(); return; }
+  /* —— Telo: tehotenstvo —— */
+  if (a === "cramp") {
+    const t = tr(MP(), "cramp");
+    steps("Kŕč v nohe", t.tips.map((tip, i) => ({ html: esc(tip) + (i === 0 ? `<div class="pulse" aria-hidden="true"><span id="pulseTxt">Hore</span></div>` : ""),
+      onShow: i === 0 ? () => { let up = true; clearInterval(timer); timer = setInterval(() => { up = !up; const el = $("pulseTxt"); if (!el) return clearInterval(timer); el.textContent = up ? "Hore" : "Dole"; el.parentElement.classList.toggle("down", !up); }, 1000); } : () => clearInterval(timer) })),
+      `<button class="btn" type="button" data-a="close">Hotovo</button><button class="btn ghost" type="button" data-a="cramp">Ešte raz od začiatku</button>${source(t.source, t.reviewed)}`);
+  }
+  if (a === "legs") {
+    const sw = tr(MP(), "swelling"), ti = tr(MP(), "tiredness");
+    open("Nohy hore", `<p class="lead">Ľahni si alebo si sadni a nohy si polož vyššie.</p><div class="chips">${[10, 20].map((m, i) => `<button class="pill" type="button" data-q="${m}" aria-pressed="${i === 0}">${m} min</button>`).join("")}</div><div class="timer" id="tm">10:00</div><button class="btn" type="button" data-a="quiet-go">Začať</button>` +
+      `<div class="info" style="margin-top:12px"><ul><li>${esc(sw.tips[2] || "")}</li><li>${esc(ti.tips[0] || "")}</li></ul></div>` +
+      `<details class="info"><summary>Kedy zavolať lekárovi</summary><p class="small">${esc(sw.doctorIntro || "")}</p><ul>${(sw.doctor || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>${source(sw.source, sw.reviewed)}`);
+  }
+  if (a === "sleep") {
+    const ti = tr(MP(), "tiredness"), hb = tr(MP(), "heartburn");
+    steps("Uložiť sa na spánok", [{ html: esc(ti.tips[1] || "") }, { html: esc(hb.tips[1] || "") }],
+      `<button class="btn" type="button" data-a="nap-go20">Spustiť šum na zaspávanie</button><button class="btn ghost" type="button" data-a="close">Bez šumu</button>${source(ti.source, ti.reviewed)}`);
+  }
+  if (a === "nap-go20") { close(); startNoise(20); }
+  /* —— Telo: po pôrode —— */
+  if (a === "feed") {
+    const back = (tr(MPP(), "pelvic").tips[3] || "").split(",")[0], water = tr(MPP(), "toilet").tips[0] || "";
+    const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah. " + water, "Telefón a nabíjačka na dosah."];
+    open("Pohodlne pri kŕmení", `<p class="lead">Kým začneš, usaď sa:</p>` + items.map((x, i) => `<button class="check" type="button" data-check="${i}" aria-pressed="false"><span class="box" aria-hidden="true"></span><span>${esc(x)}</span></button>`).join("") +
+      act("breath", "◌", "Dýchaj so mnou", "1 minúta, kým sa bábätko prisaje") + `<p class="small">Odškrtnutie sa nikam neukladá – je len pre teba teraz.</p>${source(MPP().troubles?.find(t => t.id === "pelvic")?.source, MPP().troubles?.find(t => t.id === "pelvic")?.reviewed)}`);
+  }
+  if (a === "shower") {
+    const st = tr(MPP(), "stitches");
+    open("Sprcha len pre mňa", `<p class="lead">Daj si 15 minút len pre seba.</p><div class="info"><p style="margin:0">${esc(st.tips[0] || "")}</p></div>` +
+      act("shower-ask", "✉", "Poprosiť o 15 minút", "hotová prosba, pošleš cez telefón") + act("shower-go", "⏱", "Spustiť 15 minút", "na konci zaznie jemný tón") + source(st.source, st.reviewed));
+  }
+  if (a === "shower-ask") {
+    const msg = "Postrážiš mi bábätko 15 minút? Idem sa osprchovať.";
+    open("Poprosiť o 15 minút", `<textarea id="rqt" aria-label="Text správy">${esc(msg)}</textarea><button class="btn" type="button" data-a="send">Poslať cez telefón</button><button class="btn ghost" type="button" data-a="copy">Skopírovať text</button><p class="small">Appka nič neposiela sama a nevie, či si správu odoslala.</p>`);
+  }
+  if (a === "shower-go") { open("Sprcha len pre mňa", `<div class="timer" id="tm">15:00</div><p class="small" style="text-align:center">Nikam sa neponáhľaj.</p>`); let s = 900; audio(); clearInterval(timer); timer = setInterval(() => { s--; $("tm").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); if (s <= 0) { clearInterval(timer); chime(); $("tm").textContent = "Hotovo"; } }, 1000); }
+  if (a === "pwalk") {
+    const cs = tr(MPP(), "csection"), sl = MPP().mood || {};
+    open("Pokojná prechádzka", `<div class="chips">${[10, 20].map((m, i) => `<button class="pill" type="button" data-q="${m}" aria-pressed="${i === 0}">${m} min</button>`).join("")}</div><div class="timer" id="tm">10:00</div><button class="btn" type="button" data-a="quiet-go">Ideme von</button>` +
+      `<div class="info" style="margin-top:12px"><ul><li>${esc(cs.tips[2] || "")}</li><li>${esc(cs.tips[1] || "")}</li><li>${esc((sl.sleep || [])[2] || "")}</li></ul></div><p class="small">${esc(CAUTION)}</p>${source(cs.source, cs.reviewed)}`);
+  }
   if (a === "mama") { close(); toast("V appke sa otvorí Mama › Tvoje telo (overený obsah so zdrojom)."); }
   if (a === "walk") {
     const e = C.mamaPregnancy?.exercise || {};
@@ -285,7 +343,7 @@ document.addEventListener("click", e => {
   if (t.closest("#dim")) { stopNoise(false); toast("Šum som zastavila."); return; }
   const s = t.closest("[data-s]"); if (s) return section(s.dataset.s);
   if (t.closest("[data-center]")) return centerTap();
-  const md = t.closest("[data-mood]"); if (md) { mood = mood === md.dataset.mood ? "" : md.dataset.mood; return centerTap(); }
+  const ck = t.closest("[data-check]"); if (ck) { ck.setAttribute("aria-pressed", ck.getAttribute("aria-pressed") !== "true"); return; }
   const pick = t.closest("[data-nap],[data-q]"); if (pick) { pick.parentElement.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === pick)); if (pick.dataset.q) $("tm").textContent = String(pick.dataset.q).padStart(2, "0") + ":00"; return; }
   const a = t.closest("[data-a]"); if (a) return doAct(a.dataset.a);
   if (t.closest("#close") || t === $("scrim")) close();
