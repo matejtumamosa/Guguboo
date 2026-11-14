@@ -337,10 +337,10 @@
     transform: translateY(105%); transition: transform var(--dur) ease;
     text-align: center;
   }
-  #g2Intro .sheet-open .sheet-bg { opacity: 1; visibility: visible; transition: opacity var(--dur); }
-  #g2Intro .sheet-open .sheet { transform: none; }
+  #g2Intro.sheet-open .sheet-bg, #g2Intro .sheet-open .sheet-bg { opacity: 1; visibility: visible; transition: opacity var(--dur); }
+  #g2Intro.sheet-open .sheet, #g2Intro .sheet-open .sheet { transform: none; }
   #g2Intro .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: #e2dcef; margin: 0 auto 14px; }
-  #g2Intro .sheet h2 { margin: 0 0 6px; font-size: 19px; font-weight: 750; }
+  #g2Intro .sheet h2 { margin: 0 0 6px; font-size: 19px; font-weight: 700; }
   #g2Intro .sheet p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
   #g2Intro .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
   #g2Intro .opts button {
@@ -432,3 +432,4 @@ body.g2-intro-on :is(#v5BottomBar, #v5Header, .v2-tour-resume) { display: none !
   #g2Intro .alt-links .link { font-size: 14px; padding: 0 8px; }
   #g2Intro .cycle { min-height: 40px; }
 }
+#g2Intro { overflow: hidden; } /* QA H1: okno krajiny nesmie posunúť úvod */

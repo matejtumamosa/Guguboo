@@ -513,18 +513,18 @@
     const sh = $("sheet");
     sh.innerHTML = "<div class='grab'></div>" + html;
     sh.hidden = false;
-    requestAnimationFrame(() => $("app").classList.add("sheet-open"));
+    requestAnimationFrame(() => root.classList.add("sheet-open"));
     sh._return = document.activeElement;
     setTimeout(() => { const f = sh.querySelector(focusSel || "button"); if (f) f.focus(); }, 30);
   }
   function closeSheet() {
     const sh = $("sheet");
-    $("app").classList.remove("sheet-open");
+    root.classList.remove("sheet-open");
     setTimeout(() => { sh.hidden = true; }, reduce.matches ? 0 : 280);
     if (sh._return) sh._return.focus();
   }
   $("sheetBg").addEventListener("click", closeSheet);
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && $("app").classList.contains("sheet-open")) closeSheet(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("sheet-open")) closeSheet(); });
   $("countryBtn").addEventListener("click", () => {
     const opt = (n, s) => "<button role='radio' data-c='" + n + "' aria-checked='" + (S.country === n) + "'>" + n + "<span>" + s + "</span></button>";
     openSheet("<h2 id='g2i-sheetTitle'>Úrady a príspevky pre</h2><p>Podľa krajiny ti ukážeme správne úrady a príspevky.</p>" +

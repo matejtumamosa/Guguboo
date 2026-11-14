@@ -98,3 +98,11 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) .v2-week-strip but
 body.v5-active.night .v2-week-strip .is-selected :is(b, small) { color: #fff !important; }
 /* S1: fokus polí vo farbe značky (nie oranžový systémový obrys) */
 body.v5-active :is(input, select, textarea):focus-visible { outline: 2px solid var(--v5-brand-dark) !important; outline-offset: 1px; }
+/* QA 1.9 H2/H3: plávajúce karty a „Skúsme dnes“ mali v noci denné svetlé pozadie so svetlým textom */
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) {
+  background: #232838 !important; background-image: none !important; color: var(--g2-ink) !important; border-color: rgba(255,255,255,.08) !important;
+}
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) :is(h1, h2, h3, h4, p, strong, span, li, label, small, b) { color: var(--g2-ink) !important; }
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) :is(small, p) { color: var(--g2-muted) !important; }
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu) :is(.v5-quick-tile, .v5-quick-action, button:not(.v5-primary):not(.g2-btn-primary)) { background-color: #2c3246 !important; }
+body.v5-active.night .act2-today .act2-domain { color: #5a2a3e !important; }
