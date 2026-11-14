@@ -648,3 +648,30 @@ article.v2-cal-item small { font-size: 14px !important; }
 .g2-admin-back span { font-size: 22px; }
 /* N9 / N2: hlavička domova bez ružovej škvrny */
 #v5Header .v5-header-brand::after { display: none !important; }
+
+/* ===== Master 1.8 – jeden spoločný systém okien (g2-windows.js) ===== */
+/* Pozadie sa pod otvoreným oknom neposúva; obsah okna sa posúva vnútri a „neprepadne“ na pozadie. */
+html.g2-layer-open, html.g2-layer-open body { overflow: hidden !important; }
+:is(.g2-window-body, #v2AdminBody, #v5OMenu, #v5QuickRecord, .v5-drawer-scroll), body.v5-active.v5-app-window-open .view.active { overscroll-behavior: contain; }
+/* Jedna hlavička: späť vľavo · názov · (lupa) · × vpravo, tlačidlá 44 × 44 */
+.g2-window-head { gap: 8px !important; }
+.g2-window-head > div { flex: 1 1 auto; min-width: 0; }
+.g2-window-head h2 { font-size: 19px !important; line-height: 1.2 !important; outline: none; }
+.g2-window-head .g2-win-search { margin-left: 0 !important; }
+.g2-window-head .v5-icon-button { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 50%; font-size: 22px; }
+:is(.g2-window-head, .v5-universal-window-head) :is(h2, strong)[tabindex="-1"]:focus { outline: none; }
+/* Úrady a doklady ako celostránkové okno (rovnako ako Plán): nad lištou, hlavička stojí, posúva sa obsah */
+body.v5-active #v2AdminOverlay { align-items: stretch; background: var(--v5-bg); -webkit-backdrop-filter: none; backdrop-filter: none; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+body.v5-active #v2AdminOverlay .v2-admin-sheet { display: flex; flex-direction: column; width: 100%; max-width: none; height: 100%; max-height: none !important; padding: 0; overflow: hidden; border-radius: 0; background: var(--v5-bg); box-shadow: none; animation: none; }
+body.v5-active #v2AdminOverlay .v2-birth-close { display: none; }
+body.v5-active #v2AdminOverlay .g2-admin-head { flex: 0 0 auto; }
+body.v5-active #v2AdminBody { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 6px max(18px, env(safe-area-inset-right)) 24px max(18px, env(safe-area-inset-left)); }
+body.v5-active #v2AdminBody .v2-admin-head h2 { font-size: 22px; }
+/* Upozornenie na rozpísané údaje */
+.g2-confirm { position: fixed; inset: 0; z-index: 420; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(41, 36, 58, .38); }
+.g2-confirm.open { display: flex; }
+.g2-confirm-card { width: min(100%, 360px); padding: 22px 20px 18px; border-radius: 24px; background: var(--v5-surface, #fff); color: var(--v5-ink); box-shadow: 0 26px 80px rgba(25, 20, 38, .28); }
+.g2-confirm-card h2 { margin: 0 0 6px; font: 800 19px/1.25 var(--g2-font, Montserrat, sans-serif); }
+.g2-confirm-card p { margin: 0 0 16px; font: 500 16px/1.45 var(--g2-font, Montserrat, sans-serif); color: var(--v5-muted); }
+.g2-confirm-actions { display: grid; gap: 8px; }
+.g2-confirm-actions button { width: 100%; min-height: 48px; }

@@ -1174,7 +1174,8 @@
     const bar = byId("v5BottomBar");
     const top = home.getBoundingClientRect().top + window.scrollY;
     const barTop = bar && bar.offsetHeight ? bar.getBoundingClientRect().top : window.innerHeight;
-    document.documentElement.style.setProperty("--g2-home-h", Math.max(0, Math.floor(barTop - top - 6)) + "px");
+    // Master 1.8: 12 px nad lištou – posledný riadok („Dnes stačí jedno“) nezaniká v tieni lišty ani na 375 × 667.
+    document.documentElement.style.setProperty("--g2-home-h", Math.max(0, Math.floor(barTop - top - 12)) + "px");
   }
   window.addEventListener("resize", () => { requestAnimationFrame(g2FitHome); setTimeout(g2FitHome, 60); });
   function renderAdaptiveOHome(master) {
@@ -2500,7 +2501,30 @@
 
   function cancelAdaptiveOMenu() {
     closeAdaptiveOMenu();
-    openHome();
+    // Master 1.8 (jeden systém okien): × zavrie okno a ostaneš na obrazovke, z ktorej si ho otvorila (nie vždy Domov).
+    if (!MASTER) openHome();
+  }
+
+  // Master 1.8: × v okne sekcie zavrie celý zásobník (aj okná nad ním) a vráti na obrazovku, odkiaľ si prišla:
+  // z okna na hlavnú obrazovku (Domov, Bábätko, Mama, Rodina), z hlavnej obrazovky na Domov.
+  const G2_BASE_VIEWS = new Set(["home", "v5BabyHub", "v5Mama", "v5FamilyHub"]);
+  function windowCloseAll() {
+    window.G2Win?.closeLayers?.();
+    if (byId("v5OOverlay")?.classList.contains("open")) closeAdaptiveOMenu();
+    if (byId("v5QuickRecordOverlay")?.classList.contains("open")) closeQuickRecord();
+    const view = currentView();
+    if (!MASTER || G2_BASE_VIEWS.has(view)) return openHome();
+    if (view === "v5Mama") mamaSection = "home";
+    let destination = "home";
+    while (history.length) {
+      const candidate = history.pop();
+      if (G2_BASE_VIEWS.has(candidate)) { destination = candidate; break; }
+    }
+    if (destination === "home") return openHome();
+    skipHistory = true;
+    switchView(destination);
+    if (destination === "v5Mama") { mamaSection = "home"; mamaFromLink = false; renderMama(); }
+    else renderHubs();
   }
 
   // Okno Plán (Master): jeden zoznam úloh – Teraz, Čoskoro + príprava podľa oblastí (bývalý kruh Príprava).
@@ -2553,7 +2577,7 @@
   function openMonth() {
     let overlay = byId("g2MonthOverlay");
     if (!overlay) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='g2MonthOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2MonthTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-month-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2MonthTitle'>Tvoj mesiac</h2></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button></div><div class='g2-window-body' id='g2MonthBody'></div></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='g2MonthOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2MonthTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-month-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2MonthTitle' tabindex='-1'>Tvoj mesiac</h2></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button><button class='v5-icon-button g2-win-x' type='button' data-g2-win-close aria-label='Zavrieť'>×</button></div><div class='g2-window-body' id='g2MonthBody'></div></div>");
       overlay = byId("g2MonthOverlay");
     }
     monthPeriodId = "";
@@ -2572,7 +2596,7 @@
   function openPlan() {
     let overlay = byId("g2PlanOverlay");
     if (!overlay) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='g2PlanOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2PlanTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-plan-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2PlanTitle'>Plán</h2></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button></div><div class='g2-window-body' id='g2PlanBody'></div></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='g2PlanOverlay' class='g2-window' role='dialog' aria-modal='true' aria-labelledby='g2PlanTitle' aria-hidden='true'><div class='g2-window-head'><button class='v5-icon-button' type='button' data-g2-plan-close aria-label='Späť'>" + icon("back") + "</button><div><h2 id='g2PlanTitle' tabindex='-1'>Plán</h2></div><button class='v5-icon-button g2-win-search' type='button' data-g2-ask aria-label='Opýtaj sa alebo hľadaj'>" + icon("search") + "</button><button class='v5-icon-button g2-win-x' type='button' data-g2-win-close aria-label='Zavrieť'>×</button></div><div class='g2-window-body' id='g2PlanBody'></div></div>");
       overlay = byId("g2PlanOverlay");
     }
     renderPlan();
@@ -4690,7 +4714,7 @@
   document.addEventListener("click", event => {
     // Master 1.0: každá položka zo zásuvky ju najprv zavrie, potom sa otvorí cieľ (aj keď ho obsluhuje skorší handler).
     if (event.target.closest("#v5Drawer [data-g2-go]")) closeDrawer();
-    if (event.target.closest("[data-v5-window-cancel]")) return openHome();
+    if (event.target.closest("[data-v5-window-cancel]")) return windowCloseAll();
     if (event.target.closest("[data-v5-window-back]")) return universalWindowBack();
     const prenatalGlance = event.target.closest("[data-v5-prenatal-glance]");
     if (prenatalGlance) {
@@ -5302,7 +5326,9 @@
       return announce(state.v5.night ? "Nočný režim je zapnutý." : "Nočný režim je vypnutý.");
     }
     // QA-29: ťuk na úlohu/aplikáciu v okne Plán alebo Tvoj mesiac zatvorí to okno, aby sa cieľ neotvoril pod ním.
-    if (event.target.closest("#g2PlanOverlay, #g2MonthOverlay") && event.target.closest("[data-v5-feature], [data-v2-journey-open], [data-v2-admin-open], [data-v2-birth-open], [data-v5-quick-feature], [data-g2-ask], [data-v5-book-section]")) {
+    // Master 1.8: okná zo zásobníka (Úrady, hľadanie) sa otvoria NAD Plánom – späť vráti do Plánu.
+    const g2StacksAbove = event.target.closest("[data-v2-admin-open], [data-g2-ask], [data-v2-journey-open^='admin.'], [data-v5-feature='administration']");
+    if (!(MASTER && g2StacksAbove) && event.target.closest("#g2PlanOverlay, #g2MonthOverlay") && event.target.closest("[data-v5-feature], [data-v2-journey-open], [data-v2-admin-open], [data-v2-birth-open], [data-v5-quick-feature], [data-g2-ask], [data-v5-book-section]")) {
       closePlan(); closeMonth();
     }
     // Ťuk na lištu zatvorí okná Plán a Tvoj mesiac (stabilná navigácia).
@@ -5982,6 +6008,8 @@
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
     openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
+    // Master 1.8: spoločný systém okien (g2-windows.js)
+    closeDrawer, closeQuickRecord, closeAdaptiveOMenu, cancelAdaptiveOMenu, openPlan, closePlan, openMonth, closeMonth, universalWindowBack, windowCloseAll, currentView,
     renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features, rerenderMoments: () => renderFirst100(), rerenderPeriod: () => (currentView() === "v5Period" ? renderPeriod() : renderMama()), daySummaryData, calendarItems,
     // Master: položka Plánu otvorí detail jednej veci v novej appke (nie starú obrazovku V1 „Pred narodením“).
     openPrep(prep) {

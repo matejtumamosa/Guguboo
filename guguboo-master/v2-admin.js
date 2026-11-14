@@ -90,6 +90,8 @@
     "<div id='v2AdminOverlay' class='v2-birth-overlay' aria-hidden='true'>",
     "<section class='v2-birth-sheet v2-admin-sheet' role='dialog' aria-modal='true' aria-labelledby='v2AdminTitle'>",
     "<button class='v5-icon-button v2-birth-close' type='button' data-v2-admin-close aria-label='Zavrieť'>×</button>",
+    // Master 1.8 (jeden systém okien): rovnaká hlavička ako ostatné okná – späť o krok, názov, × zavrie okno.
+    V5.MASTER ? "<div class='g2-window-head g2-admin-head'><button class='v5-icon-button' type='button' data-v2-admin-step-back aria-label='Späť'>" + V5.icon("back") + "</button><div><h2 id='g2AdminWinTitle' tabindex='-1'>Úrady a doklady</h2></div><button class='v5-icon-button g2-win-x' type='button' data-v2-admin-close aria-label='Zavrieť'>×</button></div>" : "",
     "<div id='v2AdminBody'></div></section></div>"
   ].join(""));
 
@@ -139,7 +141,8 @@
     // Master 1.7 (V8): detail otvorený z prehľadu má návrat na zoznam; × zavrie okno a ostaneš tam, kde si bola.
     const fromOverview = overlay.classList.contains("open") && body.dataset.mode === "overview";
     body.dataset.mode = "detail";
-    body.innerHTML = (fromOverview ? "<button type='button' class='g2-admin-back' data-v2-admin-back><span aria-hidden='true'>‹</span> Úrady a doklady</button>" : "") + detailHtml(item);
+    body.dataset.from = fromOverview ? "overview" : "";
+    body.innerHTML = (fromOverview && !V5.MASTER ? "<button type='button' class='g2-admin-back' data-v2-admin-back><span aria-hidden='true'>‹</span> Úrady a doklady</button>" : "") + detailHtml(item);
     body.scrollTop = 0;
     overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
     overlay.classList.add("open");
@@ -147,6 +150,13 @@
     if (!V5.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
     document.body.style.overflow = "hidden";
     window.GugubooV2?.track?.("admin_open", { id: adminId });
+  }
+
+  // Master 1.8: späť o jeden krok – z detailu otvoreného zo zoznamu na zoznam, inak zavrieť okno.
+  function stepBack() {
+    const body = byId("v2AdminBody");
+    if (body?.dataset.mode === "detail" && body.dataset.from === "overview") return openOverview();
+    close();
   }
 
   function close() {
@@ -191,7 +201,7 @@
     byId("v2AdminBody").innerHTML = overviewHtml();
     byId("v2AdminBody").dataset.mode = "overview";
     const overlay = byId("v2AdminOverlay");
-    overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
+    overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0); byId("v2AdminBody").scrollTop = 0;
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     if (!window.GugubooV5?.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal"); // Master: lišta ostáva, okno nad ňou
@@ -226,6 +236,7 @@
     const openButton = event.target.closest("[data-v2-admin-open]");
     if (openButton) return open(openButton.dataset.v2AdminOpen);
     if (event.target.closest("[data-v2-admin-back]")) return openOverview();
+    if (event.target.closest("[data-v2-admin-step-back]")) return stepBack();
     if (event.target.closest("[data-v2-admin-close]") || event.target.id === "v2AdminOverlay") return close();
     const done = event.target.closest("[data-v2-admin-done]");
     if (done) {
@@ -254,5 +265,5 @@
     if (event.key === "Escape" && byId("v2AdminOverlay")?.classList.contains("open")) close();
   });
 
-  window.GugubooAdmin = { open, openOverview, close, relevant, registerJourney, isAutomatic, items: allItems, module: countryModule };
+  window.GugubooAdmin = { open, openOverview, close, stepBack, relevant, registerJourney, isAutomatic, items: allItems, module: countryModule };
 })();
