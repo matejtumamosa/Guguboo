@@ -56,13 +56,28 @@
       window = { anchor: "age", from: when.from_days ?? 0, to: when.to_days ?? 90 };
     }
     if (!window) return null;
+    // Master 1.7 (text sweep #2): príspevok na viac súčasne narodených detí nie je úloha pre každého – appka zatiaľ nevie
+    // o dvojčatách, preto ostáva len v prehľade Úradov (nie v Pláne ani v riadku „Dnes“).
+    if (item.id === "sk.benefit.prispevok_viac_sucasne_narodenych_deti") return null;
     const stages = stagesFor(item);
     if (!stages.length) return null;
     return {
       id: "admin." + item.id, stage: stages, type: "task", priority: 78, window, soonLeadDays: 21,
-      title: item.title, why: item.why || item.what || "", action: "admin", adminId: item.id
+      title: TASK_TITLE[item.id] || item.title, why: item.why || item.what || "", note: item.authority || "", action: "admin", adminId: item.id
     };
   }
+
+  // Master 1.7 (text sweep #1, #2): názov úlohy v Pláne a na domove ako činnosť. Obsah modulu sa nemení – len UI vrstva.
+  const TASK_TITLE = {
+    "sk.benefit.tehotenske": "Tehotenské – ako na to",
+    "sk.benefit.materske": "Materské – ako na to",
+    "sk.benefit.otcovske": "Otcovské – ako na to",
+    "sk.benefit.rodicovsky_prispevok": "Rodičovský príspevok – ako na to",
+    "sk.benefit.pridavok_na_dieta": "Požiadaj o prídavok na dieťa",
+    "sk.document.rodne_cislo": "Rodné číslo – kde ho nájdeš",
+    "sk.document.dohoda_o_mene": "Dohoda o mene dieťaťa",
+    "sk.benefit.prispevok_viac_sucasne_narodenych_deti": "Príspevok na súčasne narodené deti"
+  };
 
   function registerJourney() {
     const items = allItems().filter(trusted).map(toJourneyItem).filter(Boolean);
@@ -87,7 +102,11 @@
   function detailHtml(item) {
     const partial = item.verification_status === "partial";
     const unverified = item.verification_status === "needs_source";
-    const more = [row("Kto to vybavuje", item.who), row("Doklady", item.documents), row("Ako postupovať", item.how), row("Kde", item.where), row("Čo potom", item.next)].join("");
+    // Master 1.7 (text sweep #51, N10): viditeľné Prečo, Kedy a prvá časť Sumy; Komu patrí, Termín a zvyšok Sumy sú v „Ako to vybaviť“. Text sa nemení.
+    const amountParts = Array.isArray(item.amount) ? item.amount : String(item.amount || "").split(/(?<=\.)\s+(?=[A-ZÁČĎÉÍĽĹŇÓÔŔŠŤÚÝŽ])/).filter(Boolean);
+    const amountFirst = amountParts.length ? (Array.isArray(item.amount) ? [amountParts[0]] : amountParts[0]) : null;
+    const amountRest = amountParts.length > 1 ? (Array.isArray(item.amount) ? amountParts.slice(1) : amountParts.slice(1).join(" ")) : null;
+    const more = [row("Komu patrí", item.eligibility), row("Termín", item.deadline), row("Suma – podrobnosti", amountRest), row("Kto to vybavuje", item.who), row("Doklady", item.documents), row("Ako postupovať", item.how), row("Kde", item.where), row("Čo potom", item.next)].join("");
     const moreHtml = more ? "<details class='v2-admin-more'><summary>Ako to vybaviť</summary><div class='v2-admin-rows'>" + more + "</div></details>" : "";
     return [
       "<header class='v2-admin-head'><small>", esc(item.authority || item.who || "Úrady a doklady"), "</small><h2 id='v2AdminTitle'>", esc(item.title), "</h2>",
@@ -98,9 +117,7 @@
       "<div class='v2-admin-rows'>",
       row("Prečo", item.why),
       row("Kedy", item.when?.text),
-      row("Termín", item.deadline),
-      row("Komu patrí", item.eligibility),
-      row("Suma", item.amount),
+      row("Suma", amountFirst),
       "</div>",
       // Text 1.5 (Samo 13. 11.): podrobnosti ostávajú celé, len v ďalšej úrovni.
       moreHtml,
@@ -117,8 +134,14 @@
   function open(adminId) {
     const item = allItems().find(entry => entry.id === adminId);
     if (!item) return;
-    byId("v2AdminBody").innerHTML = detailHtml(item);
     const overlay = byId("v2AdminOverlay");
+    const body = byId("v2AdminBody");
+    // Master 1.7 (V8): detail otvorený z prehľadu má návrat na zoznam; × zavrie okno a ostaneš tam, kde si bola.
+    const fromOverview = overlay.classList.contains("open") && body.dataset.mode === "overview";
+    body.dataset.mode = "detail";
+    body.innerHTML = (fromOverview ? "<button type='button' class='g2-admin-back' data-v2-admin-back><span aria-hidden='true'>‹</span> Úrady a doklady</button>" : "") + detailHtml(item);
+    body.scrollTop = 0;
+    overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     if (!V5.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal");
@@ -166,7 +189,9 @@
 
   function openOverview() {
     byId("v2AdminBody").innerHTML = overviewHtml();
+    byId("v2AdminBody").dataset.mode = "overview";
     const overlay = byId("v2AdminOverlay");
+    overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     if (!window.GugubooV5?.MASTER) byId("v5BottomBar")?.classList.add("v5-hidden-for-modal"); // Master: lišta ostáva, okno nad ňou
@@ -183,8 +208,13 @@
     // Master 1.0: zo zásuvky – najprv ju zavri, inak by prehľad úradov ostal pod ňou.
     const drawer = byId("v5DrawerOverlay");
     if (drawer?.classList.contains("open")) { drawer.classList.remove("open"); drawer.setAttribute("aria-hidden", "true"); }
-    window.GugubooV5.openHome();
+    // Master 1.7 (V8): bez skoku na Domov – po zatvorení ostaneš tam, odkiaľ si Úrady otvorila (napr. Rodina).
+    if (!window.GugubooV5.MASTER) window.GugubooV5.openHome();
     openOverview();
+  }, true);
+  // Master 1.7 (V8): ťuk na lištu (Domov, Bábätko, Mama, Rodina) okno Úradov zavrie, aby nová obrazovka nebola pod ním.
+  document.addEventListener("click", event => {
+    if (event.target.closest("#v5BottomBar") && byId("v2AdminOverlay")?.classList.contains("open")) close();
   }, true);
 
   // Pre GuguChat: relevantné položky pre aktuálnu fázu (aj bez presného okna).
@@ -195,6 +225,7 @@
   document.addEventListener("click", event => {
     const openButton = event.target.closest("[data-v2-admin-open]");
     if (openButton) return open(openButton.dataset.v2AdminOpen);
+    if (event.target.closest("[data-v2-admin-back]")) return openOverview();
     if (event.target.closest("[data-v2-admin-close]") || event.target.id === "v2AdminOverlay") return close();
     const done = event.target.closest("[data-v2-admin-done]");
     if (done) {

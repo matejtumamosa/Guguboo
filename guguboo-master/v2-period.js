@@ -222,7 +222,7 @@
     const long7 = s.runs.slice(-3).filter(r => r.len > 7);
     const between = betweenBleeding(s.runs).slice(-3);
     if (c && (long7.length || between.length)) {
-      out.push("<div class='v2-calm-box'><strong>Na toto sa oplatí myslieť pri najbližšej návšteve gynekológa</strong><ul class='v2-mama-list'>" +
+      out.push("<div class='v2-calm-box'><strong>Na najbližšiu kontrolu u gynekológa</strong><ul class='v2-mama-list'>" +
         long7.map(r => "<li>menštruácia od " + esc(short(r.start)) + " trvala " + esc(dni(r.len)) + "</li>").join("") +
         between.map(k => "<li>špinenie mimo menštruácie " + esc(short(k)) + "</li>").join("") +
         "</ul><p>" + esc(c.doctorIntro + " " + c.doctor.join(" alebo ") + ".") + "</p></div>");
@@ -264,11 +264,11 @@
       statsHtml(s),
       noticesHtml(s),
       "<section class='v2-mama-card v2-per-tools'>",
-      "<label class='v2-per-toggle'><input type='checkbox' data-v2-period-remind", p.remind ? " checked" : "", "><span><strong>Pripomenúť 2 dni vopred</strong><small>", s.next ? "Pripomienka sa objaví v Kalendári podľa odhadu." : "Funguje od druhej zapísanej menštruácie.", "</small></span></label>",
+      "<label class='v2-per-toggle'><input type='checkbox' data-v2-period-remind", p.remind ? " checked" : "", "><span><strong>Pripomenúť 2 dni vopred</strong><small>", s.next ? "Objaví sa v Kalendári." : "Funguje od druhej zapísanej menštruácie.", "</small></span></label>",
       s.runs.length ? "<button type='button' class='v5-secondary' data-v2-period-share>Prehľad pre gynekológa</button>" : "",
       "</section>",
       infoHtml(),
-      "<p class='v5-book-note'>Zápisy vidíš len ty. V tejto beta verzii sa po zatvorení appky vymažú.</p>"
+      "<p class='v5-book-note'>Zápisy vidíš len ty.</p>"
     ].join("");
   }
 

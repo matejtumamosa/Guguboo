@@ -3108,15 +3108,15 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "Master 1.6.8";</script>
+  <script>window.GUGUBOO_V2_VERSION = "Master 1.7";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=m1.6c">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
   <link rel="stylesheet" href="v2.css?v=m1.4">
-  <link rel="stylesheet" href="master.css?v=m1.6.7a">
+  <link rel="stylesheet" href="master.css?v=m1.7">
   <link rel="stylesheet" href="g2-icons.css?v=m1.4">
-  <link rel="stylesheet" href="g2-type.css?v=m1.6.4">
+  <link rel="stylesheet" href="g2-type.css?v=m1.7">
 </head>
 <body>
   <div class="app" id="app">
@@ -3258,11 +3258,11 @@
                   <p class="hidden" id="countryCopy"></p>
                 </aside>
               </div>
-              <div class="actions welcome-story-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" data-welcome-next>Ideme ďalej <span aria-hidden="true">→</span></button></div>
+              <div class="actions welcome-story-actions"><button class="ghost" type="button" data-welcome-prev>Späť</button><button class="primary" type="button" data-welcome-next>Pokračovať</button></div>
             </div>
 
             <div class="welcome-step welcome-story-step" data-welcome-step="4">
-              <h2><span data-welcome-name-only>Ty</span>, kde ste teraz?</h2>
+              <h2 data-welcome-stage-title>V akom ste období?</h2>
               <div class="welcome-options welcome-story-choices">
                 <button class="choice-card" type="button" data-welcome-status="expecting">
                   <span class="welcome-choice-icon" aria-hidden="true">☾</span>
@@ -3339,7 +3339,7 @@
 
             <div class="welcome-step welcome-story-step welcome-finish-step" data-welcome-step="7">
               <h2 id="welcomeFinishTitle">Všetko je pripravené.</h2>
-              <p class="welcome-story-lead" id="welcomeFinishLead">Každý deň ti ponúkneme jeden malý krok. Nič netreba riešiť naraz.</p>
+              <p class="welcome-story-lead" id="welcomeFinishLead">Nič netreba riešiť naraz.</p>
 
               <section class="v5-home-hero welcome-finish-preview" aria-labelledby="welcomeFinishBabyName">
                 <div class="v5-home-person">
@@ -3409,7 +3409,7 @@
                 </svg>
                 <div class="welcome-journey-copy">
                   <strong>Ideme na to</strong>
-                  <span id="welcomeJourneyText">Krok za krokom, týždeň po týždni. Spolu to zvládneme.</span>
+                  <span id="welcomeJourneyText"></span>
                 </div>
               </div>
 
@@ -8159,6 +8159,11 @@ Otázky:
       document.querySelectorAll("[data-welcome-name-only]").forEach(el => {
         el.textContent = $("welcomeUserName")?.value.trim() || state.user.name || "Ty";
       });
+      // Master 1.7 (text sweep #85): „Lucia, v akom ste období?“, bez mena „V akom ste období?“
+      document.querySelectorAll("[data-welcome-stage-title]").forEach(el => {
+        const stageName = $("welcomeUserName")?.value.trim() || state.user.name || "";
+        el.textContent = stageName ? `${stageName}, v akom ste období?` : "V akom ste období?";
+      });
       updateWelcomeFinishScreen();
       updateWelcomeFruitAvatar();
     }
@@ -8207,7 +8212,7 @@ Otázky:
       if (!card || !track?.getTotalLength) return;
       card.classList.toggle("is-born", born);
       $("welcomeJourneyArtLabel").textContent = born ? "Prvý rok spolu" : "Cesta tehotenstvom";
-      $("welcomeJourneyText").textContent = born ? "Deň po dni, celý prvý rok. Spolu to zvládneme." : "Krok za krokom, týždeň po týždni. Spolu to zvládneme.";
+      $("welcomeJourneyText").textContent = "";
       const goalLabel = $("welcomeJourneyGoalLabel");
       goalLabel.textContent = born ? "1. narodeniny" : "Narodenie";
 
@@ -8291,10 +8296,10 @@ Otázky:
         applyPregnancyWeekBadge(avatar, fruit.week);
         setText("welcomeFinishBabyMeta", fruit.week ? `${fruit.week}. týždeň${fruit.size ? ` · meria ${fruit.size}` : ""}` : "Doplň termín pôrodu");
         setText("welcomeFinishLead", dueDays === null || dueDays < 0
-          ? "Každý deň ti ponúkneme jeden malý krok. Nič netreba riešiť naraz."
+          ? "Nič netreba riešiť naraz."
           : dueDays === 0
             ? "Termín je dnes. Všetko dôležité máš na jednom mieste."
-            : `Do termínu zostáva ${slovakDays(dueDays)}. Každý deň ti ponúkneme jeden malý krok, nič netreba riešiť naraz.`);
+            : `Do termínu zostáva ${slovakDays(dueDays)}. Nič netreba riešiť naraz.`);
         // Rovnaké dlaždice ako aktuálny domov v tehotenstve (Samuel 10. 11.): údaje, bez ikon.
         setWelcomeFinishGlanceIcons([]);
         const weekNow = Number(fruit.week || 0);
@@ -8316,7 +8321,7 @@ Otázky:
         avatar.setAttribute("aria-label", `Profil: ${babyName}`);
         // Vek a dátum narodenia pod menom; okienka sú ako na domove po pôrode (Spánok · Kŕmenie · Prebalenie), len piktogramy.
         setText("welcomeFinishBabyMeta", [ageLabel, birth ? `narodené ${dateLabel(birth, { day: "numeric", month: "long" })}` : ""].filter(Boolean).join(" · "));
-        setText("welcomeFinishLead", `${readyLine} Kŕmenie, spánok, pripomienky aj spomienky nájdeš v Guguboo.`);
+        setText("welcomeFinishLead", "Kŕmenie, spánok aj spomienky máš po ruke.");
         // Rovnaké dlaždice ako aktuálny domov po pôrode (Samuel 10. 11.).
         setWelcomeFinishGlanceIcons([]);
         [
@@ -8625,7 +8630,19 @@ Otázky:
     }));
     document.querySelectorAll("[data-welcome-next]").forEach(btn => btn.addEventListener("click", () => {
       const error = validateWelcomeStep(state.welcomeStep);
-      if (error) return showToast(error);
+      // Master 1.7 (S22): chyba sa ukáže pod poľami v kroku (nie ako toast nad tlačidlom).
+      document.querySelectorAll("#welcome .g2-field-error").forEach(el => el.remove());
+      if (error) {
+        const actions = btn.closest(".welcome-story-step")?.querySelector(".welcome-story-actions");
+        if (!actions) return showToast(error);
+        const note = document.createElement("p");
+        note.className = "g2-field-error";
+        note.setAttribute("role", "alert");
+        note.textContent = error;
+        actions.before(note);
+        note.scrollIntoView?.({ block: "nearest" });
+        return;
+      }
       setWelcomeStep(state.welcomeStep + 1);
     }));
     document.querySelectorAll("[data-welcome-prev]").forEach(btn => btn.addEventListener("click", () => setWelcomeStep(state.welcomeStep - 1)));
@@ -9948,18 +9965,18 @@ Otázky:
     setTimeout(() => playBrandVoice(true), 450);
   </script>
   <script src="v4-upgrade.js?v=6.11"></script>
-  <script src="journey-engine.js?v=m0.3"></script>
+  <script src="journey-engine.js?v=m1.7"></script>
   <script src="baby-figure.js?v=m1.6.4"></script>
-  <script src="v5-mobile.js?v=m1.6.6"></script>
-  <script src="guguchat.js?v=m1.6.8"></script>
+  <script src="v5-mobile.js?v=m1.7"></script>
+  <script src="guguchat.js?v=m1.7"></script>
   <script src="v2-birth.js?v=2.27.1"></script>
   <script src="v2-tour.js?v=2.37.9"></script>
   <script src="v2-announce.js?v=2.23.0"></script>
-  <script src="v2-moments.js?v=m1.5"></script>
+  <script src="v2-moments.js?v=m1.7"></script>
   <script src="v2-albums.js?v=2.26.1"></script>
   <script src="v2-voice.js?v=2.27.1"></script>
   <script src="v2-birthcard.js?v=2.29.5"></script>
-  <script src="v2-period.js?v=m1.5"></script>
+  <script src="v2-period.js?v=m1.7"></script>
   <script src="private-space.js?v=6"></script>
   <script src="activities-data.js?v=3"></script>
   <script src="teeth.js?v=m1.3f"></script>

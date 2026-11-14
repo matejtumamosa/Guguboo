@@ -23,7 +23,7 @@
     {
       id: "preg.contacts", stage: "pregnancy", type: "task", priority: 70,
       window: { anchor: "week", from: 1, to: 42 },
-      title: "Ulož si kontakt na gynekológa a pôrodnicu",
+      title: "Ulož kontakt na gynekológa",
       why: "Keď ich budeš potrebovať, nemusíš nič hľadať.",
       feature: "contacts", done: s => (s.contacts || []).length > 0
     },
@@ -37,7 +37,7 @@
     {
       id: "preg.hospital", stage: "pregnancy", type: "task", priority: 80,
       window: { anchor: "week", from: 20, to: 36 }, soonLeadDays: 21,
-      title: "Vyber si pôrodnicu a zisti, ako prebieha príjem",
+      title: "Vyber si pôrodnicu",
       why: "Aby si presne vedela, kam ísť a čo čakať.",
       feature: "beforeBirth", prep: "hospital", checkAny: ["prep-hospital-admission"], done: s => !!s.prenatal?.hospital
     },
@@ -58,7 +58,7 @@
     {
       id: "preg.supplies", stage: "pregnancy", type: "task", priority: 55,
       window: { anchor: "week", from: 32, to: 39 }, soonLeadDays: 14,
-      title: "Priprav prvé zásoby (plienky, základná hygiena)",
+      title: "Priprav prvé zásoby",
       why: "Nech večer nikto nehľadá plienky ani vodu.",
       feature: "beforeBirth", prep: "supplies", checkAny: ["prep-supplies-diapers"]
     },
@@ -79,8 +79,8 @@
     {
       id: "preg.birth-ready", stage: "pregnancy", type: "transition", priority: 50,
       window: { anchor: "week", from: 37, to: 42 },
-      title: "Bábätko je na svete? Daj Guguboo vedieť",
-      why: "Stačí dátum narodenia – Guguboo sa samo prepne na prvé dni s bábätkom.",
+      title: "Bábätko je na svete?",
+      why: "Stačí dátum narodenia.",
       action: "birth"
     },
 
@@ -95,7 +95,7 @@
     {
       id: "baby.first-days", stage: "postpartum", type: "tool", priority: 80,
       window: { anchor: "age", from: 0, to: 14 },
-      title: "Zapisuj kŕmenie, plienky a spánok jedným ťuknutím",
+      title: "Zapisuj kŕmenie a plienky",
       why: "Pri prvej kontrole u pediatra budeš mať všetko po ruke.",
       action: "quickRecord", done: s => (s.events || []).length >= 3
     },
@@ -109,14 +109,14 @@
     {
       id: "baby.activities", stage: ["postpartum", "baby"], type: "tool", priority: 40,
       window: { anchor: "age", from: 14, to: 730 },
-      title: "Krátka spoločná chvíľa podľa veku",
+      title: "Nápad na spoločnú chvíľu",
       why: "Nápad na pár minút, ktorý sedí na vek bábätka.",
       feature: "activities", repeatable: true
     },
     {
       id: "baby.teeth", stage: "baby", type: "tool", priority: 35,
       window: { anchor: "age", from: 120, to: 1095 }, soonLeadDays: 14,
-      title: "Zúbky: čo čakať a ako sa o ne starať",
+      title: "Zúbky: čo čakať",
       why: "Mapa mliečnych zúbkov a starostlivosť podľa veku.",
       feature: "teeth"
     },

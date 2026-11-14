@@ -99,7 +99,7 @@
   // približné okrúhle prirovnanie podľa hmotnosti – v UI vždy označené ako orientačné
   // (Samuel 11. 10.: „môže to byť približne, nie presné“).
   const APPROX_ROUND = {
-    4: "hrášok", 5: "hrášok", 16: "pomaranč", 20: "grapefruit", 21: "veľký grapefruit", 22: "pomelo", 23: "veľké pomelo",
+    16: "pomaranč", 20: "grapefruit", 21: "veľký grapefruit", 22: "pomelo", 23: "veľké pomelo",
     24: "hlávka ľadového šalátu", 25: "hlávka ľadového šalátu", 26: "malý karfiol", 28: "veľký karfiol",
     29: "tekvica hokkaido", 32: "tekvica hokkaido", 33: "malý melón", 36: "veľký medový melón",
     37: "malý vodový melón", 38: "malý vodový melón", 42: "vodový melón"
@@ -175,7 +175,7 @@
       "<article class='v2-journey-card v2-journey-", item.type, "'>",
       "<button class='v2-journey-main' type='button' data-v2-journey-open='", esc(item.id), "'>",
       "<span class='v5-icon'>", icon(typeIcon[item.type] || "sparkle"), "</span>",
-      "<span class='v2-journey-text'><strong>", esc(item.title), "</strong><small>", esc(item.why || ""), "</small></span>",
+      "<span class='v2-journey-text'><strong>", esc(item.title), "</strong><small>", esc(item.note || item.why || ""), "</small></span>",
       "<span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       item.type === "task" ? [
         "<div class='v2-journey-actions'>",
@@ -192,7 +192,7 @@
     const ctx = plan.context;
     if (ctx.life_stage === "setup") {
       return "<section class='v2-journey'><header><small>Tvoja cesta</small><h2>Najprv jeden údaj</h2></header>" +
-        "<button class='v5-today-card' type='button' data-v5-feature='profiles'><span class='v5-icon'>" + icon("calendar") + "</span><div><small>Teraz</small><strong>Doplň termín pôrodu alebo dátum narodenia</strong><span class='v5-today-hint'>Podľa neho Guguboo vie, čo je pre teba práve dôležité.</span></div><span class='v5-row-arrow'>›</span></button></section>";
+        "<button class='v5-today-card' type='button' data-v5-feature='profiles'><span class='v5-icon'>" + icon("calendar") + "</span><div><small>Teraz</small><strong>Doplň termín alebo dátum narodenia</strong><span class='v5-today-hint'>Ukážeme ti, čo je teraz dôležité.</span></div><span class='v5-row-arrow'>›</span></button></section>";
     }
     const now = plan.what_is_relevant_now;
     const soon = plan.what_is_coming;
@@ -368,7 +368,7 @@
     const plan = J.compute(state);
     const placed = [...plan.what_is_relevant_now, ...plan.what_is_coming, ...plan.later, ...plan.done].find(entry => entry.id === id);
     if (!item) return { text: fallbackText, actions: [] };
-    if (placed?.done) return { text: "„" + item.title + "“ už máš označené ako hotové. 👏", actions: [{ label: "Otvoriť", kind: "open", value: id }, { label: "Vrátiť ako nehotové", kind: "undo", value: id }] };
+    if (placed?.done) return { text: "„" + item.title + "“ už máš hotové.", actions: [{ label: "Otvoriť", kind: "open", value: id }, { label: "Vrátiť ako nehotové", kind: "undo", value: id }] };
     const when = !placed ? "" : placed.horizon === "now" ? "Teraz je na to vhodný čas." : placed.horizon === "soon" ? "Bude to aktuálne o " + placed.startsInDays + " dní." : "Zatiaľ to nemusíš riešiť – ozvem sa, keď príde správny čas.";
     return { text: item.title + ".\n" + (item.why || "") + (when ? "\n\n" + when : ""), item: id, actions: itemActions(item) };
   }
@@ -395,8 +395,8 @@
     { words: ["otazky pre lekar", "otazku pre lekar", "otazky na kontrol"], stage: "pre", text: "Otázky pre lekára si pripravíš v Tehotenskej knižke.", label: "Otázky pre lekára", go: "pregnancy|[data-v5-book-section='questions']" },
     { words: ["knizk"], stage: "pre", text: "Tehotenská knižka je v časti Bábätko.", label: "Tehotenská knižka", feature: "pregnancy" },
     { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Príprava na pôrod", feature: "beforeBirth" },
-    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ako rastie bábätko, ukazuje Tvoj týždeň – na domove pod týždňom alebo v časti Bábätko.", label: "Tvoj týždeň", feature: "babySize" },
-    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár nájdeš v časti Mama – zápis jedným ťuknutím, odhad ďalšej menštruácie a prehľad pre gynekológa.", label: "Menštruačný kalendár", feature: "period" },
+    { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ťukni na týždeň na domove – otvorí sa Tvoj týždeň.", label: "Tvoj týždeň", feature: "babySize" },
+    { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár je v časti Mama.", label: "Menštruačný kalendár", feature: "period" },
     { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama.", label: "Mama", feature: "mama" },
     // Po pôrode
     { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
@@ -627,14 +627,14 @@
       if (!entry) return { text: head, actions: [{ label: "Tehotenská knižka", kind: "feature", value: "pregnancy" }] };
       const url = entry.source_urls?.[0];
       return {
-        text: head + (entry.size ? "\nBábätko meria " + entry.size + "." : "") + (entry.baby ? "\n\nBábätko: " + entry.baby : "") + (entry.you ? "\n\nTy: " + entry.you : "") + "\n\n(Zo zdroja NHS, každá veta overená citátom, kontrola " + formatChecked(content().pregnancyWeeks.meta.last_checked) + ".)",
+        text: head + (entry.size ? "\nBábätko meria " + entry.size + "." : "") + (entry.baby ? "\n\nBábätko: " + entry.baby : "") + (entry.you ? "\n\nTy: " + entry.you : "") + "\n\n(Zdroj: NHS, kontrola " + formatChecked(content().pregnancyWeeks.meta.last_checked) + ".)",
         actions: url ? [{ label: "Zdroj", kind: "link", value: url }] : []
       };
     }
     if (has(t, ["100 dni", "sto dni", "100dni"])) {
       if (ctx.baby_age_days === null) return { text: "100 dní spolu začneme počítať od narodenia bábätka. V ten deň sa ti ozvem ❤️", actions: [] };
       const left = 100 - ctx.baby_age_days;
-      return { text: left > 0 ? "Ste spolu " + ctx.baby_age_days + " dní. 100 dní spolu budete mať o " + left + " dní – v ten deň ti pripravím kartičku." : left === 0 ? "Dnes ste spolu 100 dní ❤️" : "100 dní spolu ste oslávili pred " + (-left) + " dňami ❤️", actions: [{ label: "Naše chvíle", kind: "feature", value: "memories" }] };
+      return { text: left > 0 ? "Ste spolu " + ctx.baby_age_days + " dní. 100 dní spolu budete mať o " + left + " dní – v ten deň ti pripravím kartičku." : left === 0 ? "Dnes ste spolu 100 dní ❤️" : "100 dní spolu ste oslávili pred " + (-left) + " dňami ❤️", actions: [{ label: "Naše momenty", kind: "feature", value: "memories" }] };
     }
     if (has(t, ["narodil", "narodila", "porodila", "je na svete", "uz je tu"])) {
       if (withBaby) return { text: "Bábätko už v Guguboo máš ❤️ Ak chceš opraviť dátum alebo miery, nájdeš ich v profile.", actions: [{ label: "Otvoriť profil", kind: "feature", value: "profiles" }] };
@@ -642,12 +642,12 @@
     }
 
     // 4. Po pôrode – rýchle záznamy.
-    if (withBaby && has(t, ["kojen", "dojc", "kŕm", "krm", "flas", "mliek"])) return { text: "Kŕmenie zapíšeš dvoma ťuknutiami – časovač beží aj keď zatvoríš obrazovku.", actions: [{ label: "Zapísať kŕmenie", kind: "feature", value: "feeding" }] };
+    if (withBaby && has(t, ["kojen", "dojc", "kŕm", "krm", "flas", "mliek"])) return { text: "Kŕmenie zapíšeš dvoma ťuknutiami – časovač beží, aj keď zatvoríš obrazovku.", actions: [{ label: "Zapísať kŕmenie", kind: "feature", value: "feeding" }] };
     if (withBaby && has(t, ["plienk", "prebal"])) return { text: "Prebalenie zapíšeš jedným ťuknutím.", actions: [{ label: "Zapísať prebalenie", kind: "feature", value: "diaper" }] };
-    if (withBaby && has(t, ["spank", "spi", "zaspav", "spat"])) return { text: "Spánok môžeš spustiť časovačom. V Spánku nájdeš aj pokojné zvuky na zaspávanie.", actions: [{ label: "Spánok", kind: "feature", value: "sleep" }, { label: "Zvuky", kind: "feature", value: "sounds" }] };
+    if (withBaby && has(t, ["spank", "spi", "zaspav", "spat"])) return { text: "Spánok môžeš spustiť časovačom. Šum a uspávanky sú v Spánku a zvukoch.", actions: [{ label: "Spánok", kind: "feature", value: "sleep" }, { label: "Spánok a zvuky", kind: "feature", value: "sounds" }] };
 
     // 5. Emocionálne veci.
-    if (has(t, ["uspavank", "nahrat", "hlas"])) return itemAnswer("preg.voice", "Uspávanku s vlastným hlasom nahráš v časti Zvuky.");
+    if (has(t, ["uspavank", "nahrat", "hlas"])) return itemAnswer("preg.voice", "Uspávanku svojím hlasom nahráš v Môj hlas pre bábätko.");
     if (has(t, ["kartick"])) return withBaby ? itemAnswer("baby.birth-card", "") : { text: "Kartičku narodenia ti pripravím hneď, keď sa bábätko narodí.", actions: [] };
 
     // 6. Úrady – úprimne: overený obsah sa pripravuje, nič z pamäte.
@@ -693,14 +693,14 @@
     track("chat_gap");
     return {
       level: "unknown",
-      text: "Na toto ti zatiaľ neviem odpovedať s istotou a nechcem hádať. Otázku som si zapísala, aby sme Guguboo naučili aj toto.\n\nAk ide o zdravie, najlepšie ti poradí tvoj lekár.",
+      text: "Na toto zatiaľ nemám overenú odpoveď. Otázku som si zapísala.\n\nAk ide o zdravie, najlepšie ti poradí tvoj lekár.",
       actions: [{ label: "Čo ma teraz čaká?", kind: "ask", value: "Čo ma teraz čaká?" }]
     };
   }
 
   // ——— GuguChat: UI ———
   function chips(ctx) {
-    if (ctx.life_stage === "pregnancy") return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Čo ešte musím vybaviť pred pôrodom?", "Ako rastie bábätko?", "Úrady a príspevky"];
+    if (ctx.life_stage === "pregnancy") return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Čo vybaviť pred pôrodom?", "Ako rastie bábätko?", "Úrady a príspevky"];
     if (ctx.life_stage === "setup") return ["Ako začať?", "Úrady a príspevky"];
     return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Zapísať kŕmenie", "Kedy k pediatrovi?", "Úrady po pôrode"];
   }
@@ -708,13 +708,28 @@
   function proactiveOpening(plan) {
     const ctx = plan.context;
     const name = state.user?.name ? ", " + state.user.name : "";
-    if (ctx.life_stage === "setup") return { role: "bot", text: "Ahoj" + name + ". Som GuguChat. Keď doplníš termín pôrodu alebo dátum narodenia, budem vedieť, čo je pre teba práve dôležité.", actions: [{ label: "Doplniť údaje", kind: "feature", value: "profiles" }] };
+    if (ctx.life_stage === "setup") return { role: "bot", text: "Ahoj" + name + ", som GuguChat. Keď doplníš termín alebo dátum narodenia, ukážem ti, čo je teraz dôležité.", actions: [{ label: "Doplniť údaje", kind: "feature", value: "profiles" }] };
     const next = plan.next_best_action;
-    const soon = plan.what_is_coming[0];
-    let text = "Ahoj" + name + ". Viem, kde na svojej ceste si: " + J.stageLabel(ctx) + ".";
-    if (next) text += "\n\nTeraz by som začala týmto: " + next.title + ".";
-    if (soon) text += "\nO " + soon.startsInDays + (soon.startsInDays === 1 ? " deň" : soon.startsInDays < 5 ? " dni" : " dní") + " ťa čaká: " + soon.title + " – nemusíš to riešiť dnes, ozvem sa.";
-    return { role: "bot", text, actions: next ? itemActions(next) : [] };
+    let text = "Ahoj" + name + ". S čím ti môžem pomôcť?";
+    if (next) text += "\n\nNa dnes: " + next.title + ".";
+    return { role: "bot", text, actions: next ? itemActions(next).slice(0, 2) : [] };
+  }
+
+  // Master 1.7 (S27): krátky prvý riadok (bez bodky) je nadpis odpovede, riadky „• “ sú zoznam. Text sa nemení.
+  function messageTextHtml(text) {
+    const lines = String(text || "").split("\n");
+    let html = "";
+    let list = [];
+    const flush = () => { if (list.length) html += "<ul class='g2-dots'>" + list.map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>"; list = []; };
+    lines.forEach((line, index) => {
+      if (/^•\s*/.test(line)) { list.push(line.replace(/^•\s*/, "")); return; }
+      flush();
+      if (!line.trim()) return;
+      const heading = index === 0 && lines.length > 1 && line.length <= 40 && !/[.?!:)]$/.test(line.trim());
+      html += heading ? "<p class='g2-msg-title'><strong>" + esc(line) + "</strong></p>" : "<p>" + esc(line) + "</p>";
+    });
+    flush();
+    return html;
   }
 
   function messageHtml(message) {
@@ -724,7 +739,7 @@
       if (action.kind === "link") return "<a class='v2-chat-action' href='" + esc(action.value) + "' target='_blank' rel='noopener noreferrer'>" + esc(action.label) + " ↗</a>";
       return "<button class='v2-chat-action' type='button' data-v2-chat-kind='" + esc(action.kind) + "' data-v2-chat-value='" + esc(action.value || "") + "'>" + esc(action.label) + "</button>";
     }).join("");
-    return "<div class='v2-msg v2-msg-bot" + (message.level ? " v2-level-" + esc(message.level) : "") + "'><p>" + esc(message.text).replace(/\n/g, "<br>") + "</p>" + (actions ? "<div class='v2-chat-actions'>" + actions + "</div>" : "") + "</div>";
+    return "<div class='v2-msg v2-msg-bot" + (message.level ? " v2-level-" + esc(message.level) : "") + "'>" + messageTextHtml(message.text) + (actions ? "<div class='v2-chat-actions'>" + actions + "</div>" : "") + "</div>";
   }
 
   function render() {
@@ -740,15 +755,21 @@
       "<div class='v2-chat'>",
       "<header class='v2-chat-head'><img src='guguboo-logo-3d-pastel-v2.png' alt=''><div><small>", esc(J.stageLabel(plan.context)), " · z overeného obsahu</small></div></header>",
       "<div class='v2-chat-log' id='v2ChatLog' aria-live='polite'>", state.v2.chat.map(messageHtml).join(""), "</div>",
-      "<div class='v2-chat-chips'>", chips(plan.context).map(chip => "<button type='button' data-v2-chat-ask='" + esc(chip) + "'>" + esc(chip) + "</button>").join(""), "</div>",
-      "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš, čo riešiš…'><button class='v5-primary' type='submit'>Poslať</button></form>",
       // Samuel 28. 9.: žiadny trvalý „núdzový“ pás – pôsobí strašidelne. Pomoc je vždy nenápadne po ruke
       // a naliehavé kontakty sa ukážu len vtedy, keď ich otázka naozaj vyžaduje.
       "<p class='v2-chat-disclaimer'>GuguChat ti pomáha zorientovať sa. So zdravotnými otázkami sa kedykoľvek obráť aj na svojho lekára. <button type='button' class='v2-chat-help-link' data-v2-chat-kind='helpinfo'>Kontakty na pomoc</button></p>",
+      // Master 1.7 (V13): rýchle otázky a pole na písanie sú prilepené dole – po odpovedi netreba posúvať.
+      "<div class='g2-chat-dock'>",
+      "<div class='v2-chat-chips'>", chips(plan.context).map(chip => "<button type='button' data-v2-chat-ask='" + esc(chip) + "'>" + esc(chip) + "</button>").join(""), "</div>",
+      "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš, čo riešiš…'><button class='v5-primary' type='submit'>Poslať</button></form>",
+      "</div>",
       "</div>"
     ].join("");
     const log = byId("v2ChatLog");
     if (log) log.scrollTop = log.scrollHeight;
+    // Posledná správa nad poľom (okno sa posúva celé, nie len zoznam).
+    const scroller = target.closest(".view");
+    if (scroller && state.v2.chat.length > 1) requestAnimationFrame(() => { scroller.scrollTop = scroller.scrollHeight; });
   }
 
   function ask(text) {
@@ -866,7 +887,7 @@
         J.markDone(state, item.id);
         track("journey_done", { id: item.id, source: "chat" });
         const next = J.compute(state).next_best_action;
-        state.v2.chat.push({ role: "bot", text: "Super, „" + item.title + "“ je hotové. 👏" + (next ? "\n\nĎalší krok: " + next.title + "." : "\n\nMomentálne nemáš nič ďalšie naliehavé."), actions: next ? itemActions(next) : [] });
+        state.v2.chat.push({ role: "bot", text: "Hotovo: " + item.title + "." + (next ? "\n\nĎalší krok: " + next.title + "." : "\n\nĎalšie veci počkajú."), actions: next ? itemActions(next) : [] });
         save();
         return render();
       }

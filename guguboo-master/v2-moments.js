@@ -115,7 +115,7 @@
       if (!rows.length && !empty) return "";
       return "<section class='v2-tl-group'><h3>" + esc(title) + "</h3>" + (rows.length ? "<ol class='v2-tl'>" + rows.map(item => [
         "<li class='v2-tl-item'><span class='v2-tl-dot' aria-hidden='true'>", item.emoji, "</span><div class='v2-tl-card'>",
-        "<strong>", esc(item.title), "</strong><small>", esc(dateText(item.date)), item.source !== "manual" ? " · zapísané samo" : "", "</small>",
+        "<strong>", esc(item.title), "</strong><small>", esc(dateText(item.date)), "</small>",
         item.text ? "<p>" + esc(item.text) + "</p>" : "",
         item.photo ? "<img src='" + esc(item.photo) + "' alt='' loading='lazy'>" : "",
         "</div></li>"
@@ -125,7 +125,7 @@
     return [
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Naša časová os</h1><p>Zapisujú sa samy.</p></header>",
       group("post", "Spolu", expecting ? "" : "Prvé spoločné chvíle sa objavia tu."),
-      group("pre", "Čakanie na teba", "Prvé spomienky pribudnú, keď si napríklad zapíšeš sono alebo prvé pohyby v Tehotenskej knižke."),
+      group("pre", "Čakanie na teba", "Pribudnú napríklad zo sona alebo z prvých pohybov."),
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
     ].join("");
   }
@@ -184,7 +184,7 @@
     return [
       "<section class='v2-ask-card' aria-label='Stalo sa už?'>",
       "<small>Stalo sa už?</small><div class='v2-ask-title'><span aria-hidden='true'>", item.emoji, "</span><strong>", esc(item.label), "</strong></div>",
-      item.note ? "<p>" + esc(item.note) + "</p>" : "<p>Každé bábätko má vlastné tempo. Odpovedz, len ak chceš.</p>",
+      item.note ? "<p>" + esc(item.note) + "</p>" : "<p>" + (item.phase === "pre" ? "" : "Každé bábätko má vlastné tempo. ") + "Odpovedz, len ak chceš.</p>",
       "<div class='v2-ask-actions'><button type='button' class='v5-primary' data-v2-first-yes='", item.key, "'>Áno, dnes</button>",
       "<button type='button' class='v5-secondary' data-v2-first-earlier='", item.key, "'>Už skôr</button>",
       "<button type='button' class='v5-text-action' data-v2-first-later='", item.key, "'>Ešte nie</button></div>",

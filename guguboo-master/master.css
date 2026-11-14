@@ -549,3 +549,102 @@ body.night .g2-bar-handle { background: #232838 !important; }
 .g2-bar-handle span { width: 40px !important; height: 4px !important; margin-top: 2px; }
 body.night .g2-bar-handle { background: transparent !important; }
 .g2-bar-handle { height: 13px !important; max-height: 13px !important; } .g2-bar-handle span { margin-top: 0 !important; }
+
+/* ===== Master 1.7 – vizuálny a textový sweep 1.6.4 (docs/master/VISUAL_SWEEP_1.6.4.md, TEXT_SWEEP_1.6.4.md) ===== */
+/* V5: pás mesiacov/týždňov sa v okne Tvoj mesiac a Plán nestlačí */
+.g2-window-body > * { flex-shrink: 0; }
+/* V6: hlavička okien – názov má viac miesta, 19 px, najviac 2 riadky */
+body.v5-active.g2-window-with-bar .v5-universal-window-head { grid-template-columns: 44px minmax(0, 1fr) 44px 44px !important; column-gap: 8px !important; }
+body.v5-active .v5-universal-window-head strong { font-size: 19px !important; line-height: 1.2 !important; }
+/* V10: Oddych / Telo / Opora – znak + neprekrýva text, čitateľné písmo */
+.v5-o-day-row { padding-bottom: 30px !important; }
+.v5-o-day-row strong { font-size: 14px !important; line-height: 1.25 !important; }
+.v5-o-day-row small { font-size: 13px !important; font-weight: 600 !important; }
+#v5OMenuSubtitle { white-space: normal; }
+#v5OMenuSubtitle:empty { display: none; }
+.v5-o-summary-copy { font-size: 14px !important; font-weight: 500 !important; }
+/* V12: Prehliadky u pediatra a knižky – pravidelný zvislý rytmus */
+.v2-visit-hint { margin: 8px 4px 4px !important; font-size: 14px !important; line-height: 1.45 !important; }
+:is(#v5ChildBookContent, #v5PregnancyBookContent) > :is(.v5-primary, .v5-secondary, .v5-empty, .v5-form-card, .v5-check-categories-button, .v2-calm-box, .v5-actions):not(:first-child) { margin-top: 12px !important; }
+/* N6: hlavička okna nepreteká o 3 px */
+body.v5-active .v5-universal-window-head { margin-left: -11px !important; margin-right: -11px !important; }
+/* V13: GuguChat – rýchle otázky a pole prilepené dole */
+.g2-chat-dock { position: sticky; bottom: 0; z-index: 2; display: grid; gap: 8px; margin: 0 -2px; padding: 8px 2px 6px; background: var(--v5-bg); }
+.g2-chat-dock .v2-chat-chips { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; }
+.v2-chat-chips button { font-size: 14px !important; }
+.v2-chat-disclaimer { font-size: 14px !important; }
+.v2-msg p + p, .v2-msg p + ul, .v2-msg ul + p { margin-top: 8px; }
+.v2-msg .g2-dots li { margin: 4px 0; font-size: 15px; line-height: 22px; }
+.v2-msg .g2-dots li::before { top: 7px; }
+.g2-msg-title strong { font-weight: 800; }
+/* S2: Nová udalosť – štítky 14 px, hodnoty 500 */
+.v5-o-compact-form label { font-size: 14px !important; font-weight: 700 !important; color: var(--v5-ink) !important; }
+.v5-o-compact-form :is(input, textarea, select) { font-weight: 500 !important; }
+/* S3: Denné záznamy – rovnaký okraj 14 px ako ostatné plávajúce okná */
+#v5QuickRecord { width: min(calc(100% - 28px), 440px) !important; }
+/* S4: Spánok – popis čitateľný, voľby zarovnané na stred */
+.v5-sleep-audio .v5-compact-head p { font-size: 14px !important; }
+#v5OMenu .v5-choice, #v5QuickRecord .v5-choice { align-items: center; text-align: center; }
+/* S5: rozcestník – obsah od vrchu, nepárna posledná karta na celú šírku */
+.v5-choice { justify-content: flex-start !important; }
+.v5-choice-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* S6: domov – ikony skratiek v jednej línii */
+.g2-short { justify-content: flex-start !important; padding-top: 10px !important; }
+/* S7: „Dnes stačí jedno“ – najviac 2 riadky namiesto orezania */
+body.v5-active .g2-today-main strong { white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* S10, S11: huby – riadok pod hlavičkou namiesto druhého nadpisu, ikony vo farbe oblasti */
+.g2-hub-sub { margin: 4px 4px 8px; font: 600 15px/22px var(--g2-font); color: var(--g2-muted, #5d5768); }
+.g2-hub-row.g2-baby .v5-icon { background: var(--g2-baby-bg) !important; color: var(--g2-baby) !important; }
+.g2-hub-row.g2-mama .v5-icon, #v5Mama .v2-book-tools .v5-icon { background: var(--g2-mama-bg) !important; color: var(--g2-mama) !important; }
+.g2-hub-row.g2-rod .v5-icon, .v5-moments-hub .v5-icon { background: var(--g2-rod-bg) !important; color: var(--g2-rod) !important; }
+.v2-mama-hero p { color: var(--g2-muted) !important; }
+/* S12: Tvoj týždeň – jednotné písmo a bodky v kartách */
+.v2-size-dev > p, .v2-size-dev .g2-more p { font: 500 16px/24px var(--g2-font) !important; }
+.v2-size-dev > p { padding-left: 22px !important; }
+.v2-size-dev > p::before { top: 9px !important; left: 4px !important; width: 9px !important; height: 9px !important; background: #c7bdf0 !important; }
+.g2-more { margin: 4px 0 0; }
+.g2-more summary { display: inline-flex; align-items: center; min-height: 44px; color: var(--v5-brand-dark); font: 700 15px/1 var(--g2-font); cursor: pointer; }
+.g2-more p { margin: 0 0 6px; color: var(--v5-ink); }
+.g2-small { margin: 6px 0 0; font-size: 14px; color: var(--v5-muted); }
+/* S13: Tehotenská knižka – štítky min. 13 px */
+.v2-book-facts span { font-size: 13px !important; font-weight: 700 !important; }
+.v2-book-group { font-size: 13px !important; }
+/* S14, S15: Keď sa bábätko trápi – upozornenie čitateľné; prvý nadpis okna nie je nalepený na hlavičku */
+.v5-care-disclaimer { margin: 12px 4px 0 !important; font-size: 14px !important; line-height: 1.45 !important; }
+body.v5-app-window-open .view.active .v5-flow-head { margin-top: 12px !important; }
+/* S16: Kontakty – formulár oddelený od prázdneho stavu, hlavná akcia na celú šírku */
+.v5-empty + .v5-form-card { margin-top: 12px; }
+#v5UtilityContent .v5-actions .v5-primary { width: 100%; }
+/* S17: odkaz späť v knižkách vždy vľavo */
+body.v5-active .v5-check-categories-button { justify-self: start; align-self: flex-start; margin-left: 0 !important; margin-right: auto !important; text-align: left; }
+/* S18: hlavné tlačidlo cez deň – plná fialová s bielym textom (7 : 1), aj v úvode */
+body.v5-active:not(.night) .v5-primary:not([disabled]), #welcome .welcome-story-actions .primary { background: #5f4fb1 !important; background-image: none !important; color: #fff !important; }
+/* S21: hľadanie – text riadku GuguChatu zarovnaný s ostatnými výsledkami */
+.g2-ask-row > span:nth-child(2) { flex: 1 1 auto; }
+/* S22: chyba v úvode pod poľami */
+#welcome .g2-field-error { margin: 12px 2px 0; color: #9b3b4b; font: 600 14px/20px var(--g2-font, Montserrat, sans-serif); }
+/* S23: úvod – jednotné nadpisy krokov, voľby zarovnané na stred, vlastné zaškrtávacie políčko */
+#welcome .welcome-story-step h2 { font-size: 24px !important; line-height: 30px !important; }
+#welcome .choice-card { align-items: center !important; }
+#welcome input[type="checkbox"] { appearance: none; -webkit-appearance: none; flex: 0 0 22px; width: 22px !important; height: 22px !important; min-width: 22px !important; min-height: 22px !important; max-height: 22px; padding: 0 !important; margin: 0; border: 2px solid #8e84bb !important; border-radius: 6px !important; background: #fff; display: inline-grid; place-items: center; cursor: pointer; align-self: center; }
+#welcome .v2-choice-chip { white-space: nowrap; font-size: 13px !important; padding-inline: 2px !important; }
+#welcome input[type="checkbox"]:checked { background: #5f4fb1; border-color: #5f4fb1; }
+#welcome input[type="checkbox"]:checked::after { content: ""; width: 6px; height: 11px; margin-top: -2px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+#welcome input[type="checkbox"]:focus-visible { outline: 2px solid #5f4fb1; outline-offset: 2px; }
+/* S24: odkaz na úpravu údajov zarovnaný s nadpisom */
+#welcome .welcome-finish-edit { align-self: flex-start; text-align: left; margin-left: 0 !important; }
+/* S25: Plán – jeden štýl štítkov sekcií, rovnaké šípky */
+.v2-journey-soon h3, .g2-plan-areas-head { display: block; margin: 0 2px 6px; font: var(--g2-t-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--g2-brand-ink) !important; }
+#g2PlanOverlay :is(.v5-row-arrow, b[aria-hidden="true"]) { font-size: 20px; }
+/* S26: Nastavenia a profil – karty 2 × 2, nič nepreteká */
+.v5-profile-tabs { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible !important; }
+.v5-profile-tabs button { white-space: normal !important; min-height: 44px; }
+/* S28: Naše momenty – rovnaké biele riadky, farba len v ikone */
+.v5-moments-hub > button { background: var(--v5-surface) !important; }
+/* S29: Kalendár – popis 14 px */
+article.v2-cal-item small { font-size: 14px !important; }
+/* V8: návrat z detailu úradu na zoznam */
+.g2-admin-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 4px; padding: 0 4px; border: 0; background: transparent; color: var(--v5-brand-dark); font: 700 15px/1 var(--g2-font); cursor: pointer; }
+.g2-admin-back span { font-size: 22px; }
+/* N9 / N2: hlavička domova bez ružovej škvrny */
+#v5Header .v5-header-brand::after { display: none !important; }
