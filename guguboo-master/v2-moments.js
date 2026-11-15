@@ -139,6 +139,8 @@
   const CATALOG = [
     { key: "heartbeat", phase: "pre", emoji: "💓", label: "Prvýkrát sme počuli srdiečko", askWeek: 12 },
     { key: "bump", phase: "pre", emoji: "🤰", label: "Prvá fotka bruška", askWeek: 16 },
+    // Master 2.5: zapisuje sa z kruhu („Cítila som ho“), appka sa na neho nepýta (žiadny tlak – Content & Safety)
+    { key: "firstmove", phase: "pre", emoji: "🦋", label: "Prvý pohyb bábätka" },
     { key: "firstbuy", phase: "pre", emoji: "🧸", label: "Prvá vec pre bábätko", askWeek: 20 },
     { key: "partnerkick", phase: "pre", emoji: "🤲", label: "Pohyby cítil aj partner", askWeek: 24 },
     { key: "home", phase: "post", emoji: "🏡", label: "Prvý deň doma", askDays: 2 },

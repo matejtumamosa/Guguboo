@@ -775,3 +775,6 @@ body.v5-active.night .g2q-card .g2q-center:not(.is-running) :is(strong, small, .
 /* Master 2.3 (Samo 15. 11., A): Bábätko, Mama, Rodina sú záložky – bez šípky späť a krížika (majú ich len okná otvorené z nich) */
 body.g2-tab-root:not(.g2-tab-sub) .view.active > .v5-universal-window-head :is([data-v5-window-back], [data-v5-window-cancel]) { display: none !important; }
 body.g2-tab-root:not(.g2-tab-sub) .view.active > .v5-universal-window-head { grid-template-columns: minmax(0, 1fr) auto !important; padding-left: 20px !important; }
+/* Master 2.5: „naposledy“ pod názvom dielu – ≥ 11 px na obrazovke (veľkosť počíta JS), farba menovky (kontrast > 7 : 1) */
+body:has(#home.view.active) .g2q-card .v2-o-label text.g2q-sub { font: 600 var(--g2q-sub, 18px)/1 var(--g2-font, Montserrat, sans-serif) !important; letter-spacing: 0; }
+.g2q-preview { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; background: var(--v5-surface-soft); white-space: pre-wrap; font: 500 15px/1.5 Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }

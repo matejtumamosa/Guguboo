@@ -1206,26 +1206,29 @@
   const g2qLastDiaper = () => g2qLastEvent(e => e.type === "Plienka");
   const g2qLastMove = () => (state.v5.babyMoves || []).slice(-1)[0] || null;
   const g2qBumpThisWeek = () => (state.diary || []).find(d => d.bumpWeek && d.bumpWeek === g2qWeek());
-  const g2qRecent = iso => iso && g2qSince(iso) < 24 * 36e5 ? g2qAgo(g2qSince(iso)) : "";
+  // Master 2.5 (zhoda tímu, KRUH_ZHODA.md): „naposledy“ na kruhu – do hodiny v minútach, potom celé hodiny, po 24 h nič (žiadna výčitka).
+  const g2qAgoShort = ms => { const m = Math.round(ms / 60000); return m < 1 ? "práve teraz" : m < 60 ? "pred " + m + " min" : "pred " + Math.floor(m / 60) + " h"; };
+  const g2qRecent = iso => iso && g2qSince(iso) < 24 * 36e5 ? g2qAgoShort(g2qSince(iso)) : "";
+  const g2qTodayAt = iso => iso && g2qIsToday(iso) ? "dnes " + formatClock(iso) : "";
   const g2qSideShort = side => /ľav/i.test(side || "") ? "ľavý" : /prav/i.test(side || "") ? "pravý" : "";
+  // Prvý pohyb: čaká, kým ho mama sama nezapíše („Cítila som ho“) – žiadne automatické prepnutie podľa týždňa (Content & Safety).
+  const g2qFirstMoveFelt = () => (state.v5.firstMoments || []).some(item => item.key === "firstmove") || (state.v5.babyMoves || []).length > 0;
 
   function g2qSegments() {
     const expecting = state.profile.status === "expecting";
     if (expecting) {
-      const moveLast = g2qLastMove();
       const bump = g2qBumpThisWeek();
-      const third = g2qWeek() >= 36
-        ? { key: "contraction", label: "Kontrakcie", sub: state.v5.contractionTimer.active ? "beží" : g2qRecent(state.v5.contractions.slice(-1)[0]?.start), aria: "Kontrakcie – meranie" }
-        : { key: "voice", label: "Hlas", sub: (state.lullabies || []).length ? "pustiť" : "", aria: "Hlas pre bábätko – nahrať alebo pustiť" };
-      return [
-        { key: "move", label: "Pohyby", sub: g2qRecent(moveLast?.time), aria: "Pohyby – zapísať pohyb" },
-        { key: "bump", label: "Bruško", sub: bump ? g2qWeek() + ". t. ✓" : "", aria: "Bruško – fotka tohto týždňa" },
-        third
-      ];
+      const move = { key: "move", label: "Pohyby", sub: g2qTodayAt(g2qLastMove()?.time), aria: "Pohyby – zapísať pohyb" };
+      const bumpSeg = { key: "bump", label: "Bruško", sub: bump ? g2qWeek() + ". t. ✓" : "", aria: "Bruško – fotka tohto týždňa" };
+      const voice = { key: "voice", label: "Pre bábätko", sub: "", aria: "Pre bábätko – nahraj svoj hlas alebo pár slov" };
+      if (g2qWeek() >= 36) return [move, { key: "contraction", label: "Kontrakcie", sub: state.v5.contractionTimer.active ? "beží" : g2qTodayAt(state.v5.contractions.slice(-1)[0]?.start), aria: "Kontrakcie – meranie" }, bumpSeg];
+      if (!g2qFirstMoveFelt()) return [bumpSeg, voice, { key: "firstmove", label: "Prvý pohyb", sub: "16.–24. t.", aria: "Prvý pohyb – zvyčajne medzi 16. a 24. týždňom" }];
+      return [move, bumpSeg, voice];
     }
     const days = Math.floor((new Date(todayKey() + "T12:00:00") - new Date((state.profile.birth || todayKey()) + "T12:00:00")) / 86400000);
     const lastSleep = g2qLastSleep();
-    const sleep = { key: "sleep", label: "Spánok", sub: state.sleepTimer?.active ? "spí" : lastSleep && g2qSince(lastSleep.created) < 24 * 36e5 ? "hore " + g2qSpan(g2qSince(lastSleep.created)) : "", aria: "Spánok" };
+    const awake = lastSleep ? g2qSince(lastSleep.created) : 0;
+    const sleep = { key: "sleep", label: "Spánok", sub: state.sleepTimer?.active ? "spinká" : lastSleep && awake < 24 * 36e5 ? "hore " + (awake < 36e5 ? Math.max(1, Math.round(awake / 60000)) + " min" : Math.floor(awake / 36e5) + " h") : "", aria: "Spánok" };
     if (days >= 365) return [
       { key: "food", label: "Jedlo", sub: g2qRecent(g2qLastFood()?.created), aria: "Jedlo – zapísať" },
       sleep,
@@ -1254,7 +1257,17 @@
     const night = g2qNight();
     return "<button class='v5-o-record g2-ring-center g2q-center' type='button' data-g2q='day' aria-label='" + (night ? "Naša noc" : "Náš deň") + " – prehľad dnešných zápisov'><strong>" + (night ? "Naša noc" : "Náš deň") + "</strong><span class='g2q-link'>Prehľad</span></button>";
   }
+  // Veľkosť kruhu z poslednej obrazovky: písmo „naposledy“ v jednotkách SVG (viewBox 420), aby malo ≥ 11 px.
+  let g2qSmallRing = false, g2qSubUnits = 18;
+  function g2qMeasureRing() {
+    const w = document.querySelector(".g2q-card .v5-o-ring-wrap")?.getBoundingClientRect().width || 290;
+    g2qSmallRing = w < 240;
+    g2qSubUnits = Math.ceil(11 / (w / 420));
+  }
   function g2QuickRing() {
+    g2qMeasureRing();
+    // po vykreslení skontroluj skutočnú veľkosť kruhu (prvé vykreslenie ju ešte nepozná) – prekreslí sa najviac raz
+    setTimeout(() => { const before = g2qSmallRing + "|" + g2qSubUnits; g2qMeasureRing(); if (before !== g2qSmallRing + "|" + g2qSubUnits && document.querySelector("#home.view.active .g2q-card")) renderHome(); }, 120);
     const segs = g2qSegments();
     const run = g2qRunning();
     const arc = (mid, lower, radius, id) => {
@@ -1275,9 +1288,12 @@
       segs.map((seg, index) => {
         const mid = adaptiveOCentroidAngle(adaptiveOSections[index].start);
         const lower = Math.sin(mid * Math.PI / 180) > 0.2;
-        // UI (KRUH_STRED_UI.md): na kruhu len názov; „naposledy“ je prvý riadok okna dielu (čitateľnosť na malom kruhu).
-        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'>" + arc(mid, lower, 112, "g2OArc" + (index + 1)) +
-          "<text dy='6'><textPath href='#g2OArc" + (index + 1) + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(seg.label) + "</textPath></text></g>";
+        // Zhoda tímu: „naposledy“ pod názvom dielu (≥ 11 px na obrazovke, farba menovky); na malom kruhu len čas bez strany.
+        const sub = seg.sub ? (g2qSmallRing ? seg.sub.split(" · ")[0].replace(/^pred /, "") : seg.sub) : "";
+        const rName = sub ? (lower ? 100 : 124) : 112, rSub = lower ? 130 : 94;
+        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'>" + arc(mid, lower, rName, "g2OArc" + (index + 1)) +
+          "<text dy='6'><textPath href='#g2OArc" + (index + 1) + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(seg.label) + "</textPath></text>" +
+          (sub ? arc(mid, lower, rSub, "g2OSub" + (index + 1)) + "<text class='g2q-sub' dy='5' style='--g2q-sub:" + g2qSubUnits + "px'><textPath href='#g2OSub" + (index + 1) + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(sub) + "</textPath></text>" : "") + "</g>";
       }).join(""),
       "</svg>", g2qCenter(segs),
       "</div></div>",
@@ -1324,11 +1340,11 @@
   // ——— Uložené · Vrátiť ———
   let g2qUndo = null, g2qToastTimer = 0;
   function g2qSnap() {
-    return JSON.stringify({ events: state.events, moves: state.v5.babyMoves || [], contractions: state.v5.contractions, ct: state.v5.contractionTimer, st: state.sleepTimer, ft: state.v5.feedingTimer, diary: state.diary });
+    return JSON.stringify({ events: state.events, moves: state.v5.babyMoves || [], contractions: state.v5.contractions, ct: state.v5.contractionTimer, st: state.sleepTimer, ft: state.v5.feedingTimer, diary: state.diary, first: state.v5.firstMoments || [] });
   }
   function g2qRestore(snap) {
     const s = JSON.parse(snap);
-    state.events = s.events; state.v5.babyMoves = s.moves; state.v5.contractions = s.contractions; state.v5.contractionTimer = s.ct; state.sleepTimer = s.st; state.v5.feedingTimer = s.ft; state.diary = s.diary;
+    state.events = s.events; state.v5.babyMoves = s.moves; state.v5.contractions = s.contractions; state.v5.contractionTimer = s.ct; state.sleepTimer = s.st; state.v5.feedingTimer = s.ft; state.diary = s.diary; state.v5.firstMoments = s.first || [];
     if (typeof save === "function") save(); else persist();
     renderTimers(); renderHome();
   }
@@ -1369,8 +1385,10 @@
       // Fľaša (umelé aj odsaté mlieko) ide hore, ak bolo naposledy kŕmenie fľašou – appka sa prispôsobí rodine bez nastavovania.
       const bottleFirst = last?.method === "Fľaša";
       const bottle = g2qAct("feed-bottle", "feeding", "Fľaša", "umelé alebo odsaté mlieko");
-      const breasts = g2qAct("feed-start", "feeding", "Ľavý prsník", "spustí časovač", " data-side='Ľavý prsník'") +
-        g2qAct("feed-start", "feeding", "Pravý prsník", "spustí časovač", " data-side='Pravý prsník'");
+      // Zhoda tímu: strana sa nezapisuje zvlášť – odvodí sa z posledného kŕmenia; druhá strana je prvá a väčšia (ponuka, nie pokyn).
+      const lastSide = g2qSideShort(last?.side);
+      const sides = lastSide === "ľavý" ? ["Pravý prsník", "Ľavý prsník"] : ["Ľavý prsník", "Pravý prsník"];
+      const breasts = sides.map((side, i) => g2qAct("feed-start", "feeding", side, i === 0 && lastSide ? "minule " + lastSide : "spustí časovač", " data-side='" + side + "'", i === 0 && Boolean(lastSide))).join("");
       return g2qOpen("Kŕmenie", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + String(last.value || "").split(" · ").slice(0, 3).join(" · ")) : g2qLastLine("Ťukni, čím začínaš.")) +
         (bottleFirst ? bottle + breasts : breasts + bottle) +
         // Príkrmy podľa veku: NHS – s tuhou stravou sa začína približne v 6. mesiaci (rovnaký zdroj ako GuguChat).
@@ -1394,7 +1412,16 @@
       const today = (state.v5.babyMoves || []).filter(m => g2qIsToday(m.time)).slice(-4).reverse();
       return g2qOpen("Pohyby", (today.length ? g2qLastLine("Dnes: " + today.map(m => formatClock(m.time)).join(", ")) : g2qLastLine("Zapíš, keď ho cítiš. Nič nepočítame.")) +
         g2qAct("move-save", "wave", "Cítim pohyb teraz", "uloží sa s časom", "", true) +
+        // Content & Safety (NHS Your baby's movements, overené 15. 11. 2026): pohyby sa nepočítajú, dôležitá je zmena oproti bežnému.
+        "<p class='g2r-small'>Ak sa pohyby zmenia alebo spomalia, zavolaj pôrodnú asistentku alebo pôrodnicu – aj v noci. Appka pohyby nesleduje. <a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Podľa NHS (Spojené kráľovstvo) ↗</a></p>" +
         "<button class='g2r-link' type='button' data-v5-book-section='moves' data-g2q-nav>Pohyby v Tehotenskej knižke ›</button>");
+    }
+    if (key === "firstmove") {
+      // Pokojné očakávanie, nie úloha: bez odpočtu, bez „ešte nie“, žiadne automatické prepnutie (Content & Safety, NHS overené 15. 11. 2026).
+      return g2qOpen("Prvý pohyb", "<p class='g2r-lead'>Väčšina mám pocíti bábätko medzi 16. a 24. týždňom. Pri prvom tehotenstve to často býva až po 20. týždni. Každé tehotenstvo je iné.</p>" +
+        g2qAct("firstmove-save", "wave", "Cítila som ho", "uloží sa ako prvý raz do Našich momentov", "", true) +
+        (g2qWeek() >= 24 ? "<p class='g2r-small'>Ak si pohyby ešte necítila, povedz to pri najbližšej kontrole pôrodnej asistentke alebo gynekológovi.</p>" : "") +
+        "<p class='g2r-small'><a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Podľa NHS (Spojené kráľovstvo) ↗</a></p>");
     }
     if (key === "bump") {
       const bump = g2qBumpThisWeek();
@@ -1432,7 +1459,19 @@
     const born = state.profile.status !== "expecting";
     g2qOpen(g2qNight() ? "Naša noc" : "Náš deň",
       (items.length ? "<div class='g2r-info'><ul class='g2q-list'>" + items.map(i => "<li><time>" + escapeHtml(formatClock(i[0])) + "</time><span>" + escapeHtml(i[1]) + "</span></li>").join("") + "</ul></div>" : g2qLastLine("Dnes zatiaľ nič. Stačí ťuknúť na diel kruhu.")) +
+      (born && items.length ? g2qAct("share-preview", "family", "Poslať prehľad", "napr. partnerovi alebo babke, keď preberajú bábätko") : "") +
       (born ? "<button class='g2r-link' type='button' data-v5-open-record data-g2q-nav>Všetky denné záznamy ›</button>" : ""));
+  }
+  // Poslať prehľad: len časy a činnosti, bez mena, dátumu narodenia a poznámok; mama vidí presný text pred odoslaním.
+  function g2qShareText() {
+    const feed = g2qLastFeed(), sleep = g2qLastSleep(), diaper = g2qLastDiaper();
+    const lines = ["Náš deň do " + formatClock(new Date())];
+    if (feed && g2qIsToday(feed.created)) lines.push("Posledné kŕmenie: " + formatClock(feed.created) + (g2qSideShort(feed.side) ? ", " + g2qSideShort(feed.side) : feed.method === "Fľaša" ? ", fľaša" : ""));
+    if (state.sleepTimer?.active) lines.push("Spánok: spinká od " + formatClock(state.sleepTimer.start));
+    else if (sleep && g2qIsToday(sleep.created)) lines.push("Spánok: zobudilo sa o " + formatClock(sleep.created));
+    if (diaper && g2qIsToday(diaper.created)) lines.push("Posledná plienka: " + formatClock(diaper.created));
+    lines.push("Poslané z Guguboo.");
+    return lines.join("\n");
   }
   function g2qStopRunning() {
     const run = g2qRunning();
@@ -1478,8 +1517,19 @@
     if (action === "seg") return g2qSheet(el.dataset.seg);
     if (action === "day") return g2qDaySheet();
     if (action === "stop") return g2qStopRunning();
-    if (action === "undo") { if (g2qUndo) g2qRestore(g2qUndo); g2qUndo = null; byId("g2qToast")?.classList.remove("on"); return announce("Vrátené."); }
+    if (action === "undo") { if (g2qUndo) g2qRestore(g2qUndo); g2qUndo = null; return g2qToast("Vrátené"); }
     const snap = g2qSnap();
+    if (action === "share-preview") return g2qOpen("Poslať prehľad", "<p class='g2r-lead'>Takto to odíde. Pošleš to cez správu v telefóne.</p><pre class='g2q-preview'>" + escapeHtml(g2qShareText()) + "</pre>" + g2qAct("share-send", "family", "Poslať", "WhatsApp, SMS…", "", true) + "<button class='g2r-link' type='button' data-g2q='day'>Späť</button>");
+    if (action === "share-send") {
+      const text = g2qShareText();
+      if (navigator.share) return navigator.share({ text }).then(() => g2qClose()).catch(() => {});
+      return navigator.clipboard?.writeText(text).then(() => { g2qClose(); g2qToast("Skopírované – vlož to do správy."); }).catch(() => g2qToast("Nepodarilo sa skopírovať."));
+    }
+    if (action === "firstmove-save") {
+      (state.v5.firstMoments ||= []).push({ key: "firstmove", label: "Prvý pohyb bábätka", date: new Date().toISOString() });
+      (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
+      return g2qDone("Prvý pohyb je v Našich momentoch 🦋", snap);
+    }
     if (action === "move-save") {
       (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
       return g2qDone("Pohyb zapísaný o " + formatClock(new Date()), snap);
