@@ -690,3 +690,6 @@ body.v5-active #v2AdminBody .v2-admin-head h2 { font-size: 22px; }
 /* QA 1.9 S4: na domove pás bežiaceho spánku/kŕmenia neprekrýva obsah – stav ukazuje skratka Denné záznamy („spí od …“); inde pás ostáva */
 body:has(#home.view.active) #v5PersistentTimers { display: none !important; }
 @media (max-height: 600px) { #v5Home { --g2-gap: 6px !important; } .g2-short.is-running small { font-size: 12.5px !important; line-height: 15px !important; } }
+/* Samo 15. 11.: skratky – ikony v jednej línii a obsah opticky v strede (názov má vždy miesto na 2 riadky) */
+.g2-short { justify-content: center !important; padding: 8px 6px !important; }
+.g2-short strong { min-height: 2.5em; display: flex !important; align-items: center; justify-content: center; }

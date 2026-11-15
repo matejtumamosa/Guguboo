@@ -433,3 +433,6 @@ body.g2-intro-on :is(#v5BottomBar, #v5Header, .v2-tour-resume) { display: none !
   #g2Intro .cycle { min-height: 40px; }
 }
 #g2Intro { overflow: hidden; } /* QA H1: okno krajiny nesmie posunúť úvod */
+/* Samo 15. 11.: dvojitý rámik pri písaní – rámik ukazuje len pole (.input), samotný input bez obrysu */
+#g2Intro .input input:focus, #g2Intro .input input:focus-visible { outline: none !important; box-shadow: none !important; }
+#g2Intro .input:focus-within { border-color: var(--lav-dark); box-shadow: 0 0 0 2px var(--lav-dark); }
