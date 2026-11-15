@@ -1363,10 +1363,13 @@
           g2qAct("feed-end", "feeding", "Ukončiť kŕmenie", "uloží sa s časom", "", true) + g2qAct("feed-switch", "feeding", "Prepnúť na " + other.toLowerCase(), "aktuálne sa uloží, druhé začne"));
       }
       const last = g2qLastFeed();
-      return g2qOpen("Kŕmenie", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + String(last.value || "").split(" · ").slice(0, 2).join(" · ")) : g2qLastLine("Ťukni, čím začínaš.")) +
-        g2qAct("feed-start", "feeding", "Ľavý prsník", "spustí časovač", " data-side='Ľavý prsník'") +
-        g2qAct("feed-start", "feeding", "Pravý prsník", "spustí časovač", " data-side='Pravý prsník'") +
-        g2qAct("feed-bottle", "feeding", "Fľaša", "vyberieš množstvo"));
+      // Fľaša (umelé aj odsaté mlieko) ide hore, ak bolo naposledy kŕmenie fľašou – appka sa prispôsobí rodine bez nastavovania.
+      const bottleFirst = last?.method === "Fľaša";
+      const bottle = g2qAct("feed-bottle", "feeding", "Fľaša", "umelé alebo odsaté mlieko");
+      const breasts = g2qAct("feed-start", "feeding", "Ľavý prsník", "spustí časovač", " data-side='Ľavý prsník'") +
+        g2qAct("feed-start", "feeding", "Pravý prsník", "spustí časovač", " data-side='Pravý prsník'");
+      return g2qOpen("Kŕmenie", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + String(last.value || "").split(" · ").slice(0, 3).join(" · ")) : g2qLastLine("Ťukni, čím začínaš.")) +
+        (bottleFirst ? bottle + breasts : breasts + bottle));
     }
     if (key === "sleep") {
       if (state.sleepTimer?.active) return g2qOpen("Spánok", g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "spánok sa uloží", "", true));
@@ -1436,8 +1439,8 @@
       state.v5.contractionTimer = { active: false, start: "" };
       return g2qDone("Kontrakcia uložená · trvala " + g2qClock(new Date(state.v5.contractions.slice(-1)[0].end) - new Date(state.v5.contractions.slice(-1)[0].start)), snap);
     }
-    if (run.key === "sleep") { const d = g2qSpan(g2qSince(state.sleepTimer.start)); stopSleep(); return g2qDone("Spánok uložený · " + d, snap); }
-    const d = g2qSpan(g2qSince(state.v5.feedingTimer.start)); stopFeeding(); g2qDone("Kŕmenie uložené · " + d, snap);
+    if (run.key === "sleep") { const d = g2qSpan(g2qSince(state.sleepTimer.start)); stopSleep(true); return g2qDone("Spánok uložený · " + d, snap); }
+    const d = g2qSpan(g2qSince(state.v5.feedingTimer.start)); stopFeeding(true); g2qDone("Kŕmenie uložené · " + d, snap);
   }
   let g2qAudio = null;
   function g2qStopAudio() { if (g2qAudio) { g2qAudio.pause(); g2qAudio = null; } }
@@ -1478,28 +1481,37 @@
     }
     if (action === "contraction-start") { state.v5.contractionTimer = { active: true, start: new Date().toISOString() }; return g2qDone("Kontrakcia sa meria", snap); }
     if (action === "sleep-start") {
-      if (state.v5.feedingTimer.active) stopFeeding();
+      if (state.v5.feedingTimer.active) stopFeeding(true);
       const start = new Date(Date.now() - Number(el.dataset.ago || 0) * 60000);
       const h = start.getHours();
       state.sleepTimer = { active: true, start: start.toISOString(), type: h >= 19 || h < 6 ? "night" : "day" };
       return g2qDone("Spánok sa meria", snap);
     }
     if (action === "feed-start") {
-      if (state.sleepTimer?.active) stopSleep();
+      if (state.sleepTimer?.active) stopSleep(true);
       state.v5.feedingTimer = { active: true, start: new Date().toISOString(), method: "Dojčenie", side: el.dataset.side };
       return g2qDone("Kŕmenie beží", snap);
     }
     if (action === "feed-end") return g2qStopRunning();
     if (action === "feed-switch") {
       const side = g2qSideShort(state.v5.feedingTimer.side) === "ľavý" ? "Pravý prsník" : "Ľavý prsník";
-      stopFeeding();
+      stopFeeding(true);
       state.v5.feedingTimer = { active: true, start: new Date().toISOString(), method: "Dojčenie", side };
       return g2qDone("Teraz " + side.toLowerCase(), snap);
     }
-    if (action === "feed-bottle") return g2qOpen("Fľaša", "<p class='g2r-lead'>Koľko vypilo? Ťuknutím sa uloží.</p><div class='g2r-chips'>" + [60, 90, 120, 150].map(ml => "<button class='g2r-pill' type='button' data-g2q='bottle' data-ml='" + ml + "'>" + ml + " ml</button>").join("") + "</div><button class='g2r-link' type='button' data-g2q='seg' data-seg='feed'>Späť na výber</button>");
+    if (action === "feed-bottle" || action === "milk") {
+      if (action === "milk") state.v5.bottleMilk = el.dataset.milk;
+      const milk = state.v5.bottleMilk || "Umelé mlieko";
+      const lastMl = Number(state.v5.bottleLastMl) || 0;
+      // Len rýchle voľby množstva (nie odporúčanie); naposledy zvolené je zvýraznené.
+      return g2qOpen("Fľaša", "<div class='g2r-chips g2r-rq' role='group' aria-label='Druh mlieka'>" + ["Umelé mlieko", "Odsaté mlieko"].map(m => "<button class='g2r-pill' type='button' data-g2q='milk' data-milk='" + m + "' aria-pressed='" + String(m === milk) + "'>" + m + "</button>").join("") + "</div>" +
+        "<p class='g2r-lead' style='margin-top:12px'>Koľko vypilo? Ťuknutím sa uloží.</p><div class='g2r-chips g2r-rq'>" + [30, 60, 90, 120, 150, 180, 210].map(ml => "<button class='g2r-pill" + (ml === lastMl ? " g2q-last" : "") + "' type='button' data-g2q='bottle' data-ml='" + ml + "'>" + ml + " ml</button>").join("") + "</div><button class='g2r-link' type='button' data-g2q='seg' data-seg='feed'>Späť na výber</button>");
+    }
     if (action === "bottle") {
-      if (state.v5.feedingTimer.active) stopFeeding();
-      state.events.push({ id: createId(), type: "Kŕmenie", value: "Fľaša · " + el.dataset.ml + " ml", note: "", author: "rodina", created: new Date().toISOString(), method: "Fľaša" });
+      if (state.v5.feedingTimer.active) stopFeeding(true);
+      const milk = state.v5.bottleMilk || "Umelé mlieko";
+      state.v5.bottleLastMl = Number(el.dataset.ml);
+      state.events.push({ id: createId(), type: "Kŕmenie", value: "Fľaša · " + milk + " · " + el.dataset.ml + " ml", note: "", author: "rodina", created: new Date().toISOString(), method: "Fľaša", milk });
       return g2qDone("Fľaša " + el.dataset.ml + " ml uložená", snap);
     }
     if (action === "diaper-save") {
@@ -3661,7 +3673,7 @@
     openHome();
   }
 
-  function stopSleep() {
+  function stopSleep(silent) {
     if (!state.sleepTimer?.active || !state.sleepTimer.start) return;
     const start = new Date(state.sleepTimer.start);
     const end = new Date();
@@ -3680,7 +3692,7 @@
     state.sleepTimer = { active: false, start: "", type: state.sleepTimer.type || "day" };
     if (typeof save === "function") save(); else persist();
     renderAll();
-    announce("Spánok bol ukončený a uložený.");
+    if (!silent) announce("Spánok bol ukončený a uložený.");
   }
 
   function startFeeding() {
@@ -3698,7 +3710,7 @@
     openHome();
   }
 
-  function stopFeeding() {
+  function stopFeeding(silent) {
     const timer = state.v5.feedingTimer;
     if (!timer.active || !timer.start) return;
     const start = new Date(timer.start);
@@ -3718,7 +3730,7 @@
     state.v5.feedingTimer = { active: false, start: "", method: "", side: "" };
     if (typeof save === "function") save(); else persist();
     renderAll();
-    announce("Dojčenie bolo ukončené a uložené.");
+    if (!silent) announce("Dojčenie bolo ukončené a uložené.");
   }
 
   function renderTimers() {

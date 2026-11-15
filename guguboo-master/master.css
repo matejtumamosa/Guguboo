@@ -771,3 +771,4 @@ body.v5-active.night .g2q-card .g2q-center:not(.is-running) :is(strong, small, .
   body:has(#home.view.active) .g2-short { min-height: 48px !important; }
   body:has(#home.view.active) .g2-short .g2-short-ic { display: none !important; }
 }
+.g2r-pill.g2q-last { box-shadow: inset 0 0 0 2px #5f4fb1; }
