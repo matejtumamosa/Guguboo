@@ -2055,7 +2055,9 @@
       g2Feature("contacts", "Rodina", "kontakty kontakt telefon cislo lekar pediater gynekolog porodnica porodna asistentka"),
       g2Feature("memories", "Rodina", "momenty fotky foto spomienky album karticka oznamit oznamenie narodenie prve razy"),
       expecting ? null : g2Feature("checklists", "Rodina", "zoznam zoznamy checklist choroba lekar cestovanie"),
-      g2Feature("travel", "Rodina", "cestovanie cesta vylet dovolenka auto lietadlo")
+      g2Feature("travel", "Rodina", "cestovanie cesta vylet dovolenka auto lietadlo"),
+      // Master 2.6: údaje len v telefóne, záloha, pridanie na plochu (g2-backup.js)
+      g2Item("backup", "Appka a záloha", "Na plochu, záloha údajov", "lock", "Rodina", "data-g2b-open", "zaloha zalohovat obnovit ulozit udaje data telefon plocha instalovat nainstalovat stiahnut aplikacia appka vymazat novy telefon")
     ].filter(Boolean);
     // Len pre hľadanie (nie sú samostatné dlaždice): pomoc, profil, kartičky.
     const extra = [
@@ -3911,7 +3913,7 @@
         ["Udalosti", (state.reminders || []).length]
       ];
       content = "<div class='v5-list'>" + summary.map(item => "<div class='v5-row-card'><span class='v5-icon'>" + icon("checklist") + "</span><div><strong>" + item[0] + "</strong><span>" + skCount(item[1], "položka", "položky", "položiek") + "</span></div></div>").join("") + "</div>" +
-        "<div class='v5-info-box'><strong>Súkromie</strong><br>Bez reklám. Tvoje údaje nepredávame ani nesledujeme.<br>V bete sa po zatvorení okna vymažú. Denník má vlastný PIN.</div>" +
+        "<div class='v5-info-box'><strong>Súkromie</strong><br>Bez reklám. Tvoje údaje nepredávame ani nesledujeme.<br>Údaje sú uložené len v tomto telefóne.</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť súkromný denník</button></div>";
     }
     target.innerHTML = flowHead("Nastavenia a profil", "Profily rodiny", "", 0, 1) +

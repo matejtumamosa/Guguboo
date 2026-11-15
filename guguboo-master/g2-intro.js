@@ -582,7 +582,7 @@
     const blocked = name === "stage" && !S.stage;
     btn.setAttribute("aria-disabled", String(blocked));
     slot.innerHTML = name === "hook"
-      ? "<p class='note'>Bez reklám. V bete sa údaje po zatvorení vymažú.</p>"
+      ? "<p class='note'>Bez reklám. Údaje ostávajú len v tvojom telefóne.</p>"
       : "<button class='link muted' id='g2i-back'>Späť</button>";
     const bar = $("progress"), step = { stage: 1, date: 2, names: 3 }[name];
     bar.classList.toggle("off", !step);

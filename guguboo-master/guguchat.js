@@ -6,7 +6,7 @@
  *   - ku každej odpovedi ponúkne akciu (Začať, Už mám vybavené, Pripomeň mi, …),
  *   - pri varovných signáloch vždy eskaluje (155 / 112, pôrodnica, lekár) – nikdy nediagnostikuje,
  *   - čo nevie, povie úprimne a otázku si zapíše ako medzeru v znalostiach (produktové dáta).
- * Beta: všetko žije len v sessionStorage (spolu s ostatným stavom).
+ * Master 2.6: stav sa ukladá len v telefóne (localStorage, spolu s ostatným stavom).
  */
 (function initGuguChat() {
   "use strict";
@@ -257,7 +257,7 @@
   }
 
   function betaFooterHtml() {
-    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sa po zatvorení okna vymažú</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button>" + (V5.MASTER ? "" : "<button type='button' data-v2-tour-restart>Ukázať prehliadku</button><button type='button' data-v2-reset>Začať odznova</button>") + "</span></aside>";
+    return "<aside class='v2-beta-note'><span><strong>Beta verzia " + (window.GUGUBOO_V2_VERSION || "") + "</strong> · údaje sú uložené len v tomto telefóne</span><span class='v2-beta-actions'><button type='button' data-v2-feedback>Dať spätnú väzbu</button>" + (V5.MASTER ? "" : "<button type='button' data-v2-tour-restart>Ukázať prehliadku</button><button type='button' data-v2-reset>Začať odznova</button>") + "</span></aside>";
   }
 
   // ——— Spätná väzba z bety (brief body 38–40) ———

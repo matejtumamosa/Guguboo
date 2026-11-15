@@ -19,7 +19,8 @@
   }
 
   // Beta V2: rovnako ako hlavný stav len na čas otvorenej karty (sessionStorage).
-  const betaStorage = window.sessionStorage;
+  // Master 2.6: zašifrovaný denník sa ukladá natrvalo v telefóne ako hlavný stav (odomknutie ostáva len na čas karty).
+  const betaStorage = window.localStorage;
   const privateStore = {
     read() {
       const raw = betaStorage.getItem(STORAGE_KEY);
@@ -290,7 +291,7 @@
         <section class="private-card private-list-card" aria-labelledby="privateListTitle"><h2 id="privateListTitle">Moje zápisy</h2>
           <div class="private-filter" role="group" aria-label="Filter zápisov"><button type="button" data-private-filter="all" aria-pressed="${listFilter === "all"}">Všetko</button><button type="button" data-private-filter="letters" aria-pressed="${listFilter === "letters"}">Listy pre ${escapeHtml(babyNameAcc())}${letterCount ? " · " + letterCount : ""}</button></div>
           <div class="private-list" data-private-list></div></section>
-        <p class="private-limit-note">PIN chráni šifrované zápisy v tomto prehliadači. V beta verzii sa po zatvorení appky vymažú.</p>
+        <p class="private-limit-note">PIN chráni šifrované zápisy, ktoré sú uložené len v tomto telefóne. Ak PIN zabudneš, zápisy sa nedajú otvoriť.</p>
       </main>
     </div>`;
     renderEntries();
