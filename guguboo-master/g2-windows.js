@@ -31,7 +31,9 @@
     { id: "v5OOverlay", kind: "sheet", back: oBack, close: () => V5.closeAdaptiveOMenu() },
     { id: "g2PlanOverlay", kind: "full", back: () => V5.closePlan(), close: () => V5.closePlan() },
     { id: "g2MonthOverlay", kind: "full", back: () => V5.closeMonth(), close: () => V5.closeMonth() },
-    { id: "v2AdminOverlay", kind: "full", back: () => window.GugubooAdmin?.stepBack?.(), close: () => window.GugubooAdmin?.close?.() }
+    { id: "v2AdminOverlay", kind: "full", back: () => window.GugubooAdmin?.stepBack?.(), close: () => window.GugubooAdmin?.close?.() },
+    // Master 2.0: Čas pre teba (g2-ring.js) – krátka akcia, späť o krok v rámci okna, × / Esc zavrie
+    { id: "g2RingOverlay", kind: "sheet", back: () => window.G2Ring?.back?.(), close: () => window.G2Ring?.close?.() }
   ];
   const layerById = Object.fromEntries(LAYERS.map(layer => [layer.id, layer]));
 
@@ -229,7 +231,7 @@
     // QA N4: prechod na inú časť knižky alebo Mamy (napr. „Zrušiť“ v novom zápise) – rozpísané sa nestratí bez otázky
     ".view.active [data-v5-book-section]", ".view.active [data-v2-child-section]", ".view.active [data-v2-mama-section]"
   ].join(", ");
-  const BACKDROPS = new Set(["v5OOverlay", "v5QuickRecordOverlay", "v5DrawerOverlay", "v2AdminOverlay"]);
+  const BACKDROPS = new Set(["v5OOverlay", "v5QuickRecordOverlay", "v5DrawerOverlay", "v2AdminOverlay", "g2RingOverlay"]);
   document.addEventListener("click", event => {
     if (event.target.closest("[data-g2-confirm-stay]")) return closeConfirm(false);
     if (event.target.closest("[data-g2-confirm-discard]")) return closeConfirm(true);

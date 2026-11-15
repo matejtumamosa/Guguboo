@@ -1200,7 +1200,7 @@
       : "<button class='v5-o-record v5-o-next-task' type='button' data-v5-org-section='" + firstOpenSection.id + "' aria-label='Otvoriť ďalšiu organizačnú úlohu'><span aria-hidden='true'>→</span><strong>Ďalšia úloha</strong></button>";
     if (master) {
       const anyDone = sections.some(section => progress[section.id].done > 0);
-      const masterCenter = "<button class='v5-o-record g2-ring-center' type='button' data-v5-o-section='care' aria-label='Otvoriť Čas pre teba'><strong>" + (anyDone ? "Pekne" : "Pre teba") + "</strong><small>" + (anyDone ? "Dnes si si dopriala chvíľu" : "Malá chvíľa, keď sa dá") + "</small></button>";
+      const masterCenter = "<button class='v5-o-record g2-ring-center' type='button' data-v5-o-section='care' aria-label='Otvoriť Čas pre teba'><strong>Pre teba</strong><small>Malá chvíľa, keď sa dá</small></button>";
       return [
         "<section class='v5-o-card g2-ring-card' aria-label='Čas pre teba'>",
         "<div class='g2-ring-head'><small>Čas pre teba</small></div>",
