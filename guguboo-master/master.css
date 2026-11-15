@@ -738,3 +738,36 @@ body:has(#home.view.active) .g2q-card .g2-ring-center strong { white-space: norm
   body:has(#home.view.active) .g2q-card .g2-ring-center strong { font-size: 12px !important; }
   body:has(#home.view.active) .g2q-card .v2-o-label text { font-size: 27px !important; }
 }
+/* ——— Master 2.2 (UI: KRUH_STRED_UI.md): farba stredu ukazuje, komu patrí obsah ——— */
+/* Nič nebeží: biely stred s tenkou linkou – nevyzerá ako štvrtý diel */
+body.v5-active .g2q-card .g2q-center:not(.is-running) { background: #fff !important; box-shadow: inset 0 0 0 1.5px #e4ddf3 !important; }
+body.v5-active .g2q-card .g2q-center:not(.is-running) strong { color: #29243a !important; }
+/* Beží časovač: odtieň a ikona dielu, bez fialového svetla */
+body.v5-active .g2q-card .g2q-center.is-running { animation: none !important; box-shadow: inset 0 0 0 2px rgba(41, 36, 58, .10) !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-1 { background: #fbe3ea !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-2 { background: #fde9d6 !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-3 { background: #e3eafb !important; }
+.g2q-card .g2q-ic svg { width: 18px; height: 18px; display: block; color: #29243a; }
+@media (prefers-reduced-motion: no-preference) { .g2q-card .g2-seg-glow { animation: g2qBreath 4s ease-in-out infinite; } @keyframes g2qBreath { 50% { filter: brightness(1.06) drop-shadow(0 0 6px rgba(255,255,255,.6)); } } }
+/* Popisy dielov – kontrast ≥ 4,5 : 1 aj na sýtom diele */
+body.v5-active .g2q-card .v2-o-label-1 text { fill: #6a2240 !important; }
+body.v5-active .g2q-card .v2-o-label-2 text { fill: #5a2f0c !important; }
+body.v5-active .g2q-card .v2-o-label-3 text { fill: #1f2d66 !important; }
+/* Noc: stred tmavý, text svetlý */
+body.v5-active.night .g2q-card .g2q-center:not(.is-running) { background: #2b2540 !important; box-shadow: inset 0 0 0 1.5px #4a4166 !important; }
+body.v5-active.night .g2q-card .g2q-center:not(.is-running) :is(strong, small, .g2q-link) { color: #f1edff !important; }
+/* Uložené · Vrátiť */
+.g2q-toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 260; display: flex; align-items: center; gap: 14px; max-width: calc(100% - 32px); padding: 10px 10px 10px 18px; border-radius: 18px; background: #29243a; color: #fff; font: 600 15px/1.3 Montserrat, "Segoe UI", system-ui, sans-serif; box-shadow: 0 12px 30px rgba(25, 20, 38, .3); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.g2q-toast.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.g2q-toast button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: #fff; color: #4a3d99; font: 700 15px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+/* Bruško */
+.g2q-bump { display: block; width: 100%; max-height: 46vh; object-fit: cover; border-radius: 18px; margin-bottom: 10px; }
+.g2q-file { position: relative; cursor: pointer; }
+.g2q-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+/* Malý telefón: stred bez druhého riadku, ikona nesie význam */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2q-card .g2q-center.is-running small { display: none !important; }
+  body:has(#home.view.active) .g2q-card .g2q-ic svg { width: 15px; height: 15px; }
+  body:has(#home.view.active) .g2-short { min-height: 48px !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic { display: none !important; }
+}

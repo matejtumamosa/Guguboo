@@ -100,7 +100,7 @@
       {
         target: () => home?.querySelector(".g2-ring-card"),
         title: "Rýchle záznamy",
-        text: expecting ? "Jedným ťuknutím zapíšeš pohyb, pozrieš kontrolu alebo otázky. Na konci tehotenstva tu meriaš kontrakcie." : "Jedným ťuknutím spustíš spánok alebo kŕmenie. V strede vidíš, ako dlho beží – ťuknutím ho ukončíš. Čas pre teba nájdeš v Mame."
+        text: expecting ? "Ja a bábätko: zapíš pohyb, odfoť bruško alebo nahraj bábätku svoj hlas. Na konci tehotenstva tu meriaš kontrakcie." : "Ťukni na diel – kŕmenie, spánok, plienky. Keď niečo beží, v strede vidíš čas a ťuknutím to ukončíš. Čas pre teba nájdeš v Mame."
       },
       {
         target: () => home?.querySelector(".g2-today-row"),
