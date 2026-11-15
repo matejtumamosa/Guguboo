@@ -709,6 +709,9 @@
 
   function syncUniversalWindow() {
     const viewId = currentView();
+    // Master 2.3 (Samo 15. 11., možnosť A): Bábätko, Mama a Rodina sú záložky lišty – bez krížika a šípky späť; tie majú len okná otvorené z nich.
+    document.body.classList.toggle("g2-tab-root", Boolean(MASTER) && ["v5BabyHub", "v5Mama", "v5FamilyHub"].includes(viewId));
+    if (viewId !== "v5Mama") document.body.classList.remove("g2-tab-sub");
     const open = !universalWindowExcluded.has(viewId);
     document.body.classList.toggle("v5-app-window-open", open);
     document.documentElement.classList.toggle("v5-app-window-open", open);
@@ -4441,6 +4444,7 @@
     const allowed = expecting ? ["body", "troubles", "food", "water"] : ["troubles", "check", "mood", "water"];
     let section = allowed.includes(mamaSection) ? mamaSection : "home";
     if (!content && section !== "water") section = "home";
+    document.body.classList.toggle("g2-tab-sub", section !== "home"); // podčasť Mamy je okno → späť a × sa vrátia
     // Po pôrode: koľký deň / týždeň (šestonedelie = prvých 6 týždňov).
     const birthDays = !expecting && state.profile.birth ? Math.floor((new Date(todayKey() + "T12:00:00") - new Date(state.profile.birth + "T12:00:00")) / 86400000) : null;
     const afterBirth = birthDays === null || birthDays < 0 ? "Po pôrode" : birthDays < 42 ? (birthDays + 1) + ". deň po pôrode · šestonedelie" : Math.floor(birthDays / 7) + 1 + ". týždeň po pôrode";
