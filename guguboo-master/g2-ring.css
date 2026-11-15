@@ -69,3 +69,19 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) button.g2r-part.g2
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) button.g2r-part.g2r-p2:not(.primary) { background-color: #ffe8d4 !important; color: #29243a !important; }
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) button.g2r-part.g2r-p3:not(.primary) { background-color: #e3eafc !important; color: #29243a !important; }
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2r-check[aria-pressed="true"] .box { background: #c6bcff; box-shadow: none; }
+/* Master 2.4: Počasie a oblečenie (g2-weather.js) */
+.g2w-city label { display: block; margin-bottom: 6px; font-weight: 700; }
+.g2w-city > div { display: flex; gap: 8px; }
+.g2w-city input { flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--v5-line); background: var(--v5-surface); color: var(--v5-ink); font: 500 16px/1 Montserrat, "Segoe UI", system-ui, sans-serif; }
+.g2w-now { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 14px 16px; border-radius: 18px; background: var(--v5-surface-soft); }
+.g2w-now strong { font: 800 30px/1 Montserrat, "Segoe UI", system-ui, sans-serif; }
+.g2w-now span { font-size: 14px; line-height: 1.4; color: var(--v5-muted); }
+.g2w-modes { margin-bottom: 10px; }
+.g2w-rules, .g2w-pack { margin: 0; padding-left: 18px; }
+.g2w-rules li { margin: 8px 0; }
+.g2w-rules small { display: block; font-size: 13px; color: var(--v5-muted); }
+.g2w-pack { list-style: none; padding: 0; }
+.g2w-pack label { display: flex; align-items: center; gap: 10px; min-height: 40px; }
+.g2w-pack input { width: 22px; height: 22px; accent-color: #5f4fb1; }
+.g2w-src summary { min-height: 40px; font-weight: 700; cursor: pointer; }
+.g2w-src a, .g2r-small a { color: var(--v5-brand-dark); }

@@ -35,7 +35,8 @@
     // Master 2.0: Čas pre teba (g2-ring.js) – krátka akcia, späť o krok v rámci okna, × / Esc zavrie
     { id: "g2RingOverlay", kind: "sheet", back: () => window.G2Ring?.back?.(), close: () => window.G2Ring?.close?.() },
     // Master 2.1: krátke voľby kruhu na domove (kŕmenie, plienky, jedlo, kontrakcie)
-    { id: "g2QuickOverlay", kind: "sheet", back: () => window.G2Quick?.close?.(), close: () => window.G2Quick?.close?.() }
+    { id: "g2QuickOverlay", kind: "sheet", back: () => window.G2Quick?.close?.(), close: () => window.G2Quick?.close?.() },
+    { id: "g2WeatherOverlay", kind: "sheet", back: () => window.G2Weather?.close?.(), close: () => window.G2Weather?.close?.() }
   ];
   const layerById = Object.fromEntries(LAYERS.map(layer => [layer.id, layer]));
 

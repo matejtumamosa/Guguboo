@@ -2611,6 +2611,7 @@
   function openQuickFeatureModal(key) {
     // Master 2.2.2 (Samo 15. 11.): kŕmenie, spánok a plienky sa zapisujú VŠADE rovnako ako v kruhu (jedno okno, deň/noc podľa času, Vrátiť).
     if (MASTER && ["sleep", "feeding", "diaper"].includes(key)) { closeQuickRecord(); return g2qSheet({ sleep: "sleep", feeding: "feed", diaper: "diaper" }[key]); }
+    if (MASTER && key === "weather" && window.G2Weather) { closeQuickRecord(); return window.G2Weather.open(); } // Master 2.4: počasie automaticky
     const feature = features[key];
     if (!feature?.flow) return openFeature(key);
     closeQuickRecord();
