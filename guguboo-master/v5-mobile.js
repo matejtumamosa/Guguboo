@@ -1369,7 +1369,9 @@
       const breasts = g2qAct("feed-start", "feeding", "Ľavý prsník", "spustí časovač", " data-side='Ľavý prsník'") +
         g2qAct("feed-start", "feeding", "Pravý prsník", "spustí časovač", " data-side='Pravý prsník'");
       return g2qOpen("Kŕmenie", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + String(last.value || "").split(" · ").slice(0, 3).join(" · ")) : g2qLastLine("Ťukni, čím začínaš.")) +
-        (bottleFirst ? bottle + breasts : breasts + bottle));
+        (bottleFirst ? bottle + breasts : breasts + bottle) +
+        // Príkrmy podľa veku: NHS – s tuhou stravou sa začína približne v 6. mesiaci (rovnaký zdroj ako GuguChat).
+        ((ageData()?.days ?? 0) >= 180 ? g2qAct("seg", "meal", "Príkrm", "čo jedlo", " data-seg='food'") : ""));
     }
     if (key === "sleep") {
       if (state.sleepTimer?.active) return g2qOpen("Spánok", g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "spánok sa uloží", "", true));
@@ -1849,7 +1851,9 @@
             const sCal = short("calendar", "g2-c-brand", "Kalendár", "termíny", "data-v5-feature='calendar'");
             // Samo 13. 11.: „Starostlivosť o bábätko“ (pôvodne „Keď sa bábätko trápi“, premenované 15. 11. – pokojný tón) ostáva na domove celý 1. rok (vtedy je najviac neistoty); Zdravotná knižka je v Bábätku a vo Všetko.
             // Master 2.1: od 1 roka je Aktivita v kruhu → na jej mieste Denné záznamy.
-            return days >= 365 ? [sRec, sCal, sBook] : days > 42 ? [sRec, sCare, sAct] : [sRec, sCare, sBook];
+            // Master 2.2.2 (Samo 15. 11.): Denné záznamy nie sú skratkou – zapisuje sa v kruhu, celý prehľad je v strede kruhu (Náš deň) a vo Všetko.
+            const sTeeth = short("tooth", "g2-c-baby", "Zúbky", "mapa, starostlivosť", "data-v5-feature='teeth'");
+            return days >= 365 ? [sCal, sBook, sTeeth] : days > 42 ? [sCare, sAct, sBook] : [sCare, sBook, sCal];
           })();
       // Termín do 7 dní nahradí v riadku „Dnes“ úlohu (termín je v ten deň dôležitejší).
       // QA-63: pripomienka z „Neskôr“ sa neukáže ako termín – úloha sa vráti sama, keď príde čas.
@@ -2602,6 +2606,8 @@
   }
 
   function openQuickFeatureModal(key) {
+    // Master 2.2.2 (Samo 15. 11.): kŕmenie, spánok a plienky sa zapisujú VŠADE rovnako ako v kruhu (jedno okno, deň/noc podľa času, Vrátiť).
+    if (MASTER && ["sleep", "feeding", "diaper"].includes(key)) { closeQuickRecord(); return g2qSheet({ sleep: "sleep", feeding: "feed", diaper: "diaper" }[key]); }
     const feature = features[key];
     if (!feature?.flow) return openFeature(key);
     closeQuickRecord();
@@ -3235,7 +3241,7 @@
       "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("health") + "</span><span><strong>Návšteva lekára</strong><small>Pokyny a ďalšia kontrola</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Plač, teplota a iné</strong><small>Čo pomáha a kedy sa ozvať lekárovi</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-feature='childBook'><span class='v5-icon'>" + icon("book") + "</span><span><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("moon") + "</span><span><strong>Spánok a zvuky</strong><small>Šum a uspávanky</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Šum a uspávanky</strong><small>Na upokojenie a zaspávanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-urgent><span class='v5-icon'>" + icon("contacts") + "</span><span><strong>Kontakty na pomoc</strong><small>Pediater, pohotovosť a záchranka</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "</div><p class='v5-care-disclaimer'>Guguboo ti pomáha zorientovať sa. Pri zdravotných otázkach sa vždy môžeš obrátiť na svojho pediatra.</p>"
     ].join("");
@@ -5710,7 +5716,7 @@
     if (event.target.closest("[data-v5-health-overview]")) return openHealthOverviewModal();
     if (event.target.closest("[data-v5-urgent]")) return openUrgentModal();
     if (event.target.closest("[data-v5-care-sleep]")) {
-      openQuickFeatureModal("sleep");
+      openFeature("sounds");
       state.v5.adaptiveO.modalSource = "care";
       persist();
       return;

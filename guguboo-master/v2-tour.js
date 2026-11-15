@@ -95,7 +95,7 @@
         title: "Tri skratky",
         text: expecting
           ? "Veci, ktoré teraz potrebuješ najčastejšie. Menia sa podľa týždňa."
-          : "Veci, ktoré teraz potrebuješ najčastejšie, napríklad denné záznamy. Menia sa, ako bábätko rastie."
+          : "Veci, ktoré teraz potrebuješ najčastejšie, napríklad starostlivosť o bábätko. Menia sa, ako bábätko rastie."
       },
       {
         target: () => home?.querySelector(".g2-ring-card"),
