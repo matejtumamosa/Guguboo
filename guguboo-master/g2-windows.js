@@ -33,7 +33,9 @@
     { id: "g2MonthOverlay", kind: "full", back: () => V5.closeMonth(), close: () => V5.closeMonth() },
     { id: "v2AdminOverlay", kind: "full", back: () => window.GugubooAdmin?.stepBack?.(), close: () => window.GugubooAdmin?.close?.() },
     // Master 2.0: Čas pre teba (g2-ring.js) – krátka akcia, späť o krok v rámci okna, × / Esc zavrie
-    { id: "g2RingOverlay", kind: "sheet", back: () => window.G2Ring?.back?.(), close: () => window.G2Ring?.close?.() }
+    { id: "g2RingOverlay", kind: "sheet", back: () => window.G2Ring?.back?.(), close: () => window.G2Ring?.close?.() },
+    // Master 2.1: krátke voľby kruhu na domove (kŕmenie, plienky, jedlo, kontrakcie)
+    { id: "g2QuickOverlay", kind: "sheet", back: () => window.G2Quick?.close?.(), close: () => window.G2Quick?.close?.() }
   ];
   const layerById = Object.fromEntries(LAYERS.map(layer => [layer.id, layer]));
 

@@ -99,8 +99,8 @@
       },
       {
         target: () => home?.querySelector(".g2-ring-card"),
-        title: "Čas pre teba",
-        text: "Malé veci len pre teba – oddych, telo a opora. Bez povinností a bez počítania. Ťukni na farebný diel."
+        title: "Rýchle záznamy",
+        text: expecting ? "Jedným ťuknutím zapíšeš pohyb, pozrieš kontrolu alebo otázky. Na konci tehotenstva tu meriaš kontrakcie." : "Jedným ťuknutím spustíš spánok alebo kŕmenie. V strede vidíš, ako dlho beží – ťuknutím ho ukončíš. Čas pre teba nájdeš v Mame."
       },
       {
         target: () => home?.querySelector(".g2-today-row"),

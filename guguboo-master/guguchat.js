@@ -421,7 +421,7 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – kruh na domove, len pre tvoju pohodu\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Všetko – potiahni spodnú lištu nahor\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – navrchu v Mame, len pre tvoju pohodu\n• Kruh na domove – rýchle záznamy (spánok, kŕmenie, pohyby)\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Všetko – potiahni spodnú lištu nahor\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
@@ -582,7 +582,7 @@
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
     if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc", "som na dne", "nema to zmysel", "nevladzem", "uz nevladzem"])) {
-      return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "home" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
+      return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "me" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
     }
 
     // 1b. Sprievodca appkou („kde sú fotky?“) – po bezpečnosti, pred ostatným.
@@ -865,6 +865,7 @@
         return setTimeout(() => document.querySelector(".view.active " + selector)?.click(), 80);
       }
       if (kind === "home") return V5.openHome();
+      if (kind === "me") return window.G2Ring?.overview ? window.G2Ring.overview() : V5.openHome(); // Master 2.1: Čas pre teba je v Mame
       if (kind === "birth") return window.GugubooBirth?.open();
       if (kind === "admin") return window.GugubooAdmin?.open(value);
       if (kind === "helpinfo") {

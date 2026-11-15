@@ -693,3 +693,48 @@ body:has(#home.view.active) #v5PersistentTimers { display: none !important; }
 /* Samo 15. 11.: skratky – ikony v jednej línii a obsah opticky v strede (názov má vždy miesto na 2 riadky) */
 .g2-short { justify-content: center !important; padding: 8px 6px !important; }
 .g2-short strong { min-height: 2.5em; display: flex !important; align-items: center; justify-content: center; }
+
+/* ——— Master 2.1: kruh = rýchle ovládanie, stred = živý ukazovateľ (Samo 15. 11.) ——— */
+.g2q-card .g2q-center { gap: 1px; }
+.g2q-card .g2q-center small { font-size: 11.5px; font-weight: 600; max-width: 84px; line-height: 1.15; }
+.g2q-card .g2q-center strong { font-size: 14px; line-height: 1.15; max-width: 84px; }
+.g2q-card .g2q-center .g2q-time { font: 800 22px/1.05 var(--g2-font, Montserrat, sans-serif); font-variant-numeric: tabular-nums; color: #29243a; letter-spacing: -.01em; }
+.g2q-card .g2q-center .g2q-stop { margin-top: 3px; padding: 4px 9px; border-radius: 999px; background: #5f4fb1; color: #fff !important; font: 700 11.5px/1.1 var(--g2-font, Montserrat, sans-serif); white-space: nowrap; }
+.g2q-card .g2q-center .g2q-link { margin-top: 2px; font: 700 11.5px/1.1 var(--g2-font, Montserrat, sans-serif); color: #4a3d99 !important; text-decoration: underline; text-underline-offset: 2px; }
+.g2q-card .g2q-center.is-running { box-shadow: 0 0 0 3px rgba(95, 79, 177, .35), 0 6px 18px rgba(95, 79, 177, .25) !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .g2q-card .g2q-center.is-running { animation: g2qPulse 2.4s ease-in-out infinite; }
+  @keyframes g2qPulse { 50% { box-shadow: 0 0 0 7px rgba(95, 79, 177, .12), 0 6px 18px rgba(95, 79, 177, .25); } }
+}
+.g2q-list { list-style: none; margin: 0; padding: 0; }
+.g2q-list li { display: flex; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--v5-line); }
+.g2q-list li:last-child { border-bottom: 0; }
+.g2q-list time { min-width: 46px; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* Čas pre teba – karta navrchu Mamy */
+.g2q-me { margin: 0 0 14px; padding: 12px; border-radius: 22px; background: var(--v5-surface); box-shadow: inset 0 0 0 1px var(--v5-line); }
+.g2q-me-head { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 2px 4px 8px; border: 0; background: transparent; color: var(--v5-ink); text-align: left; cursor: pointer; }
+.g2q-me-head strong { display: block; font: 800 17px/1.2 var(--g2-font, Montserrat, sans-serif); }
+.g2q-me-head small { display: block; margin-top: 2px; font: 500 14px/1.3 var(--g2-font, Montserrat, sans-serif); color: var(--v5-muted); }
+.g2q-me-head b { font-size: 22px; color: var(--v5-muted); }
+.g2q-me-parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.g2q-me .g2r-part { min-height: 56px; }
+.g2q-me :focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
+/* Master 2.1: rýchly kruh – popisy priamo na kruhu (ako prototyp), bez legendy, kruh čo najväčší, stred čitateľný */
+body:has(#home.view.active) .g2q-card.g2-ring-card { display: flex !important; flex-direction: column; align-items: center; justify-content: center; padding: 8px !important; }
+body:has(#home.view.active) .g2q-card .v5-o-layout { flex: 1 1 auto; min-height: 0 !important; width: 100%; height: 100% !important; display: flex !important; align-items: center; justify-content: center; }
+body:has(#home.view.active) .g2q-card .v5-o-ring-wrap { height: 100% !important; max-height: 330px; width: auto !important; max-width: 100% !important; aspect-ratio: 1 / 1; margin: 0 auto !important; }
+body:has(#home.view.active) .g2q-card .v2-o-label { display: block !important; }
+body:has(#home.view.active) .g2q-card .v2-o-label text { font-size: 22px !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-legend { display: none !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center { width: 33% !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center small { display: block !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center strong { white-space: normal; font-size: 13px !important; }
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2q-card .g2-ring-center { width: 42% !important; padding: 2px !important; }
+  body:has(#home.view.active) .g2q-card .g2-ring-center small { font-size: 10.5px; }
+  body:has(#home.view.active) .g2q-card .g2q-center.is-running small { display: none !important; }
+  body:has(#home.view.active) .g2q-card .g2q-center .g2q-time { font-size: 19px; }
+  body:has(#home.view.active) .g2q-card .g2q-center .g2q-stop { padding: 3px 7px; font-size: 10.5px; }
+  body:has(#home.view.active) .g2q-card .g2-ring-center strong { font-size: 12px !important; }
+  body:has(#home.view.active) .g2q-card .v2-o-label text { font-size: 27px !important; }
+}

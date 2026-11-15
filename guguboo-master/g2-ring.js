@@ -408,5 +408,13 @@
     entry(el);
   }, true);
 
+  // Master 2.1: karta Čas pre teba v Mame – Oddych / Telo / Opora otvorí priamo danú časť.
+  document.addEventListener("click", event => {
+    const el = event.target.closest("[data-g2-ring-part]");
+    if (!el) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    section(el.dataset.g2RingPart);
+  }, true);
   window.G2Ring = { back, close, center, section, overview, act: doAct, stopNoise, isOpen: () => overlay.classList.contains("open"), screen: () => nav[nav.length - 1]?.title || "" };
 })();
