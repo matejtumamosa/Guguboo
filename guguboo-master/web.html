@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guguboo – sprievodca tehotenstvom a prvým rokom bábätka</title>
+  <meta name="description" content="Tehotenstvo týždeň po týždni, rýchle záznamy kŕmenia a spánku, spomienky aj úrady a príspevky na Slovensku. Po slovensky, zadarmo, bez reklám.">
+  <!-- Náhľad: neindexovať, kým Samo nepovolí zverejnenie -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#fbf8f7">
+  <!--
+    GUGUBOO – nová úvodná stránka guguboo.com (Samo 15. 11. 2026). Texty: docs/master/WEB_TEXTY.md,
+    súkromie: docs/master/WEB_SUKROMIE.md. Formulár testeriek cez Netlify Forms (data-netlify).
+    Odkazy sú relatívne – na náhľade aj na guguboo.com vedú na app.html v tom istom priečinku.
+  -->
+  <style>
+    :root {
+      --bg: #fbf8f7; --surface: #ffffff; --soft: #f3effb; --ink: #29243a; --muted: #5d5670; --line: #e9e3f2;
+      --brand: #6f5fc4; --brand-dark: #4a3d99; --pink: #f3bdcd; --peach: #f8c79b; --lilac: #b5c5f2;
+      --radius: 24px; --shadow: 0 14px 40px rgba(41, 36, 58, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 500 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    a { color: var(--brand-dark); }
+    .wrap { width: min(100% - 32px, 1040px); margin: 0 auto; }
+    header.top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+    header.top img { height: 34px; width: auto; display: block; }
+    header.top a.small { font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 999px; background: var(--soft); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 24px; border-radius: 16px; border: 0; font: 700 17px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; text-decoration: none; cursor: pointer; }
+    .btn-main { background: #5f4fb1; color: #fff; box-shadow: 0 10px 24px rgba(95, 79, 177, .28); }
+    .btn-ghost { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+    .btn:focus-visible, a:focus-visible, input:focus-visible, label:focus-within { outline: 3px solid var(--brand-dark); outline-offset: 3px; }
+    .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: center; padding: 28px 0 56px; }
+    .hero h1 { margin: 0 0 14px; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; }
+    .hero p.lead { margin: 0 0 24px; font-size: 19px; color: var(--muted); max-width: 34em; }
+    .hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero .facts { margin: 16px 0 0; font-size: 15px; font-weight: 600; color: var(--muted); }
+    .art { display: grid; place-items: center; }
+    .art svg { width: min(100%, 360px); height: auto; }
+    section { padding: 48px 0; }
+    h2 { margin: 0 0 22px; font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+    .card { padding: 20px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .card h3 { margin: 10px 0 6px; font-size: 18px; line-height: 1.25; }
+    .card p { margin: 0; font-size: 15.5px; color: var(--muted); }
+    .dot { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; }
+    .d1 { background: #fde4ec; } .d2 { background: #ffe8d4; } .d3 { background: #e3eafc; } .d4 { background: #e8f4ea; } .d5 { background: var(--soft); }
+    .who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .who div { padding: 22px; border-radius: var(--radius); background: var(--soft); }
+    .who h3 { margin: 0 0 6px; font-size: 18px; }
+    .who p { margin: 0; font-size: 15.5px; color: var(--muted); }
+    .diff ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .diff li { padding: 18px 20px; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: 15.5px; color: var(--muted); }
+    .diff li strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
+    .fine { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
+    .privacy { display: flex; gap: 18px; align-items: center; padding: 26px; border-radius: var(--radius); background: #eef4ef; }
+    .privacy span { font-size: 34px; }
+    .privacy h2 { margin: 0 0 4px; font-size: 24px; }
+    .privacy p { margin: 0; color: var(--muted); }
+    .install { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .install div { padding: 22px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .install h3 { margin: 0 0 8px; font-size: 18px; }
+    .install ol { margin: 0; padding-left: 20px; color: var(--muted); }
+    .install li { margin: 4px 0; }
+    form { display: grid; gap: 18px; max-width: 560px; padding: 26px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .field label, .field legend { display: block; margin-bottom: 6px; font-weight: 700; }
+    .field small { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
+    fieldset { border: 0; margin: 0; padding: 0; }
+    input[type=text], input[type=email], input[type=number] { width: 100%; min-height: 50px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font: 500 17px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+    .choices label { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; border-radius: 999px; background: var(--soft); font-weight: 600; cursor: pointer; }
+    .choices input { width: 20px; height: 20px; accent-color: #5f4fb1; }
+    .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--muted); }
+    .consent input { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 2px; accent-color: #5f4fb1; }
+    .err { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #8a2f4e; }
+    .err:empty { display: none; }
+    .hp { position: absolute; left: -9999px; }
+    footer { padding: 36px 0 48px; border-top: 1px solid var(--line); margin-top: 24px; font-size: 14px; color: var(--muted); }
+    footer nav { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; }
+    footer nav a { font-weight: 700; }
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; padding-top: 8px; }
+      .art { order: -1; } .art svg { width: min(78%, 280px); }
+      .who, .diff ul, .install { grid-template-columns: 1fr; }
+      .hero .ctas .btn { flex: 1 1 100%; }
+      section { padding: 36px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <img src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo" width="94" height="34">
+      <a class="small" href="app.html">Otvoriť appku</a>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <h1>Pokojný sprievodca od bruška po prvé narodeniny</h1>
+          <p class="lead">Guguboo ti pomôže v tehotenstve aj v prvom roku bábätka – v bežnom dni, pri spomienkach aj pri úradoch.</p>
+          <div class="ctas">
+            <a class="btn btn-main" href="app.html">Otvoriť appku</a>
+            <a class="btn btn-ghost" href="#testovanie">Chcem testovať</a>
+          </div>
+          <p class="facts">Zadarmo · bez reklám · bez registrácie</p>
+        </div>
+        <div class="art" aria-hidden="true">
+          <!-- kruh ako v appke (ilustrácia) -->
+          <svg viewBox="0 0 320 320">
+            <defs>
+              <linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9d5df"/><stop offset="1" stop-color="#df91aa"/></linearGradient>
+              <linearGradient id="b" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde0c4"/><stop offset="1" stop-color="#e6955a"/></linearGradient>
+              <linearGradient id="c" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#d6e0fa"/><stop offset="1" stop-color="#768fd8"/></linearGradient>
+            </defs>
+            <g transform="translate(160 160)">
+              <path d="M8 -134 A134 134 0 0 1 120 58 L52 26 A58 58 0 0 0 4 -58 Z" fill="url(#a)"/>
+              <path d="M112 72 A134 134 0 0 1 -112 72 L-48 34 A58 58 0 0 0 48 34 Z" fill="url(#b)"/>
+              <path d="M-120 58 A134 134 0 0 1 -8 -134 L-4 -58 A58 58 0 0 0 -52 26 Z" fill="url(#c)"/>
+              <circle r="50" fill="#fff"/>
+              <text y="-4" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="17" fill="#29243a">Spí</text>
+              <text y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="20" fill="#29243a">0:47</text>
+              <text x="66" y="-56" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#6a2240" transform="rotate(38 66 -56)">Kŕmenie</text>
+              <text y="104" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#5a2f0c">Spánok</text>
+              <text x="-66" y="-56" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#1f2d66" transform="rotate(-38 -66 -56)">Plienky</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <section aria-labelledby="co">
+        <h2 id="co">Čo ti Guguboo uľahčí</h2>
+        <div class="cards">
+          <article class="card"><div class="dot d1" aria-hidden="true">🍐</div><h3>Týždeň po týždni</h3><p>Ako rastie bábätko a čo sa deje s tvojím telom. Veľkosť ukážeme orientačne ovocím.</p></article>
+          <article class="card"><div class="dot d2" aria-hidden="true">◔</div><h3>Rýchle záznamy v kruhu</h3><p>Kŕmenie, spánok a plienky zapíšeš jedným ťuknutím. V tehotenstve pohyby, bruško a hlas pre bábätko.</p></article>
+          <article class="card"><div class="dot d3" aria-hidden="true">☾</div><h3>Čas pre teba</h3><p>Malá chvíľa pre mamu: oddych, telo a opora. Bez hodnotenia a bez tlaku.</p></article>
+          <article class="card"><div class="dot d4" aria-hidden="true">✉</div><h3>Rodina a úrady</h3><p>Spoločný kalendár, udalosť pošleš partnerovi a prehľadne nájdeš, čo sa kedy vybavuje.</p></article>
+          <article class="card"><div class="dot d5" aria-hidden="true">?</div><h3>GuguChat</h3><p>Napíš, čo hľadáš, a GuguChat ťa navedie na správne miesto v appke.</p></article>
+        </div>
+      </section>
+
+      <section aria-labelledby="komu">
+        <h2 id="komu">Pre koho je Guguboo</h2>
+        <div class="who">
+          <div><h3>Keď čakáš bábätko</h3><p>Od prvých týždňov až po pôrod, s pokojným prehľadom toho, čo ťa čaká.</p></div>
+          <div><h3>Keď už máš bábätko do 1 roka</h3><p>Denné záznamy, starostlivosť, aktivity a prvé spomienky na jednom mieste.</p></div>
+          <div><h3>Pre partnera</h3><p>Termíny a udalosti si môžete poslať, aby ste o všetkom vedeli obaja.</p></div>
+        </div>
+      </section>
+
+      <section class="diff" aria-labelledby="ine">
+        <h2 id="ine">Čím je Guguboo iné</h2>
+        <ul>
+          <li><strong>Úrady a príspevky po slovensky</strong>Čo vybaviť, kde a dokedy – vždy s odkazom na oficiálny zdroj a dátumom overenia.</li>
+          <li><strong>Jedna appka od tehotenstva po prvý rok</strong>Netreba prechádzať do inej appky, keď sa bábätko narodí.</li>
+          <li><strong>Praktické aj osobné spolu</strong>Popri zápisoch kŕmenia a spánku aj Naše momenty, fotka bruška a kartičky.</li>
+          <li><strong>Overené zdroje</strong>Informácie čerpáme z verejných oficiálnych a odborných zdrojov a pri každej uvádzame, odkiaľ sú.</li>
+        </ul>
+        <p class="fine">Guguboo je sprievodca, nie zdravotnícka aplikácia. Nenahrádza lekára ani pôrodnú asistentku.</p>
+      </section>
+
+      <section aria-labelledby="sukr">
+        <div class="privacy"><span aria-hidden="true">🔒</span><div><h2 id="sukr">Tvoje údaje ostávajú u teba</h2><p>Všetko, čo si v appke zapíšeš, sa ukladá len v tvojom telefóne – bez účtu a bez posielania na server.</p></div></div>
+      </section>
+
+      <section aria-labelledby="plocha">
+        <h2 id="plocha">Maj Guguboo po ruke na ploche</h2>
+        <p>Guguboo nie je v obchode s aplikáciami. Otvoríš ho v prehliadači a pridáš si ho na plochu ako bežnú appku.</p>
+        <div class="install">
+          <div><h3>Android (Chrome)</h3><ol><li>Otvor Guguboo v Chrome.</li><li>Ťukni na ⋮ vpravo hore.</li><li>Vyber „Pridať na plochu“ alebo „Inštalovať aplikáciu“.</li><li>Potvrď.</li></ol></div>
+          <div><h3>iPhone (Safari)</h3><ol><li>Otvor Guguboo v Safari.</li><li>Ťukni na Zdieľať (štvorček so šípkou).</li><li>Vyber „Pridať na plochu“.</li><li>Ťukni na „Pridať“.</li></ol></div>
+        </div>
+        <p class="fine">Rovnaký návod nájdeš aj v appke: Všetko → Appka a záloha.</p>
+      </section>
+
+      <section id="testovanie" aria-labelledby="test">
+        <h2 id="test">Pomôž nám Guguboo vylepšiť</h2>
+        <p>Hľadáme mamičky a budúce mamičky, ktoré si appku vyskúšajú a povedia nám, čo im pomáha a čo nie. Ozveme sa e-mailom.</p>
+        <form name="testerky" method="POST" action="dakujeme.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="testerky">
+          <p class="hp"><label>Toto pole nevypĺňaj <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+          <div class="field">
+            <label for="f-name">Prezývka alebo meno</label>
+            <input id="f-name" name="meno" type="text" autocomplete="given-name" required maxlength="60">
+            <small>Stačí, ako ťa máme oslovovať.</small>
+            <p class="err" id="e-name"></p>
+          </div>
+          <div class="field">
+            <label for="f-mail">Tvoj e-mail</label>
+            <input id="f-mail" name="email" type="email" autocomplete="email" required maxlength="120">
+            <small>Použijeme ho len na kontakt k testovaniu.</small>
+            <p class="err" id="e-mail"></p>
+          </div>
+          <fieldset class="field">
+            <!-- Security & Privacy: záujem o časť appky, nie stav osoby; bez týždňa a dátumov (minimalizácia, čl. 9 GDPR) -->
+            <legend>Ktorú časť Guguboo chceš vyskúšať?</legend>
+            <div class="choices">
+              <label><input type="radio" name="cast" value="cakanie-na-babatko" required> Obdobie čakania na bábätko</label>
+              <label><input type="radio" name="cast" value="prvy-rok"> Prvý rok s bábätkom</label>
+              <label><input type="radio" name="cast" value="pozeram"> Zatiaľ sa len pozerám</label>
+            </div>
+            <p class="err" id="e-stage"></p>
+          </fieldset>
+          <fieldset class="field">
+            <legend>Aký máš telefón?</legend>
+            <div class="choices">
+              <label><input type="radio" name="telefon" value="android" required> Android</label>
+              <label><input type="radio" name="telefon" value="iphone"> iPhone</label>
+            </div>
+            <p class="err" id="e-phone"></p>
+          </fieldset>
+          <div class="field">
+            <!-- hodnota = verzia textu súhlasu (dôkaz, čo osoba odsúhlasila – čl. 7 ods. 1 GDPR) -->
+            <label class="consent"><input id="f-consent" name="suhlas" type="checkbox" value="ano-v1-2026-11" required>
+              <span id="consent-text">Súhlasím, aby TUMAMOSA s.r.o. (Guguboo) spracúvala moju prezývku, e-mail, typ telefónu a to, ktorú časť appky chcem vyskúšať, na účel pozvania do testovania a komunikácie počas neho – najdlhšie 12 mesiacov. Viem, že z tejto voľby môže vyplývať, že som tehotná alebo mám malé bábätko. Mám aspoň 16 rokov. Súhlas môžem kedykoľvek odvolať e-mailom na <a href="mailto:founders@tumamosa.com">founders@tumamosa.com</a>. Viac v <a href="sukromie.html">Ochrane súkromia</a>.</span></label>
+            <p class="err" id="e-consent"></p>
+          </div>
+          <button class="btn btn-main" type="submit">Prihlásiť sa na testovanie</button>
+          <p class="fine">Údaje použijeme len na pozvanie do testovania a po skončení ich zmažeme. Nikomu ich nepredávame.</p>
+          <p class="err" id="e-send" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Guguboo – sprievodca tehotenstvom a prvým rokom bábätka</strong>
+      <nav><a href="app.html">Otvoriť appku</a><a href="sukromie.html">Ochrana súkromia</a><a href="sukromie.html#kontakt">Kontakt</a></nav>
+      <p>Guguboo je sprievodca, nie zdravotnícka aplikácia. Pri otázkach o zdraví sa obráť na svojho lekára alebo pôrodnú asistentku.</p>
+      <p>Informácie o úradoch a príspevkoch uvádzame so zdrojom a dátumom overenia; záväzné je vždy znenie na oficiálnej stránke.</p>
+      <p>© 2026 Guguboo</p>
+    </footer>
+  </div>
+
+  <script>
+    // Kontrola formulára pokojnými vetami (bez výkričníkov); odoslanie bežným POST na Netlify Forms.
+    (function () {
+      const form = document.querySelector("form[name=testerky]");
+      if (!form) return;
+      const say = (id, text) => { document.getElementById(id).textContent = text; };
+      form.addEventListener("submit", event => {
+        ["e-name", "e-mail", "e-stage", "e-phone", "e-consent", "e-send"].forEach(id => say(id, ""));
+        let ok = true;
+        const name = form.meno.value.trim(), mail = form.email.value.trim();
+        if (!name) { say("e-name", "Napíš nám, prosím, meno alebo prezývku."); ok = false; }
+        if (!mail) { say("e-mail", "Doplň, prosím, e-mail, aby sme sa ti vedeli ozvať."); ok = false; }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) { say("e-mail", "Tento e-mail nevyzerá celý. Skontroluj, prosím, či je v ňom @ a bodka."); ok = false; }
+        if (!form.querySelector("input[name=cast]:checked")) { say("e-stage", "Vyber, prosím, jednu možnosť."); ok = false; }
+        if (!form.querySelector("input[name=telefon]:checked")) { say("e-phone", "Vyber, prosím, Android alebo iPhone."); ok = false; }
+        if (!form.suhlas.checked) { say("e-consent", "Na odoslanie potrebujeme tvoj súhlas."); ok = false; }
+        if (!ok) { event.preventDefault(); const bad = form.querySelector(".err:not(:empty)")?.closest(".field"); bad?.querySelector("input")?.focus(); bad?.scrollIntoView({ block: "center" }); }
+      });
+    })();
+  </script>
+</body>
+</html>
