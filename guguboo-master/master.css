@@ -785,19 +785,36 @@ body:has(#home.view.active) .g2q-card .v2-o-label text.g2q-sub { font: 600 var(-
 .premium-badge, .mini-badge.premium, .v4-tier-badge, .v4-app-open i, .v2-account-button,
 #memoryOutput .panel > .report-box:not(#outputPreview), .g2-legacy-premium { display: none !important; }
 .nav button[data-tier]::after { content: none !important; display: none !important; }
-/* Master 3.1 (Samo 16. 11.): meniť sa má len kruh na domove – ikony a vzhľad mimo kruhu vrátené do stavu pred 3.0.
-   Vrátená aj 2.8.3 (plné pozadie hlavičky) – rozmazanie na iPhone 16e nevyriešila a robila štvorec za pozdravom (GitHub #9 ostáva otvorený). */
+/* Master 3.2 (Samo): vrátená 2.8.3 – plné pozadie hlavičky robilo štvorec za pozdravom a rozmazanie na iPhone nevyriešilo (GitHub #9). */
+/* ——— Master 3.0 (IKONY_NAVRH.md + úpravy UX): ikony namiesto emoji a znakov ——— */
 /* Kruh na domove: ikona nad názvom dielu, farba ako názov dielu; v noci #29243a (diely ostávajú pastelové) */
 body.v5-active .g2q-card .v2-o-label-1 .g2q-seg-ic { fill: #6a2240; }
 body.v5-active .g2q-card .v2-o-label-2 .g2q-seg-ic { fill: #5a2f0c; }
 body.v5-active .g2q-card .v2-o-label-3 .g2q-seg-ic { fill: #1f2d66; }
 body.v5-active.night .g2q-card .v2-o-label .g2q-seg-ic { fill: #29243a; }
-/* Okná kruhu: veľkosť ikon; Plienky – Oboje: kvapka + plienka, menšie */
+/* Malý telefón (375 × 667): skratky si nechajú ikonu, skryje sa stavový riadok */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2-short { gap: 2px !important; padding: 6px 4px !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic { display: grid !important; width: 24px !important; height: 24px !important; background: transparent !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic svg.ph { width: 20px !important; height: 20px !important; }
+  body:has(#home.view.active) .g2-short small,
+  body:has(#home.view.active) .g2-short.is-running small { display: none !important; }
+}
+/* Témy v Mame a Menštruačný kalendár: linková ikona v štvorčeku namiesto emoji */
+.v2-mama-trouble summary > span.v5-icon { font-size: 0; }
+/* Čas pre teba: Oddych · Telo · Opora – ikona nad slovom (slovo ostáva) */
+.g2r-part { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.g2r-part svg.ph { width: 24px; height: 24px; }
 .g2r-act i svg.ph { width: 22px; height: 22px; }
+/* Plienky – Oboje: kvapka + plienka, menšie */
 .g2r-act i.g2r-two { gap: 0; grid-auto-flow: column; }
 .g2r-act i.g2r-two svg.ph { width: 16px; height: 16px; }
+/* Tip na týždeň: žiarovka namiesto 💡 */
+.v2-size-tip h3 svg.ph { width: 18px; height: 18px; vertical-align: -3px; color: var(--v5-brand-dark); }
 /* Master 3.0 (Samo, iPhone): v poli hľadania dvojitý rámik – rámik má len obal (.g2-search), nie samotné pole */
 .g2-search input, .g2-search input:focus, .g2-search input:focus-visible {
   -webkit-appearance: none !important; appearance: none !important;
   border: 0 !important; outline: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important;
 }
+/* Master 3.0.1 (Samo 16. 11.): nápisy na skratkách boli príliš hrubé – jemnejšie písmo, menšie a pokojnejšie */
+body.v5-active .g2-short strong { font: 600 14px/18px var(--g2-font) !important; letter-spacing: 0; color: var(--v5-ink); }

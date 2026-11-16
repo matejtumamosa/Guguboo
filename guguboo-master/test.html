@@ -732,8 +732,8 @@
           assert(used.size > 40, "málo nájdených použití – zmenil sa formát volaní?");
           eq([...used].filter(([n]) => !names.has(n)).map(([n, f]) => n + " (" + f + ")"), [], "chýba v iconPaths");
         },
-        "Žiadna chýbajúca ikona ani chyba – pred pôrodom (Master 3.1: znaky mimo kruhu ako pred 3.0)": async () => { const r = await iconScan("pred"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
-        "Žiadna chýbajúca ikona ani chyba – po pôrode (aj noc)": async () => { const r = await iconScan("po"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
+        "V ovládaní nie sú emoji ani znaky namiesto ikon – pred pôrodom": async () => { const r = await iconScan("pred"); eq(r.sym, [], "znaky v ovládaní"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
+        "V ovládaní nie sú emoji ani znaky namiesto ikon – po pôrode (aj noc)": async () => { const r = await iconScan("po"); eq(r.sym, [], "znaky v ovládaní"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
         "Staré negatívne názvy (Bežné ťažkosti, Keď je mi ťažko) nie sú v UI": async () => {
           const a = await iconScan("pred"), b = await iconScan("po");
           eq([...a.neg, ...b.neg], [], "viditeľné");
@@ -813,7 +813,7 @@
               eq(app.win.getComputedStyle(ic).fill, "rgb(41, 36, 58)", "farba ikony v noci");
             });
             const short = app.doc.querySelector("#home.view.active .g2-short");
-            assert(short, "chýbajú skratky"); // Master 3.1: na nízkej obrazovke skratky bez ikony ako pred 3.0 (mení sa len kruh)
+            assert(short && isVisible(short.querySelector(".g2-short-ic")), "skratka bez ikony");
             assert(!isVisible(short.querySelector("small")), "skratka ukazuje stavový riadok");
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
