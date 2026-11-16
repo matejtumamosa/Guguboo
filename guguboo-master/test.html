@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Guguboo Master – testy</title>
   <!--
-    GUGUBOO MASTER – TESTY (Master 2.8, Plán F1-0)
+    GUGUBOO MASTER – TESTY (Master 2.8, Plán F1-0; Master 3.0: ikony a názvy)
     ==============================================
     Ako spustiť (po každej zmene appky):
       1. Spusti statický server v koreni repa (napr. http://localhost:8787/) – alebo otvor náhľad na Netlify.
@@ -686,8 +686,142 @@
           try { eq(visibleMatches(app.doc, LEFTOVERS), [], "viditeľné"); } finally { app.remove(); }
         }
       }
+    },
+    {
+      // Master 3.0 (IKONY_NAVRH.md, Samo 16. 11.): ikony namiesto emoji a znakov, žiadne negatívne názvy.
+      name: "Ikony a názvy (Master 3.0)",
+      tests: {
+        "Každá ikona z iconPaths sa vykreslí (SVG s cestou, nie prázdne)": async () => {
+          const app = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const V5 = app.win.GugubooV5, names = V5.iconNames(), bad = [];
+            assert(names.length > 60, "málo ikon – zmenil sa export iconNames?");
+            const box = app.doc.createElement("div");
+            box.style.cssText = "position:fixed;left:0;top:0;width:48px;height:48px";
+            app.doc.body.appendChild(box);
+            for (const n of names) {
+              for (const variant of ["", "duo"]) {
+                box.innerHTML = V5.icon(n, variant);
+                const svg = box.querySelector("svg"), paths = svg ? [...svg.querySelectorAll("path")] : [];
+                const bb = svg && paths.length ? svg.getBBox() : null;
+                if (!paths.length || paths.some(p => !(p.getAttribute("d") || "").trim()) || !bb || Math.max(bb.width, bb.height) < 40 || bb.width > 260 || bb.height > 260) bad.push(n + (variant ? " (duo)" : ""));
+              }
+            }
+            box.remove();
+            eq(bad, [], "ikony, ktoré sa nevykreslia");
+          } finally { app.remove(); }
+        },
+        "Každý názov ikony použitý v kóde je v iconPaths": async () => {
+          const app = await bootApp(seed("pred"), { settle: 200 });
+          let names;
+          try { names = new Set(app.win.GugubooV5.iconNames()); } finally { app.remove(); }
+          const files = ["v5-mobile.js", "g2-ring.js", "v2-period.js", "teeth.js", "activities.js", "activities-data.js", "g2-windows.js", "g2-backup.js", "g2-safety.js", "g2-weather.js", "v2-moments.js", "v2-birth.js", "v2-albums.js", "v2-voice.js", "guguchat.js"];
+          const used = new Map();
+          const add = (name, file) => { if (/^[a-z][A-Za-z]+$/.test(name)) used.set(name, used.get(name) || file); };
+          for (const f of files) {
+            const r = await fetch(f + "?t=" + Date.now(), { cache: "no-store" });
+            if (!r.ok) continue;
+            const src = await r.text();
+            for (const m of src.matchAll(/\bicon\(\s*["']([A-Za-z]+)["']/g)) add(m[1], f);
+            for (const m of src.matchAll(/\bicon:\s*["']([A-Za-z]+)["']/g)) add(m[1], f);
+            for (const m of src.matchAll(/\bact\(\s*"[a-z:-]*",\s*"([A-Za-z]+)"/g)) add(m[1], f);
+            for (const m of src.matchAll(/\bshort\(\s*"([A-Za-z]+)"/g)) add(m[1], f);
+            for (const m of src.matchAll(/\b(?:quickActionButton|row|g2qAct)\(\s*"[^"]*",\s*"([A-Za-z]+)"/g)) add(m[1], f);
+            for (const block of src.matchAll(/const (?:G2Q_SEG_ICON|G2_TROUBLE_ICON) = \{([^}]*)\}/g)) for (const m of block[1].matchAll(/:\s*"([A-Za-z]+)"/g)) add(m[1], f);
+          }
+          assert(used.size > 40, "málo nájdených použití – zmenil sa formát volaní?");
+          eq([...used].filter(([n]) => !names.has(n)).map(([n, f]) => n + " (" + f + ")"), [], "chýba v iconPaths");
+        },
+        "V ovládaní nie sú emoji ani znaky namiesto ikon – pred pôrodom": async () => { const r = await iconScan("pred"); eq(r.sym, [], "znaky v ovládaní"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
+        "V ovládaní nie sú emoji ani znaky namiesto ikon – po pôrode (aj noc)": async () => { const r = await iconScan("po"); eq(r.sym, [], "znaky v ovládaní"); eq(r.warn, [], "chýbajúce ikony"); eq(r.errors, [], "chyby v konzole"); },
+        "Staré negatívne názvy (Bežné ťažkosti, Keď je mi ťažko) nie sú v UI": async () => {
+          const a = await iconScan("pred"), b = await iconScan("po");
+          eq([...a.neg, ...b.neg], [], "viditeľné");
+          const bad = [];
+          for (const f of ["v5-mobile.js", "g2-ring.js", "guguchat.js", "v2-tour.js", "g2-windows.js"]) {
+            const src = await (await fetch(f + "?t=" + Date.now(), { cache: "no-store" })).text();
+            for (const m of src.matchAll(/["'`][^"'`\n]*(?:Bežné ťažkosti|Keď je mi ťažko)[^"'`\n]*["'`]/g)) bad.push(f + ": " + m[0].slice(0, 60));
+          }
+          eq(bad, [], "v textoch kódu");
+        },
+        "Kruh 375 × 667 v noci: ikona + názov, bez „naposledy“, ikona ≥ 16 px, nič sa neprekrýva": async () => {
+          const app = await bootApp(seed("po", { night: true, extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }), { width: 375, height: 667 });
+          try {
+            await sleep(400);
+            const labels = [...app.doc.querySelectorAll("#home.view.active .g2q-card .v2-o-label")];
+            eq(labels.length, 3, "počet dielov");
+            eq(app.doc.querySelectorAll("#home.view.active .g2q-card text.g2q-sub").length, 0, "„naposledy“ na malom kruhu");
+            labels.forEach((g, i) => {
+              const ic = g.querySelector(".g2q-seg-ic"), name = g.querySelector("text:not(.g2q-sub)");
+              assert(ic && name, "diel " + (i + 1) + ": chýba ikona alebo názov");
+              const a = ic.getBoundingClientRect(), b = name.getBoundingClientRect();
+              const box = (ic.ownerSVGElement.getBoundingClientRect().width / 420) * Number(/scale\(([\d.]+)\)/.exec(ic.getAttribute("transform"))?.[1] || 0) * 256;
+              assert(box >= 15.9, "diel " + (i + 1) + ": ikona " + box.toFixed(1) + " px");
+              assert(!overlap(a, b), "diel " + (i + 1) + ": ikona prekrýva názov");
+              eq(app.win.getComputedStyle(ic).fill, "rgb(41, 36, 58)", "farba ikony v noci");
+            });
+            const short = app.doc.querySelector("#home.view.active .g2-short");
+            assert(short && isVisible(short.querySelector(".g2-short-ic")), "skratka bez ikony");
+            assert(!isVisible(short.querySelector("small")), "skratka ukazuje stavový riadok");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Kruh 390 × 844 cez deň: ikona → názov → „naposledy“ bez prekrytia": async () => {
+          const app = await bootApp(seed("po", { extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }));
+          try {
+            await sleep(400);
+            const labels = [...app.doc.querySelectorAll("#home.view.active .g2q-card .v2-o-label")];
+            eq(labels.map(g => !!g.querySelector(".g2q-seg-ic")), [true, true, true], "ikony v dieloch");
+            assert(app.doc.querySelector("#home.view.active .g2q-card text.g2q-sub"), "„naposledy“ chýba");
+            labels.forEach((g, i) => {
+              const rects = [...g.querySelectorAll(".g2q-seg-ic, text")].map(el => el.getBoundingClientRect());
+              for (let x = 0; x < rects.length; x++) for (let y = x + 1; y < rects.length; y++) assert(!overlap(rects[x], rects[y]), "diel " + (i + 1) + ": prvky sa prekrývajú");
+            });
+          } finally { app.remove(); }
+        }
+      }
     }
   ];
+
+  // ——— Master 3.0: prechod obrazovkami a kontrola ovládania (znaky, negatívne názvy, chýbajúce ikony) ———
+  const overlap = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+  // Emoji a znaky, ktoré nahrádzali ikony (◌ ☾ ✉ ☏ ⇡ ⏱ ≈ ↟ ♡ 💡 🦷 …). ✓ (stav v Zúbkoch) zatiaľ ostáva – na rozhodnutie.
+  const CTRL_SYMBOLS = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{2712}\u{2714}-\u{27BF}\u{2B00}-\u{2BFF}◌⇡↟⏱≈️]/u;
+  const NEGATIVE = /Bežné ťažkosti|Keď je mi ťažko/;
+  const scanCache = {};
+  function iconScan(kind) { return scanCache[kind] ||= iconScanRun(kind); }
+  async function iconScanRun(kind) {
+    const app = await bootApp(seed(kind), { width: 375, height: 667 });
+    const sym = [], neg = [], warn = [];
+    const ow = app.win.console.warn;
+    app.win.console.warn = function (...a) { const t = a.map(String).join(" "); if (/chýba ikona/.test(t)) warn.push(t); return ow.apply(this, a); };
+    const doc = app.doc, win = app.win, V5 = win.GugubooV5;
+    const check = where => {
+      doc.querySelectorAll("button, a, summary, label, [role='button'], .v2-size-tip h3").forEach(el => {
+        if (!isVisible(el)) return;
+        const text = el.textContent || "";
+        const pseudo = ["::before", "::after"].map(p => win.getComputedStyle(el, p).content).filter(c => c && c !== "none" && c !== "normal").join(" ");
+        if (CTRL_SYMBOLS.test(text + pseudo)) sym.push(where + ": " + (text.trim() || pseudo).slice(0, 50));
+      });
+      visibleMatches(doc, NEGATIVE).forEach(t => neg.push(where + ": " + t));
+    };
+    const reset = async () => { try { win.G2Ring?.close(); doc.querySelector("#g2QuickOverlay.open [data-g2q='close']")?.click(); V5.closeDrawer?.(); V5.windowCloseAll?.(); V5.openHome?.(); } catch (_) { /* nič */ } await sleep(80); };
+    try {
+      check("domov");
+      V5.openDrawer(); await sleep(250); check("Všetko"); await reset();
+      V5.openFeature("mama"); await sleep(150); check("Mama");
+      doc.querySelector(".view.active [data-v2-mama-section='troubles']")?.click(); await sleep(150); check("Mama – témy"); await reset();
+      for (const step of [() => win.G2Ring.overview(), () => win.G2Ring.section("rest"), () => win.G2Ring.section("body"), () => win.G2Ring.section("sup"), () => win.G2Ring.center(), () => { win.G2Ring.forceNight = true; win.G2Ring.center(); }, () => win.G2Ring.act("hard")]) {
+        step(); await sleep(400); check("Čas pre teba – " + win.G2Ring.screen()); win.G2Ring.forceNight = undefined; await reset();
+      }
+      for (const seg of [...doc.querySelectorAll("#home.view.active .g2q-card path[data-g2q='seg']")]) {
+        seg.dispatchEvent(new win.MouseEvent("click", { bubbles: true })); await sleep(150);
+        check("kruh – " + (doc.getElementById("g2qTitle")?.textContent || seg.dataset.seg)); await reset();
+      }
+      for (const f of kind === "po" ? ["period", "teeth", "care"] : ["babySize", "pregnancy"]) { V5.openFeature(f); await sleep(200); check(f); await reset(); }
+    } finally { app.remove(); }
+    return { sym: [...new Set(sym)], neg: [...new Set(neg)], warn: [...new Set(warn)], errors: app.errors };
+  }
 
   async function scanAll(kind) {
     const app = await bootApp(seed(kind));
