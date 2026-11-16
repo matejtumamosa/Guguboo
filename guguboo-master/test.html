@@ -83,7 +83,9 @@
       Object.entries(saved).forEach(([k, v]) => { if (store.getItem(k) !== v) store.setItem(k, v); });
     });
   }
-  const sameSnap = (a, b) => JSON.stringify([dump(a.local), dump(a.session)]) === JSON.stringify([dump(b.local), dump(b.session)]);
+  // Master 2.8: snímky z realSnapshot() sú obyčajné objekty (nie Storage) – porovnať zoradené kľúče.
+  const sortObj = o => Object.keys(o || {}).sort().reduce((r, k) => (r[k] = o[k], r), {});
+  const sameSnap = (a, b) => JSON.stringify([sortObj(a.local), sortObj(a.session)]) === JSON.stringify([sortObj(b.local), sortObj(b.session)]);
 
   // ——— Spustenie appky v izolovanom rámci ———
   let appHtmlCache = null;

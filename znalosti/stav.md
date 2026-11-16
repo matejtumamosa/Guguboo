@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 16. 11. 2026 (Samo, Claude)_
+_Naposledy aktualizované: 16. 11. 2026 večer (Claude)_
 
 ## Verzia
 
-- **Master 2.7** vo vetve `v2`, priečinok `guguboo-master/`.
+- **Master 2.8** vo vetve `v2`, priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -17,11 +17,14 @@ _Naposledy aktualizované: 16. 11. 2026 (Samo, Claude)_
   zapíš, čo pozoruješ + otázka pre pediatra; Otázky pre lekára na jednom mieste; vážne situácie v `g2-safety.js`;
   Zúbky bez návodov; kruh Čas pre teba bez „Kŕč v nohe“; Pripravená postieľka (NHS, The Lullaby Trust).
 - **Inštalácia na plochu** overená na Androide (Samo, 15. 11.).
+- **2.8 (Fáza 1):** testovacia stránka `guguboo-master/test.html` (pred commitom musí byť celá zelená); úrady a sumy k 1. 1. 2027 (Sociálna poisťovňa; rodičovský a daňový bonus 2027 ešte nezverejnené – poznámka), odvodová úľava 300 €, „Orientačná suma“ a upozornenie po dátume kontroly; skryté zvyšky Premium; oprava pádu Menštruačného kalendára.
 
 ## Rozpracované / ďalej
 
 - Ikony namiesto textu (nové pravidlo) – najprv kruh a karty; navrhne UI dizajnér.
-- Vety ⚕ v `g2-safety.js` a Pripravená postieľka – potvrdí odborný garant (pediater), keď sa nájde.
+- Fáza 1 ďalej: fotky a hlas do IndexedDB + záloha · overenie na iPhone (Samo) · vlastné písmo · ikony · časová os nárokov (náhľad).
+- Na rozhodnutie: ako počítať týždeň (39+0 = 39. alebo 40.), vek v dňoch sa mení o poludní; Menštruačný kalendár ešte sám hodnotí menštruáciu > 7 dní (audit #28).
+- Spustenie guguboo.com: PR #8 (čaká na Sama – keď sa začne testovanie).
 - Web guguboo.com: zapnúť Netlify Form detection, doplniť dátum účinnosti a e-mail na pozvánky v `sukromie.html`,
   právnik pred spustením. Potom web + Master nahradia V1 na guguboo.com (cez PR do `main`).
 - Písmo appky: Montserrat sa načítava z Google Fonts – nahradiť vlastným hostovaním (čaká na súhlas Sama).
