@@ -50,6 +50,7 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
   Ťuk nikdy hneď neuloží – otvorí malé okno; po uložení „Uložené · Vrátiť“. Stred = bežiaci časovač alebo „Náš deň“.
 - **Bez duplicít (2.2.2):** čo je v kruhu, nie je skratkou; kŕmenie, spánok a plienky sa zapisujú všade rovnako.
 - **Pokojné názvy (2.2):** napr. „Keď sa bábätko trápi“ → „Starostlivosť o bábätko“.
+  **Pravidlo (Samo 16. 11.): v názvoch a ikonách nekomunikujeme negatíva** – „Bežné ťažkosti“ → „Čo je bežné“, „Keď je mi ťažko“ → „Nálada a podpora“, bez náplastí a varovných ikon. Bezpečnostné vety (g2-safety.js) ostávajú.
 - **Zdieľanie s partnerom (2.2):** cez telefón (text + .ics do kalendára, pozvánka do Guguboo), bez servera.
   Účty a synchronizácia prídu neskôr (Matej).
 - **Lišta ako záložky (2.3):** Bábätko, Mama, Rodina sú záložky – bez šípky späť a ×; tie majú len okná otvorené z nich.
