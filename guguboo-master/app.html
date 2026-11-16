@@ -27,6 +27,9 @@
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="guguboo-logo-3d-pastel-v2.png">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <!-- Master 2.9: vlastné písmo Montserrat (OFL, fonts/OFL.txt) – bez Google Fonts, funguje aj bez signálu -->
+  <link rel="preload" href="fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/montserrat.css?v=m2.9">
   <!-- Master 2.6: appka sa dá pridať na plochu (manifest + service worker len pre tento priečinok) -->
   <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials"><!-- náhľad je chránený prihlásením – manifest musí ísť s prihlásením, inak Android ponúkne len odkaz -->
   <meta name="theme-color" content="#fbf8f7">
@@ -36,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Guguboo – nová verzia (vývoj)</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap');
+    /* Master 2.9: písmo Montserrat je vlastné (fonts/montserrat.css), nič sa nenačítava z Google Fonts. */
 
     :root {
       --bg: #fff9f7;
