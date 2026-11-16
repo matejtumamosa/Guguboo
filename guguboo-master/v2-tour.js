@@ -71,9 +71,9 @@
         target: () => home?.querySelector(".g2-askwrap"),
         title: "Hľadaj alebo sa opýtaj",
         items: [
-          { icon: "search", name: "Hľadaj", text: "napíš, čo hľadáš. GuguChat odpovie z overených zdrojov." }
+          { icon: "search", name: "Hľadaj", text: "napíš otázku alebo čo hľadáš. GuguChat odpovie z overených zdrojov a ukáže, kde to v appke nájdeš." }
         ],
-        try: { label: "Vyskúšať hľadanie", run: () => home?.querySelector("[data-g2-ask]")?.click() }
+        try: { label: "Vyskúšať GuguChat", run: () => home?.querySelector("[data-g2-ask]")?.click() }
       },
       expecting ? {
         target: () => home?.querySelector(".g2-hero"),

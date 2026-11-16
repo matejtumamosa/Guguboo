@@ -757,6 +757,46 @@
             assert(!app.doc.querySelector("[data-g2-chat='Je mi ťažko a potrebujem pomoc']"), "stará veta ostala");
           } finally { app.remove(); }
         },
+        "Pole „Hľadaj alebo sa opýtaj“ a lupa otvoria GuguChat s kurzorom v poli; zásuvka Všetko nemá pole hľadania": async () => {
+          const app = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const doc = app.doc, V5 = app.win.GugubooV5;
+            // pole na domove + lupa v okne (Kalendár)
+            for (const where of ["home", "calendar"]) {
+              if (where === "home") V5.openHome(); else V5.openFeature(where);
+              await sleep(150);
+              const el = [...doc.querySelectorAll("[data-g2-ask]")].find(isVisible);
+              assert(el, where + ": chýba pole alebo lupa");
+              el.click(); await sleep(300);
+              eq(V5.currentView(), "guguChat", "po ťuknutí na " + (el.getAttribute("aria-label") || el.className));
+              assert(!doc.getElementById("v5DrawerOverlay")?.classList.contains("open"), "otvorila sa zásuvka");
+              eq(doc.activeElement?.id, "v2ChatInput", "kurzor v poli GuguChatu");
+            }
+            V5.openHome(); V5.openDrawer(); await sleep(250);
+            const drawer = doc.getElementById("v5Drawer");
+            assert(!drawer.querySelector("input, form, #g2Chips, .g2-chips"), "zásuvka má pole hľadania alebo návrhy");
+            eq(doc.getElementById("v5DrawerTitle").textContent.trim(), "Všetko", "nadpis zásuvky");
+            eq([...drawer.querySelectorAll(".g2-sec h3")].map(h => h.textContent.trim()), ["Bábätko", "Mama", "Rodina"], "skupiny");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "GuguChat nájde miesta v appke aj pri hovorových slovách a preklepoch (namiesto hľadania v zásuvke)": async () => {
+          const app = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const V5 = app.win.GugubooV5, doc = app.doc;
+            const labels = q => V5.searchApps(q).map(h => h.label);
+            assert(labels("kalendr").includes("Kalendár"), "preklep „kalendr“: " + labels("kalendr"));
+            assert(labels("papanie").length > 0, "hovorové „papanie“ nič nenašlo");
+            eq(labels("nedycha"), [], "pri vážnych slovách žiadne odkazy");
+            app.win.GugubooChat.open(); await sleep(150);
+            app.win.GugubooChat.ask?.("kde mám kalendr"); await sleep(150);
+            const last = [...doc.querySelectorAll("#v2ChatLog .v2-msg-bot")].pop();
+            assert(last && [...last.querySelectorAll("button")].some(b => /Kalendár/.test(b.textContent)), "GuguChat neponúkol Kalendár");
+            const appBtn = last.querySelector(".v2-chat-app");
+            if (appBtn) { appBtn.click(); await sleep(200); assert(V5.currentView() !== "guguChat", "tlačidlo miesta v appke nič neotvorilo"); }
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
         "Kruh 375 × 667 v noci: ikona + názov, bez „naposledy“, ikona ≥ 16 px, nič sa neprekrýva": async () => {
           const app = await bootApp(seed("po", { night: true, extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }), { width: 375, height: 667 });
           try {

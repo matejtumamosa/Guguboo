@@ -2226,6 +2226,21 @@
         "<div class='g2-tiles'>" + items.filter(item => item.id !== "help").map(item => g2Btn(item, "g2-tile")).join("") + "</div></section>").join("") +
         "<div class='g2-drawer-foot'><button type='button' data-g2-go data-v5-urgent>Kontakty na pomoc</button><button type='button' data-g2-go data-v5-feature='profiles'>Nastavenia a profil</button></div>" + (window.GugubooV2?.betaFooterHtml?.() || ""); // beta poznámka a spätná väzba (presunuté z domova)
     }
+    const { hits, crisis } = g2Hits(query);
+    if (crisis) {
+      const calls = (crisis.actions || []).filter(action => action.kind === "tel");
+      return "<section class='g2-crisis' role='alert'><p>" + escapeHtml(crisis.text).replace(/\n\n/g, "</p><p>") + "</p><div class='g2-crisis-calls'>" +
+        calls.map(action => "<a class='g2-btn g2-btn-primary' href='tel:" + escapeHtml(action.value) + "'>" + escapeHtml(action.label) + "</a>").join("") + "</div></section>";
+    }
+    return [
+      "<button class='g2-ask-row' type='button' data-g2-chat='", escapeHtml(query.trim()), "'><span class='g2-ask-orb'>", icon("chat"), "</span><span><strong>Opýtať sa GuguChatu</strong><small>„", escapeHtml(query.trim()), "“</small></span>›</button>",
+      hits.length ? "<h3 class='g2-hits-head'>V appke</h3>" + hits.map(hit => g2Btn(hit.item, "g2-hit")).join("") : "<p class='g2-empty'>Skús sa opýtať GuguChatu vyššie.</p>"
+    ].join("");
+  }
+  // Master 3.0: hľadanie miest v appke (hovorové slová, preklepy) – používa ho GuguChat (searchApps), zásuvka už pole nemá.
+  function g2Hits(query) {
+    const cat = g2Catalog();
+    const q = normalized(query).trim();
     const words = q.split(/[^a-z0-9]+/).filter(w => (w.length > 2 || w === "pn" || w === "uz") && !G2_STOP.has(w));
     const pool = [...cat.groups.flatMap(([, items]) => items), ...cat.extra].map(item => ({ item, score: words.length ? g2Score(item.label + " " + item.sub + " " + item.keys, words) : 0 }));
     const admin = (window.GugubooContent?.lifeAdmin?.SK?.items || []).map(item => ({
@@ -2243,15 +2258,16 @@
     // QA 1.9 S7: krízové vety („nechcem už žiť“…) – rovnaká pokojná pomoc ako v GuguChate hneď navrchu, bez nesúvisiacich výsledkov.
     let crisis = null;
     try { crisis = window.GugubooV2?.answer?.(query, { dryRun: true }); } catch (_) { crisis = null; }
-    if (crisis && crisis.level === "urgent" && /112/.test(crisis.text || "") && /Nezábudka/.test(crisis.text || "")) {
-      const calls = (crisis.actions || []).filter(action => action.kind === "tel");
-      return "<section class='g2-crisis' role='alert'><p>" + escapeHtml(crisis.text).replace(/\n\n/g, "</p><p>") + "</p><div class='g2-crisis-calls'>" +
-        calls.map(action => "<a class='g2-btn g2-btn-primary' href='tel:" + escapeHtml(action.value) + "'>" + escapeHtml(action.label) + "</a>").join("") + "</div></section>";
-    }
-    return [
-      "<button class='g2-ask-row' type='button' data-g2-chat='", escapeHtml(query.trim()), "'><span class='g2-ask-orb'>", icon("chat"), "</span><span><strong>Opýtať sa GuguChatu</strong><small>„", escapeHtml(query.trim()), "“</small></span>›</button>",
-      hits.length ? "<h3 class='g2-hits-head'>V appke</h3>" + hits.map(hit => g2Btn(hit.item, "g2-hit")).join("") : "<p class='g2-empty'>Skús sa opýtať GuguChatu vyššie.</p>"
-    ].join("");
+    if (!(crisis && crisis.level === "urgent" && /112/.test(crisis.text || "") && /Nezábudka/.test(crisis.text || ""))) crisis = null;
+    return { hits, crisis };
+  }
+  // GuguChat: miesta v appke k otázke (max. 3). Pri vážnych slovách nič – GuguChat sám ukáže kontakty na pomoc.
+  function searchApps(query) {
+    const q = normalized(query || "");
+    if (!q.trim() || /(odtiek|odteka|praskl|plodov|krvac|necitim pohyb|nehybe|kontrakc|mzitk|bezvedom|nedycha|zmodr)/.test(q)) return [];
+    const { hits, crisis } = g2Hits(query);
+    if (crisis) return [];
+    return hits.slice(0, 3).map(hit => ({ label: hit.item.label, attrs: hit.item.attrs, id: hit.item.id }));
   }
   function g2Chips() {
     const cat = g2Catalog();
@@ -2271,19 +2287,13 @@
     const expecting = state.profile.status === "expecting";
     const groups = expecting ? prenatalDrawerGroups : postpartumDrawerGroups;
     if (MASTER) {
-      byId("v5DrawerTitle").textContent = "Hľadaj alebo sa opýtaj";
+      // Master 3.0 (Samo 16. 11.): zásuvka = LEN aplikácie v skupinách Bábätko · Mama · Rodina. Hľadanie a otázky
+      // sú v GuguChate (pole na domove a lupa); GuguChat ukáže aj miesta v appke (searchApps nižšie, hovorové slová a preklepy).
+      byId("v5DrawerTitle").textContent = "Všetko";
       const lead = byId("v5DrawerTitle").nextElementSibling;
       if (lead) lead.textContent = "";
       byId("v5Drawer")?.classList.add("g2-drawer");
-      // Pevná časť (pole + návrhy) stojí, posúva sa len zoznam.
-      let fixed = byId("g2DrawerFixed");
-      if (!fixed) {
-        fixed = document.createElement("div");
-        fixed.id = "g2DrawerFixed";
-        scroll.parentNode.insertBefore(fixed, scroll);
-      }
-      fixed.innerHTML = "<form class='g2-search' id='g2SearchForm' role='search'>" + icon("search") + "<input id='g2Q' type='search' autocomplete='off' enterkeyhint='search' placeholder='Hľadaj alebo sa opýtaj' aria-label='Hľadaj funkciu alebo sa opýtaj GuguChatu'></form>" +
-        "<div class='g2-chips' id='g2Chips' aria-label='Návrhy pre teba teraz'>" + g2Chips() + "</div>";
+      byId("g2DrawerFixed")?.remove();
       scroll.innerHTML = "<div id='g2Results'>" + g2Results("") + "</div>";
       return;
     }
@@ -6097,14 +6107,15 @@
     }
     // QA-29: ťuk na úlohu/aplikáciu v okne Plán alebo Tvoj mesiac zatvorí to okno, aby sa cieľ neotvoril pod ním.
     // Master 1.8: okná zo zásobníka (Úrady, hľadanie) sa otvoria NAD Plánom – späť vráti do Plánu.
-    const g2StacksAbove = event.target.closest("[data-v2-admin-open], [data-g2-ask], [data-v2-journey-open^='admin.'], [data-v5-feature='administration']");
+    const g2StacksAbove = event.target.closest("[data-v2-admin-open], [data-v2-journey-open^='admin.'], [data-v5-feature='administration']");
     if (!(MASTER && g2StacksAbove) && event.target.closest("#g2PlanOverlay, #g2MonthOverlay") && event.target.closest("[data-v5-feature], [data-v2-journey-open], [data-v2-admin-open], [data-v2-birth-open], [data-v5-quick-feature], [data-g2-ask], [data-v5-book-section]")) {
       closePlan(); closeMonth();
     }
     // Ťuk na lištu zatvorí okná Plán a Tvoj mesiac (stabilná navigácia).
     if (event.target.closest("#v5BottomBar")) { closePlan(); closeMonth(); }
     // Master K-4: pole GuguChatu, okno Plán, výsledky hľadania.
-    if (event.target.closest("[data-g2-ask]")) { openDrawer(); setTimeout(() => byId("g2Q")?.focus(), 320); return; }
+    // Master 3.0 (Samo 16. 11.): pole „Hľadaj alebo sa opýtaj“ a lupa (data-g2-ask) otvoria LEN GuguChat s kurzorom v poli; zásuvka Všetko je len zoznam aplikácií.
+    if (event.target.closest("[data-g2-ask]")) { closeDrawer(); window.GugubooChat?.open?.(); setTimeout(() => byId("v2ChatInput")?.focus(), 120); return; }
     if (event.target.closest("[data-g2-all]")) return openDrawer();
     if (event.target.closest("[data-g2-plan-close]")) return closePlan();
     if (event.target.closest("[data-g2-month-close]")) return closeMonth();
@@ -6772,7 +6783,7 @@
     // Master 2.7: jeden zoznam otázok pre lekára + okno „Zapísať ako otázku…“ (GuguChat, aktivity, kruh, momenty).
     addDoctorQuestion, doctorQuestions, openAskQuestion, openDoctorQuestions,
     renderHome, renderBottomBar, renderDrawer, persist, announce, icon, escapeHtml, features,
-    iconNames: () => Object.keys(iconPaths), /* Master 3.0: pre test.html */ rerenderMoments: () => renderFirst100(), rerenderPeriod: () => (currentView() === "v5Period" ? renderPeriod() : renderMama()), daySummaryData, calendarItems,
+    iconNames: () => Object.keys(iconPaths), searchApps, /* Master 3.0: test.html, GuguChat */ rerenderMoments: () => renderFirst100(), rerenderPeriod: () => (currentView() === "v5Period" ? renderPeriod() : renderMama()), daySummaryData, calendarItems,
     // Master: položka Plánu otvorí detail jednej veci v novej appke (nie starú obrazovku V1 „Pred narodením“).
     openPrep(prep) {
       if (prep === "doctor" && window.GugubooAdmin?.open) return window.GugubooAdmin.open("sk.process.vyber_pediatra");

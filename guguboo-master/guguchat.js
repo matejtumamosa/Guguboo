@@ -760,6 +760,8 @@
     const actions = (message.actions || []).map(action => {
       if (action.kind === "tel") return "<a class='v2-chat-action v2-chat-action-urgent' href='tel:" + esc(action.value) + "'>" + esc(action.label) + "</a>";
       if (action.kind === "link") return "<a class='v2-chat-action' href='" + esc(action.value) + "' target='_blank' rel='noopener noreferrer'>" + esc(action.label) + " ↗</a>";
+      // Master 3.0: miesto v appke – rovnaké atribúty ako dlaždica v zásuvke (data-v5-feature, data-v2-admin-open…), len povolené data-* atribúty.
+      if (action.kind === "app") return /^(\s*data-[a-z0-9-]+(='[^'<>]*')?)+\s*$/.test(action.value || "") ? "<button class='v2-chat-action v2-chat-app' type='button' data-g2-go " + action.value + ">" + esc(action.label) + " ›</button>" : "";
       return "<button class='v2-chat-action' type='button' data-v2-chat-kind='" + esc(action.kind) + "' data-v2-chat-value='" + esc(action.value || "") + "'>" + esc(action.label) + "</button>";
     }).join("");
     return "<div class='v2-msg v2-msg-bot" + (message.level ? " v2-level-" + esc(message.level) : "") + "'>" + messageTextHtml(message.text) + (actions ? "<div class='v2-chat-actions'>" + actions + "</div>" : "") + "</div>";
@@ -800,6 +802,13 @@
     if (!clean) return;
     state.v2.chat.push({ role: "user", text: clean });
     const reply = answer(clean);
+    // Master 3.0 (Samo 16. 11.): hľadanie je len v GuguChate – k odpovedi pridáme miesta v appke (hovorové slová, preklepy;
+    // GugubooV5.searchApps = predtým hľadanie v zásuvke). Pri vážnych a citlivých odpovediach nič navyše.
+    if (!["urgent", "support"].includes(reply.level)) {
+      const have = new Set((reply.actions || []).map(a => a.kind === "feature" ? "data-v5-feature='" + a.value + "'" : ""));
+      const apps = (V5.searchApps?.(clean) || []).filter(hit => !have.has(hit.attrs) && !(reply.actions || []).some(a => a.label === hit.label));
+      if (apps.length) reply.actions = [...(reply.actions || []), ...apps.map(hit => ({ label: hit.label, kind: "app", value: hit.attrs }))];
+    }
     state.v2.chat.push({ role: "bot", ...reply });
     track("chat_ask", { level: reply.level || "info", item: reply.item || "" });
     save();

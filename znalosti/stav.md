@@ -6,7 +6,7 @@ _Naposledy aktualizované: 16. 11. 2026 večer (Claude)_
 
 ## Verzia
 
-- **Master 2.9** vo vetve `v2`, priečinok `guguboo-master/`.
+- **Master 3.0** vo vetve `v2`, priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -23,7 +23,8 @@ _Naposledy aktualizované: 16. 11. 2026 večer (Claude)_
 
 - Ikony namiesto textu (nové pravidlo) – najprv kruh a karty; navrhne UI dizajnér.
 - **2.9:** fotky a nahrávky v IndexedDB (`g2-media.js`, `guguboo-m-media`, stav schéma 2), záloha schéma 2 aj s médiami, vlastné písmo Montserrat (`fonts/`, bez Google Fonts). 2.8.1–2.8.3: opravy úvodu a rozmazaného textu na iPhone.
-- Fáza 1 ďalej: ikony · časová os nárokov (náhľad) · kontrola na iPhone a Androide (Samo, Matej) · test s mamami.
+- **3.0:** ikony (kruh, okná, Mama, Čas pre teba – bez emoji v ovládaní, 33 ikon Phosphor), názvy bez negatív („Čo je bežné“, „Nálada a podpora“), 84 kratších textov, hľadanie = GuguChat (zásuvka len aplikácie), ukážkový režim `app.html?ukazka=pred|po` pre web.
+- Fáza 1 ďalej: časová os nárokov (náhľad) · rozmazanie na iPhone 16e (úloha #9) · kontrola na iPhone a Androide · test s mamami. Prototyp kvetu namiesto kruhu (`prototyp-kvet.html`) – rozpracovaný.
 - Na rozhodnutie: ako počítať týždeň (39+0 = 39. alebo 40.), vek v dňoch sa mení o poludní; Menštruačný kalendár ešte sám hodnotí menštruáciu > 7 dní (audit #28).
 - Spustenie guguboo.com: PR #8 (čaká na Sama – keď sa začne testovanie).
 - Web guguboo.com: zapnúť Netlify Form detection, doplniť dátum účinnosti a e-mail na pozvánky v `sukromie.html`,
