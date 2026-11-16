@@ -824,3 +824,5 @@ body.v5-active.night .g2q-card .v2-o-label .g2q-seg-ic { fill: #29243a; }
   -webkit-appearance: none !important; appearance: none !important;
   border: 0 !important; outline: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important;
 }
+/* Master 3.0.1 (Samo 16. 11.): nápisy na skratkách boli príliš hrubé – jemnejšie písmo, menšie a pokojnejšie */
+body.v5-active .g2-short strong { font: 600 14px/18px var(--g2-font) !important; letter-spacing: 0; color: var(--v5-ink); }
