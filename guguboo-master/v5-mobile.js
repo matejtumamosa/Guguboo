@@ -1339,23 +1339,28 @@
     const run = g2qRunning();
     if (run) {
       const idx = segs.findIndex(s => s.key === run.key);
-      const ic = { sleep: "moon", feed: "feeding", contraction: "clock" }[run.key];
+      const ic = { sleep: "moon", feed: g2qSideShort(state.v5.feedingTimer.side) ? "breastfeed" : "feeding", contraction: "wave" }[run.key]; // Master 3.0: ikona = ikona dielu
       return "<button class='v5-o-record g2-ring-center g2q-center is-running g2q-run-" + (idx + 1) + "' type='button' data-g2q='stop' aria-label='" + escapeHtml(run.what + " – " + run.stop) + "'><span class='g2q-ic' aria-hidden='true'>" + icon(ic) + "</span><small>" + escapeHtml(run.what) + "</small><b class='g2q-time' data-g2q-since='" + escapeHtml(run.start) + "'>" + g2qClock(g2qSince(run.start)) + "</b><span class='g2q-stop'>" + escapeHtml(run.stop) + "</span></button>";
     }
     const night = g2qNight();
     return "<button class='v5-o-record g2-ring-center g2q-center' type='button' data-g2q='day' aria-label='" + (night ? "Naša noc" : "Náš deň") + " – prehľad dnešných zápisov'><strong>" + (night ? "Naša noc" : "Náš deň") + "</strong><span class='g2q-link'>Prehľad</span></button>";
   }
   // Veľkosť kruhu z poslednej obrazovky: písmo „naposledy“ v jednotkách SVG (viewBox 420), aby malo ≥ 11 px.
-  let g2qSmallRing = false, g2qSubUnits = 18;
+  // Master 3.0 (IKONY_NAVRH.md + UX): ikona nad názvom dielu (min. 16 px na obrazovke); na kruhu < 240 px sa skryje „naposledy“,
+  // nie ikona ani názov. Keby ikona vyšla menšia ako 16 px (veľmi malý kruh), skryje sa ikona, názov ostáva.
+  let g2qSmallRing = false, g2qSubUnits = 18, g2qIconUnits = 34;
+  const G2Q_SEG_ICON = { feed: "feeding", sleep: "moon", diaper: "diaper", move: "footprints", bump: "camera", voice: "voice", firstmove: "butterfly", contraction: "wave", food: "bowlFood", play: "activity" };
   function g2qMeasureRing() {
     const w = document.querySelector(".g2q-card .v5-o-ring-wrap")?.getBoundingClientRect().width || 290;
     g2qSmallRing = w < 240;
     g2qSubUnits = Math.ceil(11 / (w / 420));
+    const units = g2qSmallRing ? Math.max(30, Math.ceil(16 / (w / 420))) : 34;
+    g2qIconUnits = units > 36 ? 0 : units;
   }
   function g2QuickRing() {
     g2qMeasureRing();
     // po vykreslení skontroluj skutočnú veľkosť kruhu (prvé vykreslenie ju ešte nepozná) – prekreslí sa najviac raz
-    setTimeout(() => { const before = g2qSmallRing + "|" + g2qSubUnits; g2qMeasureRing(); if (before !== g2qSmallRing + "|" + g2qSubUnits && document.querySelector("#home.view.active .g2q-card")) renderHome(); }, 120);
+    setTimeout(() => { const before = g2qSmallRing + "|" + g2qSubUnits + "|" + g2qIconUnits; g2qMeasureRing(); if (before !== g2qSmallRing + "|" + g2qSubUnits + "|" + g2qIconUnits && document.querySelector("#home.view.active .g2q-card")) renderHome(); }, 120);
     const segs = g2qSegments();
     const run = g2qRunning();
     const arc = (mid, lower, radius, id) => {
@@ -1376,10 +1381,18 @@
       segs.map((seg, index) => {
         const mid = adaptiveOCentroidAngle(adaptiveOSections[index].start);
         const lower = Math.sin(mid * Math.PI / 180) > 0.2;
-        // Zhoda tímu: „naposledy“ pod názvom dielu (≥ 11 px na obrazovke, farba menovky); na malom kruhu len čas bez strany.
-        const sub = seg.sub ? (g2qSmallRing ? seg.sub.split(" · ")[0].replace(/^pred /, "") : seg.sub) : "";
-        const rName = sub ? (lower ? 100 : 124) : 112, rSub = lower ? 130 : 94;
-        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'>" + arc(mid, lower, rName, "g2OArc" + (index + 1)) +
+        // Zhoda tímu: „naposledy“ pod názvom dielu (≥ 11 px na obrazovke, farba menovky).
+        // Master 3.0: poradie ikona → názov → „naposledy“; na malom kruhu (< 240 px) bez „naposledy“ (je v aria-label dielu).
+        const sub = seg.sub && !g2qSmallRing ? seg.sub : "";
+        const iu = g2qIconUnits, icName = G2Q_SEG_ICON[seg.key], on = run && run.key === seg.key;
+        // polomery (jednotky viewBoxu 420): horný diel – ikona pri obvode, dolný diel – ikona bližšie k stredu
+        const L = !iu ? { name: sub ? (lower ? 100 : 124) : 112, sub: lower ? 130 : 94 }
+          : g2qSmallRing ? (lower ? { ic: 106, name: 137 } : { ic: 136, name: 104 })
+          : (lower ? { ic: 88, name: 122, sub: 145 } : { ic: 135, name: 101, sub: 79 });
+        const rName = L.name, rSub = L.sub;
+        const icPt = iu && icName ? adaptiveOPoint(mid, L.ic) : null;
+        const icHtml = icPt ? "<g class='g2q-seg-ic' transform='translate(" + (icPt.x - iu / 2).toFixed(1) + " " + (icPt.y - iu / 2).toFixed(1) + ") scale(" + (iu / 256).toFixed(4) + ")'>" + iconBody(icName, on ? "duo" : "") + "</g>" : "";
+        return "<g class='v2-o-label v2-o-label-" + (index + 1) + "' aria-hidden='true'>" + icHtml + arc(mid, lower, rName, "g2OArc" + (index + 1)) +
           "<text dy='6'><textPath href='#g2OArc" + (index + 1) + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(seg.label) + "</textPath></text>" +
           (sub ? arc(mid, lower, rSub, "g2OSub" + (index + 1)) + "<text class='g2q-sub' dy='5' style='--g2q-sub:" + g2qSubUnits + "px'><textPath href='#g2OSub" + (index + 1) + "' startOffset='50%' text-anchor='middle'>" + escapeHtml(sub) + "</textPath></text>" : "") + "</g>";
       }).join(""),
