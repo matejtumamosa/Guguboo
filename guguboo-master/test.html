@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Guguboo Master – testy</title>
+  <!--
+    GUGUBOO MASTER – TESTY (Master 2.8, Plán F1-0)
+    ==============================================
+    Ako spustiť (po každej zmene appky):
+      1. Spusti statický server v koreni repa (napr. http://localhost:8787/) – alebo otvor náhľad na Netlify.
+      2. Otvor  guguboo-master/test.html  → testy bežia samé, výsledok je hore (zelené = OK, červené = chyba,
+         oranžové = známy nález, ktorý čaká na rozhodnutie – nie je to chyba testu).
+      3. Pred commitom má byť hore „Všetko zelené“. Pri červenej oprav chybu alebo uprav test (s dôvodom v komentári).
+    Bezpečnosť údajov:
+      - Appka sa v testoch spúšťa v rámci (iframe) s VLASTNÝM úložiskom v pamäti (náhrada localStorage/sessionStorage).
+        Skutočné údaje guguboo-m-* sa nečítajú do appky ani neprepisujú. Ak by sa náhrada nepodarila, appka sa nespustí.
+      - Poistka: pred testami sa odfotí skutočný stav guguboo-m-*, po testoch sa porovná a pri rozdiele obnoví.
+        Počas testov preto nemaj appku otvorenú v inej karte (jej zápisy by poistka vrátila).
+    Náhľad bez skutočných údajov (na ručnú kontrolu, napr. v okne 375 × 667):
+      test.html?nahlad=pred | po | uvod   (&noc=1 = nočný režim)
+    Automaticky (bez klikania): výsledok je aj v <body data-vysledok="ok|chyba"> a v window.__g2TestResult.
+    Nový test: pridaj ho do zoznamu SUITES nižšie – funkcia vráti nič (OK), vyhodí chybu (červené) alebo zavolá known(…).
+  -->
+  <style>
+    body { font: 15px/1.45 Montserrat, "Segoe UI", system-ui, sans-serif; color: #29243a; margin: 0; padding: 16px; background: #faf8ff; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    .sum { padding: 12px 14px; border-radius: 14px; font-weight: 800; margin: 10px 0 16px; background: #eee; }
+    .sum.ok { background: #e3f6ea; color: #1d6b3d; } .sum.chyba { background: #fde6ea; color: #9b2340; }
+    section { background: #fff; border: 1px solid rgba(117, 96, 181, .14); border-radius: 16px; padding: 10px 14px; margin-bottom: 12px; }
+    h2 { font-size: 16px; margin: 4px 0 8px; }
+    .t { padding: 4px 0 4px 26px; position: relative; border-top: 1px solid #f1eef8; }
+    .t::before { position: absolute; left: 4px; top: 4px; font-weight: 900; }
+    .t.ok::before { content: "✓"; color: #1d8a4a; } .t.chyba::before { content: "✗"; color: #c62848; } .t.nalez::before { content: "!"; color: #c27a12; }
+    .t small { display: block; color: #5d5768; white-space: pre-wrap; }
+    .t.chyba small { color: #9b2340; }
+    #g2tHost { position: fixed; left: -10000px; top: 0; } /* rámce testov sú mimo obrazovky, ale majú skutočnú veľkosť */
+    body.nahlad { padding: 0; background: #ddd; } body.nahlad iframe { border: 0; display: block; margin: 0 auto; background: #fff; }
+  </style>
+</head>
+<body>
+<script>
+(function g2Tests() {
+  "use strict";
+  // Prázdny rámec, do ktorého test zapíše appku (nič tu nesmie bežať ani deklarovať globálne premenné).
+  if (/[?&]ramec=1/.test(location.search)) return;
+
+  const PREFIX = "guguboo-m-";
+  const DAY = 86400000;
+  const params = new URLSearchParams(location.search);
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const iso = date => date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+  const addDays = (days, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + days); return d; };
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function assert(cond, msg) { if (!cond) throw new Error(msg); }
+  function eq(actual, expected, msg) { if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error((msg ? msg + ": " : "") + "čakal som " + JSON.stringify(expected) + ", je " + JSON.stringify(actual)); }
+  class Known extends Error {}
+  const known = msg => { throw new Known(msg); };
+
+  // ——— Úložisko v pamäti (náhrada localStorage/sessionStorage pre appku v rámci) ———
+  // Hodnoty sú vlastné vlastnosti objektu, aby Object.keys(localStorage) fungovalo ako v prehliadači (g2-backup.js ho používa).
+  function MemStorage(seed) { Object.entries(seed || {}).forEach(([k, v]) => { this[k] = String(v); }); }
+  MemStorage.prototype = Object.create(Object.prototype, {
+    getItem: { value(k) { return Object.prototype.hasOwnProperty.call(this, String(k)) ? this[String(k)] : null; } },
+    setItem: { value(k, v) { this[String(k)] = String(v); } },
+    removeItem: { value(k) { delete this[String(k)]; } },
+    clear: { value() { Object.keys(this).forEach(k => delete this[k]); } },
+    key: { value(i) { return Object.keys(this)[i] ?? null; } },
+    length: { get() { return Object.keys(this).length; } }
+  });
+  const dump = storage => Object.keys(storage).sort().reduce((o, k) => (o[k] = storage.getItem(k), o), {});
+
+  // ——— Poistka skutočných údajov ———
+  function realSnapshot() {
+    const pick = store => { const o = {}; try { for (let i = 0; i < store.length; i++) { const k = store.key(i); if (k && k.startsWith(PREFIX)) o[k] = store.getItem(k); } } catch (_) { /* nič */ } return o; };
+    return { local: pick(localStorage), session: pick(sessionStorage) };
+  }
+  function restoreReal(snap) {
+    [[localStorage, snap.local], [sessionStorage, snap.session]].forEach(([store, saved]) => {
+      const now = []; for (let i = 0; i < store.length; i++) { const k = store.key(i); if (k && k.startsWith(PREFIX)) now.push(k); }
+      now.forEach(k => { if (!(k in saved)) store.removeItem(k); });
+      Object.entries(saved).forEach(([k, v]) => { if (store.getItem(k) !== v) store.setItem(k, v); });
+    });
+  }
+  const sameSnap = (a, b) => JSON.stringify([dump(a.local), dump(a.session)]) === JSON.stringify([dump(b.local), dump(b.session)]);
+
+  // ——— Spustenie appky v izolovanom rámci ———
+  let appHtmlCache = null;
+  async function appHtml() {
+    if (appHtmlCache) return appHtmlCache;
+    const res = await fetch("app.html?t=" + Date.now(), { cache: "no-store" });
+    assert(res.ok, "app.html sa nenačítal (" + res.status + ")");
+    appHtmlCache = await res.text();
+    return appHtmlCache;
+  }
+  const GUARD = "<script>(function(){var t=window.__g2t;" +
+    // Ak náhrada úložiska nie je na mieste, zvyšok stránky sa zmení na text a appka sa NESPUSTÍ (nedotkne sa skutočných údajov).
+    "if(!t||window.localStorage!==t.storage||window.sessionStorage!==t.session){document.write('<plaintext>');return;}" +
+    "addEventListener('error',function(e){t.report('chyba',(e.message||'')+' @ '+String(e.filename||'').split('/').pop()+':'+e.lineno);});" +
+    "addEventListener('unhandledrejection',function(e){t.report('promise',String(e.reason&&e.reason.message||e.reason));});" +
+    "var ce=console.error;console.error=function(){t.report('console.error',[].map.call(arguments,String).join(' '));return ce.apply(console,arguments);};" +
+    "HTMLMediaElement.prototype.play=function(){return Promise.resolve();};" +
+    "window.confirm=function(){return true;};window.alert=function(){};window.open=function(){return null;};" +
+    "})();<\/script>";
+  async function bootApp(seed, opts = {}) {
+    const html = await appHtml();
+    const frame = document.createElement("iframe");
+    frame.style.width = (opts.width || 390) + "px";
+    frame.style.height = (opts.height || 844) + "px";
+    frame.title = "Guguboo – testovací rámec";
+    frame.src = "test.html?ramec=1";
+    (opts.host || document.getElementById("g2tHost")).appendChild(frame);
+    await new Promise(resolve => { frame.onload = resolve; });
+    const win = frame.contentWindow, doc = frame.contentDocument;
+    const storage = new MemStorage(seed), session = new MemStorage();
+    const errors = [];
+    doc.open();
+    try {
+      Object.defineProperty(win, "localStorage", { value: storage, configurable: true });
+      Object.defineProperty(win, "sessionStorage", { value: session, configurable: true });
+    } catch (_) { /* overí sa nižšie */ }
+    if (win.localStorage !== storage || win.sessionStorage !== session) {
+      doc.close(); frame.remove();
+      throw new Error("Izolované úložisko sa v tomto prehliadači nepodarilo nastaviť – appka sa NEspustila (skutočné údaje sú v bezpečí).");
+    }
+    win.__g2t = { storage, session, report: (kind, msg) => errors.push(kind + ": " + msg) };
+    doc.write(html.replace(/<head[^>]*>/i, m => m + GUARD));
+    doc.close();
+    const start = Date.now();
+    // Stačí dokončené parsovanie (obrázky a zvuk sa môžu načítavať ďalej).
+    while (!(doc.readyState !== "loading" && win.GugubooV5 && win.G2Backup)) {
+      if (Date.now() - start > 30000) { frame.remove(); throw new Error("Appka sa do 30 s nenačítala (stav " + doc.readyState + "). " + errors.join(" | ")); }
+      await sleep(100);
+    }
+    await sleep(opts.settle ?? 800);
+    return { frame, win, doc, storage, session, errors, state: () => win.eval("state"), remove: () => frame.remove() };
+  }
+
+  function seed(kind, extra = {}) {
+    const born = kind === "po";
+    const s = {
+      onboarded: kind !== "uvod",
+      profile: {
+        country: "SK", status: born ? "born" : "expecting", name: born ? "Tamarka" : "Bábätko",
+        due: born ? iso(addDays(-55)) : iso(addDays(84)), birth: born ? iso(addDays(-60)) : ""
+      },
+      user: { name: "Testerka" },
+      v5: { tourDone: true, night: !!extra.night }
+    };
+    if (kind === "uvod") { delete s.onboarded; s.profile = { country: "SK" }; }
+    if (extra.v5) Object.assign(s.v5, extra.v5);
+    if (extra.extra) Object.assign(s, extra.extra);
+    const out = { [PREFIX + "state"]: JSON.stringify(s) };
+    Object.assign(out, extra.keys || {});
+    return out;
+  }
+
+  // ——— Viditeľný text (na kontrolu, že zvyšky starých verzií nevidno) ———
+  function isVisible(el) {
+    const win = el.ownerDocument.defaultView;
+    for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
+      if (e.hidden) return false;
+      const cs = win.getComputedStyle(e);
+      if (cs.display === "none" || cs.visibility === "hidden" || cs.opacity === "0") return false;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  }
+  function visibleMatches(doc, re) {
+    const out = [];
+    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (re.test(node.nodeValue) && node.parentElement && !/^(SCRIPT|STYLE|TEMPLATE)$/.test(node.parentElement.tagName) && isVisible(node.parentElement)) out.push(node.nodeValue.trim().slice(0, 70));
+    }
+    doc.querySelectorAll("[aria-label],[title]").forEach(el => {
+      const text = (el.getAttribute("aria-label") || "") + " " + (el.getAttribute("title") || "");
+      if (re.test(text) && isVisible(el)) out.push("[popis] " + text.trim().slice(0, 70));
+    });
+    // Pseudo-prvky (napr. starý štítok .nav button[data-tier]::after).
+    doc.querySelectorAll("[data-tier]").forEach(el => {
+      ["::before", "::after"].forEach(p => { const c = doc.defaultView.getComputedStyle(el, p).content; if (c && re.test(c) && isVisible(el)) out.push("[" + p + "] " + c); });
+    });
+    return out;
+  }
+  const LEFTOVERS = /premium|prémiov|spustíme čoskoro|od 4,99/i;
+
+  // ——— Testy ———
+  const J = () => window.GugubooJourney;
+  const FIXED_NOW = new Date(2026, 10, 16, 10, 0, 0); // 16. 11. 2026 10:00 (miestny čas)
+  const dueIn = (days, now = FIXED_NOW) => iso(addDays(days, now));
+
+  const SUITES = [
+    {
+      name: "Verzie a súbory",
+      tests: {
+        "Verzia appky a cache service workera sedia (Master X.Y ↔ guguboo-m-app-X.Y)": async () => {
+          const html = await appHtml();
+          const ver = /GUGUBOO_V2_VERSION\s*=\s*"Master (\d+\.\d+)/.exec(html)?.[1];
+          const sw = await (await fetch("sw.js?t=" + Date.now(), { cache: "no-store" })).text();
+          const cache = /CACHE\s*=\s*"guguboo-m-app-([\d.]+)"/.exec(sw)?.[1];
+          assert(ver && cache, "verziu alebo CACHE sa nepodarilo prečítať");
+          eq(cache, ver, "sw.js CACHE");
+        },
+        "Všetky skripty a štýly z app.html sa dajú stiahnuť": async () => {
+          const html = await appHtml();
+          const urls = [...html.matchAll(/<(?:script[^>]+src|link[^>]+rel="stylesheet"[^>]+href)="([^"]+)"/g)].map(m => m[1]).filter(u => !/^https?:/.test(u));
+          assert(urls.length > 10, "málo súborov – zmenil sa formát app.html?");
+          const bad = [];
+          await Promise.all(urls.map(async u => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) bad.push(u + " (" + r.status + ")"); }));
+          eq(bad, [], "nedostupné súbory");
+        }
+      }
+    },
+    {
+      name: "Týždeň tehotenstva (journey-engine.js – jeden výpočet pre celú appku)",
+      tests: {
+        "Termín dnes = 40. týždeň": () => eq(J().pregnancyWeek(dueIn(0), FIXED_NOW), 40),
+        "Termín o 1, 6 dní = 40. týždeň; o 8 dní = 39.": () => eq([1, 6, 8].map(d => J().pregnancyWeek(dueIn(d), FIXED_NOW)), [40, 40, 39]),
+        "Termín o 140 dní (20 týždňov) = 20. týždeň": () => eq(J().pregnancyWeek(dueIn(140), FIXED_NOW), 20),
+        "Termín o 141 dní = 20. týždeň; o 146 dní = 20.; o 147 = 19.": () => eq([141, 146, 147].map(d => J().pregnancyWeek(dueIn(d), FIXED_NOW)), [20, 20, 19]),
+        "Začiatok: termín o 273 dní = 1. týždeň, o 280 a viac dní ostáva 1 (spodná hranica)": () => eq([273, 280, 300].map(d => J().pregnancyWeek(dueIn(d), FIXED_NOW)), [1, 1, 1]),
+        "Po termíne: 1 deň = 41., 14 dní = 42., 60 dní ostáva 42 (horná hranica)": () => eq([-1, -14, -60].map(d => J().pregnancyWeek(dueIn(d), FIXED_NOW)), [41, 42, 42]),
+        "Prázdny alebo chybný termín = žiadny týždeň (null)": () => eq(["", null, "abc", "2026-13"].map(v => J().pregnancyWeek(v, FIXED_NOW)), [null, null, null, null]),
+        "Na hodine dňa nezáleží (00:05 aj 23:55 = ten istý týždeň)": () => {
+          const due = "2027-01-04";
+          eq(J().pregnancyWeek(due, new Date(2026, 10, 16, 0, 5)), J().pregnancyWeek(due, new Date(2026, 10, 16, 23, 55)));
+        },
+        "Prechod na letný/zimný čas nemení počet dní": () => {
+          eq(J().dueDays("2027-04-10", new Date(2027, 2, 27, 23, 30)), 14, "marec 2027");
+          eq(J().dueDays("2026-11-07", new Date(2026, 9, 24, 23, 30)), 14, "október 2026");
+        },
+        "Fáza podľa veku bábätka (popoludní): 0–42 dní po pôrode, do 365 dní prvý rok, potom ďalej": () => {
+          const afternoon = new Date(2026, 10, 16, 15, 0, 0);
+          const stage = days => J().context({ profile: { status: "born", birth: iso(addDays(-days, afternoon)) } }, afternoon).life_stage;
+          eq([0, 42, 43, 365, 366].map(stage), ["postpartum", "postpartum", "baby", "baby", "parenthood"]);
+        },
+        "Nález na rozhodnutie: vek bábätka v dňoch závisí od hodiny (pred poludním o deň menej)": () => {
+          // context() počíta vek od dátumu narodenia o 12:00 (toDate) a zaokrúhľuje nadol; týždeň tehotenstva je kalendárny (bez hodín).
+          const birth = iso(addDays(-42, FIXED_NOW));
+          const at = h => J().context({ profile: { status: "born", birth } }, new Date(2026, 10, 16, h, 0, 0)).baby_age_days;
+          if (at(10) !== at(14)) known("narodenie pred 42 dňami: o 10:00 = " + at(10) + " dní, o 14:00 = " + at(14) + " dní (fáza sa mení o poludní, nie o polnoci).");
+        },
+        "Bez termínu aj narodenia = nastavenie (setup)": () => eq(J().context({ profile: {} }, FIXED_NOW).life_stage, "setup"),
+        "Nález na rozhodnutie: hranica týždňa (39+0 a 39+1 sú v rôznych týždňoch)": () => {
+          // Vzorec 40 − floor(dni do termínu / 7) = zaokrúhlenie nahor: deň 274–280 (39+1 až 40+0) je „40.“, deň 273 (39+0) je „39.“.
+          // Podľa zvyklosti „N. týždeň = N−1 ukončených týždňov“ by 39+0 malo byť 40. a 40+0 už 41. Nemeníme bez rozhodnutia PL / Content.
+          const w273 = J().pregnancyWeek(dueIn(7), FIXED_NOW), w274 = J().pregnancyWeek(dueIn(6), FIXED_NOW);
+          if (w273 !== w274) known("deň 273 (39+0) = " + w273 + ". týždeň, deň 274 (39+1) = " + w274 + ". týždeň – čaká na rozhodnutie konvencie.");
+        }
+      }
+    },
+    {
+      name: "Vážne situácie (g2-safety.js)",
+      tests: {
+        "E1 – E7 majú text (a E5rash)": () => {
+          const missing = ["E1", "E2", "E3", "E4", "E5", "E5rash", "E6", "E7"].filter(id => !(typeof window.G2Safety.E[id]?.text === "string" && window.G2Safety.E[id].text.trim().length > 20));
+          eq(missing, [], "chýba text");
+        },
+        "Zdroj je prázdny alebo https odkaz so svojím názvom": () => {
+          const bad = Object.entries(window.G2Safety.E).filter(([, e]) => e.source && (!/^https:\/\//.test(e.source) || !e.sourceName)).map(([id]) => id);
+          eq(bad, [], "zlý zdroj");
+        },
+        "Krízové čísla: 155 v E1/E5/E7, 112 v E6": () => {
+          const E = window.G2Safety.E;
+          assert(/155/.test(E.E1.text) && /155/.test(E.E5.text) && /155/.test(E.E7.text), "155 chýba");
+          assert(/112/.test(E.E6.text), "112 chýba v E6");
+        },
+        "Box html() obsahuje text a zdroj, neznáma výnimka = prázdne": () => {
+          const S = window.G2Safety;
+          assert(S.html("E3").includes("pôrodnicu") && S.html("E3").includes("nhs.uk"), "E3 box");
+          assert(!S.html("E3", false).includes("nhs.uk"), "bez zdroja");
+          eq(S.html("E99"), "");
+        },
+        "Štandardné vety „kedy sa ozvať“ (ped, gyn, mid, post) nie sú prázdne": () => eq(["ped", "gyn", "mid", "post"].filter(k => !window.G2Safety.line[k]), []),
+        "Tlačidlo „Zapísať ako otázku“ (pre mňa / pre bábätko)": () => {
+          const S = window.G2Safety;
+          assert(S.askButton("baby", "x").includes("data-g2-askq='baby'"), "baby");
+          assert(S.askButton("me", "<b>").includes("data-g2-askq='me'") && !S.askButton("me", "<b>").includes("<b>"), "me / escapovanie");
+        }
+      }
+    },
+    {
+      name: "Appka v izolovanom rámci – spustenie",
+      tests: {
+        "Pred pôrodom (deň): domov bez chýb, kľúče len guguboo-m-*": async () => {
+          const app = await bootApp(seed("pred"));
+          try {
+            eq(app.errors, [], "chyby v konzole");
+            assert(app.doc.getElementById("home")?.classList.contains("active"), "domov nie je aktívny");
+            eq(app.win.pregnancyWeek(iso(addDays(84))), J().pregnancyWeek(iso(addDays(84))), "týždeň v app.html vs. journey-engine");
+            app.win.GugubooV5.persist();
+            eq(Object.keys(app.storage).filter(k => !k.startsWith(PREFIX)), [], "kľúč bez predpony guguboo-m-");
+          } finally { app.remove(); }
+        },
+        "Po pôrode (noc, 375 × 667): domov bez chýb": async () => {
+          const app = await bootApp(seed("po", { night: true }), { width: 375, height: 667 });
+          try {
+            eq(app.errors, [], "chyby v konzole");
+            assert(app.doc.body.classList.contains("night"), "nočný režim");
+            assert(app.doc.getElementById("home")?.classList.contains("active"), "domov nie je aktívny");
+          } finally { app.remove(); }
+        },
+        "Menštruačný kalendár sa otvorí aj s menštruáciou dlhšou ako 7 dní (regresia 2.7)": async () => {
+          const days = {};
+          for (let i = 20; i < 29; i++) days[iso(addDays(-i))] = { flow: "medium", sym: [] };
+          const app = await bootApp(seed("po", { extra: { v2: { period: { days } } } }), { settle: 300 });
+          try {
+            app.win.GugubooV5.openFeature("period");
+            await sleep(100);
+            const box = app.doc.getElementById("v5PeriodContent");
+            assert(box && /Kedy sa ozvať lekárovi/.test(box.textContent), "obsah okna chýba");
+            assert(/Na najbližšiu kontrolu/.test(box.textContent), "prehľad pre gynekológa chýba");
+            assert(!/undefined/.test(box.textContent), "v texte je „undefined“");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Prvé spustenie (úvod) bez chýb": async () => {
+          const app = await bootApp(seed("uvod"));
+          try { eq(app.errors, [], "chyby v konzole"); } finally { app.remove(); }
+        }
+      }
+    },
+    {
+      name: "Migrácia otázok (pregnancyQuestions / pediatricianQuestions → doctorQuestions)",
+      tests: {
+        "Staré zoznamy sa presunú do Otázok pre lekára a vyprázdnia; je to idempotentné": async () => {
+          const first = await bootApp(seed("po", { v5: { pregnancyQuestions: ["Otázka A", "   ", "Otázka B"], pediatricianQuestions: ["Otázka C"] } }), { settle: 300 });
+          let saved;
+          try {
+            const q = first.win.GugubooV5.doctorQuestions();
+            eq(q.map(i => [i.who, i.text, i.done, i.migrated]), [["me", "Otázka A", false, true], ["me", "Otázka B", false, true], ["baby", "Otázka C", false, true]]);
+            assert(q.every(i => i.id && i.created), "id / created");
+            const st = first.state();
+            eq([st.v5.pregnancyQuestions, st.v5.pediatricianQuestions], [[], []], "staré zoznamy");
+            first.win.GugubooV5.persist();
+            saved = dump(first.storage);
+            eq(JSON.parse(saved[PREFIX + "state"]).v5.doctorQuestions.length, 3, "uložené");
+          } finally { first.remove(); }
+          const again = await bootApp(saved, { settle: 300 });
+          try { eq(again.win.GugubooV5.doctorQuestions().map(i => i.text), ["Otázka A", "Otázka B", "Otázka C"], "po opätovnom spustení"); } finally { again.remove(); }
+        },
+        "Existujúce otázky ostanú, nové sa pridajú na koniec": async () => {
+          const existing = [{ id: "q1", who: "baby", text: "Stará", created: "2026-11-01T10:00:00.000Z", done: true }];
+          const app = await bootApp(seed("po", { v5: { doctorQuestions: existing, pregnancyQuestions: ["Nová"] } }), { settle: 300 });
+          try { eq(app.win.GugubooV5.doctorQuestions().map(i => [i.id === "q1", i.who, i.text, i.done]), [[true, "baby", "Stará", true], [false, "me", "Nová", false]]); } finally { app.remove(); }
+        }
+      }
+    },
+    {
+      name: "Záloha tam a späť (g2-backup.js)",
+      tests: {
+        "Export → vymazanie → obnova vráti presne tie isté údaje; cudzie kľúče a PIN odomknutie sa nezálohujú": async () => {
+          const keys = {
+            [PREFIX + "private-space"]: JSON.stringify({ entries: [{ text: "Súkromné ěščťžýáíé 💜" }] }),
+            [PREFIX + "private-space-auth"]: "odomknute",
+            "guguboo-v2-state": "{\"cudzie\":1}",
+            "iny-kluc": "x"
+          };
+          const app = await bootApp(seed("po", { keys, v5: { doctorQuestions: [{ id: "q1", who: "me", text: "Otázka", created: "2026-11-01T10:00:00.000Z", done: false }] } }), { settle: 300 });
+          try {
+            const B = app.win.G2Backup;
+            assert(B && B.exportPayload, "G2Backup.exportPayload chýba");
+            app.win.GugubooV5.persist();
+            const before = dump(app.storage);
+            const payload = B.exportPayload();
+            const backup = B.parseBackup(payload);
+            eq([backup.app, backup.kind, backup.schema], ["guguboo", "zaloha", 1], "hlavička");
+            eq(Object.keys(backup.data).sort(), Object.keys(before).filter(k => k.startsWith(PREFIX) && k !== B.AUTH).sort(), "kľúče v zálohe");
+            // Iný stav v telefóne, potom obnova.
+            app.storage.setItem(PREFIX + "state", "{\"profile\":{}}");
+            app.storage.setItem(PREFIX + "navyse", "zmaže sa");
+            app.storage.removeItem(PREFIX + "private-space");
+            B.applyBackup(backup);
+            const after = dump(app.storage);
+            eq(after, before, "údaje po obnove");
+          } finally { app.remove(); }
+        },
+        "Obnova odmietne cudzí súbor a nezapíše kľúče bez predpony ani nie-text": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const B = app.win.G2Backup;
+            ["nie je json", "{\"app\":\"ine\",\"data\":{}}", "{\"app\":\"guguboo\"}"].forEach(text => {
+              let threw = false; try { B.parseBackup(text); } catch (_) { threw = true; }
+              assert(threw, "prijal: " + text);
+            });
+            B.applyBackup(B.parseBackup(JSON.stringify({ app: "guguboo", data: { "zly-kluc": "x", [PREFIX + "cislo"]: 5, [PREFIX + "ok"]: "y" } })));
+            eq([app.storage.getItem("zly-kluc"), app.storage.getItem(PREFIX + "cislo"), app.storage.getItem(PREFIX + "ok")], [null, null, "y"]);
+          } finally { app.remove(); }
+        },
+        "Appka sa zo zálohy spustí s tými istými údajmi": async () => {
+          const src = await bootApp(seed("pred", { v5: { doctorQuestions: [{ id: "q9", who: "me", text: "Zo zálohy", created: "2026-11-01T10:00:00.000Z", done: false }] } }), { settle: 300 });
+          let payload, due;
+          try { src.win.GugubooV5.persist(); payload = src.win.G2Backup.exportPayload(); due = src.state().profile.due; } finally { src.remove(); }
+          const restored = {}; Object.entries(JSON.parse(payload).data).forEach(([k, v]) => { restored[k] = v; });
+          const app = await bootApp(restored, { settle: 300 });
+          try {
+            eq(app.errors, [], "chyby v konzole");
+            eq(app.state().profile.due, due, "termín");
+            eq(app.win.GugubooV5.doctorQuestions().map(i => i.text), ["Zo zálohy"], "otázky");
+          } finally { app.remove(); }
+        }
+      }
+    },
+    {
+      name: "Zvyšky starších verzií nevidno (Plán F1-2: Premium, „Prihlásenie spustíme čoskoro“)",
+      tests: {
+        "Pred pôrodom: domov, Všetko a každá funkcia bez Premium": async () => scanAll("pred"),
+        "Po pôrode: domov, Všetko a každá funkcia bez Premium": async () => scanAll("po"),
+        "Úvod (prvé spustenie) bez Premium a prihlásenia": async () => {
+          const app = await bootApp(seed("uvod"));
+          try { eq(visibleMatches(app.doc, LEFTOVERS), [], "viditeľné"); } finally { app.remove(); }
+        }
+      }
+    }
+  ];
+
+  async function scanAll(kind) {
+    const app = await bootApp(seed(kind));
+    const found = [];
+    try {
+      const V5 = app.win.GugubooV5;
+      const check = where => visibleMatches(app.doc, LEFTOVERS).forEach(t => found.push(where + ": " + t));
+      check("domov");
+      V5.openDrawer?.(); await sleep(250); check("Všetko");
+      V5.closeDrawer?.(); V5.windowCloseAll?.();
+      for (const key of Object.keys(V5.features || {})) {
+        try { V5.openFeature(key); } catch (e) { found.push(key + ": výnimka " + e.message); continue; }
+        await sleep(60);
+        check(key);
+        try { V5.windowCloseAll?.(); V5.openHome?.(); } catch (_) { /* nič */ }
+      }
+      // Staré obrazovky dostupné len cez adresu/odkaz (napr. #premium) – nesmú sa dať zobraziť.
+      ["premium", "reports", "assistant"].forEach(view => {
+        try { app.win.switchView?.(view); } catch (_) { /* nič */ }
+        check("view #" + view);
+      });
+      app.win.switchView?.("home");
+      eq(app.errors, [], "chyby v konzole");
+    } finally { app.remove(); }
+    eq([...new Set(found)], [], "viditeľné zvyšky");
+  }
+
+  // ——— Beh a výpis ———
+  function loadScript(src) {
+    return new Promise((resolve, reject) => { const s = document.createElement("script"); s.src = src + "?t=" + Date.now(); s.onload = resolve; s.onerror = () => reject(new Error(src + " sa nenačítal")); document.head.appendChild(s); });
+  }
+  async function run() {
+    document.body.innerHTML = "<h1>Guguboo Master – testy</h1><div class='sum' id='g2tSum'>Bežia testy…</div><div id='g2tOut'></div><div id='g2tHost'></div>";
+    const out = document.getElementById("g2tOut");
+    const before = realSnapshot();
+    let pass = 0, fail = 0, found = 0;
+    try { await loadScript("journey-engine.js"); await loadScript("g2-safety.js"); } catch (e) { out.innerHTML = "<p>" + esc(e.message) + "</p>"; }
+    for (const suite of SUITES) {
+      const sec = document.createElement("section");
+      sec.innerHTML = "<h2>" + esc(suite.name) + "</h2>";
+      out.appendChild(sec);
+      for (const [name, fn] of Object.entries(suite.tests)) {
+        const row = document.createElement("div");
+        row.className = "t"; row.textContent = name + " …";
+        sec.appendChild(row);
+        try { await fn(); row.className = "t ok"; row.innerHTML = esc(name); pass++; }
+        catch (e) {
+          const isKnown = e instanceof Known;
+          row.className = "t " + (isKnown ? "nalez" : "chyba"); row.innerHTML = esc(name) + "<small>" + esc(e.message) + "</small>";
+          if (isKnown) found++; else fail++;
+        }
+      }
+    }
+    // Poistka: skutočné údaje guguboo-m-* musia byť rovnaké ako pred testami.
+    const sec = document.createElement("section");
+    sec.innerHTML = "<h2>Poistka skutočných údajov</h2>";
+    const row = document.createElement("div");
+    const after = realSnapshot();
+    if (sameSnap(before, after)) { row.className = "t ok"; row.textContent = "Skutočné údaje guguboo-m-* sa nezmenili (" + Object.keys(before.local).length + " kľúčov)."; pass++; }
+    else { restoreReal(before); row.className = "t chyba"; row.innerHTML = "Skutočné údaje sa počas testov zmenili – pôvodný stav je obnovený.<small>Ak bola appka otvorená v inej karte, zatvor ju a spusti testy znova.</small>"; fail++; }
+    sec.appendChild(row); out.appendChild(sec);
+    const sum = document.getElementById("g2tSum");
+    sum.className = "sum " + (fail ? "chyba" : "ok");
+    sum.textContent = fail ? fail + " červených · " + pass + " zelených" + (found ? " · " + found + " nález" : "") : "Všetko zelené (" + pass + ")" + (found ? " · " + found + " známy nález na rozhodnutie" : "");
+    document.title = (fail ? "CHYBA" : "OK") + " – Guguboo testy";
+    document.body.dataset.vysledok = fail ? "chyba" : "ok";
+    document.body.dataset.zhrnutie = sum.textContent;
+    window.__g2TestResult = { done: true, pass, fail, known: found, failures: [...document.querySelectorAll(".t.chyba")].map(el => el.innerText) };
+  }
+
+  // Náhľad bez skutočných údajov: test.html?nahlad=pred|po|uvod&noc=1
+  async function preview(kind) {
+    document.body.className = "nahlad";
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const app = await bootApp(seed(kind, { night: params.get("noc") === "1" }), { host, width: window.innerWidth, height: window.innerHeight, settle: 300 });
+    window.__g2Preview = app;
+    document.body.dataset.chyby = String(app.errors.length);
+    document.body.dataset.zhrnutie = app.errors.join(" | ");
+    if (app.errors.length) console.warn("Guguboo náhľad – chyby:", app.errors);
+  }
+
+  if (params.get("nahlad")) preview(params.get("nahlad")).catch(e => { document.body.textContent = e.message; });
+  else run().catch(e => { document.body.dataset.vysledok = "chyba"; document.body.insertAdjacentText("beforeend", "Testy spadli: " + e.message); });
+})();
+</script>
+</body>
+</html>

@@ -225,7 +225,8 @@
       out.push("<div class='v2-calm-box'><strong>Na najbližšiu kontrolu u gynekológa</strong><ul class='v2-mama-list'>" +
         long7.map(r => "<li>menštruácia od " + esc(short(r.start)) + " trvala " + esc(dni(r.len)) + "</li>").join("") +
         between.map(k => "<li>špinenie mimo menštruácie " + esc(short(k)) + "</li>").join("") +
-        "</ul><p>" + esc(c.doctorIntro + " " + c.doctor.join(" alebo ") + ".") + "</p></div>");
+        // Master 2.8 (Plán F1-0, nález test.html): Master 2.7 zrušil v obsahu doctorIntro/doctor → okno padalo; teraz jednotná veta 2.7.
+        "</ul><p>" + esc(c.doctorLine || "") + "</p></div>");
     }
     const birth = state.profile?.birth;
     const firstAfter = birth ? s.runs.find(r => r.start > birth) : null;
@@ -247,7 +248,9 @@
       box("🌙", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed)),
       box("💞", c.pregnancyTitle, bullets(c.pregnancyItems) + "<p class='v2-mama-muted'>Kalendár neukazuje plodné dni a nie je antikoncepcia.</p>" + src(c.source, c.reviewed)),
       box("🩹", c.padsTitle, bullets(c.padsItems) + src(c.source, c.reviewed)),
-      box("🩺", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><strong>" + esc(c.doctorIntro) + "</strong>" + bullets(c.doctor) + "</div>" + src(c.doctorSource, c.doctorReviewed)),
+      // Master 2.8 (Plán F1-0, nález test.html): obsah 2.7 už nemá doctorIntro/doctor (Menštruačný kalendár padal pri otvorení).
+      // Podľa „informujeme, neradíme“: čo je bežné + jedna veta, kedy sa ozvať + Zapísať ako otázku pre lekára.
+      box("🩺", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
       "</div>"
     ].join("");
   }

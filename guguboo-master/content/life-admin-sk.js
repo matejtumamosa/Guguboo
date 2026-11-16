@@ -8,6 +8,8 @@ window.GugubooContent.lifeAdmin.SK = {
     "last_checked": "2026-09-28",
     "verification_status": "evidence-verified", "reviewed": "Nezávislá kontrola 28. 9. 2026: 425/425 citátov doslovne v uložených textoch oficiálnych stránok, každé vecné pole má citát; sumy overené aj monitoringom na GitHube. Pozor: slovensko.sk (8/2025) vs. Sociálna poisťovňa (8/2026) sa líšia v automatickom materskom – platí novší zdroj, review_required.",
     "evidence_dir": "content/evidence/sk",
+    "amounts_checked": "2026-11-16",
+    "amounts_review": "Úrady a sumy k 1. 1. 2027 (kontrola 16. 11. 2026): sumy a lehoty overené priamo na socpoist.sk, employment.gov.sk a podpora.financnasprava.sk. Nové citáty z tejto kontroly majú pri sebe 'url' (zdrojová stránka) namiesto 'file' – doslovný text ešte nie je uložený v content/evidence/sk; doslovnosť má potvrdiť monitoring. Polia 'validFrom' (odkedy údaj platí; null = oficiálny zdroj dátum neuvádza) a 'nextReview' (kedy položku znova skontrolovať) sú pridané ku každej položke. Záväzné je vždy rozhodnutie príslušného úradu.",
     "note": "Prehľad vychádza výlučne z oficiálnych stránok (Sociálna poisťovňa, MPSVR SR, slovensko.sk, Finančná správa, zdravotné poisťovne) a zo znenia zákona o rodnom čísle na zakonypreludi.sk. Každé faktické pole má v 'evidence' doslovnú citáciu zo stránky. Nejde o právne poradenstvo – pred rozhodnutím si vždy over aktuálny stav na uvedenom zdroji alebo priamo na úrade. Dni v poli 'when' sú orientačné (7 dní = 1 týždeň) a počítajú sa od očakávaného dňa pôrodu (due_date) alebo dňa narodenia (birth_date)."
   },
 
@@ -43,6 +45,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Vyžiadaj si od gynekológa potvrdenie o tehotenstve. 2. Napíš oznámenie zamestnávateľovi. 3. Doruč oznámenie aj potvrdenie zamestnávateľovi.",
       "where": "U zamestnávateľa.",
       "next": "Nástup na materskú dovolenku.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Narodenie (sprievodca); Zákonník práce § 40 ods. 6",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -92,7 +96,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Tehotná zamestnankyňa, SZČO, dobrovoľne nemocensky poistená osoba alebo poistenka v ochrannej lehote, ktorá má v posledných dvoch rokoch najmenej 270 dní nemocenského poistenia.",
       "when": { "anchor": "due_date", "from_days": -189, "to_days": 0, "text": "Nárok vzniká od začiatku 27. týždňa pred očakávaným dňom pôrodu a zaniká dňom skončenia tehotenstva." },
       "deadline": "Nárok na výplatu sa premlčí uplynutím troch rokov odo dňa, za ktorý dávka patrila.",
-      "amount": "15 % denného vymeriavacieho základu (najmenej 10 % maximálneho denného vymeriavacieho základu). Maximum pri dôvode vzniknutom v roku 2026: 451 eura mesačne (30-dňový mesiac) / 466 eur mesačne (31-dňový mesiac).",
+      "amount": "15 % denného vymeriavacieho základu (najmenej 10 % maximálneho denného vymeriavacieho základu). Maximum, ak dôvod vznikne v roku 2027: 479,40 eura mesačne (30-dňový mesiac) / 495,40 eura mesačne (31-dňový mesiac). Ak dôvod vznikol v roku 2026: najviac 451 eura (30-dňový mesiac) / 466 eur (31-dňový mesiac).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-08-01",
+      "nextReview": "2027-01-15",
       "documents": [
         "Žiadosť o tehotenské, na ktorej lekár potvrdí očakávaný deň pôrodu (len ak ho lekár nezapíše do elektronickej tehotenskej knižky)",
         "Podpísané „Vyhlásenie poistenky“ na druhej strane žiadosti",
@@ -108,7 +115,8 @@ window.GugubooContent.lifeAdmin.SK = {
         "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-tehotenske",
         "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
         "https://socpoist.sk/news/digitalna-revolucia-v-socialnej-poistovni-prinasame-36-zlepseni-obcan-si-vybavi-viac-zivotnych",
-        "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/materske/dalsie-informacie-materske"
+        "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/materske/dalsie-informacie-materske",
+        "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske"
       ],
       "last_checked": "2026-09-28",
       "effective_from": null,
@@ -137,7 +145,10 @@ window.GugubooContent.lifeAdmin.SK = {
           { "file": "content/evidence/sk/sp-tehotenske-info.txt", "quote": "výška nesmie byť nižšia ako 10 % maximálneho denného vymeriavacieho základu" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2026" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "budúce mamičky dostanú najviac 451 eura mesačne pri 30-dňovom kalendárnom mesiaci" },
-          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "466 eur mesačne pri 31-dňovom kalendárnom mesiaci" }
+          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "466 eur mesačne pri 31-dňovom kalendárnom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2027" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "budúce mamičky dostanú najviac 479,40 eura mesačne pri 30-dňovom kalendárnom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "495,40 eur mesačne pri 31-dňovom kalendárnom mesiaci" }
         ],
         "documents": [
           { "file": "content/evidence/sk/sp-ako-tehotenske.txt", "quote": "Ak vám lekár nezaznamená očakávaný deň pôrodu do elektronickej tehotenskej knižky, v prechodnom období vám vystaví tlačivo „Žiadosť o tehotenské“" },
@@ -195,6 +206,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Elektronicky: služba „Zápisnica o určení otcovstva súhlasným vyhlásením rodičov k nenarodenému dieťaťu“ (potrebuješ elektronický občiansky preukaz s čipom). 2. Alebo osobne – obaja rodičia prídu na príslušnú matriku s občianskymi preukazmi. 3. Ak to nestihnete pred pôrodom, dá sa to aj po pôrode – elektronicky, osobne na matrike alebo pred súdom.",
       "where": "Príslušná matrika alebo elektronicky.",
       "next": "Dohoda rodičov o mene a priezvisku dieťaťa – matka ju môže podpísať ešte v nemocnici.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Narodenie (sprievodca)",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -254,6 +267,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Dohodni sa s pediatrom ešte pred pôrodom. 2. Maj pripravené jeho meno, adresu a telefónne číslo – v pôrodnici ich nahlásiš. 3. Ak pediatra dohodnutého nemáš, dieťa má automaticky nárok na lekára v obvode trvalého bydliska matky.",
       "where": null,
       "next": "Prihlásenie dieťaťa k pediatrovi – ideálne do troch dní od prepustenia z pôrodnice.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Narodenie (sprievodca); MPSVR SR – Príspevok pri narodení dieťaťa",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -299,7 +314,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Zamestnankyňa, SZČO, dobrovoľne nemocensky poistená osoba alebo osoba v ochrannej lehote s najmenej 270 dňami nemocenského poistenia v posledných dvoch rokoch. Poberá ho matka alebo iný poistenec, ktorý sa stará o dieťa (napr. otec).",
       "when": { "anchor": "due_date", "from_days": -56, "to_days": null, "text": "Matka: od začiatku 6. týždňa pred očakávaným dňom pôrodu, na žiadosť najskôr od začiatku 8. týždňa. Nárok zaniká spravidla po 34 týždňoch (osamelá matka najdlhšie 37, pri dvoch a viac súčasne narodených deťoch najdlhšie 43 týždňov); nesmie byť kratší ako 14 týždňov a nezanikne skôr ako 6 týždňov po pôrode." },
       "deadline": null,
-      "amount": "75 % denného vymeriavacieho základu. Maximum pri dôvode vzniknutom v roku 2026: 2 254,70 eura mesačne (30-dňový mesiac) / 2 329,90 eura mesačne (31-dňový mesiac).",
+      "amount": "75 % denného vymeriavacieho základu. Maximum, ak dôvod vznikne v roku 2027: 2 396,80 eura mesačne (30-dňový mesiac) / 2 476,70 eura mesačne (31-dňový mesiac). Ak dôvod vznikol v roku 2026: najviac 2 254,70 eura (30-dňový mesiac) / 2 329,90 eura (31-dňový mesiac).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-08-01",
+      "nextReview": "2027-01-15",
       "documents": [
         "Ak žiadosť podávaš: žiadosť o materské (vystaví ju gynekológ, alebo formulár „Žiadosť o materské - tehotná žena“)",
         "Podpísané Vyhlásenie poistenca na druhej strane žiadosti",
@@ -307,13 +325,14 @@ window.GugubooContent.lifeAdmin.SK = {
       ],
       "how": "1. Ak ti gynekológ zapíše očakávaný deň pôrodu do elektronickej tehotenskej knižky, od 1. 8. 2026 Sociálna poisťovňa začne konanie o materskom sama od začiatku 6. týždňa pred pôrodom – žiadosť podávať nemusíš. 2. Žiadosť podávaš, ak chceš materské od iného dňa (napr. od 8. týždňa), ak si u lekára vyjadrila nesúhlas so zasielaním údajov o tehotenstve, alebo ak tvoje tehotenstvo potvrdil lekár v zahraničí. 3. Ak ti lekár vystavuje papierovú žiadosť, robí to spravidla na začiatku 8. až 6. týždňa pred pôrodom. 4. Žiadosť podaj cez eSlužby, poštou alebo osobne.",
       "where": "Elektronicky cez eSlužby (Elektronický účet poistenca); poštou alebo osobne na pobočke Sociálnej poisťovne podľa sídla zamestnávateľa (SZČO a dobrovoľne poistené podľa trvalého pobytu).",
-      "next": "Po materskom rodičovský príspevok – 500,10 € mesačne, ak ti predtým vyplácali materské.",
+      "next": "Po materskom rodičovský príspevok – 500,10 € mesačne, ak ti predtým vyplácali materské (suma pre rok 2026 – od 1. 1. 2027 sa mení, aktuálnu sumu si over na employment.gov.sk).",
       "official_source": "Sociálna poisťovňa – Materské",
       "source_url": "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-materske",
       "source_urls": [
         "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-materske",
         "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/materske/dalsie-informacie-materske",
         "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
+        "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
         "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/sumy-prispevkov-pre-rodicov.html"
       ],
       "last_checked": "2026-09-28",
@@ -349,7 +368,10 @@ window.GugubooContent.lifeAdmin.SK = {
           { "file": "content/evidence/sk/sp-materske-info.txt", "quote": "Výška materského predstavuje 75 % denného vymeriavacieho základu" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2026" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 254,70 eura mesačne pri 30-dňovom mesiaci" },
-          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 329,90 eura mesačne pri 31-dňovom mesiaci" }
+          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 329,90 eura mesačne pri 31-dňovom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2027" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "materské bude Sociálna poisťovňa vyplácať maximálne vo výške 2 396,80 eura mesačne pri 30-dňovom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "alebo 2 476,70 eura mesačne pri 31-dňovom mesiaci" }
         ],
         "documents": [
           { "file": "content/evidence/sk/sp-ako-materske.txt", "quote": "Ak ste tehotná, žiadosť vám vystaví lekár (gynekológ)." },
@@ -400,6 +422,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Do nemocnice si prineste potrebné doklady – bez nich dohodu v nemocnici nepodpíšete. 2. Podpíšte dohodu v nemocnici najneskôr na nasledujúci deň po narodení. 3. Ak to nestihnete, podpíšte ju elektronicky (s eID s čipom) alebo osobne na matrike.",
       "where": "Pôrodnica, príslušný matričný úrad alebo elektronicky.",
       "next": "Matrika pošle rodný list – je v ňom aj rodné číslo dieťaťa.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Rodný list; Narodenie (sprievodca)",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -460,6 +484,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "Pri pôrode v zdravotníckom zariadení narodenie oznámi matrike zariadenie. Pri pôrode doma ho oznámi rodič.",
       "where": "Príslušná matrika",
       "next": "Rodný list – vydáva ho matričný úrad.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Rodný list; Zákon č. 301/1995 Z. z. o rodnom čísle, § 5 ods. 2",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_rodny-list/",
       "source_urls": [
@@ -513,6 +539,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "Rodné číslo pridelí matrika pri zápise narodenia; je uvedené v rodnom liste.",
       "where": null,
       "next": "Rodný list – pri podpísanej dohode o mene ho matrika pošle na adresu trvalého pobytu matky.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "Zákon č. 301/1995 Z. z. o rodnom čísle, § 5 ods. 2; slovensko.sk – Rodný list",
       "source_url": "https://www.zakonypreludi.sk/zz/1995-301",
       "source_urls": [
@@ -562,6 +590,7 @@ window.GugubooContent.lifeAdmin.SK = {
       "when": { "anchor": "birth_date", "from_days": 4, "to_days": 5, "text": "Ak je podpísaná dohoda o mene a priezvisku, rodný list sa vystaví automaticky a matrika ho pošle bezodkladne – zväčša na 4. – 5. deň od narodenia." },
       "deadline": null,
       "amount": "Prvý originál bezplatne; duplikát 7 €; elektronická žiadosť o duplikát 3,50 €.",
+      "amount_checked": "2026-11-16",
       "documents": [
         "Pri automatickom vystavení: podpísaná dohoda rodičov o mene a priezvisku dieťaťa",
         "Manželia (vyzdvihuje otec): sobášny list a platné preukazy totožnosti rodičov",
@@ -571,6 +600,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Podpíšte dohodu o mene a priezvisku dieťaťa. 2. Ešte v pôrodnici požiadaj o zaslanie rodného listu poštou. 3. Matrika ho pošle do vlastných rúk na adresu tvojho trvalého pobytu. 4. Inak si ho prevezmeš na príslušnej matrike.",
       "where": "Poštou na adresu trvalého pobytu matky alebo osobne na príslušnej matrike (podľa miesta narodenia dieťaťa).",
       "next": "Po vystavení rodného listu štát sám rieši príspevok pri narodení dieťaťa. Bábätko je automaticky poistené v poisťovni matky a má rovnaký trvalý pobyt ako matka.",
+      "validFrom": null,
+      "nextReview": "2027-01-15",
       "official_source": "slovensko.sk – Rodný list; Narodenie (sprievodca)",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_rodny-list/",
       "source_urls": [
@@ -638,6 +669,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Pri narodení na Slovensku nemusíš nič ohlasovať. 2. Nového člena domácnosti nahlás na mestskom úrade kvôli poplatkom za odvoz smetí. 3. Dieťa narodené v zahraničí treba prihlásiť na ohlasovni pobytu – bez pridelenia rodného čísla to nejde.",
       "where": "Pri zmene alebo pri narodení v zahraničí: ohlasovňa pobytu (mestský alebo obecný úrad v mieste bydliska).",
       "next": "Ak chceš mať dieťa prihlásené inde ako matka, pobyt sa dá zmeniť na ohlasovni pobytu.",
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Narodenie (sprievodca)",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -697,6 +730,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Ak poisťovňu meniť nechceš, nemusíš vypisovať žiadnu prihlášku. 2. Preukaz poistenca ti poisťovňa pošle poštou. 3. Ak sa bábätko narodí v zahraničí a nemá slovenský rodný list, kontaktuj poisťovňu čo najskôr. 4. Ak chceš inú poisťovňu, podaj prihlášku na zmenu do 30. 9.",
       "where": "Elektronicky, cez call centrum alebo osobne na pobočke zdravotnej poisťovne.",
       "next": "Prihlás bábätko k pediatrovi – oznámiš mu rodné číslo a zdravotnú poisťovňu dieťaťa.",
+      "validFrom": "2022-08-01",
+      "nextReview": "2027-03-01",
       "official_source": "VšZP – Poistenie bábätka; Dôvera – Poistenie novorodenca; slovensko.sk",
       "source_url": "https://www.vszp.sk/poistenci/pre-mamicky/ako-poistit-dieta.html",
       "source_urls": [
@@ -759,6 +794,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "how": "1. Dohodni si s pediatrom termín a miesto návštevy – v ambulancii alebo doma. 2. Na návštevu si vezmi prepúšťaciu správu z nemocnice. 3. Podpíš Dohodu o poskytovaní všeobecnej ambulantnej starostlivosti.",
       "where": "V ambulancii pediatra alebo doma.",
       "next": null,
+      "validFrom": null,
+      "nextReview": "2027-03-01",
       "official_source": "slovensko.sk – Narodenie (sprievodca); MPSVR SR – Príspevok pri narodení dieťaťa",
       "source_url": "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
       "source_urls": [
@@ -802,7 +839,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Otec – zamestnanec, SZČO, dobrovoľne nemocensky poistený alebo v ochrannej lehote – ktorý sa stará o dieťa a má najmenej 270 dní nemocenského poistenia v posledných dvoch rokoch.",
       "when": { "anchor": "birth_date", "from_days": 0, "to_days": 42, "text": "Najviac 2 týždne v období 6 týždňov od narodenia. Obdobie sa predĺži o dni, keď bolo dieťa alebo matka zo zdravotných dôvodov v ústavnej starostlivosti." },
       "deadline": "Uplatniť v období od narodenia dieťaťa do 6 týždňov po narodení.",
-      "amount": "Ako materské: 75 % denného vymeriavacieho základu (maximá pre rok 2026 pozri materské).",
+      "amount": "Ako materské: 75 % denného vymeriavacieho základu (maximá pre roky 2026 a 2027 pozri materské).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-01-01",
+      "nextReview": "2027-01-15",
       "documents": [
         "Žiadosť o materské – iný poistenec/otcovské",
         "Pri predĺžení kvôli hospitalizácii: potvrdenie o hospitalizácii dieťaťa alebo matky s dieťaťom"
@@ -878,11 +918,14 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Poistenec, ktorý sa stará o dieťa, s najmenej 270 dňami nemocenského poistenia v posledných dvoch rokoch pred dňom, od ktorého žiada materské. Otec najskôr po 6 týždňoch od pôrodu, ak matka na to isté dieťa nepoberá materské ani rodičovský príspevok.",
       "when": { "anchor": "birth_date", "from_days": null, "to_days": null, "text": "Od dňa, od ktorého o materské žiadaš. Nárok zaniká po 28. týždni (osamelý otec po 31., pri starostlivosti o dve a viac detí po 37. týždni); obdobie otcovského sa odpočíta." },
       "deadline": null,
-      "amount": "75 % denného vymeriavacieho základu. Maximum pri dôvode vzniknutom v roku 2026: 2 254,70 eura mesačne (30-dňový mesiac) / 2 329,90 eura mesačne (31-dňový mesiac).",
+      "amount": "75 % denného vymeriavacieho základu. Maximum, ak dôvod vznikne v roku 2027: 2 396,80 eura mesačne (30-dňový mesiac) / 2 476,70 eura mesačne (31-dňový mesiac). Ak dôvod vznikol v roku 2026: najviac 2 254,70 eura (30-dňový mesiac) / 2 329,90 eura (31-dňový mesiac).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-01-01",
+      "nextReview": "2027-01-15",
       "documents": ["Žiadosť o materské – iný poistenec/otcovské", "Ak sa matka nemôže starať zo zdravotných dôvodov: lekársky posudok"],
       "how": "1. Podaj „Žiadosť o materské – iný poistenec/otcovské“ cez eSlužby, poštou alebo osobne. 2. V žiadosti uveď dátum, odkedy si nárok uplatňuješ. 3. Materské sa za to isté obdobie poskytuje len jednému poistencovi.",
       "where": "Elektronicky cez eSlužby (Elektronický účet poistenca); poštou alebo osobne na pobočke Sociálnej poisťovne podľa sídla zamestnávateľa (SZČO a DNPO podľa trvalého pobytu).",
-      "next": "Rodičovský príspevok – vyššia suma 500,10 €, ak sa pred ním vyplácalo materské.",
+      "next": "Rodičovský príspevok – vyššia suma 500,10 € (suma pre rok 2026 – od 1. 1. 2027 sa mení, aktuálnu sumu si over na employment.gov.sk), ak sa pred ním vyplácalo materské.",
       "official_source": "Sociálna poisťovňa – Materské",
       "source_url": "https://www.socpoist.sk/socialne-poistenie/nemocenske-poistenie/materske/dalsie-informacie-materske",
       "source_urls": [
@@ -890,6 +933,7 @@ window.GugubooContent.lifeAdmin.SK = {
         "https://www.socpoist.sk/kto-som/zamestnanec/poziadat-o-davku/ako-poziadat-o-materske",
         "https://www.socpoist.sk/zivotne-situacie/tehotenstvo-materstvo/ako-poziadat-o-otcovske",
         "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
+        "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
         "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/sumy-prispevkov-pre-rodicov.html"
       ],
       "last_checked": "2026-09-28",
@@ -920,7 +964,10 @@ window.GugubooContent.lifeAdmin.SK = {
           { "file": "content/evidence/sk/sp-materske-info.txt", "quote": "Výška materského predstavuje 75 % denného vymeriavacieho základu" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2026" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 254,70 eura mesačne pri 30-dňovom mesiaci" },
-          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 329,90 eura mesačne pri 31-dňovom mesiaci" }
+          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "2 329,90 eura mesačne pri 31-dňovom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2027" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "materské bude Sociálna poisťovňa vyplácať maximálne vo výške 2 396,80 eura mesačne pri 30-dňovom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "alebo 2 476,70 eura mesačne pri 31-dňovom mesiaci" }
         ],
         "documents": [
           { "file": "content/evidence/sk/sp-ako-materske.txt", "quote": "Žiadosť o materské – iný poistenec/otcovské" },
@@ -953,6 +1000,9 @@ window.GugubooContent.lifeAdmin.SK = {
       "when": { "anchor": "birth_date", "from_days": 0, "to_days": 365, "text": "Konanie sa začne po zápise dieťaťa do registra fyzických osôb; štandardne do 30 dní od vystavenia rodného listu. Nárok zaniká uplynutím dvanástich mesiacov od narodenia." },
       "deadline": "Nárok zaniká uplynutím 12 mesiacov od narodenia dieťaťa.",
       "amount": "829,86 € (dieťa z 1. až 4. pôrodu); 151,37 € (5. a ďalší pôrod); pri súčasne narodených deťoch +75,69 € na každé dieťa. Sumu môže k 1. septembru zvýšiť nariadenie vlády.",
+      "amount_checked": "2026-11-16",
+      "validFrom": null,
+      "nextReview": "2027-01-15",
       "documents": ["Pri narodení v zahraničí: úradný preklad rodného listu alebo potvrdenia o narodení (z češtiny netreba)"],
       "how": "1. Pri narodení na Slovensku žiadosť nepodávaš – úrad dostane údaje z registra. 2. Nepovinne môžeš vopred oznámiť, kam chceš príspevok poslať (účet alebo adresa); inak štát použije účet alebo adresu, kam ti chodilo tehotenské. 3. Ak sa dieťa narodilo v zahraničí, doruč na úrad práce úradný preklad rodného listu.",
       "where": "Príslušný úrad práce, sociálnych vecí a rodiny (oznámenie o spôsobe výplaty aj elektronicky alebo poštou).",
@@ -963,7 +1013,8 @@ window.GugubooContent.lifeAdmin.SK = {
         "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/",
         "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/nova-web-stranka.html",
         "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/prispevok-pri-narodeni-dietata/vyplata-prispevku.html",
-        "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/"
+        "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_narodenie-sprievodca/",
+        "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/sumy-prispevkov-pre-rodicov.html"
       ],
       "last_checked": "2026-09-28",
       "effective_from": null,
@@ -1035,6 +1086,9 @@ window.GugubooContent.lifeAdmin.SK = {
       "when": { "anchor": "birth_date", "from_days": 0, "to_days": 180, "text": "Spätne sa dá uplatniť najviac za šesť mesiacov." },
       "deadline": "Spätne najviac za obdobie šiestich mesiacov.",
       "amount": "60 € mesačne (v mesiaci, keď dieťa prvýkrát nastúpi do 1. ročníka ZŠ, sa zvýši o 110 €).",
+      "amount_checked": "2026-11-16",
+      "validFrom": null,
+      "nextReview": "2027-01-15",
       "documents": ["Písomná žiadosť o prídavok na dieťa"],
       "how": "1. Vyplň žiadosť o prídavok na dieťa (tlačivo je na úrade práce alebo na stiahnutie). 2. Podaj ju na úrade práce, alebo elektronicky so zaručeným elektronickým podpisom. 3. Prídavok sa vypláca mesačne pozadu.",
       "where": "Úrad práce, sociálnych vecí a rodiny podľa trvalého pobytu; alebo elektronicky.",
@@ -1103,7 +1157,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Daňovník s príjmami podľa § 5 alebo § 6 ods. 1 a 2 zákona o dani z príjmov a s vyživovaným dieťaťom v domácnosti; zdaniteľné príjmy zo SR za rok 2026 tvoria najmenej 90 % všetkých jeho príjmov. Bonus je obmedzený percentom zo základu dane (pri 1 dieťati 29 %) a pri základe dane nad 1,5-násobok 12-násobku priemernej mesačnej mzdy za rok 2024 sa znižuje.",
       "when": { "anchor": "birth_date", "from_days": null, "to_days": null, "text": "Počas roka cez zamestnávateľa alebo v daňovom priznaní. Uplatňuje sa za každý mesiac, na ktorého začiatku boli splnené podmienky." },
       "deadline": null,
-      "amount": "Rok 2026: 100 eur mesačne na dieťa do 15 rokov; 50 eur mesačne na dieťa od 15 do 18 rokov.",
+      "amount": "Rok 2026: 100 eur mesačne na dieťa do 15 rokov; 50 eur mesačne na dieťa od 15 do 18 rokov (suma pre rok 2026 – sumu pre rok 2027 Finančná správa ešte nezverejnila, over si ju na financnasprava.sk).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-01-01",
+      "nextReview": "2027-01-15",
       "documents": [],
       "how": "1. Ak si zamestnanec, bonus si môžeš uplatňovať počas roka – zamestnávateľ ti o jeho sumu zníži preddavky na daň. 2. Inak si ho uplatníš v daňovom priznaní; správca dane ho zasiela do 40 dní po uplynutí lehoty na podanie priznania.",
       "where": "U zamestnávateľa alebo v daňovom priznaní.",
@@ -1175,7 +1232,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Rodič dieťaťa (aj osoba, ktorej bolo dieťa zverené, alebo manžel rodiča žijúci s ním v domácnosti), ktorý zabezpečuje riadnu starostlivosť o dieťa a má trvalý alebo prechodný pobyt na Slovensku. Nárok má len jedna oprávnená osoba podľa dohody.",
       "when": { "anchor": "birth_date", "from_days": 0, "to_days": null, "text": "Do 3 rokov veku dieťaťa (pri dlhodobo nepriaznivom zdravotnom stave do 6 rokov). Kým je materské vyššie ako rodičovský príspevok, nárok nevzniká; ak je nižšie, dostaneš rozdiel. Spätne najviac za 6 mesiacov." },
       "deadline": "Spätne najviac za obdobie šiestich mesiacov od posledného dňa v mesiaci, za ktorý patril.",
-      "amount": "364,80 € mesačne; 500,10 € mesačne, ak sa ti pred vznikom nároku vyplácalo materské (alebo obdobná dávka v členskom štáte). Pri súčasne narodených deťoch sa zvyšuje o 120,60 € na každé súčasne narodené dieťa. Sumy sa upravujú od 1. januára.",
+      "amount": "364,80 € mesačne; 500,10 € mesačne, ak sa ti pred vznikom nároku vyplácalo materské (alebo obdobná dávka v členskom štáte) – sumy pre rok 2026; od 1. 1. 2027 sa menia, aktuálnu sumu si over na employment.gov.sk. Pri súčasne narodených deťoch sa zvyšuje o 25 % na každé súčasne narodené dieťa. Sumy sa upravujú od 1. januára koeficientom, ktorým sa upravili sumy životného minima.",
+      "amount_checked": "2026-11-16",
+      "validFrom": null,
+      "nextReview": "2027-01-15",
       "documents": ["Písomná žiadosť o rodičovský príspevok (alebo elektronická so zaručeným elektronickým podpisom)", "Dieťa narodené v zahraničí bez slovenského rodného listu: úradný preklad rodného listu"],
       "how": "1. Podaj žiadosť o rodičovský príspevok – písomne alebo elektronicky so zaručeným elektronickým podpisom. 2. Podáva sa na úrade práce podľa trvalého pobytu. 3. Nepremeškaj 6-mesačnú lehotu na spätné uplatnenie.",
       "where": "Úrad práce, sociálnych vecí a rodiny podľa trvalého pobytu (cudzinci podľa prechodného).",
@@ -1215,7 +1275,8 @@ window.GugubooContent.lifeAdmin.SK = {
         "amount": [
           { "file": "content/evidence/sk/mpsvr-rodicovsky-vyska.txt", "quote": "Výška rodičovského príspevku je: a) 364,80 € mesačne, b) 500,10 € mesačne, ak sa oprávnenej osobe, ktorá o rodičovský príspevok požiadala, pred vznikom nároku na rodičovský príspevok vyplácalo z dôvodu starostlivosti o toto dieťa materské alebo obdobná dávka ako materské v členskom štáte." },
           { "file": "content/evidence/sk/mpsvr-rodicovsky.txt", "quote": "rodičovský príspevok sa zvyšuje o 120, 60 € (zvýšenie sumy o 25 %) na každé dieťa, ktoré sa narodilo súčasne" },
-          { "file": "content/evidence/sk/mpsvr-rodicovsky.txt", "quote": "Sumy rodičovského príspevku platné k 31. decembru sa upravujú od 1. januára" }
+          { "file": "content/evidence/sk/mpsvr-rodicovsky.txt", "quote": "Sumy rodičovského príspevku platné k 31. decembru sa upravujú od 1. januára" },
+          { "url": "https://www.employment.gov.sk/sk/rodina-socialna-pomoc/podpora-rodinam-detmi/penazna-pomoc/rodicovsky-prispevok/vyska-prispevku.html", "checked": "2026-11-16", "quote": "sa upravujú od 1. januára koeficientom, ktorým sa upravili sumy životného minima" }
         ],
         "documents": [
           { "file": "content/evidence/sk/mpsvr-rodicovsky.txt", "quote": "podaním písomnej žiadosti alebo žiadosti podanej elektronickými prostriedkami podpísanej zaručeným elektronickým podpisom" },
@@ -1243,6 +1304,9 @@ window.GugubooContent.lifeAdmin.SK = {
       "when": { "anchor": "birth_date", "from_days": 365, "to_days": null, "text": "Prvýkrát po dovŕšení 1 roka detí, potom v každom kalendárnom roku." },
       "deadline": null,
       "amount": "110,36 € (sumu môže k 1. septembru zmeniť nariadenie vlády).",
+      "amount_checked": "2026-11-16",
+      "validFrom": null,
+      "nextReview": "2027-01-15",
       "documents": ["Písomná žiadosť (potvrdzuje ju úrad práce podľa miesta narodenia dieťaťa)"],
       "how": "1. Po prvých narodeninách detí podaj písomnú žiadosť (alebo elektronicky so zaručeným elektronickým podpisom). 2. Opakuj každý kalendárny rok.",
       "where": "Úrad práce, sociálnych vecí a rodiny podľa trvalého pobytu; aj elektronicky.",
@@ -1306,7 +1370,10 @@ window.GugubooContent.lifeAdmin.SK = {
       "eligibility": "Nemocensky poistený zamestnanec, SZČO alebo dobrovoľne poistená osoba (aj v ochrannej lehote) s najmenej 270 dňami nemocenského poistenia v posledných dvoch rokoch.",
       "when": { "anchor": "birth_date", "from_days": null, "to_days": null, "text": "Keď lekár potvrdí, že dieťa potrebuje ošetrovanie, alebo keď je jeho škola či predškolské zariadenie rozhodnutím úradov uzavreté." },
       "deadline": null,
-      "amount": "Maximum pri dôvode vzniknutom v roku 2026: krátkodobé ošetrovné (najviac za 14 dní) 771,70 eura; dlhodobé ošetrovné 1 653,50 eura mesačne (30-dňový mesiac) / 1 708,60 eura mesačne (31-dňový mesiac).",
+      "amount": "Maximum, ak dôvod vznikne v roku 2027: krátkodobé ošetrovné (najviac za 14 dní) 820,30 eura; dlhodobé ošetrovné 1 757,60 eura mesačne (30-dňový mesiac) / 1 816,20 eura mesačne (31-dňový mesiac). Ak dôvod vznikol v roku 2026: krátkodobé najviac 771,70 eura; dlhodobé najviac 1 653,50 eura (30-dňový mesiac) / 1 708,60 eura (31-dňový mesiac).",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2026-08-01",
+      "nextReview": "2027-01-15",
       "documents": ["Žiadosť o ošetrovné potvrdená lekárom (ak lekár nepotvrdí potrebu elektronicky cez eZdravie)", "Pri uzavretí zariadenia: potvrdenie od zariadenia"],
       "how": "1. Lekár ti potvrdí potrebu ošetrovania – elektronicky cez eZdravie alebo na tlačive „Žiadosť o ošetrovné“. 2. Pri tlačive vyplň a podpíš Vyhlásenie poistenca a doruč ho pobočke; pri elektronickom potvrdení podaj žiadosť cez eSlužby, poštou alebo osobne. 3. Pri skončení ošetrovania pošli pobočke potvrdenie o skončení (II. diel tlačiva).",
       "where": "Sociálna poisťovňa – eSlužby, pošta alebo pobočka (podľa sídla zamestnávateľa; SZČO a DNPO podľa trvalého pobytu).",
@@ -1315,7 +1382,8 @@ window.GugubooContent.lifeAdmin.SK = {
       "source_url": "https://socpoist.sk/kto-som/zivnostnik-szco/poziadat-o-davku/ako-poziadat-o-osetrovne",
       "source_urls": [
         "https://socpoist.sk/kto-som/zivnostnik-szco/poziadat-o-davku/ako-poziadat-o-osetrovne",
-        "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske"
+        "https://socpoist.sk/news/zmena-2026-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske",
+        "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske"
       ],
       "last_checked": "2026-09-28",
       "effective_from": null,
@@ -1342,7 +1410,11 @@ window.GugubooContent.lifeAdmin.SK = {
         "amount": [
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2026" },
           { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "Dávka ošetrovné, ktorú Sociálna poisťovňa podľa zákona vypláca najviac za 14 dní, tak dosiahne maximálnu výšku 771,70 eura." },
-          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "bude jeho maximálna výška 1 653,50 eura mesačne pri 30-dňovom kalendárnom mesiaci, resp. 1 708,60 eura mesačne pri 31 dňovom kalendárnom mesiaci" }
+          { "file": "content/evidence/sk/sp-news-sumy-2026.txt", "quote": "bude jeho maximálna výška 1 653,50 eura mesačne pri 30-dňovom kalendárnom mesiaci, resp. 1 708,60 eura mesačne pri 31 dňovom kalendárnom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "Ak dôvod na poskytnutie nemocenskej dávky vznikne v období od 1. januára do 31. decembra 2027" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "tak dosiahne maximálnu výšku 820,30 eura" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "bude jeho maximálna výška 1 757,60 eura mesačne pri 30-dňovom kalendárnom mesiaci" },
+          { "url": "https://www.socpoist.sk/news/zmena-2027-socialna-poistovna-bude-vyplacat-vyssie-maximalne-sumy-davok-nemocenske-materske", "checked": "2026-11-16", "quote": "1 816,20 eura mesačne pri 31 dňovom kalendárnom mesiaci" }
         ],
         "documents": [
           { "file": "content/evidence/sk/sp-ako-osetrovne.txt", "quote": "Ak lekár nepotvrdí potrebu krátkodobej osobnej starostlivosti elektronicky prostredníctvom eZdravia, ale vám vystaví tlačivo „Žiadosť o ošetrovné“" },
@@ -1362,6 +1434,74 @@ window.GugubooContent.lifeAdmin.SK = {
           { "file": "content/evidence/sk/sp-ako-osetrovne.txt", "quote": "Písomne Poštou" },
           { "file": "content/evidence/sk/sp-ako-osetrovne.txt", "quote": "sídla zamestnávateľa, ak ste zamestnanec" },
           { "file": "content/evidence/sk/sp-ako-osetrovne.txt", "quote": "miesta vášho trvalého pobytu, ak ste SZČO alebo DNPO" }
+        ]
+      }
+    },
+    {
+      "id": "sk.benefit.odvodova_ulava_rodicia",
+      "type": "benefit",
+      "title": "Odvodová úľava pri práci na dohodu (od 2027)",
+      "life_stage": ["pregnancy", "postpartum"],
+      "automatic": false,
+      "what": "Od 1. januára 2027 si odvodovú odpočítateľnú položku môžu uplatniť aj rodičia na materskej, otcovskej alebo rodičovskej dovolenke, ktorí pracujú na dohodu o vykonaní práce alebo dohodu o pracovnej činnosti.",
+      "why": "Položka zníži vymeriavací základ z dohody, z ktorého sa platí poistné na dôchodkové poistenie – nejde o peniaze vyplácané navyše.",
+      "who": "Ty (zamestnanec na dohodu) voči zamestnávateľovi, u ktorého pracuješ na dohodu",
+      "authority": "Zamestnávateľ / Sociálna poisťovňa",
+      "eligibility": "Rodič na materskej, otcovskej alebo rodičovskej dovolenke, ktorý pracuje na dohodu o vykonaní práce alebo dohodu o pracovnej činnosti. Pri viacerých dohodách sa v jednom kalendárnom mesiaci dá uplatniť len na jednu z nich.",
+      "when": { "anchor": "birth_date", "from_days": null, "to_days": null, "text": "Od 1. januára 2027. Pri dohode uzatvorenej ešte v roku 2026 treba uplatnenie písomne oznámiť zamestnávateľovi najneskôr do 31. decembra 2026, inak sa položka uplatní až od prvého dňa nasledujúceho kalendárneho mesiaca." },
+      "deadline": "Pri dohode uzatvorenej v roku 2026: písomné oznámenie zamestnávateľovi najneskôr do 31. 12. 2026 (aby úľava platila od 1. 1. 2027). Skončenie dovolenky oznám zamestnávateľovi najneskôr 8 dní pred jej skončením.",
+      "amount": "300 eur mesačne – o túto sumu sa zníži vymeriavací základ na dôchodkové poistenie z dohody. Na nemocenské poistenie ani poistenie v nezamestnanosti sa nevzťahuje.",
+      "amount_checked": "2026-11-16",
+      "validFrom": "2027-01-01",
+      "nextReview": "2027-01-15",
+      "documents": [
+        "Písomné oznámenie zamestnávateľovi, že si odvodovú odpočítateľnú položku uplatňuješ",
+        "Potvrdenie zamestnávateľa o čerpaní materskej, otcovskej alebo rodičovskej dovolenky"
+      ],
+      "how": "1. Ak si položku chceš uplatniť, písomne to oznám zamestnávateľovi, u ktorého pracuješ na dohodu. 2. Čerpanie materskej, otcovskej alebo rodičovskej dovolenky preukáž potvrdením zamestnávateľa. 3. Skončenie dovolenky mu oznám najneskôr 8 dní pred jej skončením.",
+      "where": "U zamestnávateľa, u ktorého pracuješ na dohodu.",
+      "next": null,
+      "official_source": "Sociálna poisťovňa – Študenti, dôchodcovia a už aj rodičia: od januára 2027 odvodová úľava 300 eur",
+      "source_url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske",
+      "source_urls": [
+        "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske"
+      ],
+      "last_checked": "2026-11-16",
+      "effective_from": "2027-01-01",
+      "effective_until": null,
+      "verification_status": "partial",
+      "review_required": true,
+      "evidence_note": "Citáty z kontroly 16. 11. 2026 zo stránky Sociálnej poisťovne (správa uverejnená 22. 7. 2026). Doslovný text ešte nie je uložený v content/evidence/sk – overí ho monitoring. Sociálna poisťovňa môže postup ešte spresniť; preto 'partial'.",
+      "evidence": {
+        "what": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "Študenti, dôchodcovia a už aj rodičia: Od januára 2027 si môžete uplatniť odvodovú úľavu vo výške 300 eur" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "fyzické osoby na materskej, otcovskej alebo rodičovskej dovolenke" }
+        ],
+        "why": [{ "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "bude mať znížený vymeriavací základ o odvodovú odpočítateľnú položku iba na dôchodkové poistenie" }],
+        "eligibility": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "fyzické osoby na materskej, otcovskej alebo rodičovskej dovolenke" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "v jednom kalendárnom mesiaci si odvodovú odpočítateľnú položku môže uplatniť len na jednu z nich" }
+        ],
+        "when": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "aby zamestnanec najneskôr do 31. decembra 2026 písomne oznámil zamestnávateľovi" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "až od prvého dňa kalendárneho mesiaca nasledujúceho" }
+        ],
+        "deadline": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "aby zamestnanec najneskôr do 31. decembra 2026 písomne oznámil zamestnávateľovi" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "najneskôr do ôsmich dní pred jej skončením" }
+        ],
+        "amount": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "od 1. januára 2027 zvýši zo súčasných 200 eur na 300 eur mesačne" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "bude mať znížený vymeriavací základ o odvodovú odpočítateľnú položku iba na dôchodkové poistenie" }
+        ],
+        "documents": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "písomne oznámil zamestnávateľovi uplatnenie odvodovej odpočítateľnej položky" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "preukázal čerpanie materskej, otcovskej alebo rodičovskej dovolenky potvrdením zamestnávateľa" }
+        ],
+        "how": [
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "písomne oznámil zamestnávateľovi uplatnenie odvodovej odpočítateľnej položky" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "preukázal čerpanie materskej, otcovskej alebo rodičovskej dovolenky potvrdením zamestnávateľa" },
+          { "url": "https://www.socpoist.sk/news/studenti-dochodcovia-uz-aj-rodicia-od-januara-2027-si-mozete-uplatnit-odvodovu-ulavu-vo-vyske", "checked": "2026-11-16", "quote": "najneskôr do ôsmich dní pred jej skončením" }
         ]
       }
     }

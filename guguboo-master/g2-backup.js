@@ -52,10 +52,23 @@
   function open() { const el = overlay(); el.classList.add("open"); el.setAttribute("aria-hidden", "false"); render(); setTimeout(() => el.querySelector(".g2b-body button")?.focus({ preventScroll: true }), 60); }
   function close() { const el = byId("g2BackupOverlay"); if (!el) return; el.classList.remove("open"); el.setAttribute("aria-hidden", "true"); }
 
+  // Master 2.8 (Plán F1-0): formát zálohy v čistých funkciách, aby ho test.html overil tam a späť (správanie sa nemení).
+  function exportPayload() {
+    const data = {}; keys().forEach(key => { data[key] = localStorage.getItem(key); });
+    return JSON.stringify({ app: "guguboo", kind: "zaloha", schema: 1, created: new Date().toISOString(), data });
+  }
+  function parseBackup(text) {
+    const backup = JSON.parse(text);
+    if (backup?.app !== "guguboo" || !backup.data || typeof backup.data !== "object") throw new Error("format");
+    return backup;
+  }
+  function applyBackup(backup) {
+    keys().forEach(key => localStorage.removeItem(key));
+    Object.entries(backup.data).forEach(([key, value]) => { if (key.startsWith(PREFIX) && typeof value === "string") localStorage.setItem(key, value); });
+  }
   async function save() {
     V5.persist();
-    const data = {}; keys().forEach(key => { data[key] = localStorage.getItem(key); });
-    const payload = JSON.stringify({ app: "guguboo", kind: "zaloha", schema: 1, created: new Date().toISOString(), data });
+    const payload = exportPayload();
     const name = "guguboo-zaloha-" + new Date().toISOString().slice(0, 10) + ".json";
     const file = new File([payload], name, { type: "application/json" });
     try {
@@ -70,11 +83,9 @@
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const backup = JSON.parse(reader.result);
-        if (backup?.app !== "guguboo" || !backup.data || typeof backup.data !== "object") throw new Error("format");
+        const backup = parseBackup(reader.result);
         if (!window.confirm("Obnoviť zálohu z " + new Date(backup.created).toLocaleDateString("sk-SK") + "? Prepíše údaje v tomto telefóne.")) return;
-        keys().forEach(key => localStorage.removeItem(key));
-        Object.entries(backup.data).forEach(([key, value]) => { if (key.startsWith(PREFIX) && typeof value === "string") localStorage.setItem(key, value); });
+        applyBackup(backup);
         try { sessionStorage.clear(); } catch (_) { /* nič */ }
         window.location.reload();
       } catch (_) { V5.announce("Tento súbor nie je záloha Guguboo."); }
@@ -101,5 +112,5 @@
   });
   document.addEventListener("change", event => { if (event.target.id === "g2bRestore" && event.target.files?.[0]) restore(event.target.files[0]); });
   document.addEventListener("keydown", event => { if (event.key === "Escape" && byId("g2BackupOverlay")?.classList.contains("open")) close(); });
-  window.G2Backup = { open, close };
+  window.G2Backup = { open, close, exportPayload, parseBackup, applyBackup, PREFIX, AUTH };
 })();
