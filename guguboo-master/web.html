@@ -19,6 +19,8 @@
     bez AI, účtov, synchronizácie, komunity a diagnóz. Ukážky appky sú kreslené v HTML/CSS/SVG.
     Ikony = cesty z iconPaths vo v5-mobile.js (Phosphor, 256×256); navyše len „check“ (Phosphor, rovnaký štýl).
     Formulár testeriek cez Netlify Forms (data-netlify) – štruktúra, názvy polí, text súhlasu a validácia sú zachované.
+    Content & Safety (16. 11. 2026): texty a ukážkové údaje overené proti appke Master a content/*.js – zoznam zmien
+    v guguboo-v2/docs/master/WEB_KONTROLA.md. Sumy: content/life-admin-sk.js + socpoist.sk (overené 16. 11. 2026).
   -->
   <style>
     :root {
@@ -439,7 +441,7 @@
         <div class="rv">
           <p class="eyebrow"><svg class="ic" style="width:18px;height:18px" aria-hidden="true"><use href="#i-sparkle"/></svg>Po slovensky · tehotenstvo a prvý rok</p>
           <h1 id="h1">Pokojný sprievodca <span class="grad">od bruška po prvé narodeniny</span></h1>
-          <p class="lead">Guguboo ti pomôže v tehotenstve aj v prvom roku bábätka – v bežnom dni, pri spomienkach aj pri úradoch. Jedným ťuknutím, bez tlaku a bez hodnotenia.</p>
+          <p class="lead">Guguboo ti pomôže v tehotenstve aj v prvom roku bábätka – v bežnom dni, pri spomienkach aj pri úradoch. Pár ťuknutiami, bez tlaku a bez hodnotenia.</p>
           <div class="ctas">
             <a class="btn btn-main" href="app.html">Otvoriť appku</a>
             <a class="btn btn-ghost" href="#testovanie">Chcem testovať</a>
@@ -451,7 +453,7 @@
           </ul>
         </div>
 
-        <div class="stage rv" role="img" aria-label="Ukážka domova appky Guguboo: odznak 14. týždňa s kiwi, kruh rýchlych záznamov Bruško, Pre bábätko a Prvý pohyb so stredom Náš deň.">
+        <div class="stage rv" role="img" aria-label="Ukážka domova appky Guguboo: odznak 14. týždňa s kiwi, kruh rýchlych záznamov Bruško, Pre bábätko a Prvý pohyb so stredom Náš deň – Prehľad.">
           <div class="phone" aria-hidden="true">
             <div class="screen">
               <div class="sbar"><span>9:41</span><i></i></div>
@@ -472,10 +474,10 @@
                   <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
                   <g transform="translate(138 116)" fill="#5f4fb1"><svg width="24" height="24" viewBox="0 0 256 256"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></g>
                   <text class="ct" x="150" y="162" font-size="19">Náš deň</text>
-                  <text class="ct" x="150" y="182" font-size="12" fill="#5d5768" style="font-weight:700">prehľad dňa</text>
+                  <text class="ct" x="150" y="182" font-size="12" fill="#5d5768" style="font-weight:700">Prehľad</text>
                 </svg>
               </div>
-              <div class="m-today"><span class="sq"><svg class="ic"><use href="#i-question"/></svg></span><div><small>Dnes stačí jedno</small><b>Pripraviť otázky pre lekára</b></div></div>
+              <div class="m-today"><span class="sq"><svg class="ic"><use href="#i-question"/></svg></span><div><small>Dnes stačí jedno</small><b>Ulož kontakt na gynekológa</b></div></div>
               <div class="m-tabs">
                 <span class="on"><svg class="ic"><use href="#i-home"/></svg>Domov</span>
                 <span><svg class="ic"><use href="#i-baby"/></svg>Bábätko</span>
@@ -484,7 +486,7 @@
               </div>
             </div>
           </div>
-          <div class="float f1" aria-hidden="true"><span class="sq t-fam"><svg class="ic"><use href="#i-lock"/></svg></span><span>Údaje len v telefóne<small>bez účtu a servera</small></span></div>
+          <div class="float f1" aria-hidden="true"><span class="sq t-fam"><svg class="ic"><use href="#i-lock"/></svg></span><span>Záznamy len v telefóne<small>bez účtu a registrácie</small></span></div>
           <div class="float f2" aria-hidden="true"><span class="sq t-mama"><svg class="ic"><use href="#i-memory"/></svg></span><span>Fotka bruška<small>uložená v Našich momentoch</small></span></div>
         </div>
       </div>
@@ -508,13 +510,13 @@
         <div class="center rv">
           <p class="eyebrow">Jednoduchý deň</p>
           <h2 id="h-ako">Zapíš. Pozri sa. <span class="grad">Uchovaj.</span></h2>
-          <p class="intro">Žiadne dlhé formuláre. Čo sa práve stalo, zapíšeš jedným ťuknutím, deň uvidíš v pokojnom prehľade a pekné chvíle si odložíš na neskôr.</p>
+          <p class="intro">Žiadne dlhé formuláre. Čo sa práve stalo, zapíšeš pár ťuknutiami, deň uvidíš v pokojnom prehľade a pekné chvíle si odložíš na neskôr.</p>
         </div>
         <div class="steps">
           <article class="step rv">
             <span class="num" aria-hidden="true">1</span>
             <h3>Zapíš ťuknutím</h3>
-            <p>Ťukneš na diel kruhu, otvorí sa malé okno a uložíš. Keď sa pomýliš, jedným ťuknutím to vrátiš.</p>
+            <p>Ťukneš na diel kruhu, otvorí sa malé okno a uložíš. Keď sa pomýliš, hneď po uložení to jedným ťuknutím vrátiš.</p>
             <div class="viz" aria-hidden="true">
               <div class="chipline"><span class="chip on"><svg class="ic"><use href="#i-feeding"/></svg>Kŕmenie</span><span class="chip"><svg class="ic"><use href="#i-moon"/></svg>Spánok</span><span class="chip"><svg class="ic"><use href="#i-diaper"/></svg>Plienky</span></div>
               <div class="toast"><span>Uložené</span><u>Vrátiť</u></div>
@@ -523,11 +525,11 @@
           <article class="step rv">
             <span class="num" aria-hidden="true">2</span>
             <h3>Pozri si Náš deň</h3>
-            <p>Celý deň prehľadne na jednom mieste. Prehľad jednoducho pošleš partnerovi, aby ste o všetkom vedeli obaja.</p>
+            <p>Stred kruhu otvorí dnešné zápisy na jednom mieste. Po pôrode prehľad pošleš cez telefón partnerovi alebo babke – len časy a činnosti.</p>
             <div class="viz" aria-hidden="true">
-              <div class="row"><time>7:40</time><svg class="ic" style="color:#a24766"><use href="#i-feeding"/></svg>Kŕmenie</div>
-              <div class="row"><time>8:15</time><svg class="ic" style="color:#7d5a10"><use href="#i-moon"/></svg>Spánok · 0:47</div>
-              <div class="row"><time>9:10</time><svg class="ic" style="color:#2f6a8f"><use href="#i-diaper"/></svg>Plienky</div>
+              <div class="row"><time>9:10</time><svg class="ic" style="color:#2f6a8f"><use href="#i-diaper"/></svg>Plienka · Cikalo</div>
+              <div class="row"><time>9:02</time><svg class="ic" style="color:#7d5a10"><use href="#i-moon"/></svg>Spánok · 47 min</div>
+              <div class="row"><time>7:55</time><svg class="ic" style="color:#a24766"><use href="#i-feeding"/></svg>Kŕmenie · 15 min</div>
             </div>
           </article>
           <article class="step rv">
@@ -552,7 +554,7 @@
         <div class="rv">
           <p class="eyebrow">Mení sa s tebou</p>
           <h2 id="h-cesta">Od bruška po <span class="grad">prvé narodeniny</span></h2>
-          <p class="intro">Jedna appka od tehotenstva po prvý rok. Keď sa bábätko narodí, nič neprenášaš – domov sa sám prispôsobí tomu, čo práve potrebuješ.</p>
+          <p class="intro">Jedna appka od tehotenstva po prvý rok. Keď v appke ťukneš na „Bábätko je na svete?“, nič neprenášaš – domov sa prispôsobí tomu, čo práve potrebuješ.</p>
         </div>
         <div class="journey">
           <article class="stop rv">
@@ -561,7 +563,7 @@
             <h3>Týždeň po týždni</h3>
             <ul>
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Veľkosť bábätka orientačne ovocím</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu Bruško, Pre bábätko, Prvý pohyb</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu Bruško, Pre bábätko a Prvý pohyb (potom Pohyby)</li>
             </ul>
           </article>
           <article class="stop rv">
@@ -569,7 +571,7 @@
             <span class="when">Od 36. týždňa</span>
             <h3>Pokojne pred pôrodom</h3>
             <ul>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu pribudnú Kontrakcie</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu Pohyby, Kontrakcie a Bruško</li>
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Otázky pre lekára na jednom mieste</li>
             </ul>
           </article>
@@ -578,7 +580,7 @@
             <span class="when">Prvé týždne</span>
             <h3>Kŕmenie, spánok, plienky</h3>
             <ul>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Zápis jednou rukou, aj v noci</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Zápis pár ťuknutiami, aj v noci</li>
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Telo po pôrode – čo je bežné</li>
             </ul>
           </article>
@@ -587,7 +589,7 @@
             <span class="when">Do 1. roka</span>
             <h3>Rodina a spomienky</h3>
             <ul>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Úrady a príspevky so zdrojom</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Úrady a príspevky so zdrojom a dátumom kontroly</li>
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Prvé razy a Naše momenty</li>
             </ul>
           </article>
@@ -615,7 +617,7 @@
             <p>Po pôrode na to nadviaže Tvoj mesiac – len overené vety so zdrojom.</p>
             <ul class="ticks">
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Krátko na prvý pohľad, viac pod „Viac“</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Každá informácia s odkazom na zdroj</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Pri texte odkaz na zdroj (NHS)</li>
             </ul>
           </div>
           <div class="feat-art" role="img" aria-label="Ukážka okna Tvoj týždeň: 14. týždeň, bábätko má približne 8,5 centimetra, ako kiwi. Zdroj NHS.">
@@ -627,7 +629,7 @@
               </div>
               <div class="big-fruit" style="margin-top:18px"></div>
               <p class="size"><b>približne 8,5 cm</b>ako kiwi</p>
-              <span class="src"><svg class="ic" style="width:16px;height:16px"><use href="#i-book"/></svg>Zdroj: NHS · týždeň 14</span>
+              <span class="src"><svg class="ic" style="width:16px;height:16px"><use href="#i-book"/></svg>Zdroj: NHS (zhrnuté)</span>
             </div>
           </div>
         </div>
@@ -637,12 +639,12 @@
           <div>
             <span class="area a-home"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>Domov</span>
             <h3>Kruh rýchlych záznamov so živým stredom</h3>
-            <p>Najčastejšie veci zapíšeš priamo z domova. Stred kruhu ukazuje, čo práve beží – napríklad spánok – a jedným ťuknutím ho ukončíš.</p>
-            <p>Pri každom dieli vidíš, kedy bol posledný záznam. Bez počítadiel a bez výčitiek – po dni sa údaj jednoducho stratí z pohľadu.</p>
+            <p>Najčastejšie veci zapíšeš priamo z domova. Keď niečo beží – napríklad spánok –, stred kruhu ukazuje čas a jedným ťuknutím to ukončíš. Inak stred otvorí Náš deň (večer a v noci Naša noc) – prehľad dnešných zápisov.</p>
+            <p>Pri dieloch vidíš, kedy bol posledný záznam. Bez počítadiel a bez výčitiek – po 24 hodinách údaj z kruhu zmizne.</p>
             <ul class="ticks">
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ťuk nikdy neuloží hneď – najprv malé okno</li>
               <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Po uložení „Uložené · Vrátiť“</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Od 36. týždňa v kruhu pribudnú Kontrakcie</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Od 36. týždňa sú v kruhu Pohyby, Kontrakcie a Bruško</li>
             </ul>
           </div>
           <div class="feat-art">
@@ -652,7 +654,7 @@
             </div>
             <div class="ring-wrap">
               <svg class="ring" id="demo-ring" viewBox="0 0 300 300" role="img" aria-labelledby="demo-ring-t">
-                <title id="demo-ring-t">Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 0:47, Zobudilo sa.</title>
+                <title id="demo-ring-t">Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 47:12, Zobudilo sa.</title>
                 <use href="#ring-segs"/>
                 <text class="lbl c1"><textPath href="#arc-a" startOffset="50%" text-anchor="middle" dominant-baseline="middle" data-l="1">Kŕmenie</textPath></text>
                 <text class="lbl c2"><textPath href="#arc-b" startOffset="50%" text-anchor="middle" dominant-baseline="middle" data-l="2">Spánok</textPath></text>
@@ -660,11 +662,11 @@
                 <circle class="pulse" cx="150" cy="150" r="64" fill="#d9cff3"/>
                 <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
                 <text class="ct" x="150" y="134" font-size="15" data-c="1">Spí</text>
-                <text class="ct" x="150" y="160" font-size="26" data-c="2">0:47</text>
+                <text class="ct" x="150" y="160" font-size="26" data-c="2">47:12</text>
                 <rect x="104" y="170" width="92" height="24" rx="12" fill="#5f4fb1" data-c="bg"/>
                 <text class="ct" x="150" y="186.5" font-size="11.5" fill="#fff" style="fill:#fff" data-c="3">Zobudilo sa</text>
               </svg>
-              <div class="float r1" aria-hidden="true" data-f="1"><span class="sq t-mama"><svg class="ic"><use href="#i-clock"/></svg></span><span><b data-f-t>Kŕmenie</b><small data-f-s>naposledy pred 2 h</small></span></div>
+              <div class="float r1" aria-hidden="true" data-f="1"><span class="sq t-mama"><svg class="ic"><use href="#i-clock"/></svg></span><span><b data-f-t>Kŕmenie</b><small data-f-s>pred 2 h · ľavý</small></span></div>
               <div class="float r2" aria-hidden="true"><span class="sq" style="background:#2f2a45;color:#fff"><svg class="ic"><use href="#i-check"/></svg></span><span>Uložené<small>Vrátiť</small></span></div>
             </div>
           </div>
@@ -972,10 +974,11 @@
       // Ukážka kruhu: po pôrode / tehotenstvo (texty presne ako v appke)
       const ring = document.getElementById("demo-ring");
       const modes = {
-        po:   { l: ["Kŕmenie", "Spánok", "Plienky"], c: ["Spí", "0:47", "Zobudilo sa"], f: ["Kŕmenie", "naposledy pred 2 h"],
-                t: "Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 0:47, Zobudilo sa." },
-        pred: { l: ["Bruško", "Pre bábätko", "Prvý pohyb"], c: ["", "Náš deň", "Otvoriť"], f: ["Bruško", "naposledy pred 2 h"],
-                t: "Kruh v tehotenstve: Bruško, Pre bábätko, Prvý pohyb. V strede: Náš deň. Od 36. týždňa pribudnú Kontrakcie." }
+        // Content & Safety 16. 11.: texty podľa g2qSegments/g2qCenter vo v5-mobile.js (čas mm:ss, stred „Náš deň · Prehľad“, „naposledy“ pri Bruško = týždeň fotky)
+        po:   { l: ["Kŕmenie", "Spánok", "Plienky"], c: ["Spí", "47:12", "Zobudilo sa"], f: ["Kŕmenie", "pred 2 h · ľavý"],
+                t: "Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 47:12, Zobudilo sa." },
+        pred: { l: ["Bruško", "Pre bábätko", "Prvý pohyb"], c: ["", "Náš deň", "Prehľad"], f: ["Bruško", "14. t. ✓"],
+                t: "Kruh v tehotenstve: Bruško, Pre bábätko, Prvý pohyb. V strede: Náš deň – prehľad dnešných zápisov. Od 36. týždňa sú v kruhu Pohyby, Kontrakcie a Bruško." }
       };
       document.querySelectorAll("[data-ring]").forEach(btn => btn.addEventListener("click", () => {
         const m = modes[btn.dataset.ring];
