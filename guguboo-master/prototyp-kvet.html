@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prototyp – kvet prípravy na domove</title>
+<link href="fonts/montserrat.css?v=m2.9" rel="stylesheet">
+<!-- Prototyp (Samo 16. 11.): stred kruhu „zaktívniť“ – kvet prípravy namiesto kruhu na domove.
+     Lupene = kategórie Plánu (nahrádzajú vizualizáciu Plánu, nie sú ďalší zoznam). Farbia sa samy plynutím
+     času a odškrtnutie úloh ich len dofarbí – nikdy prázdne miesto, čísla, percentá ani výčitka.
+     Stred: ťuk alebo podržanie otvorí rýchle akcie (podržanie = zoom efekt + vibrácia).
+     Po pôrode: dnešný kruh rýchlych záznamov (predvolené) a kvet „prvé týždne“ ako variant na porovnanie.
+     Nie je súčasťou appky. Stav len v pamäti stránky, nič sa neukladá. Ikony = cesty z iconPaths (Phosphor, MIT). -->
+<style>
+:root {
+  --bg: #fbf8f7; --surface: #fff; --soft: #f3effd; --ink: #29243a; --muted: #5d5768; --line: #e6dff0;
+  --brand: #7b6bc8; --brand-ink: #5f4fb1; --icon: #6a4fc4; --pink-ink: #b34f6c;
+  --card-line: rgba(117, 96, 181, .14); --shadow: 0 6px 20px rgba(60, 40, 90, .07);
+  --center: linear-gradient(145deg, #f8f4ff, #fff1ec); --center-line: rgba(117, 96, 181, .22);
+  --petal-line: rgba(95, 79, 177, .30); --petal-ink: #3a3070; --petal-tint: .26;
+  --dim: rgba(41, 36, 58, .32); --proto: #ece6f7; --proto-ink: #29243a;
+  --f: Montserrat, "Segoe UI", system-ui, sans-serif;
+}
+body.night {
+  --bg: #141826; --surface: #212638; --soft: #2a2f42; --ink: #f5f2fb; --muted: #c9c3d8; --line: #343a50;
+  --brand: #a597ea; --brand-ink: #c6bcff; --icon: #c6bcff; --pink-ink: #f3a9bd;
+  --card-line: rgba(198, 188, 255, .14); --shadow: 0 6px 20px rgba(0, 0, 0, .3);
+  --center: linear-gradient(145deg, #353b54, #2a2f42); --center-line: rgba(198, 188, 255, .25);
+  --petal-line: rgba(230, 224, 255, .26); --petal-ink: #f5f2fb; --petal-tint: .30;
+  --dim: rgba(6, 8, 16, .55); --proto: #0c0f1a; --proto-ink: #f5f2fb;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 600 16px/1.45 var(--f); max-width: 450px; margin: 0 auto; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; transition: background .3s, color .3s; -webkit-tap-highlight-color: transparent; }
+body:not(.night) { background-image: radial-gradient(circle at 8% 0%, rgba(224, 214, 255, .58), transparent 32%), radial-gradient(circle at 96% 8%, rgba(255, 220, 220, .52), transparent 30%); }
+button { font-family: var(--f); color: inherit; touch-action: manipulation; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+svg.i { width: 24px; height: 24px; fill: currentColor; flex: 0 0 auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* —— ovládanie prototypu (nie je súčasť appky) —— */
+.proto { flex: 0 0 auto; display: flex; gap: 4px; align-items: center; padding: 4px 6px; background: var(--proto); color: var(--proto-ink); border-bottom: 1px dashed #b9add9; }
+.seg { display: flex; gap: 2px; padding: 2px; border-radius: 14px; background: rgba(255,255,255,.55); }
+body.night .seg { background: rgba(255,255,255,.08); }
+.pp { min-height: 44px; min-width: 44px; padding: 0 9px; border: 0; border-radius: 12px; background: transparent; font: 700 14px/1.1 var(--f); color: var(--proto-ink); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.pp[aria-pressed="true"] { background: #5f4fb1; color: #fff; }
+.pp svg { width: 18px; height: 18px; }
+.proto .grow { flex: 1; }
+
+/* —— domov (zjednodušená kópia appky) —— */
+.screen { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 8px 16px 10px; }
+.hdr { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.hello { flex: 1; min-width: 0; padding: 6px 14px; border-radius: 22px; background: var(--surface); border: 1px solid var(--card-line); }
+.hello b { display: block; font-size: 18px; font-weight: 800; line-height: 1.2; }
+.hello span { display: block; font-size: 14px; color: var(--muted); line-height: 1.3; }
+.iconbtn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--card-line); background: var(--surface); display: grid; place-items: center; cursor: pointer; flex: 0 0 auto; }
+.iconbtn svg { width: 22px; height: 22px; }
+.search { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px; border: 1px solid var(--card-line); border-radius: 18px; background: var(--surface); color: var(--muted); font: 600 16px/1 var(--f); text-align: left; cursor: pointer; width: 100%; }
+.search svg { width: 20px; height: 20px; }
+.hero { flex: 0 0 auto; display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 6px 14px; border: 1px solid var(--card-line); border-radius: 22px; background: linear-gradient(120deg, #f4f0ff, #fff4f0); text-align: left; width: 100%; cursor: pointer; }
+body.night .hero { background: linear-gradient(120deg, #2a2f42, #33293a); }
+.hero .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; background: #fff3d6; color: var(--icon); }
+body.night .hero .av { background: #3b3a4c; }
+.hero b { display: block; font-size: 18px; font-weight: 800; line-height: 1.2; }
+.hero span { display: block; font-size: 14px; color: var(--muted); }
+.hero .chev { margin-left: auto; color: var(--muted); font-size: 22px; font-weight: 800; }
+.tiles { flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tile { min-height: 64px; padding: 6px 4px; border: 1px solid var(--card-line); border-radius: 22px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font: 800 14px/1.15 var(--f); cursor: pointer; }
+.tile .ic { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: var(--icon); }
+.tile .ic svg { width: 18px; height: 18px; }
+
+/* —— karta kvetu —— */
+.fcard { position: relative; flex: 1 1 auto; min-height: 0; border: 1px solid var(--card-line); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); container-type: size; display: grid; place-items: center; transition: box-shadow .3s; }
+.fcard.raised { z-index: 31; }
+.stage { position: relative; width: min(100cqw - 20px, 100cqh - 14px, 330px); transition: width .4s, transform .45s cubic-bezier(.2, .8, .2, 1); aspect-ratio: 1; container-type: inline-size; }
+.fcard.has-hint { place-items: start center; padding-top: 6px; }
+.fcard.has-hint .stage { width: min(100cqw - 20px, 100cqh - 52px, 330px); }
+.stage svg.fl { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.stage.zoom { transform: scale(1.07); }
+.stage.zoom .petal, .stage.zoom .seg-r, .stage.zoom .rlab { opacity: .22; transition: opacity .35s; }
+
+/* lupene */
+.petal { cursor: pointer; outline: none; transition: opacity .35s; }
+.petal .inner { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.petal:hover .inner, .petal.hl .inner { transform: scale(1.045); }
+.petal .p-bg { fill: var(--c); fill-opacity: var(--petal-tint); }
+/* farba rozkvitá od stredu kvetu von – sústredné, mäkké okraje (žiadna „ručička“ ani percentá) */
+.petal .p-fill { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(calc((56 + var(--f, .16) * 102) / 158)); transition: transform 1.6s cubic-bezier(.3, .7, .2, 1); }
+.petal .p-line { fill: none; stroke: var(--petal-line); stroke-width: 1.5; transition: stroke .3s, stroke-width .3s; }
+.petal .p-glow { fill: var(--c); opacity: 0; filter: blur(7px); }
+.petal.now .p-glow { opacity: .85; animation: breathe 3.4s ease-in-out infinite; }
+.petal.now .p-line, .petal.hl .p-line { stroke: var(--brand); stroke-width: 2.5; }
+.petal:focus-visible .p-line { stroke: var(--brand-ink); stroke-width: 4; }
+.petal .p-ic { fill: var(--petal-ink); pointer-events: none; }
+.petal.done .p-ic { fill: var(--petal-ink); }
+.petal.pop .inner { animation: pop 1s ease-out; }
+@keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: .95; } }
+@keyframes pop { 0% { transform: scale(1); } 35% { transform: scale(1.09); } 100% { transform: scale(1); } }
+
+/* kruh po pôrode (dnešný) */
+.seg-r { cursor: pointer; stroke: var(--surface); stroke-width: 7; stroke-linejoin: round; transition: opacity .35s, filter .15s; outline: none; }
+.seg-r:hover { filter: brightness(1.04); }
+.seg-r:focus-visible { stroke: var(--brand-ink); stroke-width: 4; }
+.rlab { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; color: #29243a; font: 800 16px/1.15 var(--f); text-align: center; white-space: nowrap; transition: opacity .35s; }
+.rlab small { font: 600 13px/1.2 var(--f); }
+.rlab svg { width: 22px; height: 22px; }
+
+/* stred */
+.center { position: absolute; left: 50%; top: 50%; width: 33%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 1.5px solid var(--center-line); background: var(--center); box-shadow: 0 6px 18px rgba(80, 60, 140, .14); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0; cursor: pointer; color: var(--ink);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; z-index: 2; }
+.center:active { transform: translate(-50%, -50%) scale(.97); }
+.center .n { font: 800 clamp(22px, 9cqw, 30px)/1 var(--f); }
+.center .w { font: 700 clamp(14px, 4.4cqw, 15px)/1.2 var(--f); color: var(--muted); }
+.center .t { font: 800 clamp(20px, 7.4cqw, 26px)/1.05 var(--f); font-variant-numeric: tabular-nums; }
+.center svg { width: 20px; height: 20px; color: var(--icon); }
+.center.open { box-shadow: 0 0 0 6px rgba(123, 107, 200, .16), 0 10px 26px rgba(80, 60, 140, .22); }
+.holdring { position: absolute; left: 50%; top: 50%; width: 39%; aspect-ratio: 1; transform: translate(-50%, -50%) rotate(-90deg); pointer-events: none; z-index: 1; overflow: visible; }
+.holdring circle { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; opacity: 0; }
+.holding .holdring circle { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset .42s linear, opacity .1s; }
+.hintpulse .holdring circle { stroke-dasharray: none; stroke-dashoffset: 0; stroke-width: 2; animation: hint 2.6s ease-out infinite; transform-origin: 50% 50%; transform-box: fill-box; }
+@keyframes hint { 0% { opacity: .7; transform: scale(.9); } 70%, 100% { opacity: 0; transform: scale(1.18); } }
+.pill { position: absolute; left: 50%; top: calc(50% + 11%); transform: translateX(-50%); z-index: 3; min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: #5f4fb1; color: #fff; font: 800 13px/1 var(--f); cursor: pointer; white-space: nowrap; }
+.pill::after { content: ""; position: absolute; inset: -6px -4px; } /* ťukacia plocha ≥ 44 px */
+
+/* náznak podržania – len pri prvom použití */
+.hint { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--soft); color: var(--brand-ink); font: 700 14px/1.2 var(--f); white-space: nowrap; pointer-events: none; transition: opacity .4s; z-index: 4; }
+.hint svg { width: 18px; height: 18px; }
+
+/* —— Dnes stačí jedno —— */
+.today { flex: 0 0 auto; display: flex; align-items: stretch; min-height: 58px; border: 1px solid var(--card-line); border-radius: 22px; background: var(--surface); overflow: hidden; }
+.today .main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 4px 6px 14px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.today .mini { width: 26px; height: 30px; flex: 0 0 auto; }
+.today small { display: block; font: 700 13px/1.2 var(--f); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.today b { display: block; font: 800 15px/1.25 var(--f); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.today .later { flex: 0 0 auto; min-width: 72px; border: 0; background: transparent; color: var(--brand-ink); font: 800 14px/1 var(--f); cursor: pointer; padding: 0 14px; }
+
+/* —— lišta —— */
+.tabs { flex: 0 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 12px calc(6px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--card-line); border-radius: 22px 22px 0 0; }
+.tab { min-height: 48px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: 700 13px/1 var(--f); color: var(--muted); cursor: pointer; }
+.tab svg { width: 22px; height: 22px; }
+.tab.on { color: var(--brand-ink); }
+
+/* —— rozkvet rýchlych akcií —— */
+.dim { position: fixed; inset: 0; z-index: 30; background: var(--dim); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); opacity: 0; transition: opacity .3s; }
+.dim.show { opacity: 1; }
+.bloom { position: fixed; inset: 0; z-index: 32; pointer-events: none; }
+.bub { position: absolute; width: 96px; margin-left: -48px; margin-top: -30px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: transparent; padding: 0; cursor: pointer; pointer-events: auto; color: var(--ink);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; transition: transform .42s cubic-bezier(.2, .9, .25, 1.18), opacity .25s; transition-delay: var(--d); }
+.bloom.show .bub { transform: translate(0, 0) scale(1); opacity: 1; }
+.bub .c { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); color: var(--icon); box-shadow: 0 6px 18px rgba(40, 25, 80, .22); border: 2px solid var(--bc, transparent); transition: transform .15s, background .15s; }
+.bub .c svg { width: 26px; height: 26px; }
+.bub .l { padding: 3px 9px; border-radius: 999px; background: var(--surface); font: 800 14px/1.15 var(--f); white-space: nowrap; box-shadow: 0 2px 8px rgba(40, 25, 80, .14); }
+.bub.over .c, .bub:hover .c { transform: scale(1.12); background: var(--soft); }
+.bub:focus-visible { outline: none; }
+.bub:focus-visible .c { outline: 3px solid var(--brand); outline-offset: 3px; }
+.bub.live .c { --bc: #5f4fb1; }
+
+/* —— okno oblasti —— */
+.scrim { position: fixed; inset: 0; z-index: 40; background: rgba(41, 36, 58, .30); opacity: 0; transition: opacity .25s; }
+body.night .scrim { background: rgba(0, 0, 0, .5); }
+.scrim.show { opacity: 1; }
+.sheet { position: fixed; left: 50%; bottom: 0; z-index: 41; width: min(100%, 450px); max-height: 78dvh; overflow: auto; transform: translate(-50%, 100%); transition: transform .35s cubic-bezier(.2, .8, .2, 1); background: var(--surface); border-radius: 24px 24px 0 0; padding: 8px 16px calc(16px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(40, 25, 80, .16); }
+.sheet.show { transform: translate(-50%, 0); }
+.grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 8px; }
+.sh-head { display: flex; align-items: center; gap: 12px; }
+.sh-head svg.mp { width: 40px; height: 48px; flex: 0 0 auto; }
+.sh-head h2 { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.2; flex: 1; }
+.chip { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--brand-ink); font: 700 13px/1.2 var(--f); }
+.sh-lead { margin: 10px 0 6px; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.tasks { list-style: none; margin: 0; padding: 0; }
+.task { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 6px 4px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; font: 600 16px/1.3 var(--f); cursor: pointer; }
+.tasks li:last-child .task { border-bottom: 0; }
+.box { width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--brand); display: grid; place-items: center; flex: 0 0 auto; transition: background .25s, border-color .25s; }
+.box svg { width: 18px; height: 18px; color: #fff; opacity: 0; transform: scale(.4); transition: opacity .2s, transform .3s cubic-bezier(.2, .9, .25, 1.3); }
+.task[aria-checked="true"] .box { background: #5f4fb1; border-color: #5f4fb1; }
+.task[aria-checked="true"] .box svg { opacity: 1; transform: scale(1); }
+.task[aria-checked="true"] .tx { color: var(--muted); }
+.sh-foot { display: flex; gap: 8px; margin-top: 12px; }
+.btn { flex: 1; min-height: 48px; border-radius: 16px; border: 1px solid var(--card-line); background: var(--soft); color: var(--brand-ink); font: 800 15px/1.1 var(--f); cursor: pointer; }
+
+/* —— hlásenie —— */
+.toast { position: fixed; left: 50%; bottom: 84px; z-index: 50; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; width: max-content; max-width: min(92vw, 410px); display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 16px; border-radius: 18px; background: #29243a; color: #fff; font: 600 15px/1.35 var(--f); box-shadow: 0 8px 24px rgba(0, 0, 0, .2); transition: opacity .25s, transform .3s; }
+body.night .toast { background: #f5f2fb; color: #29243a; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.toast button { min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: rgba(255,255,255,.14); color: inherit; font: 800 14px/1 var(--f); cursor: pointer; }
+body.night .toast button { background: rgba(41,36,58,.1); }
+
+/* nízka obrazovka (375 × 667) – kvet dostane viac miesta */
+@media (max-height: 720px) {
+  .screen { gap: 8px; padding-top: 6px; }
+  .hello { padding: 4px 12px; } .hello span { display: none; }
+  .search { min-height: 44px; }
+  .hero { min-height: 52px; padding: 4px 12px; } .hero .av { width: 38px; height: 38px; }
+  .tile { min-height: 48px; flex-direction: row; gap: 6px; border-radius: 18px; }
+  .tile .ic { width: 26px; height: 26px; }
+  .today { min-height: 52px; }
+  .tab { min-height: 44px; }
+  .bub .c { width: 54px; height: 54px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .petal.now .p-glow { opacity: .7; }
+}
+</style>
+</head>
+<body>
+<div class="proto" role="group" aria-label="Ovládanie prototypu">
+  <div class="seg" role="group" aria-label="Obdobie">
+    <button class="pp" id="pPred" aria-pressed="true" aria-label="Pred pôrodom">Pred</button>
+    <button class="pp" id="pPo" aria-pressed="false" aria-label="Po pôrode">Po</button>
+  </div>
+  <div class="seg" id="variantSeg" role="group" aria-label="Variant po pôrode" hidden>
+    <button class="pp" id="vRing" aria-pressed="true" aria-label="Dnešný kruh záznamov">Kruh</button>
+    <button class="pp" id="vFlower" aria-pressed="false" aria-label="Kvet prvých týždňov">Kvet</button>
+  </div>
+  <button class="pp" id="pWeek" aria-label="Zmeniť týždeň">15. t.</button>
+  <span class="grow"></span>
+  <button class="pp" id="pNight" aria-pressed="false" aria-label="Nočný režim"></button>
+  <button class="pp" id="pReset" aria-label="Začať odznova (ukáže aj náznak podržania)">↺</button>
+</div>
+
+<main class="screen" id="screen">
+  <div class="hdr">
+    <div class="hello"><b id="hello">Dobrý deň, Lucia</b><span id="helloSub">Pekný deň pred vami.</span></div>
+    <button class="iconbtn" id="moonBtn" aria-label="Nočný režim"></button>
+    <button class="iconbtn" data-toast="Otvorí ponuku" aria-label="Ponuka"></button>
+  </div>
+  <button class="search" data-toast="Otvorí Hľadaj alebo sa opýtaj"><span data-i="search"></span>Hľadaj alebo sa opýtaj</button>
+  <button class="hero" id="hero" data-toast="Otvorí Tvoj týždeň"></button>
+  <div class="tiles" id="tiles"></div>
+
+  <section class="fcard" id="fcard" aria-label="Kvet prípravy">
+    <div class="stage" id="stage">
+      <svg class="fl" id="fl" viewBox="-165 -165 330 330" aria-hidden="false"></svg>
+      <svg class="holdring" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" pathLength="100"/></svg>
+      <button class="center" id="center" aria-haspopup="true" aria-expanded="false"></button>
+      <button class="pill" id="pill" hidden></button>
+    </div>
+    <div class="hint" id="hint" aria-hidden="true"><span data-i="handPalm"></span>Podrž alebo ťukni na stred</div>
+  </section>
+
+  <div class="today" id="today">
+    <button class="main" id="todayMain"></button>
+    <button class="later" data-toast="Dobre, pripomenie sa inokedy">Neskôr</button>
+  </div>
+</main>
+
+<nav class="tabs" aria-label="Hlavná lišta">
+  <button class="tab on" aria-current="page"><span data-i="home"></span>Domov</button>
+  <button class="tab" data-toast="Bábätko"><span data-i="baby"></span>Bábätko</button>
+  <button class="tab" data-toast="Mama"><span data-i="mama"></span>Mama</button>
+  <button class="tab" data-toast="Rodina"><span data-i="family"></span>Rodina</button>
+</nav>
+
+<div class="dim" id="dim" hidden></div>
+<div class="bloom" id="bloom" role="menu" aria-label="Rýchle akcie" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastText"></span><button id="toastAct" hidden></button></div>
+
+<script>
+(() => {
+  "use strict";
+  // Ikony: originálne cesty z iconPaths vo v5-mobile.js (Phosphor Icons, MIT).
+  const P = {
+    search: "M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z",
+    menu: "M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z",
+    moon: "M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.910,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.920-1.06A89,89,0,0,1,188.9,190.34Z",
+    sun: "M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.050,48.050,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z",
+    home: "M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H48V120l80-80,80,80Z",
+    baby: "M92,140a12,12,0,1,1,12-12A12,12,0,0,1,92,140Zm72-24a12,12,0,1,0,12,12A12,12,0,0,0,164,116Zm-12.27,45.23a45,45,0,0,1-47.46,0,8,8,0,0,0-8.54,13.54,61,61,0,0,0,64.54,0,8,8,0,0,0-8.54-13.54ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.11,88.11,0,0,0-84.090-87.91C120.32,56.38,120,71.880,120,72a8,8,0,0,0,16,0,8,8,0,0,1,16,0,24,24,0,0,1-48,0c0-.73.13-14.3,8.46-30.63A88,88,0,1,0,216,128Z",
+    mama: "M245.83,121.63a15.53,15.53,0,0,0-9.52-7.33,73.51,73.51,0,0,0-22.17-2.22c4-19.85,1-35.55-2.06-44.86a16.15,16.15,0,0,0-18.79-10.88,85.53,85.53,0,0,0-28.55,12.12,94.58,94.58,0,0,0-27.11-33.25,16.05,16.05,0,0,0-19.26,0A94.48,94.48,0,0,0,91.26,68.46,85.53,85.53,0,0,0,62.71,56.34,16.15,16.15,0,0,0,43.92,67.22c-3,9.31-6,25-2.06,44.86a73.51,73.51,0,0,0-22.17,2.22,15.53,15.53,0,0,0-9.52,7.33,16,16,0,0,0-1.6,12.27c3.39,12.57,13.8,36.48,45.33,55.32S113.13,208,128.05,208s42.67,0,74-18.78c31.53-18.84,41.94-42.75,45.33-55.32A16,16,0,0,0,245.83,121.63ZM59.14,72.14a.2.2,0,0,1,.23-.15A70.43,70.43,0,0,1,85.18,83.66,118.65,118.65,0,0,0,80,119.17c0,18.74,3.77,34,9.11,46.28A123.59,123.59,0,0,1,69.57,140C51.55,108.62,55.3,84,59.14,72.14Zm3,103.35C35.47,159.57,26.82,140.05,24,129.7a59.82,59.82,0,0,1,22.5-1.17,129.08,129.08,0,0,0,9.15,19.41,142.28,142.28,0,0,0,34,39.56A114.92,114.92,0,0,1,62.1,175.49ZM128,190.4c-9.33-6.94-32-28.23-32-71.23C96,76.7,118.38,55.24,128,48c9.62,7.26,32,28.72,32,71.19C160,162.17,137.33,183.46,128,190.4ZM170.82,83.66A70.43,70.43,0,0,1,196.63,72a.2.2,0,0,1,.23.15C200.7,84,204.45,108.62,186.43,140a123.32,123.32,0,0,1-19.54,25.48c5.34-12.26,9.11-27.54,9.11-46.28A118.65,118.65,0,0,0,170.82,83.66ZM232,129.72c-2.77,10.25-11.4,29.81-38.090,45.77a114.92,114.92,0,0,1-27.55,12,142.28,142.28,0,0,0,34-39.56,129.08,129.08,0,0,0,9.15-19.41A59.690,59.690,0,0,1,232,129.71Z",
+    family: "M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z",
+    administration: "M200,112a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h40A8,8,0,0,1,200,112Zm-8,24H152a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm40-80V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Zm-80.26-34a8,8,0,1,1-15.5,4c-2.63-10.26-13.060-18-24.25-18s-21.61,7.74-24.25,18a8,8,0,1,1-15.5-4,39.84,39.84,0,0,1,17.19-23.34,32,32,0,1,1,45.12,0A39.76,39.76,0,0,1,135.75,166ZM96,136a16,16,0,1,0-16-16A16,16,0,0,0,96,136Z",
+    stethoscope: "M220,160a12,12,0,1,1-12-12A12,12,0,0,1,220,160Zm-4.55,39.29A48.080,48.080,0,0,1,168,240H144a48.050,48.050,0,0,1-48-48V151.49A64,64,0,0,1,40,88V40a8,8,0,0,1,8-8H72a8,8,0,0,1,0,16H56V88a48,48,0,0,0,48.64,48c26.11-.34,47.36-22.25,47.36-48.83V48H136a8,8,0,0,1,0-16h24a8,8,0,0,1,8,8V87.17c0,32.84-24.53,60.29-56,64.31V192a32,32,0,0,0,32,32h24a32.060,32.060,0,0,0,31.22-25,40,40,0,1,1,16.23.27ZM232,160a24,24,0,1,0-24,24A24,24,0,0,0,232,160Z",
+    shopping: "M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z",
+    bed: "M208,72H24V48a8,8,0,0,0-16,0V208a8,8,0,0,0,16,0V176H240v32a8,8,0,0,0,16,0V120A48.050,48.050,0,0,0,208,72ZM24,88H96v72H24Zm88,72V88h96a32,32,0,0,1,32,32v40Z",
+    clipboard: "M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z",
+    travel: "M104,88v96a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Zm24-8a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V88A8,8,0,0,0,128,80Zm32,0a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V88A8,8,0,0,0,160,80Zm48-16V208a16,16,0,0,1-16,16H176v16a8,8,0,0,1-16,0V224H96v16a8,8,0,0,1-16,0V224H64a16,16,0,0,1-16-16V64A16,16,0,0,1,64,48H88V24A24,24,0,0,1,112,0h32a24,24,0,0,1,24,24V48h24A16,16,0,0,1,208,64ZM104,48h48V24a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8Zm88,160V64H64V208H192Z",
+    cards: "M184,72H40A16,16,0,0,0,24,88V200a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V88A16,16,0,0,0,184,72Zm0,128H40V88H184V200ZM232,56V176a8,8,0,0,1-16,0V56H64a8,8,0,0,1,0-16H216A16,16,0,0,1,232,56Z",
+    memory: "M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.070,62.070,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.070,62.070,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.060,46.060,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.060,46.060,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z",
+    footprints: "M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.930,29.38-18.56,73,.29,96A8.050,8.050,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.82,6.22,17.29,19.89c11.1,23.41,15.29,58,3.9,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z",
+    camera: "M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.050,44.050,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z",
+    voice: "M128,176a48.050,48.050,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.050,48.050,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z",
+    hourglass: "M200,75.64V40a16,16,0,0,0-16-16H72A16,16,0,0,0,56,40V76a16.070,16.070,0,0,0,6.4,12.8L114.67,128,62.4,167.2A16.070,16.070,0,0,0,56,180v36a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V180.36a16.090,16.090,0,0,0-6.35-12.77L141.27,128l52.38-39.6A16.050,16.050,0,0,0,200,75.64ZM72,40H184V75.64L178.23,80H77.33L72,76Zm56,78L98.67,96h58.4Zm56,98H72V180l48-36v24a8,8,0,0,0,16,0V144.08l48,36.28Z",
+    question: "M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z",
+    calendar: "M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z",
+    calendarDots: "M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-68-76a12,12,0,1,1-12-12A12,12,0,0,1,140,132Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,132ZM96,172a12,12,0,1,1-12-12A12,12,0,0,1,96,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,140,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,172Z",
+    sparkle: "M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z",
+    bath: "M240,96H208a8,8,0,0,0-8-8H136a8,8,0,0,0-8,8H64V52A12,12,0,0,1,76,40a12.44,12.44,0,0,1,12.16,9.59,8,8,0,0,0,15.68-3.18A28.32,28.32,0,0,0,76,24,28,28,0,0,0,48,52V96H16a8,8,0,0,0-8,8v40a56.060,56.060,0,0,0,56,56v16a8,8,0,0,0,16,0V200h96v16a8,8,0,0,0,16,0V200a56.060,56.060,0,0,0,56-56V104A8,8,0,0,0,240,96Zm-48,8v32H144V104Zm40,40a40,40,0,0,1-40,40H64a40,40,0,0,1-40-40V112H128v32a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V112h24Z",
+    feeding: "M104,64V48a24,24,0,0,1,48,0V64H136V48a8,8,0,0,0-16,0V64Z|M80,64h96a8,8,0,0,1,8,8V92H72V72A8,8,0,0,1,80,64Z|evenodd:M72,92H184V200a32,32,0,0,1-32,32H104a32,32,0,0,1-32-32ZM88,92V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V92Z|M80,128h36a8,8,0,0,1,0,16H80ZM80,164h36a8,8,0,0,1,0,16H80Z",
+    diaper: "evenodd:M40,48H216a8,8,0,0,1,8,8v56c-36,4-56,36-56,84a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16c0-48-20-80-56-84V56A8,8,0,0,1,40,48ZM48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z",
+    handPalm: "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.080,48.080,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z",
+    check: "M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z",
+    x: "M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z",
+    leaf: "M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.090,87.090,0,0,0-12.76,49c.57,15.92,5.21,32,13.79,47.85l-19.51,19.5a8,8,0,0,0,11.32,11.32l19.5-19.51C81,210.73,97.09,215.37,113,215.94q1.67.06,3.330.06A86.930,86.930,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07ZM153.75,189.5c-22.75,13.78-49.68,14-76.71.77l88.63-88.62a8,8,0,0,0-11.32-11.32L65.73,179c-13.19-27-13-54,.77-76.71,22.090-36.47,74.6-56.44,141.31-54.06C210.2,114.89,190.22,167.41,153.75,189.5Z"
+  };
+  const paths = name => (P[name] || "").split("|").map(d => d.startsWith("evenodd:") ? `<path fill-rule="evenodd" d="${d.slice(8)}"/>` : `<path d="${d}"/>`).join("");
+  const icon = (name, cls = "i") => `<svg class="${cls}" viewBox="0 0 256 256" aria-hidden="true" focusable="false">${paths(name)}</svg>`;
+  document.querySelectorAll("[data-i]").forEach(el => { el.outerHTML = icon(el.dataset.i); });
+  const $ = id => document.getElementById(id);
+
+  // —— dáta (ukážkové; v appke = kategórie Plánu z journey-engine.js, life-admin-sk.js, vybava.js) ——
+  // pastelové, bez červenej; v noci tlmenšie
+  const COLORS = { day: ["#c8bdf3", "#f2b6cb", "#f7cba6", "#b3dccb", "#acd0ec", "#d9c6f2", "#ecc3e6", "#c9dcae"],
+                   night: ["#7468c4", "#9c5d7a", "#9c7752", "#4d8a76", "#4f7ca3", "#8268b4", "#93608e", "#6f8552"] };
+  const PRED = [
+    { id: "urady", name: "Úrady a príspevky", ic: "administration", win: [8, 22], lead: "Tehotenské, materské a ostatné – postup krok za krokom nájdeš v časti Úrady.",
+      tasks: [["Oznám tehotenstvo zamestnávateľovi", 1], ["Požiadaj o tehotenské", 0], ["Priprav podklady na materské", 0], ["Ak nie ste manželia: určenie otcovstva", 0]] },
+    { id: "pediater", name: "Pediater", ic: "stethoscope", win: [20, 32], lead: "Pediatra je dobré mať vybraného ešte pred pôrodom.",
+      tasks: [["Vyber pediatra", 0], ["Over, či prijíma nové bábätká", 0], ["Ulož si kontakt na ambulanciu", 0]] },
+    { id: "vybava", name: "Výbava", ic: "shopping", win: [18, 34], lead: "Celý zoznam s tipmi je vo Výbave – tu len odškrtneš, čo už máte.",
+      tasks: [["Autosedačka", 0], ["Oblečenie pre bábätko", 1], ["Kočík", 0], ["Prebaľovanie", 0], ["Kúpanie", 0]] },
+    { id: "domov", name: "Domov pre bábätko", ic: "home", win: [28, 37], lead: "Malé prípravy, vďaka ktorým budú prvé dni doma pokojnejšie.",
+      tasks: [["Priprav miesto na spanie bábätka", 0], ["Priprav prvé zásoby", 0], ["Priprav kútik na prebaľovanie", 0], ["Dohodni s blízkymi prvé dni doma", 0]] },
+    { id: "porodnica", name: "Pôrodnica", ic: "bed", win: [24, 33], lead: "Keď viete, kam pôjdete, je o jednu starosť menej.",
+      tasks: [["Vyber si pôrodnicu", 0], ["Pozri si, ako to tam vyzerá", 0], ["Ulož si cestu do pôrodnice", 0], ["Zisti, čo treba mať pri príjme", 0]] },
+    { id: "plan", name: "Plán pôrodu", ic: "clipboard", win: [30, 36], lead: "Tvoje predstavy a otázky na jednom mieste.",
+      tasks: [["Zapíš si, na čom ti záleží", 0], ["Priprav si otázky pre lekára", 0], ["Kontakty na jednom mieste", 0]] },
+    { id: "taska", name: "Taška do pôrodnice", ic: "travel", win: [32, 37], lead: "Zoznam vecí je v appke – tu si len odškrtneš, čo je zbalené.",
+      tasks: [["Doklady", 0], ["Veci pre teba", 0], ["Veci pre bábätko", 0], ["Autosedačka v aute", 0]] },
+    { id: "pohoda", name: "Ja a pohoda", ic: "mama", win: [0, 42], always: true, lead: "Aj na teba myslíme. Nič z toho nie je povinné.",
+      tasks: [["Ulož kontakt na gynekológa", 1], ["Zapíš si prehliadky do kalendára", 1], ["Nahraj bábätku svoj hlas", 0], ["Nájdi si chvíľu len pre seba", 0]] }
+  ];
+  const PO = [
+    { id: "doklady", name: "Doklady bábätka", ic: "cards", win: [0, 3], lead: "Rodný list, rodné číslo a poistenie – postup je v časti Úrady.",
+      tasks: [["Rodný list", 1], ["Rodné číslo", 1], ["Trvalý pobyt dieťaťa", 0], ["Zdravotné poistenie bábätka", 0]] },
+    { id: "pediater", name: "Pediater", ic: "stethoscope", win: [0, 2], lead: "Kontakt a prehliadky na jednom mieste.",
+      tasks: [["Prihlás bábätko k pediatrovi", 1], ["Ulož si ordinačné hodiny", 0], ["Zapíš si prehliadku do kalendára", 0]] },
+    { id: "prispevky", name: "Príspevky", ic: "administration", win: [0, 10], lead: "Čo vám patrí a kde o to požiadať – v časti Úrady.",
+      tasks: [["Príspevok pri narodení dieťaťa", 1], ["Materské", 0], ["Prídavok na dieťa", 0], ["Daňový bonus na dieťa", 0], ["Otcovské", 0]] },
+    { id: "mama", name: "Mama po pôrode", ic: "mama", win: [4, 8], lead: "Aj na teba myslíme.",
+      tasks: [["Objednaj sa na kontrolu po pôrode", 0], ["Zapíš si otázky pre lekára", 0], ["Dohodni, kto ti pomôže doma", 1]] },
+    { id: "spanok", name: "Domov a spánok", ic: "home", win: [0, 12], lead: "Malé veci pre pokojnejšie noci.",
+      tasks: [["Miesto na spanie bábätka", 1], ["Vyskúšaj zvuky na spanie v appke", 0], ["Priprav si veci na nočné kŕmenie", 0]] },
+    { id: "spomienky", name: "Prvé spomienky", ic: "memory", win: [0, 52], always: true, lead: "Na tieto chvíle sa raz radi pozriete.",
+      tasks: [["Vytvor kartičku narodenia", 1], ["Prvá fotka spolu", 1], ["Nahraj bábätku svoj hlas", 0], ["Zapíš prvé razy", 0]] }
+  ];
+  const WEEKS = { pred: [15, 24, 31, 37], po: [1, 6, 13] };
+  const ACTIONS = {
+    pred: w => [
+      { ic: "footprints", l: "Pohyby", t: "Otvorí malé okno Pohyby – nič sa neuloží hneď" },
+      { ic: "camera", l: "Bruško", t: "Otvorí fotku bruška" },
+      { ic: "voice", l: "Hlas", aria: "Hlas pre bábätko", t: "Otvorí nahrávanie hlasu pre bábätko" },
+      w >= 36 ? { ic: "hourglass", l: "Kontrakcie", t: "Spustí meranie kontrakcií" } : { ic: "baby", l: "Tvoj týždeň", t: "Otvorí Tvoj týždeň" },
+      { ic: "question", l: "Otázky", aria: "Otázky pre lekára", t: "Otvorí Otázky pre lekára" },
+      { ic: "calendar", l: "Kalendár", t: "Otvorí Kalendár" }
+    ],
+    poFlower: () => [
+      { ic: "feeding", l: state.timer?.kind === "feed" ? "Dojedené" : "Kŕmenie", timer: "feed" },
+      { ic: "moon", l: state.timer?.kind === "sleep" ? "Zobudilo sa" : "Spánok", timer: "sleep" },
+      { ic: "diaper", l: "Plienky", t: "Otvorí malé okno Plienky" },
+      { ic: "camera", l: "Fotka dňa", t: "Otvorí Fotku dňa" },
+      { ic: "question", l: "Otázky", aria: "Otázky pre lekára", t: "Otvorí Otázky pre lekára" },
+      { ic: "calendarDots", l: "Náš deň", t: "Otvorí prehľad Náš deň" }
+    ],
+    poRing: () => [
+      { ic: "camera", l: "Fotka dňa", t: "Otvorí Fotku dňa" },
+      { ic: "sparkle", l: "Prvé razy", t: "Otvorí Prvé razy" },
+      { ic: "bath", l: "Kúpanie", t: "Zapíše kúpanie (malé okno)" },
+      { ic: "question", l: "Otázky", aria: "Otázky pre lekára", t: "Otvorí Otázky pre lekára" },
+      { ic: "calendar", l: "Kalendár", t: "Otvorí Kalendár" },
+      { ic: "calendarDots", l: "Náš deň", t: "Otvorí prehľad Náš deň" }
+    ]
+  };
+
+  const clone = list => list.map(a => ({ ...a, tasks: a.tasks.map(([t, d]) => ({ t, d: !!d })) }));
+  const state = { phase: "pred", variant: "ring", night: false, wi: { pred: 0, po: 2 }, hintSeen: false,
+    areas: { pred: clone(PRED), po: clone(PO) }, timer: null, bloom: false, sheet: null };
+  const week = () => WEEKS[state.phase][state.wi[state.phase]];
+  const areas = () => state.areas[state.phase];
+  const showFlower = () => state.phase === "pred" || state.variant === "flower";
+
+  // —— farba lupeňa: rastie sama časom, úlohy ju dofarbia (nikdy prázdne, bez čísel) ——
+  function timeGrowth(a, w) { // 0–1: ako blízko je obdobie oblasti
+    if (a.always) return Math.min(1, w / (state.phase === "pred" ? 40 : 12));
+    const start = a.win[0] - 6, end = a.win[1];
+    return Math.max(0, Math.min(1, (w - start) / (end - start)));
+  }
+  const doneShare = a => a.tasks.filter(x => x.d).length / a.tasks.length;
+  const fillOf = a => doneShare(a) === 1 ? 1 : .16 + .30 * timeGrowth(a, week()) + .50 * doneShare(a);
+  function nowArea() {
+    const w = week(), list = areas();
+    const cand = list.filter(a => !a.always && w >= a.win[0] - 2 && w <= a.win[1] && doneShare(a) < 1)
+      .sort((a, b) => a.win[0] - b.win[0]);
+    return cand[0] || list.find(a => doneShare(a) < 1) || list[0];
+  }
+  const statusWord = a => doneShare(a) === 1 ? "pripravené" : doneShare(a) > 0 ? "rozkvitá" : "pomaly rastie";
+
+  // —— geometria ——
+  const petalPath = n => { const w = n >= 8 ? 46 : 58;
+    return `M0,-56 C${(w * .85).toFixed(1)},-64 ${(w * 1.1).toFixed(1)},-118 0,-156 C${(-w * 1.1).toFixed(1)},-118 ${(-w * .85).toFixed(1)},-64 0,-56Z`; };
+  const pt = (deg, r) => { const a = deg * Math.PI / 180; return [(r * Math.sin(a)).toFixed(2), (-r * Math.cos(a)).toFixed(2)]; };
+
+  function renderFlower() {
+    const list = areas(), n = list.length, d = petalPath(n), step = 360 / n, now = nowArea();
+    const cols = COLORS[state.night ? "night" : "day"];
+    // mäkká horná hrana farby: prechod sa škáluje s výplňou, takže okraj je vždy jemný
+    let s = `<defs><clipPath id="pc" clipPathUnits="userSpaceOnUse"><path d="${d}"/></clipPath>` +
+      list.map((a, i) => `<radialGradient id="fg${i}" cx="0" cy="0" r="158" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${cols[i % cols.length]}"/><stop offset=".86" stop-color="${cols[i % cols.length]}"/><stop offset="1" stop-color="${cols[i % cols.length]}" stop-opacity=".15"/></radialGradient>`).join("") + `</defs>`;
+    list.forEach((a, i) => {
+      const ang = i * step;
+      s += `<g class="petal${a.id === now.id ? " now" : ""}${doneShare(a) === 1 ? " done" : ""}" data-i="${i}" role="button" tabindex="0"
+          style="--c:${cols[i % cols.length]};--f:${fillOf(a).toFixed(3)}" aria-label="${a.name}, ${statusWord(a)}${a.id === now.id ? ", teraz sa hodí" : ""}">
+        <g transform="rotate(${ang})"><g class="inner">
+          <path class="p-glow" d="${d}"/>
+          <path class="p-bg" d="${d}"/>
+          <g clip-path="url(#pc)"><circle class="p-fill" fill="url(#fg${i})" cx="0" cy="0" r="158"/></g>
+          <path class="p-line" d="${d}"/>
+          <g transform="translate(0,-106) rotate(${-ang}) translate(-12,-12) scale(${24 / 256})"><g class="p-ic">${paths(a.ic)}</g></g>
+        </g></g></g>`;
+    });
+    $("fl").innerHTML = s;
+    $("fl").setAttribute("role", "group");
+    $("fl").setAttribute("aria-label", "Lupene prípravy");
+  }
+  function updatePetals() { // len premenné – lupeň sa plynulo dofarbí
+    const now = nowArea();
+    $("fl").querySelectorAll(".petal").forEach(g => {
+      const a = areas()[+g.dataset.i];
+      g.style.setProperty("--f", fillOf(a).toFixed(3));
+      g.classList.toggle("now", a.id === now.id);
+      g.classList.toggle("done", doneShare(a) === 1);
+      g.setAttribute("aria-label", `${a.name}, ${statusWord(a)}${a.id === now.id ? ", teraz sa hodí" : ""}`);
+    });
+  }
+
+  // dnešný kruh rýchlych záznamov (po pôrode)
+  const RING = [
+    { k: "feed", l: "Kŕmenie", ic: "feeding", a0: 0, a1: 120, c: "#efb3c6", sub: "pred 2 h · ľavý" },
+    { k: "sleep", l: "Spánok", ic: "moon", a0: 120, a1: 240, c: "#f2c094", sub: "spinká" },
+    { k: "diaper", l: "Plienky", ic: "diaper", a0: 240, a1: 360, c: "#b5c3ee", sub: "pred 1 h" }
+  ];
+  function renderRing() {
+    const R = 150, r = 66, g = 1.5;
+    let s = "";
+    RING.forEach((x, i) => {
+      const a0 = x.a0 + g, a1 = x.a1 - g, [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), [x2, y2] = pt(a1, r), [x3, y3] = pt(a0, r);
+      s += `<path class="seg-r" data-k="${x.k}" role="button" tabindex="0" aria-label="${x.l}, ${x.sub}" fill="${x.c}"
+        d="M${x0},${y0} A${R},${R} 0 0 1 ${x1},${y1} L${x2},${y2} A${r},${r} 0 0 0 ${x3},${y3}Z"/>`;
+    });
+    $("fl").innerHTML = s;
+    $("fl").removeAttribute("aria-label");
+    $("stage").querySelectorAll(".rlab").forEach(e => e.remove());
+    RING.forEach(x => {
+      const [lx, ly] = pt((x.a0 + x.a1) / 2, 108), el = document.createElement("div");
+      el.className = "rlab";
+      el.style.left = (50 + lx / 330 * 100) + "%"; el.style.top = (50 + ly / 330 * 100) + "%";
+      el.innerHTML = icon(x.ic) + x.l + `<small>${x.sub}</small>`;
+      $("stage").appendChild(el);
+    });
+  }
+
+  // —— stred ——
+  const fmt = ms => { const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), z = n => String(n).padStart(2, "0");
+    return h ? `${h}:${z(m)}:${z(s % 60)}` : `${z(m)}:${z(s % 60)}`; };
+  function renderCenter() {
+    const c = $("center"), pill = $("pill");
+    if (state.bloom) { c.innerHTML = icon("x") + `<span class="w">Zavrieť</span>`; c.setAttribute("aria-label", "Zavrieť rýchle akcie"); pill.hidden = true; return; }
+    if (state.phase === "pred") {
+      c.innerHTML = `<span class="n">${week()}.</span><span class="w">týždeň</span>`;
+      c.setAttribute("aria-label", `${week()}. týždeň – rýchle akcie (ťukni alebo podrž)`);
+      pill.hidden = true; return;
+    }
+    if (state.timer) {
+      const sleep = state.timer.kind === "sleep";
+      c.innerHTML = icon(sleep ? "moon" : "feeding") + `<span class="w">${sleep ? "Spí" : "Kŕmenie"}</span><span class="t" id="tm">${fmt(Date.now() - state.timer.start)}</span>`;
+      c.setAttribute("aria-label", `${sleep ? "Spí" : "Kŕmenie"} – rýchle akcie`);
+      pill.hidden = false; pill.textContent = sleep ? "Zobudilo sa" : "Dojedené";
+      c.style.paddingBottom = "16%";
+    } else {
+      c.innerHTML = icon("sun") + `<span class="w" style="color:var(--ink);font-weight:800">Náš deň</span>`;
+      c.setAttribute("aria-label", "Náš deň – rýchle akcie");
+      pill.hidden = true; c.style.paddingBottom = "";
+    }
+  }
+  setInterval(() => { const t = $("tm"); if (t && state.timer) t.textContent = fmt(Date.now() - state.timer.start); }, 1000);
+  function startTimer(kind) {
+    if (state.timer && state.timer.kind === kind) return stopTimer();
+    state.timer = { kind, start: Date.now() };
+    renderCenter();
+    toast(kind === "sleep" ? "Spánok beží – čas vidíš v strede" : "Kŕmenie beží – čas vidíš v strede");
+  }
+  function stopTimer() {
+    const prev = state.timer; if (!prev) return;
+    const min = Math.max(1, Math.round((Date.now() - prev.start) / 60000));
+    state.timer = null; renderCenter();
+    toast(`Uložené · ${prev.kind === "sleep" ? "spánok" : "kŕmenie"} ${min} min`, "Vrátiť", () => { state.timer = prev; renderCenter(); toast("Vrátené – čas beží ďalej"); });
+  }
+
+  // —— Dnes stačí jedno (ukazuje lupeň, ktorý je na rade) ——
+  function renderToday() {
+    const a = nowArea(), i = areas().indexOf(a), task = a.tasks.find(x => !x.d) || a.tasks[0];
+    const col = COLORS[state.night ? "night" : "day"][i % 8];
+    $("todayMain").innerHTML = `<svg class="mini" viewBox="-60 -160 120 108" aria-hidden="true"><path d="${petalPath(8)}" fill="${col}" stroke="var(--brand)" stroke-width="5"/></svg>
+      <span style="min-width:0"><small>Dnes stačí jedno</small><b>${task.t}</b></span>`;
+    $("todayMain").setAttribute("aria-label", `Dnes stačí jedno: ${task.t}. Lupeň ${a.name}`);
+    $("todayMain").dataset.i = i;
+  }
+  const highlight = (i, on) => { const g = $("fl").querySelector(`.petal[data-i="${i}"]`); if (g) g.classList.toggle("hl", on); };
+  ["pointerenter", "focus"].forEach(ev => $("todayMain").addEventListener(ev, () => showFlower() && highlight($("todayMain").dataset.i, true)));
+  ["pointerleave", "blur"].forEach(ev => $("todayMain").addEventListener(ev, () => highlight($("todayMain").dataset.i, false)));
+  $("todayMain").addEventListener("click", () => {
+    const i = +$("todayMain").dataset.i;
+    if (showFlower()) { highlight(i, true); setTimeout(() => { highlight(i, false); openSheet(i); }, 380); }
+    else openSheet(i);
+  });
+
+  // —— hlavné vykreslenie ——
+  function render() {
+    document.body.classList.toggle("night", state.night);
+    const pred = state.phase === "pred";
+    $("pPred").setAttribute("aria-pressed", pred); $("pPo").setAttribute("aria-pressed", !pred);
+    $("variantSeg").hidden = pred;
+    $("vRing").setAttribute("aria-pressed", state.variant === "ring"); $("vFlower").setAttribute("aria-pressed", state.variant === "flower");
+    $("pWeek").textContent = pred ? `${week()}. t.` : `${week()}. t. po`;
+    $("pWeek").setAttribute("aria-label", pred ? `Týždeň tehotenstva ${week()}, zmeniť` : `${week()}. týždeň po pôrode, zmeniť`);
+    $("pNight").innerHTML = icon(state.night ? "sun" : "moon"); $("pNight").setAttribute("aria-pressed", state.night);
+    $("moonBtn").innerHTML = icon(state.night ? "sun" : "moon");
+    document.querySelector("[aria-label='Ponuka']").innerHTML = icon("menu");
+    $("hello").textContent = state.night ? "Dobrý večer, Lucia" : "Dobrý deň, Lucia";
+    $("helloSub").textContent = pred ? (state.night ? "Deň sa pomaly končí." : "Pekný deň pred vami.") : `Dnes je to ${week() * 7}. deň spolu`;
+    $("hero").innerHTML = pred
+      ? `<span class="av">${icon("leaf")}</span><span><b>${week()}. týždeň</b><span>Tvoj týždeň – vývoj bábätka</span></span><span class="chev">›</span>`
+      : `<span class="av">${icon("baby")}</span><span><b>Ema</b><span>${week() < 5 ? week() + ". týždeň" : Math.ceil(week() / 4.35) + ". mesiac"}</span></span><span class="chev">›</span>`;
+    $("tiles").innerHTML = (pred
+      ? [["leaf", "Čo je bežné"], ["mama", "Tvoje telo"], ["calendar", "Kalendár"]]
+      : [["handPalm", "Starostlivosť"], ["sparkle", "Aktivity"], ["clipboard", "Zdrav. knižka"]])
+      .map(([ic, l]) => `<button class="tile" data-toast="Otvorí ${l}"><span class="ic">${icon(ic)}</span>${l}</button>`).join("");
+    $("stage").querySelectorAll(".rlab").forEach(e => e.remove());
+    if (showFlower()) renderFlower(); else renderRing();
+    $("fcard").setAttribute("aria-label", showFlower() ? "Kvet prípravy" : "Rýchle záznamy");
+    renderCenter(); renderToday();
+    $("hint").hidden = state.hintSeen;
+    $("fcard").classList.toggle("has-hint", !state.hintSeen);
+    $("stage").classList.toggle("hintpulse", !state.hintSeen);
+  }
+
+  // —— okno oblasti ——
+  let lastFocus = null;
+  const mpScale = a => ((56 + fillOf(a) * 102) / 158).toFixed(3);
+  function openSheet(i) {
+    const a = areas()[i], now = nowArea(), col = COLORS[state.night ? "night" : "day"][i % 8];
+    state.sheet = i; lastFocus = document.activeElement;
+    $("sheet").innerHTML = `<div class="grab"></div>
+      <div class="sh-head">
+        <svg class="mp" viewBox="-62 -160 124 108" aria-hidden="true" style="--c:${col}">
+          <defs><clipPath id="mpc" clipPathUnits="userSpaceOnUse"><path d="${petalPath(8)}"/></clipPath></defs>
+          <path d="${petalPath(8)}" fill="${col}" fill-opacity=".3"/>
+          <g clip-path="url(#mpc)"><circle id="mpFill" cx="0" cy="0" r="158" fill="${col}" style="transform-box:fill-box;transform-origin:50% 50%;transform:scale(${mpScale(a)});transition:transform 1.2s cubic-bezier(.3,.7,.2,1)"/></g>
+          <path d="${petalPath(8)}" fill="none" stroke="var(--brand)" stroke-width="4"/>
+        </svg>
+        <div style="flex:1;min-width:0"><h2 id="shTitle">${a.name}</h2>${a.id === now.id ? `<span class="chip">${icon("sparkle")}Teraz sa hodí</span>` : ""}</div>
+        <button class="iconbtn" id="shClose" aria-label="Zavrieť">${icon("x")}</button>
+      </div>
+      <p class="sh-lead">${a.lead}</p>
+      <ul class="tasks">${a.tasks.map((t, k) => `<li><button class="task" role="checkbox" aria-checked="${t.d}" data-k="${k}"><span class="box">${icon("check")}</span><span class="tx">${t.t}</span></button></li>`).join("")}</ul>
+      <div class="sh-foot"><button class="btn" data-toast="Otvorí celý Plán – časť ${a.name}">Celý plán</button></div>`;
+    $("sheet").querySelectorAll(".chip svg").forEach(s => { s.style.width = "14px"; s.style.height = "14px"; });
+    $("scrim").hidden = false; $("sheet").hidden = false;
+    void $("sheet").offsetWidth;
+    $("scrim").classList.add("show"); $("sheet").classList.add("show");
+    $("shClose").onclick = closeSheet;
+    $("sheet").querySelectorAll(".task").forEach(b => b.onclick = () => {
+      const t = a.tasks[+b.dataset.k], wasDone = doneShare(a) === 1;
+      t.d = !t.d; b.setAttribute("aria-checked", t.d);
+      $("mpFill").style.transform = `scale(${mpScale(a)})`;
+      if (!wasDone && doneShare(a) === 1) toast(`${a.name} – pripravené. Pekne.`);
+    });
+    setTimeout(() => $("shClose").focus(), 50);
+  }
+  function closeSheet() {
+    if (state.sheet == null) return;
+    const i = state.sheet; state.sheet = null;
+    $("scrim").classList.remove("show"); $("sheet").classList.remove("show");
+    setTimeout(() => { $("scrim").hidden = true; $("sheet").hidden = true; }, 320);
+    if (showFlower()) {
+      updatePetals();
+      const g = $("fl").querySelector(`.petal[data-i="${i}"]`);
+      if (g) { g.classList.remove("pop"); void g.getBBox(); g.classList.add("pop"); setTimeout(() => g.classList.remove("pop"), 1100); }
+    }
+    renderToday();
+    if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+  }
+  $("scrim").addEventListener("click", closeSheet);
+
+  // —— rozkvet rýchlych akcií ——
+  let curActions = [];
+  function openBloom(viaKeyboard) {
+    if (state.bloom) return;
+    state.bloom = true; state.hintSeen = true;
+    $("hint").hidden = true; $("stage").classList.remove("hintpulse");
+    curActions = state.phase === "pred" ? ACTIONS.pred(week()) : state.variant === "flower" ? ACTIONS.poFlower() : ACTIONS.poRing();
+    const cr = $("center").getBoundingClientRect(), cx = cr.left + cr.width / 2, cy = cr.top + cr.height / 2;
+    const stageW = $("stage").getBoundingClientRect().width;
+    const R = Math.max(112, Math.min(132, stageW * .40));
+    const n = curActions.length;
+    $("bloom").innerHTML = curActions.map((a, i) => {
+      const ang = -90 + i * 360 / n, rad = ang * Math.PI / 180, x = cx + R * Math.cos(rad), y = cy + R * Math.sin(rad);
+      const live = a.timer && state.timer?.kind === a.timer;
+      return `<button class="bub${live ? " live" : ""}" role="menuitem" data-i="${i}" aria-label="${a.aria || a.l}"
+        style="left:${x}px;top:${y}px;--dx:${(cx - x).toFixed(1)}px;--dy:${(cy - y).toFixed(1)}px;--d:${i * 35}ms">
+        <span class="c">${icon(a.ic)}</span><span class="l">${a.l}</span></button>`;
+    }).join("");
+    $("dim").hidden = false; $("bloom").hidden = false;
+    $("fcard").classList.add("raised"); $("stage").classList.add("zoom");
+    $("center").classList.add("open"); $("center").setAttribute("aria-expanded", "true");
+    renderCenter();
+    void $("bloom").offsetWidth; // vynúti výpočet štýlu, aby prechod z výchozej polohy začal hneď
+    $("dim").classList.add("show"); $("bloom").classList.add("show");
+    if (viaKeyboard) setTimeout(() => $("bloom").querySelector(".bub")?.focus(), 60);
+  }
+  function closeBloom(refocus) {
+    if (!state.bloom) return;
+    state.bloom = false;
+    $("dim").classList.remove("show"); $("bloom").classList.remove("show");
+    $("stage").classList.remove("zoom"); $("center").classList.remove("open"); $("center").setAttribute("aria-expanded", "false");
+    renderCenter();
+    setTimeout(() => { if (!state.bloom) { $("dim").hidden = true; $("bloom").hidden = true; $("bloom").innerHTML = ""; $("fcard").classList.remove("raised"); } }, 380);
+    if (refocus) $("center").focus();
+  }
+  function runAction(i) {
+    const a = curActions[i]; if (!a) return;
+    closeBloom(false);
+    if (a.timer) startTimer(a.timer); else toast(a.t);
+  }
+  $("bloom").addEventListener("click", e => { const b = e.target.closest(".bub"); if (b) runAction(+b.dataset.i); });
+  $("dim").addEventListener("click", () => closeBloom(true));
+
+  // stred: ťuk = otvorí/zavrie, podržanie = zoom + vibrácia; pri podržaní sa dá rovno potiahnuť na ikonu
+  const HOLD = 420;
+  let hold = null, heldOpen = false, ignoreClick = false;
+  const center = $("center");
+  center.addEventListener("contextmenu", e => e.preventDefault());
+  $("stage").addEventListener("contextmenu", e => e.preventDefault());
+  center.addEventListener("pointerdown", e => {
+    if (e.button > 0 || state.bloom) return;
+    heldOpen = false;
+    const sx = e.clientX, sy = e.clientY;
+    try { center.setPointerCapture(e.pointerId); } catch (_) {}
+    $("stage").classList.add("holding");
+    hold = { sx, sy, t: setTimeout(() => {
+      $("stage").classList.remove("holding");
+      heldOpen = true; openBloom(false);
+      if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) {} }
+    }, HOLD) };
+  });
+  const bubAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".bub") : null; };
+  center.addEventListener("pointermove", e => {
+    if (!hold) return;
+    if (!heldOpen) { if (Math.hypot(e.clientX - hold.sx, e.clientY - hold.sy) > 12) cancelHold(); return; }
+    const b = bubAt(e.clientX, e.clientY);
+    $("bloom").querySelectorAll(".bub").forEach(x => x.classList.toggle("over", x === b));
+  });
+  function cancelHold() { if (hold) clearTimeout(hold.t); hold = null; $("stage").classList.remove("holding"); }
+  center.addEventListener("pointerup", e => {
+    if (!hold) return;
+    cancelHold();
+    if (!heldOpen) return; // krátky ťuk – vybaví click
+    ignoreClick = true; setTimeout(() => ignoreClick = false, 400);
+    const b = bubAt(e.clientX, e.clientY);
+    if (b) return runAction(+b.dataset.i);
+    const cr = center.getBoundingClientRect();
+    const onCenter = e.clientX >= cr.left && e.clientX <= cr.right && e.clientY >= cr.top && e.clientY <= cr.bottom;
+    if (!onCenter) closeBloom(false); // pustenie mimo zavrie; pustenie na strede nechá ikony otvorené
+  });
+  center.addEventListener("pointercancel", () => { cancelHold(); });
+  center.addEventListener("click", e => {
+    if (ignoreClick) return;
+    if (state.bloom) closeBloom(true); else openBloom(e.detail === 0);
+  });
+  $("pill").addEventListener("pointerdown", e => e.stopPropagation());
+  $("pill").addEventListener("click", e => { e.stopPropagation(); stopTimer(); });
+
+  // lupene a segmenty kruhu
+  $("fl").addEventListener("click", e => {
+    if (state.bloom) return;
+    const g = e.target.closest(".petal"); if (g) return openSheet(+g.dataset.i);
+    const s = e.target.closest(".seg-r"); if (s) return ringTap(s.dataset.k);
+  });
+  $("fl").addEventListener("keydown", e => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const g = e.target.closest(".petal, .seg-r"); if (!g) return;
+    e.preventDefault(); g.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
+  function ringTap(k) {
+    if (k === "diaper") return toast("Otvorí malé okno Plienky – nič sa neuloží hneď");
+    startTimer(k);
+  }
+
+  // klávesnica: Esc a fokus v okne / v rozkvete
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { if (state.sheet != null) closeSheet(); else if (state.bloom) closeBloom(true); return; }
+    if (e.key !== "Tab") return;
+    const box = state.sheet != null ? $("sheet") : state.bloom ? null : null;
+    let items;
+    if (box) items = [...box.querySelectorAll("button")];
+    else if (state.bloom) items = [center, ...$("bloom").querySelectorAll(".bub")];
+    if (!items || !items.length) return;
+    const i = items.indexOf(document.activeElement);
+    e.preventDefault();
+    items[(i + (e.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+  });
+  $("bloom").addEventListener("keydown", e => {
+    if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.key)) return;
+    const items = [...$("bloom").querySelectorAll(".bub")], i = items.indexOf(document.activeElement);
+    e.preventDefault(); items[(i + (e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+  });
+
+  // —— hlásenie ——
+  let toastT = null;
+  function toast(text, act, fn) {
+    $("toastText").textContent = text;
+    const b = $("toastAct"); b.hidden = !act; b.textContent = act || ""; b.onclick = () => { $("toast").classList.remove("show"); fn && fn(); };
+    $("toast").classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(() => $("toast").classList.remove("show"), act ? 5000 : 2600);
+  }
+  document.addEventListener("click", e => { const t = e.target.closest("[data-toast]"); if (t) toast(t.dataset.toast); });
+
+  // —— ovládanie prototypu ——
+  const set = fn => () => { closeBloom(false); closeSheet(); fn(); render(); };
+  $("pPred").onclick = set(() => state.phase = "pred");
+  $("pPo").onclick = set(() => { state.phase = "po"; });
+  $("vRing").onclick = set(() => state.variant = "ring");
+  $("vFlower").onclick = set(() => state.variant = "flower");
+  $("pWeek").onclick = set(() => { const p = state.phase; state.wi[p] = (state.wi[p] + 1) % WEEKS[p].length; });
+  const night = set(() => state.night = !state.night);
+  $("pNight").onclick = night; $("moonBtn").onclick = night;
+  $("pReset").onclick = set(() => { state.hintSeen = false; state.timer = { kind: "sleep", start: Date.now() - 47 * 60000 }; state.areas = { pred: clone(PRED), po: clone(PO) }; });
+
+  state.timer = { kind: "sleep", start: Date.now() - 47 * 60000 }; // ako v ukážke appky
+  render();
+})();
+</script>
+</body>
+</html>
