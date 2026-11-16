@@ -3,6 +3,14 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-16 – Samo (plán k 9–10/10, spustenie)
+- **Plán Fáza 1 schválený** (zhoda tímu: hodnotiteľ, stratég, UI, UX, Content & Safety, architekt):
+  testovacia stránka · úrady a sumy k 1. 1. 2027 · skryť zvyšky Premium · fotky a hlas do IndexedDB + záloha ·
+  overenie na iPhone (Samo) · vlastné písmo · ikony (v kruhu ikona + slovo, „Dnes stačí jedno“ ostáva slovom) ·
+  časová os nárokov ako náhľad · test s mamami. Fáza 2 až po teste.
+- **Bez garanta a bez režimu pre stratu tehotenstva / vážne situácie** – appka na to nie je zameraná.
+- **Spustenie guguboo.com:** nová úvodná stránka + appka Master nahradí V1 cez PR do `main` (Samo zlúči).
+
 ## 2026-11-16 – Samo (Master 2.7)
 - **Jeden spôsob práce:** všetci pracujú vo vetve `v2`, priamo v `guguboo-master/` (Claude na Samovom PC predtým
   pracoval v lokálnej vetve a do `guguboo-master/` len kopíroval – zrušené, aby sa si práca neprepisovala).
