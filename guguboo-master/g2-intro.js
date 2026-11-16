@@ -80,7 +80,7 @@
     <section class="screen" data-screen="names" aria-labelledby="g2i-h-names">
       <div class="head">
         <h1 id="g2i-h-names">Ako vás môžeme oslovovať?</h1>
-        <p class="sub">Nepovinné. Doplniť alebo zmeniť to môžeš kedykoľvek.</p>
+        <p class="sub">Nepovinné, zmeníš kedykoľvek.</p>
       </div>
       <div class="fields">
         <div class="field">

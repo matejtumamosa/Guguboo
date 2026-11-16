@@ -162,7 +162,7 @@
       V5.persist();
       await load(hit.latitude.toFixed(2), hit.longitude.toFixed(2), hit.name);
     } catch (e) {
-      error = e.message === "city" ? "Toto mesto som nenašla. Skús iný názov." : "Počasie sa teraz nepodarilo zistiť. Skús to o chvíľu.";
+      error = e.message === "city" ? "Toto mesto sa nenašlo. Skús iný názov." : "Počasie sa teraz nepodarilo zistiť. Skús to o chvíľu.";
     }
     busy = false; render();
   }

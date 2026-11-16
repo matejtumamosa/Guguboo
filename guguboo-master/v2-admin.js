@@ -113,7 +113,7 @@
     return [
       "<header class='v2-admin-head'><small>", esc(item.authority || item.who || "Úrady a doklady"), "</small><h2 id='v2AdminTitle'>", esc(item.title), "</h2>",
       item.what ? "<p>" + esc(item.what) + "</p>" : "", "</header>",
-      isAutomatic(item) ? "<p class='v2-admin-status v2-admin-auto'>✓ Toto sa vybaví samo – nemusíš nič podávať.</p>" : "",
+      isAutomatic(item) ? "<p class='v2-admin-status v2-admin-auto'>✓ Vybaví sa samo, netreba nič podávať.</p>" : "",
       unverified ? "<p class='v2-admin-status'>Tieto údaje ešte overujeme z oficiálneho zdroja. Presné pravidlá nájdeš na stránke úradu.</p>"
         : partial ? "<p class='v2-admin-status'>Časť údajov ešte overujeme – pri detailoch sa riaď oficiálnou stránkou.</p>" : "",
       "<div class='v2-admin-rows'>",

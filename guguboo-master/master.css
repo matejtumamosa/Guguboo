@@ -819,3 +819,8 @@ body.v5-active.night .g2q-card .v2-o-label .g2q-seg-ic { fill: #29243a; }
 .g2r-act i.g2r-two svg.ph { width: 16px; height: 16px; }
 /* Tip na týždeň: žiarovka namiesto 💡 */
 .v2-size-tip h3 svg.ph { width: 18px; height: 18px; vertical-align: -3px; color: var(--v5-brand-dark); }
+/* Master 3.0 (Samo, iPhone): v poli hľadania dvojitý rámik – rámik má len obal (.g2-search), nie samotné pole */
+.g2-search input, .g2-search input:focus, .g2-search input:focus-visible {
+  -webkit-appearance: none !important; appearance: none !important;
+  border: 0 !important; outline: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important;
+}

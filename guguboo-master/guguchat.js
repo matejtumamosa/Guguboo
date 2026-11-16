@@ -201,14 +201,14 @@
       weekHtml(ctx),
       "<section class='v2-journey' aria-label='Tvoj plán'>",
       "<header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
-      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je všetko podstatné hotové. Užívaj si to ❤️</p>",
+      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na dnes je hotovo. Užívaj si deň.</p>",
       soon.length ? [
         "<div class='v2-journey-soon'><h3>Čoskoro</h3>",
         soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
         "</div>"
       ].join("") : "",
       plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
-      "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí zatiaľ nemusíš riešiť. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
+      "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí počká. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
       // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
       "</footer>",
       "</section>"
@@ -230,7 +230,7 @@
     const item = plan.what_is_relevant_now.find(entry => !/na svete/i.test(entry.title || ""));
     if (item) return row("Dnes stačí jedno", item.title, "data-v2-journey-open='" + esc(item.id) + "'", item.type === "task" ? item.id : "");
     if (plan.transition && (ctx.pregnancy_week || 0) >= 37) return row("Keď príde čas", "Bábätko je na svete?", "data-v2-birth-open", "");
-    return row("Dnes stačí jedno", "Na dnes nič netreba · celý plán", "data-g2-plan", "");
+    return row("Dnes stačí jedno", "Na dnes je hotovo · celý plán", "data-g2-plan", "");
   }
   function planHtml() {
     const plan = J.compute(state);
@@ -239,9 +239,9 @@
     const now = plan.what_is_relevant_now;
     const soon = plan.what_is_coming;
     return [
-      "<p class='g2-lead'>Nemusíš to mať všetko v hlave. Keď príde čas, ozvem sa.</p>",
+      "<p class='g2-lead'>Keď príde čas, ozvem sa.</p>",
       "<section class='v2-journey g2-plan-list' aria-label='Plán'><header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
-      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na teraz nič netreba.</p>",
+      now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na teraz je hotovo.</p>",
       soon.length ? "<div class='v2-journey-soon'><h3>Čoskoro</h3>" + soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>" + (item.startsInDays <= 7 ? "budúci týždeň" : "o pár týždňov") + "</em></button>").join("") + "</div>" : "",
       plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
       "</section>",
@@ -369,7 +369,7 @@
     const placed = [...plan.what_is_relevant_now, ...plan.what_is_coming, ...plan.later, ...plan.done].find(entry => entry.id === id);
     if (!item) return { text: fallbackText, actions: [] };
     if (placed?.done) return { text: "„" + item.title + "“ už máš hotové.", actions: [{ label: "Otvoriť", kind: "open", value: id }, { label: "Vrátiť ako nehotové", kind: "undo", value: id }] };
-    const when = !placed ? "" : placed.horizon === "now" ? "Teraz je na to vhodný čas." : placed.horizon === "soon" ? "Bude to aktuálne o " + placed.startsInDays + " dní." : "Zatiaľ to nemusíš riešiť – ozvem sa, keď príde správny čas.";
+    const when = !placed ? "" : placed.horizon === "now" ? "Teraz je na to vhodný čas." : placed.horizon === "soon" ? "Bude to aktuálne o " + placed.startsInDays + " dní." : "Na toto je ešte čas – ozvem sa.";
     return { text: item.title + ".\n" + (item.why || "") + (when ? "\n\n" + when : ""), item: id, actions: itemActions(item) };
   }
 
@@ -606,7 +606,7 @@
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
     if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc", "som na dne", "nema to zmysel", "nevladzem", "uz nevladzem"])) {
-      return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "me" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
+      return { level: "support", text: "To, čo cítiš, je dôležité a môžeš sa o to s niekým podeliť.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "me" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
     }
 
     // 1b. Sprievodca appkou („kde sú fotky?“) – po bezpečnosti, pred ostatným.
@@ -709,7 +709,7 @@
 
     // 7. Zdvorilosti.
     if (has(t, ["ahoj", "dobry den", "cau", "zdravim"])) return { text: "Ahoj, som GuguChat. S čím ti môžem pomôcť?", actions: [{ label: "Čo ma teraz čaká?", kind: "ask", value: "Čo ma teraz čaká?" }] };
-    if (has(t, ["dakujem", "vdaka", "super"])) return { text: "Rado sa stalo ❤️ Keď budeš niečo potrebovať, som tu.", actions: [] };
+    if (has(t, ["dakujem", "vdaka", "super"])) return { text: "Rado sa stalo. Som tu, keď budeš chcieť.", actions: [] };
 
     // 8. Neviem – úprimne a zapíšem ako medzeru v znalostiach.
     if (!options.dryRun) state.v2.gaps.push({ q: question, stage: ctx.life_stage, at: new Date().toISOString() });
@@ -780,11 +780,11 @@
       "<div class='v2-chat-log' id='v2ChatLog' aria-live='polite'>", state.v2.chat.map(messageHtml).join(""), "</div>",
       // Samuel 28. 9.: žiadny trvalý „núdzový“ pás – pôsobí strašidelne. Pomoc je vždy nenápadne po ruke
       // a naliehavé kontakty sa ukážu len vtedy, keď ich otázka naozaj vyžaduje.
-      "<p class='v2-chat-disclaimer'>GuguChat ti pomáha zorientovať sa. So zdravotnými otázkami sa kedykoľvek obráť aj na svojho lekára. <button type='button' class='v2-chat-help-link' data-v2-chat-kind='helpinfo'>Kontakty na pomoc</button></p>",
+      "<p class='v2-chat-disclaimer'>GuguChat ti pomôže zorientovať sa. So zdravotnými otázkami sa obráť aj na lekára.<button type='button' class='v2-chat-help-link' data-v2-chat-kind='helpinfo'>Kontakty na pomoc</button></p>",
       // Master 1.7 (V13): rýchle otázky a pole na písanie sú prilepené dole – po odpovedi netreba posúvať.
       "<div class='g2-chat-dock'>",
       "<div class='v2-chat-chips'>", chips(plan.context).map(chip => "<button type='button' data-v2-chat-ask='" + esc(chip) + "'>" + esc(chip) + "</button>").join(""), "</div>",
-      "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš, čo riešiš…'><button class='v5-primary' type='submit'>Poslať</button></form>",
+      "<form class='v2-chat-form' id='v2ChatForm'><label class='v5-sr-only' for='v2ChatInput'>Napíš otázku</label><input id='v2ChatInput' autocomplete='off' placeholder='Napíš otázku…'><button class='v5-primary' type='submit'>Poslať</button></form>",
       "</div>",
       "</div>"
     ].join("");
@@ -902,7 +902,7 @@
       }
       if (kind === "remind" && item) {
         const date = remind(item, 7);
-        state.v2.chat.push({ role: "bot", text: "Dobre, pripomeniem ti to " + date.toLocaleDateString("sk-SK", { day: "numeric", month: "long" }) + ". Dovtedy to nemusíš mať v hlave.", actions: [] });
+        state.v2.chat.push({ role: "bot", text: "Dobre, pripomeniem ti to " + date.toLocaleDateString("sk-SK", { day: "numeric", month: "long" }) + ". Dovtedy si to pamätám ja.", actions: [] });
         save();
         return render();
       }

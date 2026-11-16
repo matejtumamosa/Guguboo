@@ -28,7 +28,7 @@
         kicker: "Upozornenia",
         title: "Pripomenieme ti dôležité veci",
         icon: "bell",
-        text: "Kontroly, termíny a úrady – len to, čo sa ťa týka. Žiadne reklamy.",
+        text: "Kontroly, termíny a úrady – len to, čo sa ťa týka.",
         note: "V beta verzii prídu upozornenia, len keď máš appku otvorenú.",
         nextLabel: "Povoliť upozornenia",
         skipLabel: "Neskôr",
@@ -56,7 +56,7 @@
         target: () => null,
         title: "Zoznám sa s Guguboo",
         icon: "spark",
-        text: "Ukážem ti domov. Je to len pár vecí a všetko si môžeš hneď vyskúšať."
+        text: "Ukážem ti domov – všetko si môžeš hneď vyskúšať."
       },
       {
         top: true,
@@ -71,7 +71,7 @@
         target: () => home?.querySelector(".g2-askwrap"),
         title: "Hľadaj alebo sa opýtaj",
         items: [
-          { icon: "search", name: "Hľadaj", text: "napíš, čo sa deje alebo čo hľadáš. Nájdeš to v appke a GuguChat odpovie z overených zdrojov." }
+          { icon: "search", name: "Hľadaj", text: "napíš, čo hľadáš. GuguChat odpovie z overených zdrojov." }
         ],
         try: { label: "Vyskúšať hľadanie", run: () => home?.querySelector("[data-g2-ask]")?.click() }
       },
@@ -94,18 +94,18 @@
         target: () => home?.querySelector(".g2-shorts"),
         title: "Tri skratky",
         text: expecting
-          ? "Veci, ktoré teraz potrebuješ najčastejšie. Menia sa podľa týždňa."
-          : "Veci, ktoré teraz potrebuješ najčastejšie, napríklad starostlivosť o bábätko. Menia sa, ako bábätko rastie."
+          ? "Čo teraz potrebuješ najčastejšie. Menia sa podľa týždňa."
+          : "Čo teraz potrebuješ najčastejšie. Menia sa, ako bábätko rastie."
       },
       {
         target: () => home?.querySelector(".g2-ring-card"),
         title: "Rýchle záznamy",
-        text: expecting ? "Ja a bábätko: zapíš pohyb, odfoť bruško alebo nahraj bábätku svoj hlas. Na konci tehotenstva tu meriaš kontrakcie." : "Ťukni na diel – kŕmenie, spánok, plienky. Keď niečo beží, v strede vidíš čas a ťuknutím to ukončíš. Čas pre teba nájdeš v Mame."
+        text: expecting ? "Zapíš pohyb, odfoť bruško alebo nahraj bábätku svoj hlas." : "Ťukni na diel – kŕmenie, spánok, plienky. Bežiaci čas ukončíš v strede."
       },
       {
         target: () => home?.querySelector(".g2-today-row"),
         title: "Dnes stačí jedno",
-        text: "Jedna vec, ktorú treba vybaviť, kúpiť alebo pripraviť. Ostatné počká v Pláne. Môžeš ju odložiť tlačidlom Neskôr."
+        text: "Jedna vec na dnes. Ostatné počká v Pláne."
       },
       {
         target: () => byId("v5BottomBar"),

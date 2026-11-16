@@ -189,7 +189,7 @@
       item.note ? "<p>" + esc(item.note) + "</p>" : "<p>" + (item.phase === "pre" ? "" : "Každé bábätko má vlastné tempo. ") + "Odpovedz, len ak chceš.</p>",
       "<div class='v2-ask-actions'><button type='button' class='v5-primary' data-v2-first-yes='", item.key, "'>Áno, dnes</button>",
       "<button type='button' class='v5-secondary' data-v2-first-earlier='", item.key, "'>Už skôr</button>",
-      "<button type='button' class='v5-text-action' data-v2-first-later='", item.key, "'>Ešte nie</button></div>",
+      "<button type='button' class='v5-text-action' data-v2-first-later='", item.key, "'>Zatiaľ nie</button></div>",
       "<div class='v2-ask-date' hidden><label>Kedy to bolo?<input type='date' max='", todayKey(), "' data-v2-first-date='", item.key, "'></label><button type='button' class='v5-primary' data-v2-first-date-save='", item.key, "'>Uložiť</button></div>",
       "</section>"
     ].join("");

@@ -196,7 +196,7 @@
     const mamaLink = "<button class='g2r-link' type='button' data-g2r='mama'>Viac o tele v Mame ›</button>";
     // Master 2.7 (audit #30, PL): „Kŕč v nohe“ odstránený – postup pri príznaku; téma Kŕče ostáva v Mame (čo je bežné + otázka).
     if (!born) return push("Telo", () => (night ? "" : act("legs", "couch", "Nohy hore", "10 alebo 20 minút, čas postrážim ja")) + act("sleep", "bed", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
-    push("Telo", () => act("feed", "breastfeed", "Pohodlne pri kŕmení", "usaď sa, kým začneš") + (night ? "" : act("shower", "shower", "Sprcha len pre mňa", "15 minút, nikam sa neponáhľaš") + act("pwalk", "walk", "Pokojná prechádzka", "10 alebo 20 minút von")) + mamaLink, { noContent: true });
+    push("Telo", () => act("feed", "breastfeed", "Pohodlne pri kŕmení", "usaď sa, kým začneš") + (night ? "" : act("shower", "shower", "Sprcha len pre mňa", "15 minút len pre seba") + act("pwalk", "walk", "Pokojná prechádzka", "10 alebo 20 minút von")) + mamaLink, { noContent: true });
   }
 
   // Postup o krokoch (Ďalej) v jednom okne
@@ -227,10 +227,10 @@
     if (a === "close") return close();
     if (a === "breath") {
       const tip = breathText();
-      return push("Dýchaj so mnou", () => "<div class='g2r-breath'><div class='g2r-bubble' id='g2rBub' aria-hidden='true'></div></div><p class='g2r-cue' id='g2rCue' aria-live='polite'>Pripravená?</p>" +
+      return push("Dýchaj so mnou", () => "<div class='g2r-breath'><div class='g2r-bubble' id='g2rBub' aria-hidden='true'></div></div><p class='g2r-cue' id='g2rCue' aria-live='polite'>Začneme?</p>" +
         "<p class='g2r-small' style='text-align:center'>" + esc(tip || "Dýchaj pokojne nosom a pomaly vydychuj ústami.") + "</p>" +
         "<button class='g2r-btn' type='button' data-g2r='breath-go'>Začať · 1 minúta</button>" + (tip ? source("https://www.nhs.uk/pregnancy/week-by-week/", "") : "") +
-        "<p class='g2r-small'>Jednoduchá dobrovoľná pomôcka na upokojenie, nie lekársky postup.</p>", { noContent: true });
+        "<p class='g2r-small'>Jednoduchá pomôcka na upokojenie, nie lekársky postup.</p>", { noContent: true });
     }
     if (a === "breath-go") {
       const b = byId("g2rBub"), cue = byId("g2rCue");
@@ -250,7 +250,7 @@
       return;
     }
     if (a === "nap") return push(phase() === "born" && !isNight() ? "Zdriemni si, kým spí" : "Šum na zaspávanie", () => chips("data-g2r-nap", [20, 45], 20, " minút") +
-      "<button class='g2r-btn' type='button' data-g2r='nap-go'>Spustiť šum</button><p class='g2r-small'>Šum sa 6 sekúnd zosilňuje a na konci sám pomaly stíchne. Obrazovka stmavne. Zvuk vychádza z telefónu, nie zo súboru.</p>", { noContent: true });
+      "<button class='g2r-btn' type='button' data-g2r='nap-go'>Spustiť šum</button><p class='g2r-small'>Šum sa pomaly zosilní a na konci sám stíchne.</p>", { noContent: true });
     if (a === "nap-go") { const m = +(body.querySelector("[data-g2r-nap][aria-pressed='true']")?.dataset.g2rNap || 20); close(); return startNoise(m); }
     if (a === "nap-go20") { close(); return startNoise(20); }
     if (a === "quiet") return push("Chvíľa ticha", () => chips("data-g2r-q", [5, 10, 15], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button><p class='g2r-small'>Na konci zaznie jemný tón. Telefón môžeš položiť.</p>", { noContent: true });
@@ -261,7 +261,7 @@
       return push(a === "friend" ? "Napísať blízkemu" : "Poprosiť o pomoc", () => (list.length > 1 ? "<div class='g2r-chips g2r-rq' role='group' aria-label='Vyber prosbu'>" + list.map((t, i) => "<button class='g2r-pill' type='button' data-g2r-rq='" + i + "' aria-pressed='" + (i === 0) + "' aria-label='Prosba " + (i + 1) + "'>" + (i + 1) + "</button>").join("") + "</div>" : "") +
         "<p class='g2r-small' style='margin:12px 0 6px'>Uprav si text, ak chceš:</p><textarea id='g2rText' data-g2-no-guard aria-label='Text správy'>" + esc(list[0]) + "</textarea>" +
         "<button class='g2r-btn' type='button' data-g2r='send'>Poslať cez telefón</button><button class='g2r-btn ghost' type='button' data-g2r='copy'>Skopírovať text</button>" +
-        "<p class='g2r-small'>Otvorí sa zdieľanie telefónu (Správy, WhatsApp…). Appka nič neposiela sama a nevie, či si správu odoslala.</p>", { noContent: true, list });
+        "<p class='g2r-small'>Pošleš cez Správy alebo WhatsApp. Appka nič neposiela sama.</p>", { noContent: true, list });
     }
     if (a === "send") {
       const t = (byId("g2rText")?.value || "").trim();
@@ -273,7 +273,7 @@
     }
     if (a === "copy") {
       const t = (byId("g2rText")?.value || "").trim();
-      const fallback = () => { byId("g2rText")?.select(); toast("Označila som text – skopíruj ho."); };
+      const fallback = () => { byId("g2rText")?.select(); toast("Text je označený – skopíruj ho."); };
       if (navigator.clipboard?.writeText) navigator.clipboard.writeText(t).then(() => toast("Text je skopírovaný. Vlož ho do správy."), fallback);
       else fallback();
       return;
@@ -281,7 +281,7 @@
     if (a === "hard") {
       return push("Nálada a podpora", () => { // Master 3.0 (Samo): bez negatívneho názvu
         const mood = MPP().mood;
-        return "<div class='g2r-info'><p style='margin:0'>Nemusíš to niesť sama. Linka dôvery Nezábudka je k dispozícii nonstop a bezplatne.</p><p style='margin:10px 0 0'><a class='g2r-btn g2r-call' href='tel:0800800566'>Zavolať 0800 800 566</a></p></div>" +
+        return "<div class='g2r-info'><p style='margin:0'>Porozprávať sa môžeš kedykoľvek. Linka dôvery Nezábudka je nonstop a bezplatná.</p><p style='margin:10px 0 0'><a class='g2r-btn g2r-call' href='tel:0800800566'>Zavolať 0800 800 566</a></p></div>" +
           (phase() === "born" && mood ? "<div class='g2r-info'><h3>Po pôrode</h3><p style='margin:0'>" + esc(mood.blues) + "</p><p class='g2r-small' style='margin-top:8px'>" + esc(mood.help) + "</p>" + source(mood.source, mood.reviewed) + "</div>" : "") +
           "<p class='g2r-small'>Ak hrozí nebezpečenstvo, volaj <a href='tel:112'>112</a>.</p>";
       }, { noContent: phase() !== "born" });
@@ -306,7 +306,7 @@
         const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah.", "Telefón a nabíjačka na dosah."];
         const pelvic = MPP().troubles?.find(t => t.id === "pelvic");
         return "<p class='g2r-lead'>Kým začneš, usaď sa:</p>" + items.map((x, i) => "<button class='g2r-check' type='button' data-g2r-check='" + i + "' aria-pressed='false'><span class='box' aria-hidden='true'></span><span>" + esc(x) + "</span></button>").join("") +
-          act("breath", "wind", "Dýchaj so mnou", "1 minúta, kým začneš") + "<p class='g2r-small'>Odškrtnutie sa nikam neukladá – je len pre teba teraz.</p>" + source(pelvic?.source, pelvic?.reviewed);
+          act("breath", "wind", "Dýchaj so mnou", "1 minúta, kým začneš") + "<p class='g2r-small'>Len pre teba, nikam sa neukladá.</p>" + source(pelvic?.source, pelvic?.reviewed);
       });
     }
     if (a === "shower") {
@@ -318,10 +318,10 @@
       });
     }
     if (a === "shower-ask") {
-      return push("Poprosiť o 15 minút", () => "<textarea id='g2rText' data-g2-no-guard aria-label='Text správy'>" + esc("Postrážiš mi bábätko 15 minút? Idem sa osprchovať.") + "</textarea><button class='g2r-btn' type='button' data-g2r='send'>Poslať cez telefón</button><button class='g2r-btn ghost' type='button' data-g2r='copy'>Skopírovať text</button><p class='g2r-small'>Appka nič neposiela sama a nevie, či si správu odoslala.</p>", { noContent: true });
+      return push("Poprosiť o 15 minút", () => "<textarea id='g2rText' data-g2-no-guard aria-label='Text správy'>" + esc("Postrážiš mi bábätko 15 minút? Idem sa osprchovať.") + "</textarea><button class='g2r-btn' type='button' data-g2r='send'>Poslať cez telefón</button><button class='g2r-btn ghost' type='button' data-g2r='copy'>Skopírovať text</button><p class='g2r-small'>Appka nič neposiela sama.</p>", { noContent: true });
     }
     if (a === "shower-go") {
-      return push("Sprcha len pre mňa", () => "<div class='g2r-timer' id='g2rTm'>15:00</div><p class='g2r-small' style='text-align:center'>Nikam sa neponáhľaj.</p>", {
+      return push("Sprcha len pre mňa", () => "<div class='g2r-timer' id='g2rTm'>15:00</div><p class='g2r-small' style='text-align:center'>Pokojne, máš čas.</p>", {
         noContent: true,
         after: () => { let s = 900; try { audio(); } catch (error) { /* bez zvuku */ } clearInterval(timer); timer = setInterval(() => { s--; const el = byId("g2rTm"); if (el) el.textContent = mmss(s); if (s <= 0) { clearInterval(timer); chime(); if (el) el.textContent = "Hotovo"; } }, 1000); }
       });

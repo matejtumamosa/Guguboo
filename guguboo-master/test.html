@@ -744,6 +744,19 @@
           }
           eq(bad, [], "v textoch kódu");
         },
+        "Nálada a podpora: nová veta „Potrebujem pomoc a podporu“ dostane v GuguChate rovnakú odpoveď ako stará": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const C = app.win.GugubooChat;
+            const a = C.answer("Je mi ťažko a potrebujem pomoc"), b = C.answer("Potrebujem pomoc a podporu");
+            assert(a && b && a.text, "GuguChat neodpovedal");
+            eq(b.text, a.text, "odpoveď");
+            eq(JSON.stringify(b.actions || []), JSON.stringify(a.actions || []), "akcie");
+            app.win.GugubooV5.openFeature("mama"); await sleep(150);
+            assert(app.doc.querySelector("[data-g2-chat='Potrebujem pomoc a podporu']"), "tlačidlo Nálada a podpora neposiela novú vetu");
+            assert(!app.doc.querySelector("[data-g2-chat='Je mi ťažko a potrebujem pomoc']"), "stará veta ostala");
+          } finally { app.remove(); }
+        },
         "Kruh 375 × 667 v noci: ikona + názov, bez „naposledy“, ikona ≥ 16 px, nič sa neprekrýva": async () => {
           const app = await bootApp(seed("po", { night: true, extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }), { width: 375, height: 667 });
           try {
