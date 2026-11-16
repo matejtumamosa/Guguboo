@@ -571,7 +571,7 @@
     $("fact").innerHTML = fact;
     $("fact").hidden = !fact;
     $("today").hidden = !step;
-    $("today").innerHTML = step ? "<span class='dot' aria-hidden='true'>" + V5.icon("checklist") + "</span><div class='t'><span class='lbl'>Dnes pre teba</span><strong>" + esc(step.t) + "</strong>" + (step.y ? "<p>" + esc(step.y) + "</p>" : "") + "</div>" : "";
+    $("today").innerHTML = step ? "<span class='dot' aria-hidden='true'>" + V5.icon("checklist") + "</span><div class='t'><span class='lbl'>Na domove ťa čaká</span><strong>" + esc(step.t) + "</strong>" + (step.y ? "<p>" + esc(step.y) + "</p>" : "") + "</div>" : "";
   }
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

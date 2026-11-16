@@ -438,3 +438,7 @@ body.g2-intro-on :is(#v5BottomBar, #v5Header, .v2-tour-resume) { display: none !
 /* Samo 15. 11.: dvojitý rámik pri písaní – rámik ukazuje len pole (.input), samotný input bez obrysu */
 #g2Intro .input input:focus, #g2Intro .input input:focus-visible { outline: none !important; box-shadow: none !important; }
 #g2Intro .input:focus-within { border-color: var(--lav-dark); box-shadow: 0 0 0 2px var(--lav-dark); }
+/* Master 2.8.2 (Samo 16. 11.): „Dnes pre teba“ v úvode nie je tlačidlo – bez bielej karty a tieňa, len pokojná informácia (ploché pozadie, malá ikona) */
+#g2Intro .today { background: transparent !important; box-shadow: none !important; border: 0; border-top: 1px solid var(--lav-line, #e6e0f3); border-radius: 0 !important; padding: 14px 4px 0 !important; cursor: default; }
+#g2Intro .today .dot { width: 28px !important; height: 28px !important; border-radius: 9px !important; background: transparent !important; color: var(--lav-dark) !important; }
+#g2Intro .today .dot svg { width: 20px !important; height: 20px !important; }
