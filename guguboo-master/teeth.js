@@ -86,7 +86,7 @@
     const hasFirst = Object.values(state.teeth.records).some(record => record.status === "erupted");
     const dentistRelevant = hasFirst || (days !== null && days >= 300);
     root.innerHTML = `<div class="teeth-shell">
-      <header class="teeth-hero"><span aria-hidden="true">🦷</span><div><h1>Zúbky</h1><p>Orientačný sprievodca bez porovnávania detí.</p></div></header>
+      <header class="teeth-hero"><span aria-hidden="true">${window.GugubooV5?.icon ? window.GugubooV5.icon("tooth") : ""}</span><div><h1>Zúbky</h1><p>Orientačný sprievodca bez porovnávania detí.</p></div></header>
       <section class="teeth-card teeth-now"><h2 class="sr-only">Čo je dôležité teraz</h2>${currentCard()}</section>
       <section class="teeth-card" data-teeth-map-section><h2>Mapa zúbkov</h2><p>Pozeráš sa na dieťa spredu: pravá strana dieťaťa je naľavo na obrazovke. Symboly: ○ ešte nie, ◐ pravdepodobne sa prerezáva, ✓ prerezaný.</p>
         <div class="teeth-map" aria-label="Mapa 20 mliečnych zubov"><div class="teeth-jaw"><strong>Horná čeľusť</strong><div class="teeth-row">${TOOTH_DEFINITIONS.filter(item => item.jaw === "upper").map(toothButton).join("")}</div></div><div class="teeth-midline" aria-hidden="true"></div><div class="teeth-jaw"><strong>Dolná čeľusť</strong><div class="teeth-row">${TOOTH_DEFINITIONS.filter(item => item.jaw === "lower").map(toothButton).join("")}</div></div></div>${editPanel()}</section>

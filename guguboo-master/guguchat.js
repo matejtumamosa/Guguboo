@@ -397,7 +397,7 @@
     { words: ["task", "do porodnice", "priprav"], stage: "pre", text: "Taška do pôrodnice a príprava domova sú v Príprave na pôrod.", label: "Príprava na pôrod", feature: "beforeBirth" },
     { words: ["ake velke", "velkost babatka", "ovoci"], stage: "pre", text: "Ťukni na týždeň na domove – otvorí sa Tvoj týždeň.", label: "Tvoj týždeň", feature: "babySize" },
     { words: ["menstruacny kalendar", "kalendar menstru", "zapisat menstru", "zapisem menstru", "zapis menstru", "sledovat menstru", "dlzka cyklu", "kalendar cyklu"], stage: "post", text: "Menštruačný kalendár je v časti Mama.", label: "Menštruačný kalendár", feature: "period" },
-    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, bežné ťažkosti, jedlo a pitný režim sú v časti Mama.", label: "Mama", feature: "mama" },
+    { words: ["telo", "tazkost", "pitny rezim", "pitie", "okienko mama"], text: "Tvoje telo, čo je bežné, jedlo a pitný režim sú v časti Mama.", label: "Mama", feature: "mama" },
     // Po pôrode
     { words: ["ockovan"], stage: "post", text: "Očkovania zapíšeš v Zdravotnej knižke dieťaťa.", label: "Očkovanie", go: "childBook|[data-v2-child-section='vaccines']" },
     { words: ["prehliadk", "pediatr"], stage: "post", text: "Prehliadky u pediatra (aj nárok podľa zákona) sú v Zdravotnej knižke dieťaťa.", label: "Prehliadky", go: "childBook|[data-v2-child-section='checks']" },
@@ -421,7 +421,7 @@
       return {
         level: "nav",
         text: "Najdôležitejšie miesta:\n• " + (pre ? "Tehotenská knižka – kontroly, výsledky, sono, plán pôrodu" : "Zdravotná knižka – prehliadky, rast, očkovanie") +
-          "\n• Mama – tvoje telo, ťažkosti, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – navrchu v Mame, len pre tvoju pohodu\n• Kruh na domove – rýchle záznamy (spánok, kŕmenie, pohyby)\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Všetko – potiahni spodnú lištu nahor\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
+          "\n• Mama – tvoje telo, čo je bežné, pitie a nálada\n• Plán (Rodina) – čo ťa čaká a čo vybaviť\n• Čas pre teba – navrchu v Mame, len pre tvoju pohodu\n• Kruh na domove – rýchle záznamy (spánok, kŕmenie, pohyby)\n• Kalendár – všetky termíny\n• Naše momenty – fotky, prvé razy a albumy (zapisujú sa samy)\n• Všetko – potiahni spodnú lištu nahor\n\nStačí sa ma opýtať napríklad „Kde sú fotky?“ a otvorím ti to.",
         actions: [
           { label: pre ? "Tehotenská knižka" : "Zdravotná knižka", kind: "feature", value: pre ? "pregnancy" : "childBook" },
           { label: "Naše momenty", kind: "go", value: "moments:timeline" },
@@ -471,8 +471,8 @@
     const safety = item.safety && S.E[item.safety] ? "\n\n" + S.E[item.safety].text : "";
     return {
       level: "content",
-      text: item.title + "\n\n" + (item.common || []).join(" ") + " " + every + info + "\n\nViac nájdeš v časti " + (section === "post" ? "Telo po pôrode" : "Bežné ťažkosti") + ".\n\n" + when + safety + "\n\nChceš si to zapísať ako otázku?\n\n" + safeSourceLine(),
-      actions: [askAction("me", item.askPrompt || item.title), { label: section === "post" ? "Telo po pôrode" : "Bežné ťažkosti", kind: "go", value: "mama|[data-v2-mama-section='troubles']" }, ...sourceAction(item.source)]
+      text: item.title + "\n\n" + (item.common || []).join(" ") + " " + every + info + "\n\nViac nájdeš v časti " + (section === "post" ? "Telo po pôrode" : "Čo je bežné") + ".\n\n" + when + safety + "\n\nChceš si to zapísať ako otázku?\n\n" + safeSourceLine(),
+      actions: [askAction("me", item.askPrompt || item.title), { label: section === "post" ? "Telo po pôrode" : "Čo je bežné", kind: "go", value: "mama|[data-v2-mama-section='troubles']" }, ...sourceAction(item.source)]
     };
   }
   // „Pripravená postieľka“ (audit časť 3, #45) – kontrolný zoznam zo zdroja v Domove pre bábätko.

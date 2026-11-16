@@ -3118,13 +3118,13 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "Master 2.9";</script>
+  <script>window.GUGUBOO_V2_VERSION = "Master 3.0";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=m1.6c">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
-  <link rel="stylesheet" href="v2.css?v=m1.4">
-  <link rel="stylesheet" href="master.css?v=m2.8.3">
+  <link rel="stylesheet" href="v2.css?v=m3.0">
+  <link rel="stylesheet" href="master.css?v=m3.0">
   <link rel="stylesheet" href="g2-icons.css?v=m1.4">
   <link rel="stylesheet" href="g2-type.css?v=m1.9.1a">
   <link rel="stylesheet" href="g2-intro.css?v=m2.8.2">
@@ -5649,7 +5649,23 @@
     // Master 2.6 (Samo 15. 11. 2026): údaje sa ukladajú natrvalo LEN v tomto telefóne (localStorage prehliadača),
     // nikam sa neposielajú, bez účtu a servera. Kľúče len guguboo-m-* (V1 na tej istej doméne sa ich nedotkne).
     // Pri plnej pamäti appka nepadne – upozorní (zálohu si mama urobí v Profile → Záloha údajov).
-    const appStorage = {
+    // Master 3.0 (web guguboo.com): app.html?ukazka=pred|po = ukážka pre web – skutočná appka s vymyslenými údajmi,
+    // len v pamäti (nič sa neuloží, nesiahne na údaje návštevníčky, bez service workera).
+    const g2Demo = new URLSearchParams(location.search).get("ukazka");
+    const g2DemoStore = g2Demo ? (() => {
+      const ago = min => new Date(Date.now() - min * 60000).toISOString();
+      const day = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+      const demo = g2Demo === "po"
+        ? { profile: { status: "born", birth: day(-95), name: "Ema", country: "SK" }, user: { name: "Lucia" }, onboarded: true,
+            sleepTimer: { active: true, start: ago(47), type: "day" },
+            events: [{ id: "d1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 18 min", side: "Ľavý prsník", method: "Dojčenie", created: ago(130) },
+                     { id: "d2", type: "Plienka", value: "Cikalo", created: ago(60) }],
+            v5: { tourDone: true } }
+        : { profile: { status: "expecting", due: day(280 - 14 * 7 - 2), country: "SK" }, user: { name: "Lucia" }, onboarded: true, v5: { tourDone: true } };
+      const mem = new Map([[storeKey, JSON.stringify(demo)]]);
+      return { getItem: k => mem.has(k) ? mem.get(k) : null, setItem: (k, v) => { mem.set(k, String(v)); }, removeItem: k => { mem.delete(k); } };
+    })() : null;
+    const appStorage = g2DemoStore || {
       getItem(key) { try { return localStorage.getItem(key) ?? sessionStorage.getItem(key); } catch (_) { return null; } },
       setItem(key, value) {
         // Master 2.9 (Plán F1): fotka/nahrávka ako dataURL v stave sa o chvíľu presunie do IndexedDB (g2-media.js).
@@ -5667,7 +5683,7 @@
     };
     // Požiadať prehliadač, aby údaje nemazal sám (najmä iPhone); a zaregistrovať appku na plochu (len tento priečinok).
     try { navigator.storage?.persist?.(); } catch (_) { /* nič */ }
-    if ("serviceWorker" in navigator && location.protocol === "https:") {
+    if (!g2Demo && "serviceWorker" in navigator && location.protocol === "https:") {
       window.addEventListener("load", () => navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {}));
     }
     let restoredState = {};
@@ -10012,8 +10028,8 @@ Otázky:
   <script src="journey-engine.js?v=m1.9.2"></script>
   <script src="baby-figure.js?v=m1.6.4"></script>
   <script src="g2-safety.js?v=m2.7"></script>
-  <script src="v5-mobile.js?v=m2.9"></script>
-  <script src="guguchat.js?v=m2.7"></script>
+  <script src="v5-mobile.js?v=m3.0"></script>
+  <script src="guguchat.js?v=m3.0"></script>
   <script src="v2-birth.js?v=2.27.1"></script>
   <script src="v2-tour.js?v=m2.8"></script>
   <script src="v2-announce.js?v=2.23.0"></script>
@@ -10021,14 +10037,14 @@ Otázky:
   <script src="v2-albums.js?v=m2.9"></script>
   <script src="v2-voice.js?v=2.27.1"></script>
   <script src="v2-birthcard.js?v=m2.9"></script>
-  <script src="v2-period.js?v=m2.8"></script>
+  <script src="v2-period.js?v=m3.0"></script>
   <script src="private-space.js?v=m2.6"></script>
-  <script src="activities-data.js?v=3"></script>
-  <script src="teeth.js?v=m2.7"></script>
+  <script src="activities-data.js?v=m3.0"></script>
+  <script src="teeth.js?v=m3.0"></script>
   <script src="activities.js?v=m2.7"></script>
   <script src="g2-windows.js?v=m2.6"></script>
   <script src="g2-intro.js?v=m2.8.2"></script>
-  <script src="g2-ring.js?v=m2.7"></script>
+  <script src="g2-ring.js?v=m3.0"></script>
   <script src="g2-weather.js?v=m2.4"></script>
   <script src="g2-backup.js?v=m2.9"></script>
   <script>

@@ -87,6 +87,10 @@
     .phone { position: relative; width: 290px; padding: 11px; border-radius: 46px; background: #2b2540; box-shadow: 0 40px 80px rgba(41, 36, 58, .25), inset 0 0 0 2px #463d63; }
     .phone::before { content: ""; position: absolute; top: 18px; left: 50%; width: 92px; height: 24px; border-radius: 14px; background: #2b2540; transform: translateX(-50%); z-index: 3; }
     .screen { position: relative; overflow: hidden; border-radius: 36px; background: var(--bg); padding: 44px 12px 0; display: flex; flex-direction: column; gap: 10px; min-height: 560px; font-size: 12px; line-height: 1.3; }
+    /* Master 3.0: živá ukážka appky v telefóne – appka má 390 × 844, zmenší sa na šírku obrazovky telefónu */
+    .screen.screen-live { padding: 0; display: block; min-height: 0; aspect-ratio: 390 / 844; }
+    .phone:has(.screen-live)::before { display: none; }
+    .screen-live iframe { position: absolute; top: 0; left: 0; width: 390px; height: 844px; border: 0; transform-origin: 0 0; transform: scale(var(--live-s, .687)); pointer-events: none; background: var(--bg); }
     .sbar { position: absolute; top: 14px; left: 26px; right: 26px; display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; }
     .sbar i { display: inline-block; width: 22px; height: 10px; border-radius: 3px; border: 1.5px solid var(--ink); position: relative; }
     .sbar i::after { content: ""; position: absolute; inset: 1.5px 5px 1.5px 1.5px; border-radius: 1px; background: var(--ink); }
@@ -461,35 +465,7 @@
 
         <div class="stage rv" role="img" aria-label="Ukážka domova appky Guguboo: odznak 14. týždňa s kiwi, kruh rýchlych záznamov Bruško, Pre bábätko a Prvý pohyb so stredom Náš deň – Prehľad.">
           <div class="phone" aria-hidden="true">
-            <div class="screen">
-              <div class="sbar"><span>9:41</span><i></i></div>
-              <div class="m-head"><img src="guguboo-logo-3d-pastel-v2.png" alt=""><span class="m-round"><svg class="ic"><use href="#i-search"/></svg></span></div>
-              <div class="m-hero">
-                <div class="badge"><div><b>14</b><span>TÝŽDEŇ</span></div></div>
-                <p><small>Tvoj týždeň</small><strong>asi 8,5 cm</strong><em>približne ako kiwi</em></p>
-                <span class="fruit"></span>
-              </div>
-              <div class="m-card">
-                <small>Rýchle záznamy</small>
-                <svg class="ring" viewBox="0 0 300 300">
-                  <use href="#ring-segs"/>
-                  <text class="lbl c1"><textPath href="#arc-a" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Bruško</textPath></text>
-                  <text class="lbl c2"><textPath href="#arc-b" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Pre bábätko</textPath></text>
-                  <text class="lbl c3"><textPath href="#arc-c" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Prvý pohyb</textPath></text>
-                  <circle class="pulse" cx="150" cy="150" r="64" fill="#d9cff3"/>
-                  <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
-                  <text class="ct" x="150" y="152" font-size="20">Náš deň</text>
-                  <text class="ct" x="150" y="174" font-size="13" fill="#5d5768" style="font-weight:700">Prehľad</text>
-                </svg>
-              </div>
-              <div class="m-today"><span class="sq"><svg class="ic"><use href="#i-question"/></svg></span><div><small>Dnes stačí jedno</small><b>Ulož kontakt na gynekológa</b></div></div>
-              <div class="m-tabs">
-                <span class="on"><svg class="ic"><use href="#i-home"/></svg>Domov</span>
-                <span><svg class="ic"><use href="#i-baby"/></svg>Bábätko</span>
-                <span><svg class="ic"><use href="#i-mama"/></svg>Mama</span>
-                <span><svg class="ic"><use href="#i-family"/></svg>Rodina</span>
-              </div>
-            </div>
+            <!-- Master 3.0: skutočná appka v ukážkovom režime (app.html?ukazka=pred – vymyslené údaje, nič sa neukladá) namiesto kreslenej napodobeniny -->            <div class="screen screen-live"><iframe src="app.html?ukazka=pred" title="Ukážka appky Guguboo" loading="lazy" tabindex="-1"></iframe></div>
           </div>
           <div class="float f1" aria-hidden="true"><span class="sq t-fam"><svg class="ic"><use href="#i-lock"/></svg></span><span>Záznamy len v telefóne<small>bez účtu a registrácie</small></span></div>
           <div class="float f2" aria-hidden="true"><span class="sq t-mama"><svg class="ic"><use href="#i-memory"/></svg></span><span>Fotka bruška<small>uložená v Našich momentoch</small></span></div>
@@ -1004,6 +980,8 @@
         document.getElementById("demo-ring-t").textContent = m.t;
       }));
     })();
+    // Master 3.0: živá ukážka appky – zmenšenie 390 px appky na šírku obrazovky telefónu
+    (function () { const fit = () => document.querySelectorAll(".screen-live").forEach(s => s.style.setProperty("--live-s", String(s.clientWidth / 390))); addEventListener("resize", fit); addEventListener("load", fit); fit(); })();
   </script>
 </body>
 </html>

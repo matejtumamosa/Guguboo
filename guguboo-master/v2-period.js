@@ -212,7 +212,7 @@
     }).join("");
     return [
       "<div class='v2-per-tiles'>", tiles.map(([label, value, note]) => "<div><small>" + esc(label) + "</small><strong>" + esc(value) + "</strong><em>" + esc(note) + "</em></div>").join(""), "</div>",
-      "<details class='v2-mama-trouble v2-per-history'><summary><span aria-hidden='true'>🗓️</span><strong>História menštruácií</strong><b aria-hidden='true'>›</b></summary><ul>", history, "</ul></details>"
+      "<details class='v2-mama-trouble v2-per-history'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon("calendar") + "</span><strong>História menštruácií</strong><b aria-hidden='true'>›</b></summary><ul>", history, "</ul></details>"
     ].join("");
   }
 
@@ -242,15 +242,16 @@
     if (!c) return "";
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>";
     const src = (url, reviewed) => "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + esc(reviewed) + ", overené " + esc(c.checked) + " ↗</a>";
-    const box = (emoji, title, body) => "<details class='v2-mama-trouble'><summary><span aria-hidden='true'>" + emoji + "</span><strong>" + esc(title) + "</strong><b aria-hidden='true'>›</b></summary>" + body + "</details>";
+    // Master 3.0 (IKONY_NAVRH.md): linkové ikony namiesto emoji 🌙 💞 🩹 🩺 🗓️
+    const box = (ic, title, body) => "<details class='v2-mama-trouble'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon(ic) + "</span><strong>" + esc(title) + "</strong><b aria-hidden='true'>›</b></summary>" + body + "</details>";
     return [
       "<h3 class='v2-per-info-title'>Dobré vedieť</h3><div class='v2-mama-troubles'>",
-      box("🌙", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed)),
-      box("💞", c.pregnancyTitle, bullets(c.pregnancyItems) + "<p class='v2-mama-muted'>Kalendár neukazuje plodné dni a nie je antikoncepcia.</p>" + src(c.source, c.reviewed)),
-      box("🩹", c.padsTitle, bullets(c.padsItems) + src(c.source, c.reviewed)),
+      box("calendarDots", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed)),
+      box("baby", c.pregnancyTitle, bullets(c.pregnancyItems) + "<p class='v2-mama-muted'>Kalendár neukazuje plodné dni a nie je antikoncepcia.</p>" + src(c.source, c.reviewed)),
+      box("dropHalf", c.padsTitle, bullets(c.padsItems) + src(c.source, c.reviewed)),
       // Master 2.8 (Plán F1-0, nález test.html): obsah 2.7 už nemá doctorIntro/doctor (Menštruačný kalendár padal pri otvorení).
       // Podľa „informujeme, neradíme“: čo je bežné + jedna veta, kedy sa ozvať + Zapísať ako otázku pre lekára.
-      box("🩺", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
+      box("stethoscope", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
       "</div>"
     ].join("");
   }

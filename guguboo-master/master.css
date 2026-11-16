@@ -794,3 +794,28 @@ body.v5-active .v5-universal-window-head {
   background: var(--v5-bg) !important;
 }
 body.v5-active #v5BottomBar { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: var(--v5-surface) !important; }
+/* ——— Master 3.0 (IKONY_NAVRH.md + úpravy UX): ikony namiesto emoji a znakov ——— */
+/* Kruh na domove: ikona nad názvom dielu, farba ako názov dielu; v noci #29243a (diely ostávajú pastelové) */
+body.v5-active .g2q-card .v2-o-label-1 .g2q-seg-ic { fill: #6a2240; }
+body.v5-active .g2q-card .v2-o-label-2 .g2q-seg-ic { fill: #5a2f0c; }
+body.v5-active .g2q-card .v2-o-label-3 .g2q-seg-ic { fill: #1f2d66; }
+body.v5-active.night .g2q-card .v2-o-label .g2q-seg-ic { fill: #29243a; }
+/* Malý telefón (375 × 667): skratky si nechajú ikonu, skryje sa stavový riadok */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2-short { gap: 2px !important; padding: 6px 4px !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic { display: grid !important; width: 24px !important; height: 24px !important; background: transparent !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic svg.ph { width: 20px !important; height: 20px !important; }
+  body:has(#home.view.active) .g2-short small,
+  body:has(#home.view.active) .g2-short.is-running small { display: none !important; }
+}
+/* Témy v Mame a Menštruačný kalendár: linková ikona v štvorčeku namiesto emoji */
+.v2-mama-trouble summary > span.v5-icon { font-size: 0; }
+/* Čas pre teba: Oddych · Telo · Opora – ikona nad slovom (slovo ostáva) */
+.g2r-part { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.g2r-part svg.ph { width: 24px; height: 24px; }
+.g2r-act i svg.ph { width: 22px; height: 22px; }
+/* Plienky – Oboje: kvapka + plienka, menšie */
+.g2r-act i.g2r-two { gap: 0; grid-auto-flow: column; }
+.g2r-act i.g2r-two svg.ph { width: 16px; height: 16px; }
+/* Tip na týždeň: žiarovka namiesto 💡 */
+.v2-size-tip h3 svg.ph { width: 18px; height: 18px; vertical-align: -3px; color: var(--v5-brand-dark); }

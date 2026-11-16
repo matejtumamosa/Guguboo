@@ -35,7 +35,7 @@
   // Oblasti (namiesto obrázkov ikona a farba).
   const domains = {
     pohyb: { label: "Pohyb", icon: "exercise" },
-    rec: { label: "Reč", icon: "chat" },
+    rec: { label: "Reč", icon: "voice" }, // Master 3.0: „chat“ = len GuguChat
     vztah: { label: "Blízkosť", icon: "family" },
     objavovanie: { label: "Objavovanie", icon: "sparkle" }
   };
