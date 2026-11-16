@@ -102,9 +102,9 @@ body.night .hero .av { background: #3b3a4c; }
 .seg-r { cursor: pointer; stroke: var(--surface); stroke-width: 7; stroke-linejoin: round; transition: opacity .35s, filter .15s; outline: none; }
 .seg-r:hover { filter: brightness(1.04); }
 .seg-r:focus-visible { stroke: var(--brand-ink); stroke-width: 4; }
-.rlab { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; color: #29243a; font: 800 16px/1.15 var(--f); text-align: center; white-space: nowrap; transition: opacity .35s; }
-.rlab small { font: 600 13px/1.2 var(--f); }
-.rlab svg { width: 22px; height: 22px; }
+.rlab { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; color: #29243a; font: 800 clamp(14px, 4.9cqw, 16px)/1.15 var(--f); text-align: center; white-space: nowrap; transition: opacity .35s; }
+.rlab small { font: 600 clamp(12px, 3.9cqw, 13px)/1.2 var(--f); }
+.rlab svg { width: clamp(18px, 6.6cqw, 22px); height: clamp(18px, 6.6cqw, 22px); }
 
 /* stred */
 .center { position: absolute; left: 50%; top: 50%; width: 33%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 1.5px solid var(--center-line); background: var(--center); box-shadow: 0 6px 18px rgba(80, 60, 140, .14); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0; cursor: pointer; color: var(--ink);
@@ -192,13 +192,22 @@ body.night .toast button { background: rgba(41,36,58,.1); }
   .screen { gap: 8px; padding-top: 6px; }
   .hello { padding: 4px 12px; } .hello span { display: none; }
   .search { min-height: 44px; }
-  .hero { min-height: 52px; padding: 4px 12px; } .hero .av { width: 38px; height: 38px; }
-  .tile { min-height: 48px; flex-direction: row; gap: 6px; border-radius: 18px; }
+  .hero { min-height: 48px; padding: 2px 12px; } .hero .av { width: 36px; height: 36px; }
+  .hero span span { display: none; }
+  .tile { min-height: 44px; flex-direction: row; gap: 6px; border-radius: 18px; }
   .tile .ic { width: 26px; height: 26px; }
-  .today { min-height: 52px; }
+  .today { min-height: 48px; }
   .tab { min-height: 44px; }
+  .tabs { padding-top: 2px; padding-bottom: 2px; }
   .bub .c { width: 54px; height: 54px; }
+  .fcard.has-hint .stage { width: min(100cqw - 20px, 100cqh - 44px, 330px); }
+  /* ovládanie prototypu sa na nízkej obrazovke schová do plávajúceho tlačidla, aby merala skutočná appka */
+  .proto { position: fixed; top: 6px; right: 8px; z-index: 60; flex-wrap: wrap; justify-content: flex-end; max-width: 300px; border: 1px dashed #b9add9; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+  .proto:not(.open) > :not(#protoBtn) { display: none !important; }
+  .proto:not(.open) { padding: 0; background: transparent; border: 0; box-shadow: none; }
+  #protoBtn { display: inline-flex !important; background: var(--proto); border: 1px dashed #b9add9; }
 }
+#protoBtn { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .petal.now .p-glow { opacity: .7; }
@@ -206,7 +215,8 @@ body.night .toast button { background: rgba(41,36,58,.1); }
 </style>
 </head>
 <body>
-<div class="proto" role="group" aria-label="Ovládanie prototypu">
+<div class="proto" id="proto" role="group" aria-label="Ovládanie prototypu">
+  <button class="pp" id="protoBtn" aria-expanded="false" aria-label="Ovládanie prototypu">Proto</button>
   <div class="seg" role="group" aria-label="Obdobie">
     <button class="pp" id="pPred" aria-pressed="true" aria-label="Pred pôrodom">Pred</button>
     <button class="pp" id="pPo" aria-pressed="false" aria-label="Po pôrode">Po</button>
@@ -445,7 +455,7 @@ body.night .toast button { background: rgba(41,36,58,.1); }
     $("fl").removeAttribute("aria-label");
     $("stage").querySelectorAll(".rlab").forEach(e => e.remove());
     RING.forEach(x => {
-      const [lx, ly] = pt((x.a0 + x.a1) / 2, 108), el = document.createElement("div");
+      const [lx, ly] = pt((x.a0 + x.a1) / 2, 113), el = document.createElement("div");
       el.className = "rlab";
       el.style.left = (50 + lx / 330 * 100) + "%"; el.style.top = (50 + ly / 330 * 100) + "%";
       el.innerHTML = icon(x.ic) + x.l + `<small>${x.sub}</small>`;
@@ -567,7 +577,7 @@ body.night .toast button { background: rgba(41,36,58,.1); }
       const t = a.tasks[+b.dataset.k], wasDone = doneShare(a) === 1;
       t.d = !t.d; b.setAttribute("aria-checked", t.d);
       $("mpFill").style.transform = `scale(${mpScale(a)})`;
-      if (!wasDone && doneShare(a) === 1) toast(`${a.name} – pripravené. Pekne.`);
+      if (!wasDone && doneShare(a) === 1) toast(`Lupeň ${a.name} rozkvitol`);
     });
     setTimeout(() => $("shClose").focus(), 50);
   }
@@ -720,6 +730,7 @@ body.night .toast button { background: rgba(41,36,58,.1); }
   document.addEventListener("click", e => { const t = e.target.closest("[data-toast]"); if (t) toast(t.dataset.toast); });
 
   // —— ovládanie prototypu ——
+  $("protoBtn").onclick = () => { const o = $("proto").classList.toggle("open"); $("protoBtn").setAttribute("aria-expanded", o); };
   const set = fn => () => { closeBloom(false); closeSheet(); fn(); render(); };
   $("pPred").onclick = set(() => state.phase = "pred");
   $("pPo").onclick = set(() => { state.phase = "po"; });
