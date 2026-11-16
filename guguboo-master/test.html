@@ -19,7 +19,7 @@
       - Poistka: pred testami sa odfotí skutočný stav guguboo-m-*, po testoch sa porovná a pri rozdiele obnoví.
         Počas testov preto nemaj appku otvorenú v inej karte (jej zápisy by poistka vrátila).
     Náhľad bez skutočných údajov (na ručnú kontrolu, napr. v okne 375 × 667):
-      test.html?nahlad=pred | po | uvod   (&noc=1 = nočný režim)
+      test.html?nahlad=pred | po | uvod   (&noc=1 = nočný režim, &w=375&h=667 = pevná veľkosť rámca)
     Automaticky (bez klikania): výsledok je aj v <body data-vysledok="ok|chyba"> a v window.__g2TestResult.
     Nový test: pridaj ho do zoznamu SUITES nižšie – funkcia vráti nič (OK), vyhodí chybu (červené) alebo zavolá known(…).
   -->
@@ -491,7 +491,7 @@
     document.body.className = "nahlad";
     const host = document.createElement("div");
     document.body.appendChild(host);
-    const app = await bootApp(seed(kind, { night: params.get("noc") === "1" }), { host, width: window.innerWidth, height: window.innerHeight, settle: 300 });
+    const app = await bootApp(seed(kind, { night: params.get("noc") === "1" }), { host, width: +params.get("w") || window.innerWidth, height: +params.get("h") || window.innerHeight, settle: 300 });
     window.__g2Preview = app;
     document.body.dataset.chyby = String(app.errors.length);
     document.body.dataset.zhrnutie = app.errors.join(" | ");

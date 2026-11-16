@@ -4,7 +4,7 @@
  * Stránky (HTML): najprv sieť, bez siete posledná uložená verzia. Súbory s ?v=: z pamäte, inak zo siete.
  * Žiadne údaje používateľky sa tu neukladajú – len súbory appky. Cudzie adresy (počasie) sa nechávajú prehliadaču.
  */
-const CACHE = "guguboo-m-app-2.7";
+const CACHE = "guguboo-m-app-2.8";
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["app.html", "manifest.webmanifest", "icon-192.png"])).then(() => self.skipWaiting()));
