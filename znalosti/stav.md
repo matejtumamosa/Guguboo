@@ -2,38 +2,33 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 16. 11. 2026 (Samo)_
+_Naposledy aktualizované: 16. 11. 2026 (Samo, Claude)_
 
 ## Verzia
 
-- **Master 2.6** vo vetve `v2`, priečinok `guguboo-master/`.
+- **Master 2.7** vo vetve `v2`, priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
-- Posledné commity (15. 11. 2026): Master 2.6, náhľad webu guguboo.com, PWA manifest s prihlásením.
+- Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
-## Čo je hotové (Master 2.x, 15. 11. 2026)
+## Čo je hotové
 
-- **2.0 – 2.1:** nový kruh *Čas pre teba*, kruh ako rýchle ovládanie, *Čas pre teba* v sekcii Mama.
-- **2.2:** jedinečný kruh, pokojné názvy, zdieľanie s partnerom; 2.2.1 fľaša a hlásenia; 2.2.2 bez duplicít.
-- **2.3:** lišta ako záložky.
-- **2.4:** počasie automaticky (`g2-weather.js`).
-- **2.5:** kruh podľa zhody tímu (`g2-ring.js`).
-- **2.6:** údaje natrvalo v telefóne, záloha (`g2-backup.js`), appka na plochu (`manifest.webmanifest`, `sw.js`, ikony).
-- **Web guguboo.com:** náhľad úvodnej stránky – `web.html`, `sukromie.html`, `dakujeme.html`.
+- **2.0 – 2.6:** pozri `znalosti/rozhodnutia.md` (kruh, lišta, počasie, údaje v telefóne, appka na plochu).
+- **2.7 – informujeme, neradíme:** bez liekov, dávok a postupov pri príznakoch; Starostlivosť o bábätko =
+  zapíš, čo pozoruješ + otázka pre pediatra; Otázky pre lekára na jednom mieste; vážne situácie v `g2-safety.js`;
+  Zúbky bez návodov; kruh Čas pre teba bez „Kŕč v nohe“; Pripravená postieľka (NHS, The Lullaby Trust).
+- **Inštalácia na plochu** overená na Androide (Samo, 15. 11.).
 
 ## Rozpracované / ďalej
 
-- Overiť pridanie na plochu na Androide aj iPhone (náhľad je za prihlásením).
-- Web guguboo.com: zatiaľ len náhľad v `guguboo-master/web.html` – ešte nie je nasadený namiesto `index.html` v koreni.
-- Oprava prípravy umelého mlieka: v `guguboo-master/app.html` ešte chýba text úlohy „Pripraviť fľašu“
-  (návod na balení, čerstvo, nie mikrovlnka, test na zápästí, zvyšok vyliať), automatické doplnenie bez
-  „bezpečnej teploty podľa rutiny“ a pole „Voda / teplota“ → „Voda / príprava“. Návrh: Master 2.6.1. Čaká na Sama.
-- Komentáre v kóde odkazujú na `docs/master/…` (VISUAL_SWEEP, UVOD_NAVRH, HLAVNA_VETA, KRUH_ZHODA, POCASIE_…) –
-  tie súbory nie sú v repe. Zistiť, kde sú.
-
-## Posledná práca (16. 11. 2026)
-
-- `CLAUDE.md` zosúladený s praxou; do `znalosti/rozhodnutia.md` doplnené rozhodnutia Master 0.1 – 2.6.
+- Ikony namiesto textu (nové pravidlo) – najprv kruh a karty; navrhne UI dizajnér.
+- Vety ⚕ v `g2-safety.js` a Pripravená postieľka – potvrdí odborný garant (pediater), keď sa nájde.
+- Web guguboo.com: zapnúť Netlify Form detection, doplniť dátum účinnosti a e-mail na pozvánky v `sukromie.html`,
+  právnik pred spustením. Potom web + Master nahradia V1 na guguboo.com (cez PR do `main`).
+- Písmo appky: Montserrat sa načítava z Google Fonts – nahradiť vlastným hostovaním (čaká na súhlas Sama).
+- Fotky a nahrávky sú v `localStorage` (~5 MB) – presun médií do IndexedDB.
+- Oprava prípravy umelého mlieka – odložené (pozri rozhodnutie 16. 11.).
 
 ## Pozor
 
 - Vetva `main` je stará (V7.6 z 25. 9. 2026). Pracuje sa vo `v2` – v GitHub Desktop musí byť *Current branch: v2*.
+- Interné analýzy agentov (hodnotenie konkurencie, návrhy) sú len lokálne na Samovom PC – repo je verejné.

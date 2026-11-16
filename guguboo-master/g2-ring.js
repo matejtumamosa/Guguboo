@@ -173,7 +173,7 @@
   function center() {
     const night = isNight(), born = phase() === "born";
     if (night) return push("Nočná chvíľka", () => act("nap", "☾", "Šum na zaspávanie", "pomaly sa zosilní", true) + act("breath", "◌", "Dýchaj so mnou", "1 minúta") +
-      (born ? act("ask-night", "✉", "Vymeníme sa pri ďalšom zobudení?", "prosba blízkemu") : act("cramp", "↯", "Kŕč v nohe", "pomôžem ti hneď")) +
+      (born ? act("ask-night", "✉", "Vymeníme sa pri ďalšom zobudení?", "prosba blízkemu") : act("sleep", "☾", "Uložiť sa na spánok", "pohodlne na boku, potom šum")) + // Master 2.7 (audit #30): bez „Kŕč v nohe“
       act("ask", "✉", "Poprosiť o pomoc", "hotová prosba") + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"), { noContent: true });
     const big = born ? ["nap", "☾", "Zdriemni si, kým spí", "šum sa pomaly zosilní"] : ["breath", "◌", "Dýchaj so mnou", "1 minúta"];
     push("Teraz pre teba", () => act(big[0], big[1], big[2], big[3], true) + act("ask", "✉", "Poprosiť o pomoc", "hotová prosba") + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"), { noContent: true });
@@ -193,7 +193,8 @@
       (night ? "" : act("quiet", "⏱", "Chvíľa ticha", "5, 10 alebo 15 minút")), { noContent: true });
     if (k === "sup") return push("Opora", () => act("ask", "✉", "Poprosiť o pomoc", "hotová prosba, upravíš a pošleš") + (night ? "" : act("friend", "♡", "Napísať blízkemu", "krátka správa")) + act("hard", "☏", "Keď je mi ťažko", "kontakty na pomoc"), { noContent: true });
     const mamaLink = "<button class='g2r-link' type='button' data-g2r='mama'>Viac o tele v Mame ›</button>";
-    if (!born) return push("Telo", () => act("cramp", "↯", "Kŕč v nohe", "pomôžem ti hneď") + (night ? "" : act("legs", "⇡", "Nohy hore", "10 alebo 20 minút, čas postrážim ja")) + act("sleep", "☾", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
+    // Master 2.7 (audit #30, PL): „Kŕč v nohe“ odstránený – postup pri príznaku; téma Kŕče ostáva v Mame (čo je bežné + otázka).
+    if (!born) return push("Telo", () => (night ? "" : act("legs", "⇡", "Nohy hore", "10 alebo 20 minút, čas postrážim ja")) + act("sleep", "☾", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
     push("Telo", () => act("feed", "♡", "Pohodlne pri kŕmení", "usaď sa, kým začneš") + (night ? "" : act("shower", "≈", "Sprcha len pre mňa", "15 minút, nikam sa neponáhľaš") + act("pwalk", "↟", "Pokojná prechádzka", "10 alebo 20 minút von")) + mamaLink, { noContent: true });
   }
 
@@ -286,33 +287,17 @@
     }
     if (a === "mama") { close(); return V5.openFeature("mama"); }
     // —— Telo: tehotenstvo ——
-    if (a === "cramp") {
-      const t = tr(MP(), "cramp");
-      if (!t.tips.length) return push("Kŕč v nohe", () => "");
-      return steps("Kŕč v nohe", t.tips.map((tip, i) => ({
-        html: esc(tip) + (i === 0 ? "<div class='g2r-pulse' aria-hidden='true'><span id='g2rPulse'>Hore</span></div>" : ""),
-        onShow: i === 0 ? () => {
-          let up = true;
-          clearInterval(timer);
-          timer = setInterval(() => { up = !up; const el = byId("g2rPulse"); if (!el) return clearInterval(timer); el.textContent = up ? "Hore" : "Dole"; el.parentElement.classList.toggle("down", !up); }, 1000);
-        } : () => clearInterval(timer)
-      })), "<button class='g2r-btn' type='button' data-g2r='close'>Hotovo</button><button class='g2r-btn ghost' type='button' data-g2r='cramp-again'>Ešte raz od začiatku</button>" + source(t.source, t.reviewed));
-    }
-    if (a === "cramp-again") { nav.pop(); return doAct("cramp"); }
+    // Master 2.7 (audit #30): „Kŕč v nohe“ (postup pri príznaku) odstránený.
+    // Master 2.7 (audit #31, #33): Nohy hore = len časovač oddychu + výnimka E2; Spánok = len informácia NHS (bez rady pri príznaku).
+    const SAFE = id => window.G2Safety?.html(id) || "";
     if (a === "legs") {
-      return push("Nohy hore", () => {
-        const sw = tr(MP(), "swelling"), ti = tr(MP(), "tiredness");
-        return "<p class='g2r-lead'>Ľahni si alebo si sadni a nohy si polož vyššie.</p>" + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" +
-          "<div class='g2r-info' style='margin-top:12px'><ul><li>" + esc(sw.tips[2] || "") + "</li><li>" + esc(ti.tips[0] || "") + "</li></ul></div>" +
-          "<details class='g2r-info'><summary>Kedy zavolať lekárovi</summary><p class='g2r-small'>" + esc(sw.doctorIntro || "") + "</p><ul>" + (sw.doctor || []).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></details>" + source(sw.source, sw.reviewed) + source(ti.source, ti.reviewed);
-      });
+      return push("Nohy hore", () => "<p class='g2r-lead'>Ľahni si alebo si sadni a nohy si polož vyššie. Čas postrážim ja.</p>" + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" + SAFE("E2"));
     }
     if (a === "sleep") {
-      const ti = tr(MP(), "tiredness"), hb = tr(MP(), "heartburn");
-      // Kontrola obsahu: šum na zaspávanie len v noci (NHS: popoludní a večer radšej nespi).
-      return steps("Uložiť sa na spánok", [{ html: esc(ti.tips[1] || "") }, { html: esc(hb.tips[1] || "") }],
+      const ti = tr(MP(), "tiredness");
+      return steps("Uložiť sa na spánok", [{ html: esc((ti.info || [])[0] || "Uľahni si pohodlne.") }],
         (isNight() ? "<button class='g2r-btn' type='button' data-g2r='nap-go20'>Spustiť šum na zaspávanie</button><button class='g2r-btn ghost' type='button' data-g2r='close'>Bez šumu</button>" : "<button class='g2r-btn' type='button' data-g2r='close'>Hotovo</button>") +
-        source(ti.source, ti.reviewed) + source(hb.source, hb.reviewed));
+        source(ti.source, ti.reviewed));
     }
     // —— Telo: po pôrode ——
     if (a === "feed") {
@@ -326,7 +311,7 @@
     if (a === "shower") {
       return push("Sprcha len pre mňa", () => {
         const stt = tr(MPP(), "stitches"), safe = safeSleep();
-        return "<p class='g2r-lead'>Daj si 15 minút len pre seba.</p><div class='g2r-info'><p style='margin:0'>" + esc(stt.tips[0] || "") + "</p></div>" +
+        return "<p class='g2r-lead'>Daj si 15 minút len pre seba.</p>" + // Master 2.7 (audit): bez rady o stehoch
           act("shower-ask", "✉", "Poprosiť o 15 minút", "hotová prosba, pošleš cez telefón") + (safe ? "<p class='g2r-small' style='margin:8px 2px'>Ak bábätko nikto nestráži: " + esc(safe) + "</p>" : "") +
           act("shower-go", "⏱", "Spustiť 15 minút", "na konci zaznie jemný tón") + source(stt.source, stt.reviewed) + (safe ? "<p class='g2r-src'>Bezpečný spánok: CDC (Learn the Signs)</p>" : "");
       });
@@ -342,11 +327,9 @@
     }
     if (a === "pwalk") {
       return push("Pokojná prechádzka", () => {
-        const cs = tr(MPP(), "csection"), sl = MPP().mood || {}, se = tr(MPP(), "serious");
+        // Master 2.7 (audit #32): bez rád po cisárskom reze, namiesto zoznamu výnimka E1
         return chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='walk-go'>Ideme von</button>" +
-          "<div class='g2r-info' style='margin-top:12px'><ul><li>" + esc(cs.tips[2] || "") + "</li><li>" + esc(cs.tips[1] || "") + "</li><li>" + esc((sl.sleep || [])[2] || "") + "</li></ul></div>" +
-          (se.doctor?.length ? "<details class='g2r-info'><summary>Kedy sa ozvať hneď</summary><p class='g2r-small'>" + esc(se.doctorIntro || "") + "</p><ul>" + se.doctor.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></details>" : "") +
-          source(cs.source, cs.reviewed) + source(sl.sleepSource, sl.sleepReviewed);
+          (window.G2Safety?.html("E1") || "");
       });
     }
   }

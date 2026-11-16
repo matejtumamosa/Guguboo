@@ -349,7 +349,7 @@ window.GugubooContent.pregnancyWeeks = {
                                         }
                                     ],
                             "tip":  {
-                                        "sk":  "Keď ješ málo a často počas dňa, udržiava to stabilnú hladinu cukru v krvi, čo môže zmierniť rannú nevoľnosť.",
+                                        "sk":  "",
                                         "evidence":  [
                                                          "If you eat little and often throughout the day, it keeps your blood sugar stable, which can reduce morning sickness."
                                                      ]
@@ -406,7 +406,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Pri nafukovaní môže pomôcť jesť 6 malých jedál denne a nejesť neskoro večer.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "Try making yourself 6 small meals a day and avoid eating late at night."
                                                       ]
@@ -577,7 +577,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Je vhodný čas začať posilňovať svaly panvového dna.",
+                                         "sk":  "Cviky panvového dna nájdeš v Mame v Cvikoch.",
                                          "evidence":  [
                                                           "It\u0027s a good time to tone up your pelvic floor muscles."
                                                       ]
@@ -681,7 +681,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Pomôcť môže vyložiť si nohy a oddychovať.",
+                                             "sk":  "",
                                              "evidence":  [
                                                               "putting your feet up and resting can help"
                                                           ]
@@ -694,7 +694,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Pri svrbení môže pomôcť nenavoňaný hydratačný krém, voľné bavlnené oblečenie a chladný kúpeľ.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "It might help to use an unperfumed moisturiser, wear loose cotton clothing and have a cool bath."
                                                       ]
@@ -883,7 +883,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Na lepší spánok skús podoprieť bruško vankúšmi alebo spať s vankúšom medzi kolenami.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "use pillows to support your bump and any aching muscles try sleeping with a pillow between your knees"
                                                       ]
@@ -931,7 +931,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Pri kŕči sval silno pomasíruj alebo pritiahni prsty na nohe smerom k členku.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "Rub the muscle hard or pull your toes up towards your ankle."
                                                       ]
@@ -1171,7 +1171,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Môže pomôcť jesť menšie porcie a pri jedle sedieť vzpriamene.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "eat smaller meals, so you do not feel too full afterwards",
                                                           "sit up straight when you eat"
@@ -1262,7 +1262,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Na spánok si podopri bruško vankúšom, pokrč kolená a ďalší vankúš si daj medzi nohy.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "support your baby bump with a pillow keep your knees and legs bent put another pillow between your legs"
                                                       ]

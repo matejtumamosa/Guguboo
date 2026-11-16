@@ -187,13 +187,13 @@
     if (!select) return;
     state.activities.observations[select.dataset.observationId] = select.value;
     if (select.value === "ask") {
-      // Otázka ide do Zdravotnej knižky → Otázky pre pediatra (rovnako ako z GuguChatu).
+      // Master 2.7: otázka ide do jedného zoznamu Otázky pre lekára → Pre bábätko (rovnako ako z GuguChatu).
       const observation = Object.values(data.observations).flat().find(item => item.id === select.dataset.observationId);
-      const questions = (state.v5 ||= {}).pediatricianQuestions ||= [];
+      const V5 = window.GugubooV5;
       const text = observation ? "Vývoj: " + observation.text : "";
-      if (text && !questions.some(question => question.endsWith(text))) questions.push(new Date().toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) + ": " + text);
+      if (text && V5?.addDoctorQuestion && !V5.doctorQuestions("baby").some(item => item.text === text)) V5.addDoctorQuestion(text, "baby");
       persist(); render();
-      return announce("Otázka je v Zdravotnej knižke → Otázky pre pediatra.");
+      return announce("Zapísané. Otázku nájdeš v Otázkach pre lekára.");
     }
     persist();
     announce("Uložené.");

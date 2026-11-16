@@ -150,7 +150,7 @@
     { key: "smile", phase: "post", emoji: "😊", label: "Prvý úsmev", askMonths: 2, source: CDC },
     { key: "laugh", phase: "post", emoji: "😄", label: "Prvý smiech", askMonths: 4, source: CDC },
     { key: "roll", phase: "post", emoji: "🔄", label: "Prvé pretočenie z bruška na chrbát", askMonths: 6, source: CDC },
-    { key: "solids", phase: "post", emoji: "🥄", label: "Prvý príkrm", askMonths: 6, source: "NHS" },
+    { key: "solids", phase: "post", emoji: "🥄", label: "Prvý príkrm" }, // Master 2.7 (audit #24): bez otázky podľa veku – appka nediktuje, kedy začať
     { key: "sit", phase: "post", emoji: "🪑", label: "Prvé sedenie bez opory", askMonths: 9, source: CDC },
     { key: "crawl", phase: "post", emoji: "🐾", label: "Prvé lezenie po štyroch", askMonths: 9, source: "WHO", note: "Niektoré deti štvornožkovanie preskočia – aj to je v poriadku." },
     { key: "mama", phase: "post", emoji: "🗣️", label: "Prvé „mama“ alebo „tata“", askMonths: 12, source: CDC },
@@ -272,7 +272,7 @@
     const when = (isToday ? "Dnes" : "Zajtra") + (hasTime ? " o " + new Date(item.date).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "");
     const health = item.type === "Zdravie" || /kontrol|lekár|gynek|pediatr|prehliad|ultrazvuk/i.test(item.title || "");
     const born = state.profile?.status !== "expecting";
-    const questions = (born ? state.v5?.pediatricianQuestions : state.v5?.pregnancyQuestions) || [];
+    const questions = (window.GugubooV5?.doctorQuestions?.(born ? "baby" : "me") || []).filter(item => !item.done);
     const past = isToday && hasTime && time(item.date) < now;
     const actions = [
       health && past ? btn(born ? "Zapísať z prehliadky" : "Zapísať z kontroly", "data-v2-deck-go='" + (born ? "childBook|[data-v2-child-section=\"check-new\"]" : "pregnancy|[data-v5-book-section=\"visit-new\"]") + "'", true) : "",

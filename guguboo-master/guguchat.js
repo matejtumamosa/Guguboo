@@ -457,13 +457,32 @@
     serious: ["na co si dat pozor", "kedy volat", "kedy ist k lekarovi", "nebezpecne priznaky"]
   };
   function sourceAction(url) { return url ? [{ label: "Zdroj", kind: "link", value: url }] : []; }
+  // Master 2.7 – „informujeme, neradíme“ (INFORMUJEME_TEXTY.md §2): jeden tvar zdravotnej odpovede –
+  // čo je bežné (zo zdroja) · kam ťa zavediem · jedna veta „kedy sa ozvať“ · ponuka zapísať otázku · zdrojový riadok.
+  // Vety „kedy sa ozvať“ a výnimky E1–E7 sú na jednom mieste v g2-safety.js (window.G2Safety).
+  const SAFE = () => window.G2Safety || { line: {}, E: {}, CHECKED: "15. 11. 2026" };
+  const safeSourceLine = () => "Podľa NHS (Spojené kráľovstvo) · overené " + SAFE().CHECKED;
+  const askAction = (who, value) => ({ label: who === "baby" ? "Zapísať ako otázku pre pediatra" : "Zapísať ako otázku pre lekára", kind: who === "baby" ? "pedq" : "docq", value: value || "" });
   function troubleAnswer(item, checked, section) {
-    const tips = item.tips.slice(0, 4).map(tip => "• " + tip).join("\n");
-    const doctor = item.doctor?.length ? "\n\n" + item.doctorIntro + "\n" + item.doctor.map(line => "• " + line).join("\n") + (item.doctorNote ? "\n" + item.doctorNote : "") + (item.emergency ? "\n" + item.emergency : "") : "";
+    const S = SAFE();
+    const every = section === "post" ? "Každé telo sa zotavuje inak." : "Každé tehotenstvo je iné.";
+    const info = item.info?.length ? "\n\nČo uvádza NHS:\n" + item.info.map(line => "• " + line).join("\n") : "";
+    const when = item.askText || S.line[item.ask] || S.line.gyn || "";
+    const safety = item.safety && S.E[item.safety] ? "\n\n" + S.E[item.safety].text : "";
     return {
       level: "content",
-      text: item.title + "\n\nČo môže pomôcť:\n" + tips + doctor + "\n\n(Zdroj: NHS, stránka z " + item.reviewed + ", overené " + checked + ".)",
-      actions: [{ label: section === "post" ? "Telo po pôrode" : "Bežné ťažkosti", kind: "go", value: "mama|[data-v2-mama-section='troubles']" }, ...sourceAction(item.source)]
+      text: item.title + "\n\n" + (item.common || []).join(" ") + " " + every + info + "\n\nViac nájdeš v časti " + (section === "post" ? "Telo po pôrode" : "Bežné ťažkosti") + ".\n\n" + when + safety + "\n\nChceš si to zapísať ako otázku?\n\n" + safeSourceLine(),
+      actions: [askAction("me", item.askPrompt || item.title), { label: section === "post" ? "Telo po pôrode" : "Bežné ťažkosti", kind: "go", value: "mama|[data-v2-mama-section='troubles']" }, ...sourceAction(item.source)]
+    };
+  }
+  // „Pripravená postieľka“ (audit časť 3, #45) – kontrolný zoznam zo zdroja v Domove pre bábätko.
+  function cribAnswer() {
+    const crib = window.GugubooV5?.cribList?.();
+    if (!crib) return null;
+    return {
+      level: "content",
+      text: "Pripravená postieľka – čo uvádza NHS a The Lullaby Trust:\n" + crib.items.map(item => "• " + item.text).join("\n") + "\n\nZoznam na odškrtnutie nájdeš v Domove pre bábätko (Spánok).\n\n" + SAFE().line.ped.replace("pediatrovi.", "pôrodnej asistentke alebo pediatrovi.") + "\n\n" + crib.sourceLine,
+      actions: [{ label: "Pripravená postieľka", kind: "checklist", value: "home" }, askAction("baby", "Mám otázku k bezpečnému spánku."), ...sourceAction(crib.sources[0])]
     };
   }
   function contentAnswer(t, ctx, pregnant, withBaby) {
@@ -496,35 +515,42 @@
       const found = pack.troubles.find(item => (TROUBLE_WORDS[item.id] || []).some(word => t.includes(word)));
       if (found) return troubleAnswer(found, pack.checked, pregnant ? "pre" : "post");
     }
+    // Bezpečný spánok / postieľka (pred pôrodom aj po ňom).
+    if (has(t, ["postielk", "bezpecny spanok", "bezpecne spanie", "kde bude spat", "kde ma spat babatko", "matrac"])) {
+      const crib = cribAnswer();
+      if (crib) return crib;
+    }
     if (pregnant && pre) {
       if (has(t, ["co nesmiem jest", "co mozem jest", "co nejest", "jedl", "syr", "ryb", "tuniak", "pecen", "kav", "kofein", "alkohol", "vino", "pivo"])) {
         const f = pre.food;
-        return { level: "content", text: "Jedlo v tehotenstve\n\nRadšej vynechaj:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + "\n\nObmedz:\n" + f.limit.map(x => "• " + x).join("\n") + "\n\n" + f.alcohol + "\n\n(Zdroj: NHS, stránka z " + f.reviewed + ", overené " + pre.checked + ".)", actions: [{ label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
+        return { level: "content", text: "Jedlo v tehotenstve\n\nČo NHS v tehotenstve uvádza vynechať:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + "\n\nČo NHS uvádza obmedziť:\n" + f.limit.map(x => "• " + x).join("\n") + "\n\n" + f.alcohol + "\n\nViac nájdeš v časti Jedlo a pohyb.\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + f.reviewed + ", overené " + pre.checked + ".)", actions: [askAction("me", "Mám otázku k jedlu v tehotenstve."), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
       }
       if (has(t, ["vitamin", "kyselin", "folic", "doplnk", "jod"])) {
         const v = pre.vitamins;
-        return { level: "content", text: "Vitamíny v tehotenstve\n\n" + v.items.map(([name, text]) => "• " + name + " – " + text).join("\n") + "\n\nDoplnky prebrať aj s lekárom.\n\n(Zdroj: NHS, stránka z " + v.reviewed + ", overené " + pre.checked + ".)", actions: [{ label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(v.source)] };
+        return { level: "content", text: "Vitamíny v tehotenstve\n\n" + v.text + " Chceš si to zapísať ako otázku?", actions: [askAction("me", v.askPrompt), ...sourceAction(v.source)] };
       }
       if (has(t, ["cvic", "sport", "behat", "plavat", "joga", "fitko", "posilnov"])) {
         const e = pre.exercise;
-        return { level: "content", text: "Pohyb v tehotenstve\n\n" + e.goal + "\n\n" + e.tips.map(x => "• " + x).join("\n") + "\n\nVyhni sa:\n" + e.avoid.map(x => "• " + x).join("\n") + "\n\n" + e.note + "\n\n(Zdroj: NHS, stránka z " + e.reviewed + ", overené " + pre.checked + ".)", actions: [{ label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(e.source)] };
+        return { level: "content", text: "Pohyb v tehotenstve\n\n" + e.goal + "\n\nČo uvádza NHS:\n" + e.tips.map(x => "• " + x).join("\n") + "\n\nČo NHS neodporúča:\n" + e.avoid.map(x => "• " + x).join("\n") + "\n\n" + e.note + "\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + e.reviewed + ", overené " + pre.checked + ".)", actions: [askAction("me", e.askPrompt), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(e.source)] };
       }
     }
     if (withBaby && post) {
       if (has(t, ["kontrola po porode", "kontrolu po porode", "prehliadka po porode", "gynekolog po porode", "sestonedel"])) {
-        const k = post.check;
-        return { level: "content", text: (kid ? kid.mother.text : k.when) + "\n\nČo sa zvyčajne preberá:\n" + k.items.map(x => "• " + x).join("\n") + "\n\n(Zdroje: " + (kid ? kid.sourceName + ", overené " + kid.checked + "; " : "") + "NHS, stránka z " + k.reviewed + ".)", actions: [{ label: "Kontrola po pôrode", kind: "go", value: "mama|[data-v2-mama-section='check']" }, ...sourceAction(kid?.source || k.source)] };
+        // Audit #21: len termín a otázky – bez zoznamu toho, čo robí lekár.
+        return { level: "content", text: (kid ? kid.mother.text : "Kontrolu po pôrode si dohodneš so svojím gynekológom.") + "\n\nTermín nájdeš v Kalendári. Otázky na kontrolu si môžeš zapísať – na kontrole ich budeš mať po ruke." + (kid ? "\n\n(Zdroj: " + kid.sourceName + ", overené " + kid.checked + ".)" : ""), actions: [{ label: "Zapísať otázku na kontrolu", kind: "docq", value: "" }, { label: "Kontrola po pôrode", kind: "go", value: "mama|[data-v2-mama-section='check']" }, ...sourceAction(kid?.source)] };
       }
       if (post.period && has(t, ["menstru", "periodu", "perioda", "tampon", "kalisok", "antikoncep", "otehotn"])) {
         const p = post.period;
         const tampon = has(t, ["tampon", "kalisok"]);
         const pregnancy = has(t, ["antikoncep", "otehotn"]);
         const items = tampon ? p.padsItems : pregnancy ? p.pregnancyItems : p.returnItems.concat(p.pregnancyItems.slice(0, 1));
-        return { level: "content", text: (tampon ? p.padsTitle : pregnancy ? p.pregnancyTitle : "Menštruácia po pôrode") + "\n\n" + items.map(x => "• " + x).join("\n") + "\n\n(Zdroj: NHS, stránka z " + p.reviewed + ", overené " + p.checked + ".)", actions: [{ label: "Menštruačný kalendár", kind: "feature", value: "period" }, ...sourceAction(p.source)] };
+        const prompt = tampon ? p.padsAsk : pregnancy ? p.pregnancyAsk : p.askPrompt;
+        return { level: "content", text: (tampon ? p.padsTitle : pregnancy ? p.pregnancyTitle : "Menštruácia po pôrode") + "\n\n" + items.map(x => "• " + x).join("\n") + "\n\n" + p.doctorLine + "\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + p.reviewed + ", overené " + p.checked + ".)", actions: [askAction("me", prompt), { label: "Menštruačný kalendár", kind: "feature", value: "period" }, ...sourceAction(p.source)] };
       }
       if (has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) {
+        // PL 15. 11.: baby blues + jedna veta „kedy sa ozvať“ + kontakty na pomoc + otázka (bez zoznamu prejavov).
         const m = post.mood;
-        return { level: "support", text: m.blues + "\n\n" + m.signsIntro + "\n" + m.signs.map(x => "• " + x).join("\n") + "\n\n" + m.help + "\n\n(Zdroj: NHS, stránka z " + m.reviewed + ", overené " + post.checked + ".)", actions: [{ label: "Nálada a spánok", kind: "go", value: "mama|[data-v2-mama-section='mood']" }, { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }] };
+        return { level: "support", text: m.blues + "\n\n" + m.help + "\n\nLinka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + m.reviewed + ", overené " + post.checked + ".)", actions: [askAction("me", m.askPrompt), { label: "Nálada a spánok", kind: "go", value: "mama|[data-v2-mama-section='mood']" }, { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }] };
       }
     }
     if (withBaby && kid && has(t, ["kolko prehliadok", "preventivn", "prehliadky u pediatr", "kedy k pediatr", "kedy ist k pediatr", "prehliadk"])) {
@@ -534,7 +560,8 @@
       return { level: "content", text: kid.vaccines.note + "\n\nOčkovania si môžeš zapisovať v Zdravotnej knižke.", actions: [{ label: "Zápis očkovaní", kind: "go", value: "childBook|[data-v2-child-section='vaccines']" }, ...sourceAction(kid.vaccines.source)] };
     }
     if (withBaby && has(t, ["prikrm", "tuhu stravu", "tuha strava", "kasick", "prve jedlo", "zacat jest", "dokrm"])) {
-      return { level: "content", text: "S tuhou stravou (príkrmami) sa podľa NHS začína, keď má bábätko približne 6 mesiacov.\n\nKedy a ako začať u vás, prebraj s pediatrom.\n\n(Zdroj: NHS – Baby's first solid foods, stránka z 19. 2. 2026, overené 4. 11. 2026.)", actions: [{ label: "Zdroj", kind: "link", value: "https://www.nhs.uk/baby/weaning-and-feeding/babys-first-solid-foods/" }] };
+      // Audit #23: vek neuvádzame – appka nediktuje, kedy začať.
+      return { level: "content", text: "Kedy a ako začať s príkrmami, je u každého bábätka iné – môžeš to prebrať s pediatrom.\n\nPrvý príkrm si môžeš zapísať v Kŕmení.", actions: [askAction("baby", "Kedy a ako začať s príkrmami?"), { label: "Zapísať príkrm", kind: "feature", value: "feeding" }, { label: "Zdroj", kind: "link", value: "https://www.nhs.uk/baby/weaning-and-feeding/babys-first-solid-foods/" }] };
     }
     return null;
   }
@@ -577,9 +604,6 @@
     if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "odtiekla mi voda", "odteka mi voda", "praskla mi voda", "plodovy vak", "voda mi odtiekla", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
       return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – nemusíš to posudzovať sama.\n\nZavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
-    if (has(t, ["ublizit si", "nechcem zit", "zabit sa", "samovrazd"])) {
-      return { level: "urgent", text: "Ďakujem, že si to napísala. Nie si v tom sama a zaslúžiš si pomoc hneď teraz.\n\nAk ti hrozí nebezpečenstvo, volaj 112. Povedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }] };
-    }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
     if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc", "som na dne", "nema to zmysel", "nevladzem", "uz nevladzem"])) {
       return { level: "support", text: "To, čo cítiš, je dôležité a nemusíš to niesť sama.\n\nSkús dnes jednu malú vec len pre seba a povedz niekomu blízkemu, ako sa máš. Ak to trvá dlhšie alebo sa to zhoršuje, porozprávaj sa so svojím lekárom alebo pôrodnou asistentkou – je to bežná a správna vec.", actions: [{ label: "Môj súkromný denník", kind: "feature", value: "privateSpace" }, { label: "Čas pre teba", kind: "me" }, { label: "Linka Nezábudka 0800 800 566", kind: "tel", value: "0800800566" }] };
@@ -591,21 +615,19 @@
     // 1c. Overený obsah appky (ťažkosti, jedlo, telo po pôrode, prehliadky, príkrmy…).
     const verified = contentAnswer(t, ctx, pregnant, withBaby);
     if (verified) return verified;
-    // 1d. Príznaky (bod 3): nikdy nediagnostikovať. Pokojne odporučiť lekára, povedať, kedy volať 155,
-    // a ponúknuť zapísanie otázky na najbližšiu prehliadku (s dátumom), aby na nič nezabudla.
-    // Horúčka u bábätka do 3 mesiacov: bez diagnózy, len bezpečná všeobecná hranica (NHS: pod 3 mesiace a 38 °C a viac → hneď lekár).
+    // 1d. Príznaky: nikdy neposudzovať a neradiť. Pokojne ponúknuť zápis otázky pre lekára (INFORMUJEME_TEXTY §2);
+    // výnimky (E4 horúčka do 3 mesiacov, E5 dýchanie) sú doslovne z g2-safety.js.
+    // E4 (audit #8): bez tlačidla 155 a bez „Netreba čakať“ – NHS tu uvádza neodkladnú linku, nie záchranku.
     if (withBaby && ctx.baby_age_days !== null && ctx.baby_age_days < 91 && has(t, ["horuck", "teplot", "horuca", "horuci", "horuce", "38", "39", "40"])) {
-      return { level: "urgent", text: "Pri bábätku mladšom ako 3 mesiace je pri teplote 38 °C a viac správne ozvať sa hneď lekárovi – aj v noci (pohotovosť alebo 155). Netreba čakať, ako sa to vyvinie.\n\nDiagnózu ti na diaľku nedám, nechcem hádať.\n\n(Všeobecná informácia podľa NHS, nie lekárska rada.)", actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Dôležité kontakty", kind: "feature", value: "contacts" }] };
+      return { level: "urgent", text: (SAFE().E.E4?.text || "") + "\n\n" + safeSourceLine(), actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, askAction("baby", question), { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }] };
     }
     if (has(t, ["vyrazk", "vyrazil", "flak", "horuck", "teplot", "kasl", "kasel", "nadch", "hnack", "zvraca", "vraca ", "alergi", "zihlav", "kolik", "neje", "nechce jest", "zltacz", "zlte", "pupok", "zapal", "bolest", "boli ho", "boli ju", "boli ma", "svrbi", "nespi", "stale place", "vela place"])) {
-      const who = withBaby ? "pediatrovi" : "svojmu lekárovi alebo pôrodnej asistentke";
       return {
         level: "support",
-        text: "Pri tom, čo opisuješ, sa oplatí ozvať " + who + " – poradí ti, či treba prísť a čo robiť. Diagnózu ti na diaľku nedám, nechcem hádať.\n\n" +
-          (withBaby ? "Ak by sa pridalo ťažké dýchanie, opuch pier či jazyka alebo by bolo bábätko nezvyčajne malátne, vtedy volaj 155." : "Ak sa cítiš naozaj zle, volaj 155.") +
-          "\n\nMôžem ti to zapísať do otázok na najbližšiu prehliadku, aby si na nič nezabudla.",
+        text: "Toto ti posúdiť neviem – to patrí lekárovi. Môžem ti to zapísať ako otázku pre " + (withBaby ? "pediatra" : "lekára") + ", aby si to mala na kontrole po ruke.\n\n" +
+          (withBaby ? SAFE().line.ped + "\n\n" + (SAFE().E.E5?.text || "") : (pregnant ? SAFE().line.gyn : SAFE().line.post) + " Ak ti je naozaj zle, volaj 155."),
         actions: [
-          { label: withBaby ? "Zapísať pre pediatra" : "Zapísať pre lekára", kind: withBaby ? "pedq" : "docq", value: question },
+          askAction(withBaby ? "baby" : "me", question),
           { label: "Dôležité kontakty", kind: "feature", value: "contacts" },
           { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }
         ]
@@ -840,16 +862,15 @@
         return render();
       }
       if (kind === "pedq" || kind === "docq") {
-        // Zapíše otázku s dátumom do Zdravotnej knižky (pediater) alebo Tehotenskej knižky (lekár).
-        state.v5 ||= {};
-        const listKey = kind === "pedq" ? "pediatricianQuestions" : "pregnancyQuestions";
-        const day = new Date().toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" });
-        (state.v5[listKey] ||= []).push(day + ": " + value);
-        V5.persist();
-        state.v2.chat.push({ role: "bot", text: "Zapísané: „" + value + "“. Nájdeš to v " + (kind === "pedq" ? "Otázkach pre pediatra" : "Otázkach pre lekára") + ".", actions: [{ label: "Otvoriť otázky", kind: "go", value: kind === "pedq" ? "childBook|[data-v2-child-section='questions']" : "pregnancy|[data-v5-book-section='questions']" }] });
+        // Master 2.7: jeden zoznam Otázky pre lekára (Pre bábätko = pediater, Pre mňa = lekár). Bez textu → okno na napísanie.
+        const who = kind === "pedq" ? "baby" : "me";
+        if (!value) return V5.openAskQuestion?.(who, "");
+        V5.addDoctorQuestion?.(value, who);
+        state.v2.chat.push({ role: "bot", text: "Zapísané: „" + value + "“. Nájdeš to v Otázkach pre lekára (" + (who === "baby" ? "Pre bábätko" : "Pre mňa") + ").", actions: [{ label: "Otvoriť otázky", kind: "questions", value: "" }] });
         save();
         return render();
       }
+      if (kind === "questions") return V5.openDoctorQuestions?.();
       if (kind === "tour") { V5.openHome(); return setTimeout(() => window.GugubooTour?.start?.(), 250); }
       if (kind === "drawer") { V5.openHome(); return setTimeout(() => V5.openDrawer?.(), 200); }
       if (kind === "go") {

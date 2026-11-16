@@ -3,6 +3,22 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-16 – Samo (Master 2.7)
+- **Jeden spôsob práce:** všetci pracujú vo vetve `v2`, priamo v `guguboo-master/` (Claude na Samovom PC predtým
+  pracoval v lokálnej vetve a do `guguboo-master/` len kopíroval – zrušené, aby sa si práca neprepisovala).
+- **Informujeme, neradíme (platí pre celú appku aj GuguChat):** pri zdravotnej téme len *čo je bežné* (zo zdroja,
+  „každé … je iné“) + jedna pokojná veta, kedy sa ozvať lekárovi + tlačidlo **„Zapísať ako otázku pre lekára“**.
+  Nikdy postupy pri príznakoch, „mala by si“, vek ako pokyn (príkrmy appka nediktuje), lieky a dávky, samohodnotenie
+  ani zoznam toho, čo robí lekár na prehliadke. Vážne situácie (E1–E7) majú jednu pokojnú vetu na jednom mieste:
+  `g2-safety.js`. Vety označené ⚕ má pred testom s ľuďmi potvrdiť pediater / pôrodná asistentka (garant).
+- **Otázky pre lekára** sú na jednom mieste s časťami *Pre mňa* a *Pre bábätko* (`state.v5.doctorQuestions`).
+- **Rozsah:** appka sa rieši do 1. roka bábätka; obdobie od 1 roka sa dopracuje po spustení.
+- **Ikony namiesto textu (nové pravidlo):** kde sa dá, nahradiť text peknou, jemnou ikonou, ktorá navodzuje pokoj
+  a vysvetľuje význam (napr. diely kruhu). Texty stále minimalizovať.
+- **Web guguboo.com** (náhľad `web.html`): formulár testeriek cez Netlify Forms s minimom údajov (bez týždňa
+  tehotenstva – zdravotný údaj), web bez Google Fonts. Pôvodnú V1 nikto nepoužíva – pri spustení ju Master nahradí.
+- **GuguChat ako AI** až po testoch, hlavne ako navigátor po appke; **odborný garant** (pediater) – hľadáme.
+
 ## 2026-11-16 – Samo
 - `CLAUDE.md` zosúladený s praxou (úložisko `guguboo-m-*`, `sw.js` CACHE, prototypy, QA, verejné repo).
   Každé nové rozhodnutie o dizajne, textoch alebo postupe sa zapisuje sem, aby ho videl aj Matej.
