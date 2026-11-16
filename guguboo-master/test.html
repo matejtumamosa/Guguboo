@@ -98,7 +98,7 @@
   }
   const GUARD = "<script>(function(){var t=window.__g2t;" +
     // Ak náhrada úložiska nie je na mieste, zvyšok stránky sa zmení na text a appka sa NESPUSTÍ (nedotkne sa skutočných údajov).
-    "if(!t||window.localStorage!==t.storage||window.sessionStorage!==t.session){document.write('<plaintext>');return;}" +
+    "if(!t||!t.mediaDb||window.localStorage!==t.storage||window.sessionStorage!==t.session){document.write('<plaintext>');return;}" +
     "addEventListener('error',function(e){t.report('chyba',(e.message||'')+' @ '+String(e.filename||'').split('/').pop()+':'+e.lineno);});" +
     "addEventListener('unhandledrejection',function(e){t.report('promise',String(e.reason&&e.reason.message||e.reason));});" +
     "var ce=console.error;console.error=function(){t.report('console.error',[].map.call(arguments,String).join(' '));return ce.apply(console,arguments);};" +
@@ -126,7 +126,11 @@
       doc.close(); frame.remove();
       throw new Error("Izolované úložisko sa v tomto prehliadači nepodarilo nastaviť – appka sa NEspustila (skutočné údaje sú v bezpečí).");
     }
-    win.__g2t = { storage, session, report: (kind, msg) => errors.push(kind + ": " + msg) };
+    // Master 2.9: fotky a nahrĂˇvky idĂş do vlastnej testovacej databĂˇzy (skutoÄŤnĂˇ guguboo-m-media sa nedotkne).
+    // opts.mediaDb = tĂˇ istĂˇ databĂˇza pre ÄŹalĹˇie spustenie; opts.noIdb = prehliadaÄŤ bez IndexedDB.
+    const mediaDb = opts.mediaDb || newTestDb();
+    if (opts.noIdb) { try { Object.defineProperty(win, "indexedDB", { value: undefined, configurable: true }); } catch (_) { /* niÄŤ */ } }
+    win.__g2t = { storage, session, mediaDb, report: (kind, msg) => errors.push(kind + ": " + msg) };
     doc.write(html.replace(/<head[^>]*>/i, m => m + GUARD));
     doc.close();
     const start = Date.now();
@@ -136,8 +140,56 @@
       await sleep(100);
     }
     await sleep(opts.settle ?? 800);
-    return { frame, win, doc, storage, session, errors, state: () => win.eval("state"), remove: () => frame.remove() };
+    const remove = async (keepDb = !!opts.mediaDb) => {
+      try { win.G2Media?.close(); } catch (_) { /* niÄŤ */ }
+      frame.remove();
+      if (!keepDb) await deleteDb(mediaDb);
+    };
+    return { frame, win, doc, storage, session, errors, mediaDb, state: () => win.eval("state"), remove };
   }
+
+  // â€”â€”â€” Testovacie databĂˇzy fotiek (IndexedDB) â€”â€”â€”
+  const TEST_DB = PREFIX + "media-test-";
+  let dbCounter = 0;
+  const newTestDb = () => TEST_DB + Date.now().toString(36) + "-" + (++dbCounter);
+  const deleteDb = name => new Promise(resolve => {
+    if (!name || !name.startsWith(TEST_DB)) return resolve(); // poistka: nikdy nie skutoÄŤnĂˇ databĂˇza
+    const request = indexedDB.deleteDatabase(name);
+    request.onsuccess = request.onerror = () => resolve();
+    request.onblocked = () => setTimeout(resolve, 500);
+  });
+  // PoÄŤet zĂˇznamov v skutoÄŤnej databĂˇze guguboo-m-media (null = databĂˇza neexistuje / nedĂˇ sa zistiĹĄ) â€“ bez jej vytvorenia.
+  async function realMediaCount() {
+    if (!indexedDB.databases) return null;
+    const list = await indexedDB.databases().catch(() => []);
+    if (!list.some(d => d.name === PREFIX + "media")) return null;
+    return new Promise(resolve => {
+      const request = indexedDB.open(PREFIX + "media");
+      request.onsuccess = () => {
+        const db = request.result;
+        try { const c = db.transaction("media").objectStore("media").count(); c.onsuccess = () => { db.close(); resolve(c.result); }; c.onerror = () => { db.close(); resolve(null); }; }
+        catch (_) { db.close(); resolve(null); }
+      };
+      request.onerror = () => resolve(null);
+    });
+  }
+  // MalĂ© testovacie mĂ©diĂˇ (dataURL): 1Ă—1 PNG a krĂˇtky â€žzvukâ€ś.
+  const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+  const PNG2 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  const AUDIO = "data:audio/webm;codecs=opus;base64," + btoa("GUGUBOO-TEST-AUDIO-" + "x".repeat(200));
+  function mediaSeed(extra = {}) {
+    const base = seed("po", extra);
+    const s = JSON.parse(base[PREFIX + "state"]);
+    s.profile.photo = PNG;
+    s.diary = [{ id: "d1", date: iso(addDays(-1)), text: "BruĹˇko Â· 30. tĂ˝ĹľdeĹ", photo: PNG2, bumpWeek: 30, created: new Date().toISOString() }];
+    s.lullabies = [{ id: "l1", title: "UspĂˇvanka", src: AUDIO, author: "mama", created: new Date().toISOString() }];
+    s.v5.prenatalResults = [{ id: "r1", date: iso(addDays(-90)), type: "Ultrazvuk", text: "", photo: PNG, created: new Date().toISOString() }];
+    s.v2 = { moments: { announced: iso(addDays(-120)), announcedImg: PNG2 } };
+    base[PREFIX + "state"] = JSON.stringify(s);
+    return base;
+  }
+  const bytesOf = async blob => Array.from(new Uint8Array(await blob.arrayBuffer()));
+  const bytesOfDataUrl = url => Array.from(atob(url.slice(url.indexOf(",") + 1)), c => c.charCodeAt(0));
 
   function seed(kind, extra = {}) {
     const born = kind === "po";
@@ -366,15 +418,15 @@
             assert(B && B.exportPayload, "G2Backup.exportPayload chýba");
             app.win.GugubooV5.persist();
             const before = dump(app.storage);
-            const payload = B.exportPayload();
+            const payload = await B.exportPayload(); // Master 2.9: async (pridá médiá z IndexedDB)
             const backup = B.parseBackup(payload);
-            eq([backup.app, backup.kind, backup.schema], ["guguboo", "zaloha", 1], "hlavička");
+            eq([backup.app, backup.kind, backup.schema], ["guguboo", "zaloha", 2], "hlavička (Master 2.9: schéma 2)");
             eq(Object.keys(backup.data).sort(), Object.keys(before).filter(k => k.startsWith(PREFIX) && k !== B.AUTH).sort(), "kľúče v zálohe");
             // Iný stav v telefóne, potom obnova.
             app.storage.setItem(PREFIX + "state", "{\"profile\":{}}");
             app.storage.setItem(PREFIX + "navyse", "zmaže sa");
             app.storage.removeItem(PREFIX + "private-space");
-            B.applyBackup(backup);
+            await B.applyBackup(backup);
             const after = dump(app.storage);
             eq(after, before, "údaje po obnove");
           } finally { app.remove(); }
@@ -387,14 +439,14 @@
               let threw = false; try { B.parseBackup(text); } catch (_) { threw = true; }
               assert(threw, "prijal: " + text);
             });
-            B.applyBackup(B.parseBackup(JSON.stringify({ app: "guguboo", data: { "zly-kluc": "x", [PREFIX + "cislo"]: 5, [PREFIX + "ok"]: "y" } })));
+            await B.applyBackup(B.parseBackup(JSON.stringify({ app: "guguboo", data: { "zly-kluc": "x", [PREFIX + "cislo"]: 5, [PREFIX + "ok"]: "y" } })));
             eq([app.storage.getItem("zly-kluc"), app.storage.getItem(PREFIX + "cislo"), app.storage.getItem(PREFIX + "ok")], [null, null, "y"]);
           } finally { app.remove(); }
         },
         "Appka sa zo zálohy spustí s tými istými údajmi": async () => {
           const src = await bootApp(seed("pred", { v5: { doctorQuestions: [{ id: "q9", who: "me", text: "Zo zálohy", created: "2026-11-01T10:00:00.000Z", done: false }] } }), { settle: 300 });
           let payload, due;
-          try { src.win.GugubooV5.persist(); payload = src.win.G2Backup.exportPayload(); due = src.state().profile.due; } finally { src.remove(); }
+          try { src.win.GugubooV5.persist(); payload = await src.win.G2Backup.exportPayload(); due = src.state().profile.due; } finally { src.remove(); }
           const restored = {}; Object.entries(JSON.parse(payload).data).forEach(([k, v]) => { restored[k] = v; });
           const app = await bootApp(restored, { settle: 300 });
           try {
