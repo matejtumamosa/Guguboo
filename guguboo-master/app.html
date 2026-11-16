@@ -5652,12 +5652,16 @@
     const appStorage = {
       getItem(key) { try { return localStorage.getItem(key) ?? sessionStorage.getItem(key); } catch (_) { return null; } },
       setItem(key, value) {
+        // Master 2.9 (Plán F1): fotka/nahrávka ako dataURL v stave sa o chvíľu presunie do IndexedDB (g2-media.js).
+        const media = key === storeKey && window.G2Media?.enabled() && window.G2Media.hasInline(value);
         try { localStorage.setItem(key, value); window.__g2StorageFull = false; }
         catch (error) {
           window.__g2StorageFull = true;
           try { sessionStorage.setItem(key, value); } catch (_) { /* aspoň do zatvorenia */ }
-          if (typeof showToast === "function") showToast("Pamäť appky v telefóne je plná. Urob si zálohu a vymaž staršie fotky.");
+          // Počas presunu do IndexedDB neupozorňovať – upozornenie ukáže až uloženie po presune, ak by stále zlyhalo.
+          if (!media && typeof showToast === "function") showToast("Pamäť appky v telefóne je plná. Urob si zálohu a vymaž staršie fotky.");
         }
+        if (media) window.G2Media.schedule();
       },
       removeItem(key) { try { localStorage.removeItem(key); sessionStorage.removeItem(key); } catch (_) { /* nič */ } }
     };
@@ -5993,7 +5997,7 @@
       updateBirthCardAppearance(data);
       $("birthCardPreviewName").textContent = data.name || "Bábätko";
       $("birthCardMonogram").textContent = (data.name || "B").trim().charAt(0).toLocaleUpperCase("sk-SK");
-      $("birthCardPreviewPhoto").src = data.photo || "";
+      window.G2Media ? G2Media.setSrc($("birthCardPreviewPhoto"), data.photo || "") : ($("birthCardPreviewPhoto").src = data.photo || ""); // Master 2.9: fotka môže byť v IndexedDB
       $("birthCardPhotoShell").classList.toggle("has-photo", !!data.photo);
       $("removeBirthCardPhoto").classList.toggle("hidden", !data.photo);
       $("birthCardPhotoLabel").textContent = data.photo ? "Zmeniť fotografiu" : "Pridať fotografiu dieťaťa";
@@ -6435,7 +6439,7 @@
       let photoDrawn = false;
       if (data.photo) {
         try {
-          const photo = await loadBirthCardCanvasImage(data.photo);
+          const photo = await loadBirthCardCanvasImage(window.G2Media ? await G2Media.url(data.photo) : data.photo); // Master 2.9
           drawCoverImage(ctx, photo, photoX, photoY, photoWidth, photoHeight);
           photoDrawn = true;
         } catch (error) {
@@ -7120,7 +7124,7 @@
           memory && memory.photo ? "has-photo" : ""
         ].filter(Boolean).join(" ");
         const title = memory ? `Deň ${d}: ${memory.title}` : `Deň ${d}`;
-        const content = memory && memory.photo ? `<img src="${memory.photo}" alt="${escapeHtml(memory.title)}">` : (memory ? "•" : "");
+        const content = memory && memory.photo ? `<img ${window.G2Media ? G2Media.srcAttr(memory.photo) : `src="${memory.photo}"`} alt="${escapeHtml(memory.title)}">` : (memory ? "•" : "");
         return `<button class="day-dot ${cls}" type="button" data-memory-day="${d}" title="${escapeHtml(title)}">${content}</button>`;
       }).join("");
       $("dayPath").querySelectorAll("[data-memory-day]").forEach(btn => {
@@ -7204,7 +7208,7 @@
       renderList("growthList", state.growth.slice().reverse(), g => `<main><strong>${[g.weight, g.height, g.head].filter(Boolean).join(" · ") || "Meranie"}</strong><span class="muted small">${g.date ? new Date(g.date + "T00:00:00").toLocaleDateString("sk-SK") : fmtTime(g.created)}${g.note ? " · " + g.note : ""}</span></main>`);
       renderList("siblingList", state.children.slice().reverse(), child => `<main><strong>${child.name}</strong><span class="muted small">${child.date ? new Date(child.date + "T00:00:00").toLocaleDateString("sk-SK") : "dátum nezadaný"}${child.note ? " · " + child.note : ""}</span></main>`);
       renderList("childrenPageList", state.children.slice().reverse(), child => `<main><strong>${child.name}</strong><span class="muted small">${child.date ? new Date(child.date + "T00:00:00").toLocaleDateString("sk-SK") : "dátum nezadaný"}${child.note ? " · " + child.note : ""}</span></main>`);
-      renderList("diaryList", state.diary.slice().reverse(), d => `<main><strong>${d.title}</strong><span class="muted small">${d.day ? "Deň " + d.day + " · " : ""}${d.date ? new Date(d.date + "T00:00:00").toLocaleDateString("sk-SK") : fmtTime(d.created)}${d.created && d.date ? " · uložené " + fmtTime(d.created) : ""}${d.moment ? " · " + d.moment : ""}${d.text ? " · " + d.text : ""}</span>${d.photo ? `<img class="memory-thumb" src="${d.photo}" alt="Fotka spomienky">` : ""}</main>`);
+      renderList("diaryList", state.diary.slice().reverse(), d => `<main><strong>${d.title}</strong><span class="muted small">${d.day ? "Deň " + d.day + " · " : ""}${d.date ? new Date(d.date + "T00:00:00").toLocaleDateString("sk-SK") : fmtTime(d.created)}${d.created && d.date ? " · uložené " + fmtTime(d.created) : ""}${d.moment ? " · " + d.moment : ""}${d.text ? " · " + d.text : ""}</span>${d.photo ? `<img class="memory-thumb" ${window.G2Media ? G2Media.srcAttr(d.photo) : `src="${d.photo}"`} alt="Fotka spomienky">` : ""}</main>`);
       renderList("shoppingList", state.shopping.slice().reverse(), s => `<main><strong>${s.item}</strong><span class="muted small">${[
         s.category || "zoznam",
         s.brand ? "značka: " + s.brand : "",
@@ -9775,7 +9779,16 @@ Otázky:
     }
 
     function setCustomSound(url, name, hint = "Uložené len v tejto bete prehliadača. Ostrá appka ju uloží do rodinného účtu.", data = "") {
-      if (customSoundUrl) URL.revokeObjectURL(customSoundUrl);
+      // Master 2.9 (Plán F1): nahrávka môže byť odkaz media:<id> (IndexedDB) – prehrá sa cez objectURL z g2-media.js,
+      // do knižnice sa uloží znova len odkaz. objectURL patriace g2-media.js sa tu neuvoľňujú.
+      const M = window.G2Media;
+      if (M?.isRef(url)) {
+        data = data || url;
+        const ref = url;
+        url = M.cached(ref);
+        if (!url) M.url(ref).then(resolved => { if (resolved && customSoundData === ref) { customSoundUrl = resolved; $("customSoundAudio").src = resolved; } });
+      }
+      if (customSoundUrl && !M?.owns(customSoundUrl)) URL.revokeObjectURL(customSoundUrl);
       customSoundUrl = url;
       customSoundData = data || url;
       $("customSoundName").textContent = name || "Moja uspávanka";

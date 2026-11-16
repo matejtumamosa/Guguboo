@@ -1433,7 +1433,7 @@
     }
     if (key === "bump") {
       const bump = g2qBumpThisWeek();
-      return g2qOpen("Bruško · " + g2qWeek() + ". týždeň", (bump?.photo ? "<img class='g2q-bump' src='" + escapeHtml(bump.photo) + "' alt='Fotka bruška tento týždeň'>" : g2qLastLine("Jedna fotka za týždeň. Uloží sa do Našich momentov.")) +
+      return g2qOpen("Bruško · " + g2qWeek() + ". týždeň", (bump?.photo ? "<img class='g2q-bump' " + mediaImgSrc(bump.photo) + " alt='Fotka bruška tento týždeň'>" : g2qLastLine("Jedna fotka za týždeň. Uloží sa do Našich momentov.")) +
         "<label class='g2r-act big g2q-file'><i>" + icon("camera") + "</i><span>" + (bump ? "Vymeniť fotku" : "Odfotiť bruško") + "<small>alebo vybrať z galérie</small></span><input id='g2qBumpInput' type='file' accept='image/*'></label>");
     }
     if (key === "voice") {
@@ -1584,7 +1584,7 @@
     if (action === "voice-play") {
       const list = state.lullabies || [];
       g2qStopAudio();
-      g2qAudio = new Audio(list[list.length - 1]?.src);
+      g2qAudio = new Audio(mediaAudioSrc(list[list.length - 1]?.src)); // Master 2.9: nahrávka môže byť v IndexedDB
       g2qAudio.play().catch(() => g2qToast("Nahrávku sa nepodarilo pustiť."));
       el.outerHTML = g2qAct("voice-stop", "sound", "Zastaviť", "", "", true);
       return;
@@ -1808,7 +1808,7 @@
           "<button class='v5-baby-avatar v2-week-badge' type='button' data-v5-feature='babySize' aria-label='Tvoj týždeň'>", weekBadgeInner, "</button>"
         ].join("")
       : state.profile.photo
-        ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'></button>"
+        ? "<button class='v5-baby-avatar v5-photo-avatar' type='button' data-v5-child-avatar aria-label='Otvoriť fotografiu a profil dieťaťa'><img " + mediaImgSrc(state.profile.photo) + " alt='Fotografia dieťaťa'></button>"
         : "<button class='v5-baby-avatar v5-empty-avatar' type='button' data-v5-child-avatar aria-label='Nahrať fotografiu dieťaťa'>" + icon("baby") + "<span class='v5-sr-only'>Nahrať fotografiu</span></button>";
     const avatarPopover = "";
     const pregnancyWeek = Number(pregnancyAvatar.week || 0);
@@ -4012,7 +4012,7 @@
         "<div class='v5-form-card'>",
         state.profile.status === "expecting" ? "" : [
           "<div class='v5-child-photo-card'>",
-          state.profile.photo ? "<img src='" + escapeHtml(state.profile.photo) + "' alt='Fotografia dieťaťa'>" : "<span aria-hidden='true'>" + icon("baby") + "</span>",
+          state.profile.photo ? "<img " + mediaImgSrc(state.profile.photo) + " alt='Fotografia dieťaťa'>" : "<span aria-hidden='true'>" + icon("baby") + "</span>",
           "<div><strong>Fotografia dieťaťa</strong><small>Zobrazí sa na domove.</small><label class='v5-photo-picker'>", state.profile.photo ? "Zmeniť fotografiu" : "Nahrať fotografiu", "<input id='v5ChildPhoto' type='file' accept='image/*'></label></div></div>"
         ].join("") ,
         "<label>Meno<input id='v5ChildName' value='", escapeHtml(state.profile.name || ""), "'></label>",
@@ -4227,7 +4227,7 @@
         "<div class='v5-form-card'><label>Dátum<input id='v5First100Date' type='date' value='" + escapeHtml(existing?.date || date) + "'></label>" +
         "<label>Krátka veta<textarea id='v5First100Text' placeholder='Moment, ktorý si chceš zapamätať'>" + escapeHtml(existing?.text || "") + "</textarea></label>" +
         "<label>Fotografia — nepovinné<input id='v5First100Photo' type='file' accept='image/*'></label>" +
-        (existing?.photo ? "<img src='" + escapeHtml(existing.photo) + "' alt='Dnešný moment' class='v5-moment-photo'>" : "") + "</div>" +
+        (existing?.photo ? "<img " + mediaImgSrc(existing.photo) + " alt='Dnešný moment' class='v5-moment-photo'>" : "") + "</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-first100'>Uložiť moment</button><button class='v5-secondary' type='button' data-v5-moments-home>Späť</button></div>";
       return;
     }
@@ -5038,7 +5038,7 @@
           "<article class='v2-visit-card'><header><strong>", escapeHtml(result.type), "</strong><span>", escapeHtml(dateLabel(result.date)), "</span>",
           "<button type='button' data-v2-result-delete='", escapeHtml(result.id), "' aria-label='Vymazať výsledok'>×</button></header>",
           result.text ? "<p>" + escapeHtml(result.text).replace(/\n/g, "<br>") + "</p>" : "",
-          result.photo ? "<img class='v2-result-photo' src='" + escapeHtml(result.photo) + "' alt='Fotka výsledku'>" : "",
+          result.photo ? "<img class='v2-result-photo' " + mediaImgSrc(result.photo) + " alt='Fotka výsledku'>" : "",
           "</article>"
         ].join("")).join("") + "</div>" : "<div class='v5-empty'>Zatiaľ žiadny výsledok.</div>",
         back
@@ -5893,7 +5893,7 @@
       if (typeof window.setCustomSound === "function") window.setCustomSound(item.src, item.title, "Rodinná uspávanka");
       const audioElement = byId("customSoundAudio");
       if (audioElement) {
-        audioElement.src = item.src;
+        audioElement.src = mediaAudioSrc(item.src); // Master 2.9: odkaz media:<id> → objectURL
         audioElement.play().catch(() => announce("Prehrávanie spustíš tlačidlom Play."));
       }
       state.v5.audio = { ...state.v5.audio, active: true, type: "custom", title: item.title || "Rodinná uspávanka", stopAt: "" };
