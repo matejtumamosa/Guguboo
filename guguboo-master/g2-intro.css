@@ -205,6 +205,8 @@
   #g2Intro .wheel:focus-visible { outline: none; }
   #g2Intro .wheel:focus-visible + .ring, #g2Intro .picker .col:focus-within .ring { opacity: 1; }
   #g2Intro .col { position: relative; }
+  /* Master 2.8.1 (Samo 16. 11.): globálne .ring::after (iný komponent) kreslil biely ovál cez vybraný mesiac */
+  #g2Intro .col .ring::before, #g2Intro .col .ring::after { content: none !important; display: none !important; }
   #g2Intro .col .ring {                               /* fokus pre klávesnicu */
     position: absolute; left: 0; right: 0; top: calc(50% - var(--item) / 2); height: var(--item);
     border: 3px solid var(--lav-dark); border-radius: 12px; opacity: 0; pointer-events: none;
