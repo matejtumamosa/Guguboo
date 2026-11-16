@@ -930,9 +930,9 @@ body.v5-active #v5Header[data-home="true"] .v5-header-brand::after {
 }
 body.v5-active #v5Header[data-home="true"] .v5-header-title { position: relative; z-index: 1; display: block !important; width: 100%; margin: 0 auto; text-align: center !important; }
 body.v5-active #v5Header[data-home="true"] .v5-header-title::before { display: block; margin-bottom: 3px; font-size: 18px; line-height: 1; }
-body.v5-active #v5Header[data-home="true"][data-daypart="morning"] .v5-header-title::before { content: none; /* Master 3.0: bez znaku ☀ (Master hlavičku kreslí inak) */ }
-body.v5-active #v5Header[data-home="true"][data-daypart="day"] .v5-header-title::before { content: none; }
-body.v5-active #v5Header[data-home="true"][data-daypart="evening"] .v5-header-title::before { content: none; }
+body.v5-active #v5Header[data-home="true"][data-daypart="morning"] .v5-header-title::before { content: "☀"; color: #e8a33b; }
+body.v5-active #v5Header[data-home="true"][data-daypart="day"] .v5-header-title::before { content: "🌤"; }
+body.v5-active #v5Header[data-home="true"][data-daypart="evening"] .v5-header-title::before { content: "☾"; color: #7b6bc8; }
 body.v5-active #v5Header[data-home="true"] .v5-header-title strong,
 body.v5-active #v5Header[data-home="true"] .v5-header-title span { display: block; width: 100%; text-align: center !important; }
 body.v5-active #v5Header[data-home="true"] .v5-header-title strong { color: var(--v5-ink); font-size: 20px; font-weight: 800; line-height: 1.2; letter-spacing: -.01em; overflow-wrap: anywhere; white-space: normal; }
