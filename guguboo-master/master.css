@@ -778,3 +778,10 @@ body.g2-tab-root:not(.g2-tab-sub) .view.active > .v5-universal-window-head { gri
 /* Master 2.5: „naposledy“ pod názvom dielu – ≥ 11 px na obrazovke (veľkosť počíta JS), farba menovky (kontrast > 7 : 1) */
 body:has(#home.view.active) .g2q-card .v2-o-label text.g2q-sub { font: 600 var(--g2q-sub, 18px)/1 var(--g2-font, Montserrat, sans-serif) !important; letter-spacing: 0; }
 .g2q-preview { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; background: var(--v5-surface-soft); white-space: pre-wrap; font: 500 15px/1.5 Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }
+/* Master 2.8 (Plán F1-2): zvyšky starších verzií (Premium, tiery Free/Premium, ceny, „prémiové“) sa v Master neukazujú.
+   Len skryté – kód a markup ostávajú, zmažú sa až po teste. Kontroluje to test.html („Zvyšky starších verzií nevidno“). */
+#premium, #apps,
+.nav button[data-view="premium"], [data-v4-view="premium"], .v4-premium-nav, .v4-premium-teaser,
+.premium-badge, .mini-badge.premium, .v4-tier-badge, .v4-app-open i, .v2-account-button,
+#memoryOutput .panel > .report-box:not(#outputPreview), .g2-legacy-premium { display: none !important; }
+.nav button[data-tier]::after { content: none !important; display: none !important; }

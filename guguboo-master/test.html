@@ -431,11 +431,12 @@
         check(key);
         try { V5.windowCloseAll?.(); V5.openHome?.(); } catch (_) { /* nič */ }
       }
-      // Staré obrazovky dostupné len cez adresu/odkaz (napr. #premium) – nesmú sa dať zobraziť.
-      ["premium", "reports", "assistant"].forEach(view => {
-        try { app.win.switchView?.(view); } catch (_) { /* nič */ }
+      // Aj staré obrazovky dostupné len cez starý odkaz (napr. #premium): ani tie nesmú ukázať Premium.
+      for (const view of [...app.doc.querySelectorAll(".view[id]")].map(v => v.id)) {
+        try { app.win.switchView?.(view); } catch (e) { found.push("view #" + view + ": výnimka " + e.message); continue; }
+        await sleep(30);
         check("view #" + view);
-      });
+      }
       app.win.switchView?.("home");
       eq(app.errors, [], "chyby v konzole");
     } finally { app.remove(); }

@@ -319,7 +319,9 @@
     const account = event.target.closest("[data-v2-account]");
     if (account) {
       state.v2Account = account.dataset.v2Account;
-      if (account.dataset.v2Account !== "guest" && typeof showToast === "function") showToast("Prihlásenie spustíme čoskoro – teraz pokračuješ v beta verzii.");
+      // Master 2.8 (Plán F1-2): v Master bez hlášky „Prihlásenie spustíme čoskoro“ – účty nie sú (údaje len v telefóne); zmaže sa po teste.
+      const masterBuild = /^Master/.test(String(window.GUGUBOO_V2_VERSION || ""));
+      if (!masterBuild && account.dataset.v2Account !== "guest" && typeof showToast === "function") showToast("Prihlásenie spustíme čoskoro – teraz pokračuješ v beta verzii.");
     }
     if (event.target.closest("[data-v2-tour-restart]")) {
       event.preventDefault();

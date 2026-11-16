@@ -120,6 +120,9 @@
       row("Prečo", item.why),
       row("Kedy", item.when?.text),
       row("Suma", amountFirst),
+      // Master 2.8 (Úrady 2027): pri sume vždy „orientačná“ (informujeme, neradíme); po dátume kontroly upozornenie na možnú neaktuálnosť.
+      amountFirst ? "<p class='v2-birth-note'>Orientačná suma. Presnú výšku určí úrad v rozhodnutí.</p>" : "",
+      item.nextReview && new Date().toISOString().slice(0, 10) > item.nextReview ? "<p class='v2-admin-status'>" + (item.amount_checked ? "Naposledy overené " + esc(item.amount_checked) + ". " : "") + "Údaj môže byť neaktuálny – over si ho na oficiálnej stránke.</p>" : "",
       "</div>",
       // Text 1.5 (Samo 13. 11.): podrobnosti ostávajú celé, len v ďalšej úrovni.
       moreHtml,

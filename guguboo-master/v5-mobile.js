@@ -1978,6 +1978,8 @@
   }
 
   function tierText(tier) {
+    // Master 2.8 (Plán F1-2): v Master sa štítky Free/Premium/Doplnok neukazujú (funkcia sa dnes nevolá; zmaže sa po teste).
+    if (MASTER) return "";
     return tier === "free" ? "Free" : tier === "addon" ? "Doplnok" : "Premium";
   }
 

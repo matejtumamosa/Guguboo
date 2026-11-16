@@ -1,6 +1,8 @@
 (function initGugubooV4() {
   if (window.__gugubooV4Loaded) return;
   window.__gugubooV4Loaded = true;
+  // Master 2.8 (Plán F1-2): v Master sa ponuky Premium (navigácia, upútavka) nevykresľujú – kód ostáva pre V2, zmaže sa po teste.
+  const v4HidePremium = /^Master/.test(String(window.GUGUBOO_V2_VERSION || ""));
 
   document.body.classList.add("v4-upgrade");
   state.parentRole = "rodina";
@@ -228,7 +230,7 @@
       <button type="button" data-v4-view="contacts">📇 Kontakty</button>
       <button type="button" data-v4-view="tracker">➕ Základné záznamy</button>
       <div class="v4-nav-label">Po narodení</div>
-      <button class="v4-premium-nav" type="button" data-v4-view="premium">💎 Čo odomkne Premium</button>` : `
+      ${v4HidePremium ? "" : `<button class="v4-premium-nav" type="button" data-v4-view="premium">💎 Čo odomkne Premium</button>`}` : `
       <div class="v4-nav-label">Dnes</div>
       <button type="button" data-v4-view="home">🏠 Domov</button>
       <button type="button" data-v4-view="tracker">➕ Denné záznamy</button>
@@ -626,7 +628,7 @@
       <button type="button" data-v4-view="calendar"><span>📅</span><strong>Kalendár</strong><small>PREMIUM · rodinné pripomienky</small></button>
       <button type="button" data-v4-view="shopping"><span>🛒</span><strong>Nákup</strong><small>PREMIUM · spoločný zoznam</small></button>
       <button type="button" data-v4-view="travel"><span>🧳</span><strong>Cestovanie</strong><small>FREE · balenie a pomoc podľa mesta</small></button>`;
-    const supportCard = expecting ? `
+    const supportCard = expecting && v4HidePremium ? "" : expecting ? `
       <article class="v4-ai-home-card v4-premium-teaser">
         <span class="v4-ai-mark">Premium po narodení</span>
         <div><h3>Dnes sa pripravuješ zdarma</h3><p>Po narodení môžeš odomknúť spánok, rodinné prehľady, AI pomoc, zdravie, rast a spomienky od 4,99 € mesačne.</p></div>
