@@ -754,10 +754,9 @@
             labels.forEach((g, i) => {
               const ic = g.querySelector(".g2q-seg-ic"), name = g.querySelector("text:not(.g2q-sub)");
               assert(ic && name, "diel " + (i + 1) + ": chýba ikona alebo názov");
-              const a = ic.getBoundingClientRect(), b = name.getBoundingClientRect();
               const box = (ic.ownerSVGElement.getBoundingClientRect().width / 420) * Number(/scale\(([\d.]+)\)/.exec(ic.getAttribute("transform"))?.[1] || 0) * 256;
               assert(box >= 15.9, "diel " + (i + 1) + ": ikona " + box.toFixed(1) + " px");
-              assert(!overlap(a, b), "diel " + (i + 1) + ": ikona prekrýva názov");
+              const clash = ringClash(g); assert(!clash, "diel " + (i + 1) + ": " + clash);
               eq(app.win.getComputedStyle(ic).fill, "rgb(41, 36, 58)", "farba ikony v noci");
             });
             const short = app.doc.querySelector("#home.view.active .g2-short");
@@ -774,8 +773,7 @@
             eq(labels.map(g => !!g.querySelector(".g2q-seg-ic")), [true, true, true], "ikony v dieloch");
             assert(app.doc.querySelector("#home.view.active .g2q-card text.g2q-sub"), "„naposledy“ chýba");
             labels.forEach((g, i) => {
-              const rects = [...g.querySelectorAll(".g2q-seg-ic, text")].map(el => el.getBoundingClientRect());
-              for (let x = 0; x < rects.length; x++) for (let y = x + 1; y < rects.length; y++) assert(!overlap(rects[x], rects[y]), "diel " + (i + 1) + ": prvky sa prekrývajú");
+              const clash = ringClash(g); assert(!clash, "diel " + (i + 1) + ": " + clash);
             });
           } finally { app.remove(); }
         }
@@ -784,7 +782,28 @@
   ];
 
   // ——— Master 3.0: prechod obrazovkami a kontrola ovládania (znaky, negatívne názvy, chýbajúce ikony) ———
-  const overlap = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+  // Diel kruhu: písmená názvu a „naposledy“ nesmú zasahovať do ikony a názov s „naposledy“ nesmú ležať na sebe
+  // (počítané v jednotkách viewBoxu 420 podľa stredov písmen – text ide po oblúku, obdĺžniky by klamali).
+  function ringClash(g) {
+    const ic = g.querySelector(".g2q-seg-ic");
+    const t = ic && /translate\(([\d.-]+) ([\d.-]+)\) scale\(([\d.]+)\)/.exec(ic.getAttribute("transform"));
+    const iu = t ? 256 * +t[3] : 0, icx = t ? +t[1] + iu / 2 : 0, icy = t ? +t[2] + iu / 2 : 0;
+    const win = g.ownerDocument.defaultView;
+    const rings = [];
+    for (const text of g.querySelectorAll("text")) {
+      const fs = parseFloat(win.getComputedStyle(text).fontSize) || 20, rs = [];
+      for (let i = 0; i < text.getNumberOfChars(); i++) {
+        const e = text.getExtentOfChar(i), cx = e.x + e.width / 2, cy = e.y + e.height / 2;
+        if (t && Math.hypot(cx - icx, cy - icy) < iu / 2 + fs * 0.3) return "písmeno „" + text.textContent[i] + "“ zasahuje do ikony";
+        rs.push(Math.hypot(cx - 210, cy - 210));
+      }
+      rs.sort((a, b) => a - b);
+      rings.push({ fs, r: rs[Math.floor(rs.length / 2)] || 0 });
+    }
+    for (let a = 0; a < rings.length; a++) for (let b = a + 1; b < rings.length; b++)
+      if (Math.abs(rings[a].r - rings[b].r) < (rings[a].fs + rings[b].fs) * 0.4) return "názov a „naposledy“ sú na sebe";
+    return "";
+  }
   // Emoji a znaky, ktoré nahrádzali ikony (◌ ☾ ✉ ☏ ⇡ ⏱ ≈ ↟ ♡ 💡 🦷 …). ✓ (stav v Zúbkoch) zatiaľ ostáva – na rozhodnutie.
   const CTRL_SYMBOLS = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{2712}\u{2714}-\u{27BF}\u{2B00}-\u{2BFF}◌⇡↟⏱≈️]/u;
   const NEGATIVE = /Bežné ťažkosti|Keď je mi ťažko/;
