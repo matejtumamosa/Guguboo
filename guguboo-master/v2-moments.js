@@ -117,7 +117,7 @@
         "<li class='v2-tl-item'><span class='v2-tl-dot' aria-hidden='true'>", item.emoji, "</span><div class='v2-tl-card'>",
         "<strong>", esc(item.title), "</strong><small>", esc(dateText(item.date)), "</small>",
         item.text ? "<p>" + esc(item.text) + "</p>" : "",
-        item.photo ? "<img src='" + esc(item.photo) + "' alt='' loading='lazy'>" : "",
+        item.photo ? "<img " + (window.G2Media ? G2Media.srcAttr(item.photo) : "src='" + esc(item.photo) + "'") + " alt='' loading='lazy'>" : "",
         "</div></li>"
       ].join("")).join("") + "</ol>" : "<p class='v2-tl-empty'>" + esc(empty) + "</p>") + "</section>";
     };

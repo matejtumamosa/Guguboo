@@ -75,7 +75,7 @@
         "<label class='v2-album-keep'><input type='checkbox' data-v2-album-keep='", esc(album.id), "' data-key='", esc(item.key), "'", h[item.key] ? "" : " checked", "> V albume</label>",
         "<strong>", esc(item.title), "</strong><small>", esc(dateText(item.date)), "</small>",
         item.text ? "<p>" + esc(item.text) + "</p>" : "",
-        item.photo ? "<img src='" + esc(item.photo) + "' alt='' loading='lazy'>" : "",
+        item.photo ? "<img " + (window.G2Media ? G2Media.srcAttr(item.photo) : "src='" + esc(item.photo) + "'") + " alt='' loading='lazy'>" : "",
         "</div></li>"
       ].join("")).join("") + "</ol>" : "<div class='v5-empty'>Album je zatiaľ prázdny. Spomienky sa sem dostanú samy – napríklad keď si v Tehotenskej knižke zapíšeš sono alebo ťukneš na prvý raz.</div>",
       all.length ? "<div class='v2-ann-share'><button type='button' class='v5-primary' data-v2-album-share='" + esc(album.id) + "'>Zdieľať obrázok</button><button type='button' class='v5-secondary' data-v2-album-print='" + esc(album.id) + "'>Vytlačiť / PDF</button></div>" : "",
@@ -85,7 +85,7 @@
   }
 
   // ——— Obrázok albumu (canvas) ———
-  const loadImage = src => new Promise(resolve => { if (!src) return resolve(null); const img = new Image(); img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = src; });
+  const loadImage = src => Promise.resolve(window.G2Media ? G2Media.url(src) : src).then(src => new Promise(resolve => { if (!src) return resolve(null); const img = new Image(); img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = src; })); // Master 2.9: fotka môže byť v IndexedDB
 
   function wrap(ctx, text, maxWidth) {
     const words = String(text).split(/\s+/); const lines = []; let line = "";

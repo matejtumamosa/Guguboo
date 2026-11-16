@@ -15,6 +15,9 @@
   const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"
   })[character]);
+  // Master 2.9 (Plán F1): fotky a nahrávky môžu byť v IndexedDB (odkaz media:<id>, g2-media.js) – src pre <img> a zvuk.
+  const mediaImgSrc = value => (window.G2Media ? window.G2Media.srcAttr(value) : "src='" + escapeHtml(value) + "'");
+  const mediaAudioSrc = value => (window.G2Media ? window.G2Media.cached(value) : value || "");
   const createId = () => "v5-" + Date.now() + "-" + Math.random().toString(16).slice(2);
   const normalized = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const formatClock = value => {
@@ -6306,6 +6309,9 @@
     if (action === "save-mother-profile") return saveMotherProfile();
     if (action === "save-child-profile") return saveChildProfile();
     if (action === "export-family-data") {
+      // Master 2.9 (Plán F1): jedna záloha pre celú appku – s fotkami a nahrávkami, dá sa obnoviť (g2-backup.js).
+      // Pôvodný surový export stavu ostáva len ako záloha, ak by g2-backup.js chýbal.
+      if (window.G2Backup?.open) { closeDrawer?.(); return window.G2Backup.open(); }
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

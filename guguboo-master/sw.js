@@ -3,11 +3,12 @@
  * Rozsah LEN tento priečinok (nikdy koreň domény – V1 na guguboo.com ostáva nedotknutá).
  * Stránky (HTML): najprv sieť, bez siete posledná uložená verzia. Súbory s ?v=: z pamäte, inak zo siete.
  * Žiadne údaje používateľky sa tu neukladajú – len súbory appky. Cudzie adresy (počasie) sa nechávajú prehliadaču.
+ * Master 2.9: vlastné písmo (fonts/) je v pamäti hneď pri inštalácii – appka bez signálu má Montserrat.
  */
-const CACHE = "guguboo-m-app-2.8";
+const CACHE = "guguboo-m-app-2.9";
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["app.html", "manifest.webmanifest", "icon-192.png"])).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["app.html", "manifest.webmanifest", "icon-192.png", "fonts/montserrat.css?v=m2.9", "fonts/montserrat-latin.woff2", "fonts/montserrat-latin-ext.woff2"])).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", event => {

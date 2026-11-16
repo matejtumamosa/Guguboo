@@ -11,6 +11,7 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 - **Bez garanta a bez režimu pre stratu tehotenstva / vážne situácie** – appka na to nie je zameraná.
 - **Spustenie guguboo.com:** nová úvodná stránka + appka Master nahradí V1 cez PR do `main` (Samo zlúči, keď sa začne testovanie).
 - **Testy:** pred každým commitom appky musí byť `guguboo-master/test.html` celý zelený.
+- **Spoplatnenie zatiaľ nerozhodnuté:** nikde nesľubovať „zadarmo“ natrvalo ani ceny – len „počas testovania zadarmo“.
 
 ## 2026-11-16 – Samo (Master 2.7)
 - **Jeden spôsob práce:** všetci pracujú vo vetve `v2`, priamo v `guguboo-master/` (Claude na Samovom PC predtým

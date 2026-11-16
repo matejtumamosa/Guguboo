@@ -389,7 +389,8 @@
     if (!photo && profile().photo) {
       const img = new Image();
       img.onload = () => { photo = img; redraw(); };
-      img.src = profile().photo;
+      // Master 2.9: fotka môže byť v IndexedDB (odkaz media:<id>).
+      Promise.resolve(window.G2Media ? G2Media.url(profile().photo) : profile().photo).then(src => { if (src) img.src = src; });
     }
     render();
   }
