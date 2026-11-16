@@ -12,6 +12,13 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 - **Spustenie guguboo.com:** nová úvodná stránka + appka Master nahradí V1 cez PR do `main` (Samo zlúči, keď sa začne testovanie).
 - **Testy:** pred každým commitom appky musí byť `guguboo-master/test.html` celý zelený.
 - **Spoplatnenie zatiaľ nerozhodnuté:** nikde nesľubovať „zadarmo“ natrvalo ani ceny – len „počas testovania zadarmo“.
+- **Smer spoplatnenia (podľa analytika, Samo súhlasí):** jeden balík na celú cestu (tehotenstvo až 1. narodeniny), nie zvlášť
+  pred a po pôrode; 14 dní na vyskúšanie; časť natrvalo zadarmo (týždeň a veľkosť bábätka, základný zápis, otázky pre lekára,
+  základ úradov, bezpečnostné vety); orientačne „Celá cesta“ jednorazovo 39–49 € alebo mesačne 4–5 €; od 36. týždňa
+  do 6 týždňov po pôrode žiadna výzva na platbu; možnosť darčeka (partner, starí rodičia). Po skončení predplatného sa
+  vlastné záznamy a záloha nikdy nezamknú. Nespoplatňovať pred testom s mamami – presnú cenu overiť v teste.
+  Technika (keď príde čas): platobná brána ako predajca (Stripe Managed Payments, náhradne Paddle), lístok o platbe v telefóne,
+  bez vlastných účtov; právne texty a DPH s právnikom a účtovníkom.
 
 ## 2026-11-16 – Samo (Master 2.7)
 - **Jeden spôsob práce:** všetci pracujú vo vetve `v2`, priamo v `guguboo-master/` (Claude na Samovom PC predtým
