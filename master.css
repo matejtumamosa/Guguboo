@@ -1,0 +1,780 @@
+/* GUGUBOO MASTER BETA 1.0 – vývojová verzia (variant K-4).
+   Nový domov: pole GuguChatu, hero, výrazný kruh Pohody, 3 skratky, „Dnes stačí jedno“.
+   Lišta so 4 položkami (fixná, safe-area) + „Hľadať · Všetko“ na jej okraji. Tokeny z v5-mobile.css (aj nočný režim). */
+
+body.v5-active {
+  --g2-baby-bg: #eaf4fb; --g2-baby: #2f6a8f;
+  --g2-mama-bg: #fdecf1; --g2-mama: #a24766;
+  --g2-rod-bg: #e5f3ee; --g2-rod: #24715f;
+  --g2-me-bg: #fff7dc; --g2-me: #7d5a10;
+  --g2-ok: #2f7a5f; --g2-ok-bg: #e9f6ef;
+  --g2-hero: linear-gradient(135deg, #f4f0ff 0%, #fff4f0 100%);
+}
+body.v5-active.night {
+  --g2-baby-bg: #24324a; --g2-baby: #a9c4f2;
+  --g2-mama-bg: #3a2a3a; --g2-mama: #f0b0c6;
+  --g2-rod-bg: #1f3530; --g2-rod: #8fd6c2;
+  --g2-me-bg: #3a3424; --g2-me: #f2d98e;
+  --g2-ok: #76bda8; --g2-ok-bg: #22352f;
+  --g2-hero: linear-gradient(135deg, #252a3d 0%, #2c2534 100%);
+}
+
+.g2-ask svg, .g2-short-ic svg, .g2-bar-grip svg, .g2-search svg, .g2-ask-orb svg {
+  stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ——— Domov ——— */
+#v5Home { display: flex; flex-direction: column; gap: 14px; }
+#v5Home > * { margin: 0 !important; }
+
+.g2-ask {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 54px;
+  padding: 0 8px 0 16px; border: 0; border-radius: 18px;
+  background: var(--v5-surface); color: var(--v5-muted);
+  box-shadow: inset 0 0 0 1.5px var(--v5-line), 0 6px 18px rgba(58, 44, 83, .06);
+  font: 600 15px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif; text-align: left; cursor: pointer;
+}
+.g2-ask > span:nth-child(2) { flex: 1 1 auto; }
+.g2-ask > svg, .g2-search > svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.g2-ask-orb {
+  flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(140deg, #7b6bc8, #6a5bbf); color: #fff;
+}
+.g2-ask-orb svg { width: 18px; height: 18px; }
+
+.g2-hero {
+  display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 24px;
+  background: var(--g2-hero); box-shadow: inset 0 0 0 1px var(--v5-line), 0 10px 28px rgba(58, 44, 83, .08);
+}
+.g2-hero-top { display: flex; align-items: center; gap: 16px; }
+.g2-hero-top .v5-baby-avatar { flex: 0 0 auto; width: 78px !important; height: 78px !important; margin: 0 !important; }
+.g2-hero-text { min-width: 0; }
+.g2-hero-text h2 { margin: 0; font-size: 26px; line-height: 1.15; font-weight: 800; color: var(--v5-ink); }
+.g2-hero-text p { margin: 5px 0 0; font-size: 14px; line-height: 1.45; font-weight: 600; color: var(--v5-muted); }
+.g2-hero-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.g2-chip { padding: 5px 11px; border-radius: 999px; background: var(--g2-rod-bg); color: var(--g2-rod); font-size: 12px; font-weight: 700; }
+.g2-link {
+  display: inline-flex; align-items: center; min-height: 44px; margin: -8px -4px; padding: 0 4px;
+  border: 0; background: transparent; color: var(--v5-brand-dark); font: 800 13px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer;
+}
+
+/* Výrazný kruh Pohody (K) */
+.g2-ring-card { padding: 16px 14px 18px !important; }
+.g2-ring-head { display: flex; flex-direction: column; gap: 2px; padding: 0 4px 6px; }
+.g2-ring-head small { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); }
+.g2-ring-head span { font-size: 13px; font-weight: 600; color: var(--v5-muted); }
+.g2-ring-card .v5-o-layout { display: block !important; min-height: 0 !important; height: auto !important; }
+.g2-ring-card .v5-o-ring-wrap { width: min(100%, 290px) !important; height: auto !important; margin: 0 auto !important; }
+.g2-ring-card .v5-o-legend { display: none !important; }
+.g2-ring-center { width: 92px !important; padding: 6px !important; }
+.g2-ring-card .g2-seg { cursor: pointer; transition: filter .25s ease, transform .2s ease; transform-origin: 210px 210px; }
+.g2-ring-card .g2-seg:hover, .g2-ring-card .g2-seg:focus-visible { filter: brightness(1.04); }
+.g2-ring-card .g2-seg-fill { pointer-events: none; transition: opacity .4s ease; }
+.g2-ring-card .g2-seg-glow { filter: drop-shadow(0 0 10px rgba(255, 214, 120, .55)); }
+.g2-ring-center { display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
+.g2-ring-center strong { font-size: 15px; line-height: 1.1; }
+.g2-ring-center small { max-width: 78px; font-size: 10.5px; font-weight: 600; line-height: 1.2; opacity: .9; }
+
+/* 3 skratky */
+.g2-shorts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.g2-short {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 100px; padding: 12px 6px;
+  border: 0; border-radius: 20px; background: var(--v5-surface); color: var(--v5-ink);
+  box-shadow: inset 0 0 0 1px var(--v5-line), 0 6px 18px rgba(58, 44, 83, .06); cursor: pointer; text-align: center;
+  transition: transform .12s ease;
+}
+.g2-short:active { transform: scale(.97); }
+.g2-short-ic { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; }
+.g2-short-ic svg { width: 21px; height: 21px; }
+.g2-short strong { font-size: 14px; font-weight: 800; }
+.g2-short small { font-size: 12.5px; font-weight: 600; color: var(--v5-muted); line-height: 1.25; }
+.g2-short.is-running { box-shadow: inset 0 0 0 1.5px var(--g2-ok), 0 6px 18px rgba(58, 44, 83, .06); }
+.g2-short.is-running small { color: var(--g2-ok); font-weight: 700; }
+.g2-short.is-running small::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: var(--g2-ok); vertical-align: 1px; }
+.g2-c-brand .g2-short-ic { background: var(--v5-brand-soft); color: var(--v5-brand-dark); }
+.g2-c-baby .g2-short-ic { background: var(--g2-baby-bg); color: var(--g2-baby); }
+.g2-c-mama .g2-short-ic { background: var(--g2-mama-bg); color: var(--g2-mama); }
+.g2-c-me .g2-short-ic { background: var(--g2-me-bg); color: var(--g2-me); }
+
+/* Dnes stačí jedno */
+.g2-today { display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 22px; background: var(--v5-surface); box-shadow: inset 0 0 0 1px var(--v5-line), 0 6px 18px rgba(58, 44, 83, .06); }
+.g2-today > small { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); }
+.g2-today h3 { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 800; color: var(--v5-ink); }
+.g2-today p { margin: 0; font-size: 13.5px; line-height: 1.45; font-weight: 600; color: var(--v5-muted); }
+.g2-today-actions { display: flex; gap: 8px; }
+.g2-btn { flex: 1 1 0; min-height: 46px; border: 0; border-radius: 14px; background: var(--v5-surface-soft); color: var(--v5-ink); font: 700 14.5px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+.g2-btn-primary { background: #6a5bbf; color: #fff; }
+.g2-today-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: var(--v5-muted); }
+.g2-note { margin: 0; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--v5-muted); }
+
+/* ——— Lišta: 4 položky, fixná, „Hľadať · Všetko“ na okraji ——— */
+body.v5-active #v5BottomBar.v2-bottom-bar.g2-bar {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding-top: 40px;
+  overflow: visible;
+}
+#v5BottomBar.g2-bar .v5-bottom-action.active,
+#v5BottomBar.g2-bar .v5-bottom-action[aria-current="page"] { color: var(--v5-brand-dark); background: transparent !important; box-shadow: none !important; }
+#v5BottomBar.g2-bar .v5-bottom-action[aria-current="page"]::before {
+  content: ""; position: absolute; top: 2px; left: 50%; width: 16px; height: 3px; margin-left: -8px; border-radius: 2px; background: var(--v5-brand);
+}
+#v5BottomBar.g2-bar .v5-bottom-action { position: relative; }
+.g2-bar-grip {
+  position: absolute; left: 50%; top: 7px; transform: translateX(-50%); z-index: 2;
+  display: flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 14px 0 11px;
+  border: 0; border-radius: 999px; background: var(--v5-surface-soft); color: var(--v5-brand-dark);
+  font: 700 12px/1 Montserrat, "Segoe UI", system-ui, sans-serif; white-space: nowrap; cursor: pointer;
+}
+.g2-bar-grip::after { content: ""; position: absolute; inset: -8px -6px; }
+.g2-bar-grip svg { width: 15px; height: 15px; }
+/* obsah sa nikdy neschová pod lištu */
+body.v5-active main, body.v5-active .view { scroll-padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+.g2-ring-card { min-height: 0 !important; }
+.g2-ring-card .v5-o-ring-wrap { aspect-ratio: 1 / 1; }
+
+/* ——— Opýtaj sa alebo hľadaj (zásuvka) ——— */
+.g2-search {
+  display: flex; align-items: center; gap: 10px; min-height: 50px; margin: 0 0 12px; padding: 0 14px;
+  border-radius: 16px; background: var(--v5-surface); color: var(--v5-muted); box-shadow: inset 0 0 0 1.5px var(--v5-line);
+}
+.g2-search:focus-within { box-shadow: inset 0 0 0 2px var(--v5-brand-dark); }
+.g2-search input { flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--v5-ink); font: 600 15px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif; }
+.g2-az-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 8px; }
+.g2-az-head small { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); }
+.g2-legend { display: flex; gap: 10px; font-size: 12px; font-weight: 600; color: var(--v5-muted); }
+.g2-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.g2-az { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
+.g2-az button {
+  display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 14px;
+  background: var(--v5-surface-soft); color: var(--v5-ink); font: 700 13px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif; text-align: left; cursor: pointer;
+}
+.g2-dot { flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.g2-dot-baby { background: var(--g2-baby); } .g2-dot-mama { background: var(--g2-mama); } .g2-dot-rod { background: var(--g2-rod); }
+.g2-hit, .g2-ask-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 54px; margin-bottom: 8px; padding: 8px 14px;
+  border: 0; border-radius: 16px; background: var(--v5-surface-soft); color: var(--v5-ink); text-align: left; cursor: pointer; font: 700 14px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif;
+}
+.g2-hit > span, .g2-ask-row > span:nth-child(2) { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.g2-hit > span { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 8px; }
+.g2-hit strong, .g2-ask-row strong { font-size: 14.5px; }
+.g2-hit small, .g2-ask-row small { flex-basis: 100%; font-size: 12.5px; font-weight: 600; color: var(--v5-muted); }
+.g2-ask-row { background: var(--v5-brand-soft); }
+.g2-ask-row .g2-ask-orb { width: 36px; height: 36px; }
+.g2-empty { margin: 8px 2px; font-size: 14px; font-weight: 600; color: var(--v5-muted); }
+
+/* ——— Okno Plán ——— */
+.g2-window {
+  position: fixed; inset: 0; z-index: 110; display: flex; flex-direction: column;
+  background: var(--v5-bg); transform: translateX(100%); visibility: hidden; transition: transform .26s cubic-bezier(.2, .8, .2, 1), visibility .26s;
+}
+.g2-window.open { transform: none; visibility: visible; }
+.g2-window-head {
+  display: flex; align-items: center; gap: 12px; padding: calc(14px + env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 10px max(18px, env(safe-area-inset-left));
+}
+.g2-window-head h2 { margin: 0; font-size: 22px; font-weight: 800; color: var(--v5-ink); }
+.g2-window-head p { margin: 2px 0 0; font-size: 13px; font-weight: 600; color: var(--v5-muted); }
+.g2-window-body { flex: 1 1 auto; overflow-y: auto; padding: 6px max(18px, env(safe-area-inset-right)) calc(130px + env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 14px; }
+.g2-lead { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--v5-muted); }
+.g2-window-body .v2-journey { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) { .g2-window, .g2-short, .g2-seg { transition: none !important; } }
+
+/* ——— Tvoj týždeň (variant A): štylizovaná ilustrácia + ovocie ——— */
+.g2-size-visual { position: relative; width: 200px; height: 200px; margin: 6px auto 4px; }
+.g2-baby { width: 100%; height: 100%; display: block; }
+.g2-baby-body { transform-origin: 90px 92px; transform-box: view-box; animation: g2-breathe 4.5s ease-in-out infinite; }
+@keyframes g2-breathe { 0%, 100% { translate: 0 0; } 50% { translate: 0 -2px; } }
+.g2-size-fruit { position: absolute; right: -6px; bottom: 6px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 34px; background: var(--v5-surface); box-shadow: 0 6px 18px rgba(58, 44, 83, .12); }
+.g2-hide-art { display: flex !important; width: 100%; justify-content: center; margin: 4px 0 0 !important; color: var(--v5-muted) !important; font-weight: 700 !important; }
+@media (prefers-reduced-motion: reduce) { .g2-baby-body { animation: none; } }
+
+/* Samuel 13. 11.: bez pilulky na lište – lišta má bežnú výšku; lupa v hlavičke mimo domova. */
+body.v5-active #v5BottomBar.v2-bottom-bar.g2-bar { padding-top: 10px !important; }
+#v5Header[data-home='true'] .g2-head-search { display: none; }
+.g2-head-search svg { stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== Dizajnový systém Master v1 (docs/master/GUGUBOO_DESIGN_SYSTEM.md) – schválil Product Lead 13. 11. ===== */
+body.v5-active {
+  --g2-font: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  --v5-muted: #635d70;
+  --g2-line-strong: #8e84bb; --g2-brand-strong: #6a5bbf;
+  --g2-sh-1: 0 6px 18px rgba(58, 44, 83, .06); --g2-sh-2: 0 10px 28px rgba(58, 44, 83, .08);
+  --g2-dur-s: 150ms; --g2-dur-m: 240ms; --g2-ease: cubic-bezier(.2, .8, .2, 1);
+}
+body.v5-active.night {
+  --v5-muted: #c2bdd0; --g2-line-strong: #7d74a3;
+  --g2-sh-1: 0 6px 18px rgba(0, 0, 0, .30); --g2-sh-2: 0 10px 28px rgba(0, 0, 0, .35);
+}
+.g2-ask, .g2-short, .g2-btn, .g2-link, .g2-az button, .g2-hit, .g2-ask-row, .g2-ring-center, .g2-hide-art, .g2-head-search {
+  transition: transform var(--g2-dur-s) var(--g2-ease);
+}
+:is(.g2-ask, .g2-short, .g2-btn, .g2-link, .g2-az button, .g2-hit, .g2-ask-row, .g2-ring-center, .g2-hide-art, .g2-head-search):focus-visible {
+  outline: 3px solid var(--v5-brand-dark); outline-offset: 2px;
+}
+:is(.g2-btn, .g2-az button, .g2-hit, .g2-ask, .g2-short):active { transform: scale(.98); }
+.g2-ring-card .g2-seg:focus-visible { stroke: var(--v5-brand-dark); stroke-width: 4; filter: none; outline: none; }
+.g2-ring-card .v2-o-label text { font: 700 19px/1 var(--g2-font) !important; letter-spacing: .04em; }
+.g2-ring-card .v2-o-label-1 text { fill: #8a3556 !important; }
+.g2-ring-card .v2-o-label-2 text { fill: #7a4416 !important; }
+.g2-ring-card .v2-o-label-3 text { fill: #2f4590 !important; }
+body.night .g2-ring-card .v2-o-label text { fill: #29243a !important; }
+body.night .g2-ring-card .g2-seg-glow { filter: drop-shadow(0 0 8px rgba(255, 214, 120, .35)); }
+.g2-ring-center small { font-size: 12px; max-width: 80px; }
+.g2-btn-primary, .g2-ask-orb { background: var(--g2-brand-strong); }
+#v5BottomBar.g2-bar .v5-bottom-action[aria-current="page"] { font-weight: 800; }
+#v5BottomBar.g2-bar .v5-bottom-action[aria-current="page"]::before { width: 20px; height: 4px; margin-left: -10px; }
+.g2-short strong { font-size: 15px; }
+.g2-short small, .g2-hit small, .g2-ask-row small { font-size: 13px; }
+.g2-short-ic { width: 44px; height: 44px; }
+.g2-short-ic svg { width: 22px; height: 22px; }
+.g2-today p { font-size: 14px; line-height: 1.5; }
+.g2-hit strong, .g2-ask-row strong, .g2-btn { font-size: 15px; }
+.g2-hero-text h1, .g2-hero-text h2 { margin: 0; font: 800 26px/31px var(--g2-font); letter-spacing: -.01em; color: var(--v5-ink); }
+.g2-ask { border-radius: 20px; }
+.g2-today { border-radius: 20px; }
+.g2-btn, .g2-az button { border-radius: 16px; }
+.g2-short, .g2-today, .g2-ask { box-shadow: inset 0 0 0 1px var(--v5-line), var(--g2-sh-1); }
+.g2-hero { box-shadow: inset 0 0 0 1px var(--v5-line), var(--g2-sh-2); }
+.g2-window { transition: transform var(--g2-dur-m) var(--g2-ease), visibility var(--g2-dur-m); }
+.g2-size-fruit { box-shadow: var(--g2-sh-1); }
+body.night .g2-size-fruit { background: var(--v5-surface-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .g2-btn, .g2-ask, .g2-hit, .g2-az button, .g2-seg-fill, .g2-short { transition: none !important; transform: none !important; }
+}
+html body.v5-active { --v5-muted: #635d70; }
+html body.v5-active.night { --v5-muted: #c2bdd0; }
+
+/* Master: okná aplikácií nad lištou – lišta ostáva viditeľná a ťukateľná (stabilná navigácia). */
+body.v5-active.g2-window-with-bar #v5BottomBar { z-index: 180; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+body.v5-active.g2-window-with-bar.v5-app-window-open .view.active { bottom: calc(86px + env(safe-area-inset-bottom)) !important; }
+body.v5-active.g2-window-with-bar .v5-universal-window-head { grid-template-columns: 67px minmax(0, 1fr) 46px 46px !important; }
+.g2-win-search svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Nezávislé QA 13. 11.: Plán nad oknami sekcií (pod lištou), nočný kontrast stredu kruhu, zdieľanie bez servera skryté. */
+.g2-window { z-index: 176 !important; }
+body.night .g2-ring-center, body.night .g2-ring-center strong, body.night .g2-ring-center small { color: #29243a !important; }
+body.v5-active .v5-calendar-share { display: none !important; }
+.g2-plan-areas-list { display: flex; flex-direction: column; gap: 8px; }
+/* Detail úradu: lišta ostáva viditeľná pod oknom */
+body.v5-active #v2AdminOverlay { z-index: 177; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+/* QA-41: okno Úradov sa celé zmestí nad lištu (nič sa neodreže hore) */
+body.v5-active #v2AdminOverlay .v2-birth-sheet { max-height: calc(100dvh - 98px - env(safe-area-inset-bottom)); }
+/* Tvoj mesiac */
+.g2-month-kicker { display: block; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); margin-bottom: 4px; }
+.g2-month-nav { display: flex; justify-content: space-between; gap: 10px; }
+.g2-month-nav .g2-btn { flex: 0 1 auto; padding: 0 16px; }
+.g2-month-doctor { background: var(--v5-surface-soft) !important; }
+#g2MonthOverlay .v2-week-strip b { font-size: 14px; }
+/* QA-31: lišta vždy nad oknami Plán a Tvoj mesiac; okná končia nad lištou */
+body.v5-active #v5BottomBar.g2-bar { z-index: 180; }
+.g2-window { bottom: 0; }
+.g2-window-body { padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important; }
+.g2-window-head .g2-win-search { margin-left: auto; }
+/* QA: stred kruhu – tmavý text na svetlom stredovom tlačidle (deň aj noc) */
+.g2-ring-center, .g2-ring-center strong, .g2-ring-center small { color: #29243a !important; }
+.g2-ring-center { background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.7), transparent 40%), linear-gradient(145deg, #ece6fb, #d9cff3) !important; }
+body.v5-active.night .g2-ring-center { background: #ece6fb !important; }
+body.v5-active.night .g2-ring-center small { opacity: 1 !important; color: #3d3650 !important; }
+
+/* ——— Master 1.0: zásuvka „Hľadaj alebo sa opýtaj“ ———
+   Pevná hlavička (nadpis, pole, návrhy), posúva sa len zoznam. Skupiny = výrazné farebné tlačidlá s ikonou, nie bodky.
+   Farby skupín: Bábätko modrá · Mama ružová · Rodina zelená (odlíšiteľné aj pri farbosleposti vďaka nadpisu a ikone). */
+#v5Drawer.g2-drawer { max-height: min(88dvh, 820px); padding-bottom: 0; }
+#v5Drawer.g2-drawer .v5-drawer-handle { flex-basis: 22px; }
+#v5Drawer.g2-drawer .v5-drawer-head { padding-bottom: 6px; min-height: 44px; }
+#v5Drawer.g2-drawer .v5-drawer-head h2 { font-size: 19px; }
+#v5Drawer.g2-drawer .v5-drawer-head p { display: none; }
+#g2DrawerFixed { flex: 0 0 auto; padding: 0 1px 8px; position: relative; z-index: 1; transition: box-shadow .2s; }
+#v5Drawer.g2-scrolled #g2DrawerFixed { box-shadow: 0 8px 10px -10px rgba(30, 20, 60, .45); }
+#v5Drawer.g2-drawer .g2-search { min-height: 52px; margin: 0; }
+#v5Drawer.g2-drawer .g2-search input { font-size: 16px; } /* 16 px – iOS pri písaní nezväčšuje stránku */
+.g2-chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+.g2-chips::-webkit-scrollbar { display: none; }
+.g2-chips button { flex: 0 0 auto; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--v5-surface-soft); color: var(--v5-brand-dark); font: 700 13px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; box-shadow: inset 0 0 0 1px var(--v5-line); }
+#v5Drawer.g2-drawer .v5-drawer-scroll { overflow-y: auto; padding: 4px 1px calc(20px + env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+.g2-sec { margin: 10px 0 18px; }
+.g2-sec h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 15px; font-weight: 800; }
+.g2-sec-ic { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; }
+.g2-sec-ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.g2-sec-baby h3 { color: var(--g2-baby); } .g2-sec-baby .g2-sec-ic { background: var(--g2-baby); color: var(--v5-bg); }
+.g2-sec-mama h3 { color: var(--g2-mama); } .g2-sec-mama .g2-sec-ic { background: var(--g2-mama); color: var(--v5-bg); }
+.g2-sec-rod h3 { color: var(--g2-rod); } .g2-sec-rod .g2-sec-ic { background: var(--g2-rod); color: var(--v5-bg); }
+.g2-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.g2-tile {
+  display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 10px; border: 0; border-radius: 16px; text-align: left; cursor: pointer;
+  color: var(--v5-ink); font: 700 13.5px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif;
+}
+.g2-tile > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.g2-tile-ic { flex: 0 0 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--v5-surface); }
+.g2-tile-ic svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.g2-tile.g2-baby, .g2-hit.g2-baby { background: var(--g2-baby-bg); } .g2-baby .g2-tile-ic { color: var(--g2-baby); }
+.g2-tile.g2-mama, .g2-hit.g2-mama { background: var(--g2-mama-bg); } .g2-mama .g2-tile-ic { color: var(--g2-mama); }
+.g2-tile.g2-rod, .g2-hit.g2-rod { background: var(--g2-rod-bg); } .g2-rod .g2-tile-ic { color: var(--g2-rod); }
+.g2-hit { align-items: center; gap: 12px; }
+.g2-hit .g2-hit-text { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; flex: 1 1 auto; text-align: left; }
+.g2-hit .g2-hit-text small { flex-basis: auto; }
+.g2-hit > b { color: var(--v5-muted); }
+.g2-help { margin-bottom: 8px; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--g2-mama) 35%, transparent); }
+.g2-hits-head { margin: 6px 2px 8px; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-muted); }
+.g2-drawer-foot { display: flex; gap: 8px; margin-top: 4px; }
+.g2-drawer-foot button { flex: 1 1 0; min-height: 46px; border: 0; border-radius: 14px; background: transparent; color: var(--v5-brand-dark); font: 700 13px/1.2 Montserrat, "Segoe UI", system-ui, sans-serif; box-shadow: inset 0 0 0 1px var(--v5-line); cursor: pointer; }
+:is(.g2-tile, .g2-chips button, .g2-drawer-foot button):focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
+:is(.g2-tile, .g2-chips button):active { transform: scale(.98); }
+@media (prefers-reduced-motion: reduce) { .g2-tile, .g2-chips button, #g2DrawerFixed { transition: none !important; transform: none !important; } }
+/* Domov: hľadanie + samostatné „Všetko“ (Samo 13. 11.) */
+.g2-askwrap { display: flex; gap: 8px; align-items: stretch; }
+.g2-askwrap .g2-ask { flex: 1 1 auto; min-width: 0; padding-right: 14px; }
+.g2-all {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 7px; min-height: 54px; padding: 0 16px; border: 0; border-radius: 18px; cursor: pointer;
+  background: var(--g2-brand-strong, #6a5bbf); color: #fff; font: 800 14px/1 Montserrat, "Segoe UI", system-ui, sans-serif;
+  box-shadow: 0 6px 18px rgba(58, 44, 83, .12);
+}
+.g2-all svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.g2-all:focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
+.g2-all:active { transform: scale(.98); }
+.g2-askwrap .g2-ask > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.g2-askwrap .g2-ask { padding: 0 12px; gap: 8px; }
+.g2-all { padding: 0 12px; gap: 6px; }
+
+/* ——— Domov bez posúvania (Samo 13. 11.; UX Architekt + UI Designer) ———
+   Výšku domova nastaví JS (--g2-home-h = priestor medzi hlavičkou a lištou). Kruh vyplní zvyšok.
+   Poistka: pri veľmi nízkej obrazovke (< 540 px) sa domov radšej posúva, než by sa niečo orezalo. */
+body:has(#home.view.active) main.main { padding-bottom: 0 !important; }
+body:has(#home.view.active) #home.view.active { height: var(--g2-home-h, auto); overflow: hidden; padding-top: 8px !important; box-sizing: border-box; }
+#v5Home { --g2-gap: 10px; }
+body:has(#home.view.active) #v5Home { height: 100%; display: flex; flex-direction: column; gap: var(--g2-gap) !important; }
+#v5Home > * { flex: 0 0 auto; }
+/* Hlavička na domove: jeden riadok */
+#v5Header[data-home="true"] { min-height: 0 !important; padding-top: 8px !important; padding-bottom: 4px !important; }
+#v5Header[data-home="true"] .v5-header-logo { display: none; }
+#v5Header[data-home="true"] #v5HeaderTitle { font-size: 19px !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#v5Header[data-home="true"] #v5HeaderSubtitle { font-size: 12.5px !important; }
+/* Hero: 72 px, celá textová časť je tlačidlo */
+.g2-hero { padding: 10px 14px !important; gap: 0 !important; border-radius: 20px !important; }
+.g2-hero-top { gap: 12px; }
+.g2-hero-top .v5-baby-avatar { width: 52px !important; height: 52px !important; border-radius: 16px !important; }
+.g2-hero-top .v5-baby-avatar b { font-size: 20px !important; line-height: 1 !important; }
+.g2-hero-top .v5-baby-avatar small { font-size: 9.5px !important; }
+.g2-hero-text { flex: 1 1 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; min-height: 52px; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.g2-hero-text h1 { grid-column: 1; margin: 0; font-size: 17px !important; line-height: 1.25 !important; font-weight: 800; color: var(--v5-ink); }
+.g2-hero-sub { grid-column: 1; font-size: 13px; font-weight: 600; color: var(--v5-muted); }
+.g2-hero-text p { grid-column: 1 / -1; display: none; margin: 6px 0 0 !important; font-size: 13.5px; line-height: 1.4; }
+.g2-hero-more { grid-column: 2; grid-row: 1 / span 2; font-size: 13px; font-weight: 800; color: var(--v5-brand-dark); white-space: nowrap; }
+/* Skratky: ikona + názov (popis len pri bežiacom zázname alebo na vysokej obrazovke) */
+.g2-short { min-height: 68px !important; padding: 8px 6px !important; gap: 4px !important; justify-content: center; }
+.g2-short .g2-short-ic { width: 32px !important; height: 32px !important; }
+.g2-short strong { font-size: 13px !important; line-height: 1.15; text-align: center; }
+.g2-short small { display: none; }
+.g2-short.is-running small { display: block; font-size: 11.5px; }
+/* Kruh vyplní zvyšok */
+body:has(#home.view.active) .g2-ring-card { flex: 1 1 0 !important; min-height: 150px !important; display: flex !important; flex-direction: column; padding: 10px 12px !important; overflow: hidden; }
+body:has(#home.view.active) .g2-ring-card .v5-o-layout { flex: 1 1 0; min-height: 0; container-type: size; display: flex !important; align-items: center; justify-content: center; margin: 0 !important; }
+body:has(#home.view.active) .g2-ring-card .v5-o-ring-wrap { width: min(100cqw, 100cqh, 290px) !important; }
+.g2-ring-legend { display: none; }
+.g2-ring-legend button { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 12px; background: transparent; color: var(--v5-ink); font: 700 15px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; text-align: left; }
+.g2-leg-dot { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; opacity: .75; }
+.g2-leg-dot.is-done { opacity: 1; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent), 0 0 10px rgba(0,0,0,.12); }
+.g2-leg-1 { background: #df91a8; } .g2-leg-2 { background: #e6955a; } .g2-leg-3 { background: #768fdd; }
+/* „Dnes“ ako jeden riadok */
+.g2-today-row { flex-direction: row !important; align-items: center; gap: 6px !important; min-height: 60px; padding: 6px 6px 6px 14px !important; border-radius: 18px !important; }
+.g2-today-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; min-height: 48px; justify-content: center; padding: 0; border: 0; background: transparent; color: var(--v5-ink); text-align: left; cursor: pointer; font: inherit; }
+.g2-today-main small { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--v5-brand-dark); }
+.g2-today-main strong { font-size: 14px; font-weight: 700; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g2-today-later { flex: 0 0 auto; min-width: 64px; min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--v5-muted); font: 700 13px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+.g2-today-arrow { flex: 0 0 auto; width: 32px; text-align: center; font-size: 20px; color: var(--v5-muted); }
+:is(.g2-hero-text, .g2-today-main, .g2-today-later, .g2-ring-legend button):focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; border-radius: 12px; }
+/* Moment len na vysokej obrazovke; inak je v Našich momentoch */
+.g2-home-moment { display: none; }
+.g2-home-moment:empty { display: none !important; }
+
+/* Nižšia obrazovka (< 720 px): kruh vľavo, čitateľná legenda vpravo, popisy na oblúku skryté */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2-ring-card { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(120px, auto); grid-template-rows: auto 1fr; column-gap: 10px; }
+  body:has(#home.view.active) .g2-ring-card .g2-ring-head { grid-column: 1 / -1; }
+  body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; height: 100%; }
+  body:has(#home.view.active) .g2-ring-card .v2-o-label { display: none; }
+  body:has(#home.view.active) .g2-ring-legend { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+  body:has(#home.view.active) .g2-ring-head span { display: none; }
+}
+@media (max-height: 659px) {
+  #v5Home { --g2-gap: 8px; }
+  #v5Header[data-home="true"] #v5HeaderSubtitle { display: none; }
+  .g2-short { min-height: 56px !important; flex-direction: row !important; }
+  .g2-short .g2-short-ic { width: 26px !important; height: 26px !important; }
+  .g2-hero-top .v5-baby-avatar { width: 44px !important; height: 44px !important; }
+  .g2-hero-text { min-height: 44px; }
+  .g2-today-row { min-height: 54px; }
+}
+@media (min-height: 720px) { #v5Home { --g2-gap: 14px; } }
+@media (min-height: 820px) {
+  .g2-hero-text p { display: block; }
+  .g2-short small { display: block; font-size: 11.5px; }
+  .g2-home-moment { display: block; }
+}
+@media (max-height: 539px) {
+  body:has(#home.view.active) #home.view.active { height: auto; overflow: visible; }
+  body:has(#home.view.active) main.main { padding-bottom: 150px !important; }
+  body:has(#home.view.active) .g2-ring-card { flex: 0 0 auto !important; min-height: 200px !important; }
+}
+/* Noc: legenda a riadky cez tokeny */
+body.night .g2-ring-legend button, body.night .g2-today-main { color: var(--v5-ink); }
+/* Domov: kompaktná hlavička (jeden riadok) a stred kruhu úmerný kruhu (nezakryje diely) */
+#v5Header[data-home="true"] { padding-top: 10px !important; }
+#v5Header[data-home="true"] .v5-header-brand { min-height: 0 !important; padding: 8px 14px !important; }
+body:has(#home.view.active) .g2-ring-card .g2-ring-center { width: 31% !important; min-width: 0 !important; padding: 4px !important; }
+body:has(#home.view.active) .g2-ring-card .v5-o-celebration { display: none; }
+@container (max-height: 230px) {
+  .g2-ring-center small { display: none !important; }
+  .g2-ring-center strong { font-size: 12.5px !important; }
+}
+body.v5-active #v5Header[data-home="true"] .v5-header-brand { min-height: 0 !important; padding: 9px 16px !important; }
+body.v5-active:has(#home.view.active) { padding-bottom: 0 !important; }
+body.v5-active #v5Header[data-home="true"] { padding-top: calc(10px + env(safe-area-inset-top)) !important; align-items: center !important; }
+body.v5-active #v5Header[data-home="true"] .v5-header-actions { flex-direction: row !important; align-items: center !important; gap: 6px !important; }
+body:has(#home.view.active) .g2-ring-center strong { white-space: nowrap; }
+body:has(#home.view.active) #home.view.active { overflow: hidden auto; overscroll-behavior: contain; } /* poistka: posun len ak si používateľka sama rozbalí obsah (napr. moment) */
+/* QA-64: legenda vedľa kruhu pri každej výške (popisy na oblúku boli pri malom kruhu nečitateľné) */
+body:has(#home.view.active) .g2-ring-card { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(120px, auto); grid-template-rows: auto 1fr; column-gap: 10px; }
+body:has(#home.view.active) .g2-ring-card .g2-ring-head { grid-column: 1 / -1; }
+body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; height: 100%; }
+body:has(#home.view.active) .g2-ring-card .v2-o-label { display: none; }
+body:has(#home.view.active) .g2-ring-legend { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+/* Kruh má prednosť pred momentom aj na vysokej obrazovke (QA-64/66): moment je v Našich momentoch, veta o týždni ostáva */
+@media (min-height: 820px) { .g2-home-moment { display: none !important; } }
+@media (min-height: 720px) { .g2-hero-text p { display: block; } }
+/* ——— Vývoj bábätka (Samo 13. 11., schválené): okrúhle ovocie + štylizovaná ilustrácia (baby-figure.js) ——— */
+.g2-fruit-badge { display: grid !important; place-items: center; flex: 0 0 auto; width: 52px !important; height: 52px !important; border-radius: 50% !important; background: #fff6dc !important; box-shadow: inset 0 0 0 2px #fbe9b3 !important; border: 0; padding: 0; }
+.g2-fruit-badge .g2-fruit { width: 36px; height: 36px; }
+body.night .g2-fruit-badge { background: #3a3424 !important; box-shadow: inset 0 0 0 2px #514725 !important; }
+.g2-size-visual { display: grid; place-items: center; margin: 6px auto 4px; }
+.g2-baby-fig { width: min(72vw, 280px); height: auto; }
+@media (max-height: 700px) { .g2-baby-fig { width: min(60vw, 220px); } }
+.g2-baby-breath { transform-origin: 100px 104px; animation: g2Breath 6s ease-in-out infinite; }
+@keyframes g2Breath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@media (prefers-reduced-motion: reduce) { .g2-baby-breath { animation: none; } }
+.g2-size-line { display: flex; align-items: center; gap: 12px; text-align: left; margin-top: 8px; }
+.g2-size-line h2 { margin: 0 !important; font: 700 18px/24px Montserrat, "Segoe UI", system-ui, sans-serif !important; }
+.g2-size-line p { margin: 2px 0 0 !important; font: 500 15px/21px Montserrat, "Segoe UI", system-ui, sans-serif !important; color: var(--v5-muted); }
+.g2-approx { font-weight: 600; color: var(--v5-muted); font-size: 15px; }
+.g2-size-chip { display: inline-block; margin-top: 10px; padding: 6px 14px; border-radius: 999px; background: #fdecf1; color: #8f3c5a; font: 700 15px/20px Montserrat, "Segoe UI", system-ui, sans-serif; }
+body.night .g2-size-chip { background: #3a2a3a; color: #f0b0c6; }
+.g2-dots { list-style: none; margin: 0; padding: 0; }
+.g2-dots li { position: relative; padding-left: 22px; margin: 8px 0; font: 500 16px/24px Montserrat, "Segoe UI", system-ui, sans-serif; }
+.g2-dots li::before { content: ""; position: absolute; left: 4px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #c7bdf0; }
+.g2-size-note { margin: 12px 2px 4px !important; font: 500 14px/20px Montserrat, "Segoe UI", system-ui, sans-serif !important; color: var(--v5-muted); }
+.g2-size-note .g2-hide-art { display: inline; padding: 0; min-height: 0; margin-left: 4px; }
+.v2-week-strip button > span .g2-fruit { width: 26px; height: 26px; display: block; margin: 0 auto; }
+body.v5-active .g2-hero-top .g2-fruit-badge { border-radius: 50% !important; }
+body.v5-active .v2-week-strip .is-selected :is(b, small) { color: #fff !important; }
+/* Úvod (Samo 13. 11.): potvrdzovacie tlačidlá vždy na tom istom mieste dole; nadpisy krokov zarovnané rovnako (vľavo) */
+#welcome .welcome-story-step.active { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+#welcome .welcome-story-step.active .welcome-story-actions {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 30; width: min(100%, 460px); margin: 0 !important;
+  padding: 12px max(16px, env(safe-area-inset-left)) calc(16px + env(safe-area-inset-bottom)); box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 10px;
+  background: linear-gradient(to bottom, rgba(251, 248, 247, 0), var(--v5-bg, #fbf8f7) 28%);
+}
+#welcome .welcome-story-step.active .welcome-story-actions > button { width: 100%; min-height: 52px; margin: 0 !important; }
+#welcome .welcome-story-step.active .welcome-story-actions > .primary { order: -1; }
+#welcome .welcome-story-step :is(h2, .welcome-story-lead) { text-align: left !important; }
+#welcome .welcome-friendly-field { font: 700 15px/20px Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }
+#welcome .welcome-story-step.active { transform: none !important; } /* transform by ukotvil „fixed“ tlačidlá k prvku namiesto obrazovky */
+#welcome .welcome-story-step.active .welcome-story-actions { top: auto !important; right: auto !important; position: fixed !important; bottom: 0 !important; }
+#welcome .welcome-story-step.active { animation: g2WelcomeFade .35s ease both !important; } /* bez transform – inak sa „fixed“ tlačidlá viažu na krok */
+@keyframes g2WelcomeFade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #welcome .welcome-story-step.active { animation: none !important; } }
+/* Úvod – krok „Koho spolu privítame?“ bez posúvania (Samo 13. 11.) */
+#welcome .welcome-story-step.active { padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important; }
+#welcome .welcome-story-step.active .welcome-story-actions { gap: 8px; padding-top: 10px; }
+#welcome .welcome-story-step.active .welcome-story-actions > button { min-height: 50px; }
+#welcome [data-welcome-step="5"] h2 { font-size: 24px !important; line-height: 1.2 !important; margin-bottom: 10px !important; }
+#welcome [data-welcome-step="5"] > .welcome-story-lead { display: none; }
+#welcome .welcome-baby-card { padding: 14px !important; gap: 12px !important; }
+#welcome .welcome-name-block { gap: 8px !important; }
+#welcome .welcome-friendly-field { gap: 6px !important; }
+#welcome .welcome-friendly-field :is(input, select) { min-height: 48px !important; padding-block: 0 !important; }
+#welcome .v2-choice-chips { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px !important; }
+#welcome .v2-choice-chip { min-height: 46px !important; padding: 6px 4px !important; justify-content: center !important; text-align: center; font-size: 14px !important; line-height: 1.15 !important; }
+#welcome .v2-choice-chip .v2-choice-dot { display: none !important; }
+#welcome .welcome-name-undecided { min-height: 36px; }
+/* Výber „ovocie/týždeň“ pre avatar už Master nepotrebuje (domov má odznak s ovocím) */
+#welcome #welcomeFruitAvatarChoice { display: none !important; }
+#welcome .welcome-baby-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; column-gap: 10px !important; }
+#welcome .welcome-baby-card > * { grid-column: 1 / -1; min-width: 0; }
+#welcome .welcome-baby-card > #welcomeDueBasisWrap { grid-column: 1; }
+#welcome .welcome-baby-card > #welcomeCycleWrap { grid-column: 2; align-self: end; }
+#welcome #welcomeDueResult { min-height: 0 !important; padding: 8px 12px !important; font-size: 14px !important; line-height: 1.3 !important; }
+#welcome [data-welcome-step="5"] h2 { margin-top: 0 !important; }
+#welcome .welcome-baby-card { row-gap: 10px !important; }
+#welcome [data-welcome-step="5"] h2 { margin-bottom: 6px !important; }
+#welcome .welcome-story-step.active { padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important; }
+#welcomeCard:has(.welcome-story-step.active) { padding-bottom: 0 !important; }
+/* Záver úvodu: náhľad starého domova a časová os sa v Masteri nezobrazujú (domov je iný); ostáva nadpis, veta a úprava údajov */
+#welcome .welcome-finish-step :is(.welcome-finish-preview, #welcomeFinishFirstStep) { display: none !important; }
+#welcome .welcome-story-choices { gap: 8px !important; }
+#welcome .welcome-story-choices .choice-card { min-height: 60px !important; padding-block: 10px !important; }
+/* Samo 13. 11. (snímky): menej textu, nič nepreteká */
+body:has(#home.view.active) .g2-ring-center small { display: none !important; }
+body:has(#home.view.active) .g2-ring-center strong { font-size: 14px !important; }
+.g2-hero-text p { display: none !important; }
+.g2-short small { display: none !important; }
+.g2-short.is-running small { display: block !important; }
+.g2-size-milestone { margin: 10px 0 0 !important; text-align: left; font: 500 15px/22px Montserrat, "Segoe UI", system-ui, sans-serif !important; color: var(--v5-ink); }
+.v2-size-hero { overflow: hidden; }
+.g2-size-visual svg { overflow: hidden; }
+body.v5-active .g2-hero-more { font-size: 24px !important; line-height: 1 !important; color: var(--v5-muted) !important; }
+/* Vyššia obrazovka: kruh na celú šírku, legenda pod ním v jednom riadku (žiadne prázdne miesto v karte) */
+@media (min-height: 760px) {
+  body:has(#home.view.active) .g2-ring-card { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto minmax(0, 1fr) auto !important; }
+  body:has(#home.view.active) .g2-ring-card .v5-o-layout { grid-column: 1; grid-row: 2; }
+  body:has(#home.view.active) .g2-ring-legend { grid-column: 1; grid-row: 3; flex-direction: row !important; justify-content: center; gap: 6px 14px !important; flex-wrap: wrap; }
+}
+.v2-size-hero .g2-size-visual { margin: 10px auto 6px !important; position: static !important; height: auto !important; width: auto !important; } .v2-size-hero .g2-size-visual .g2-baby-fig { display: block; position: static !important; margin: 0 auto !important; transform: none !important; }
+/* Spodná lišta ako vyťahovacie menu (Samo 13. 11.): úchyt navrchu, potiahnutie nahor alebo ťuk otvorí Všetko */
+#v5BottomBar.g2-bar { touch-action: none; padding-top: 14px !important; }
+.g2-bar-handle { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 88px; height: 22px; border: 0; padding: 0; background: transparent; cursor: pointer; display: grid; place-items: center; z-index: 3; }
+.g2-bar-handle span { width: 44px; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--v5-muted) 45%, transparent); transition: width .2s, background .2s; }
+.g2-bar-handle:hover span, .g2-bar-handle:focus-visible span { width: 56px; background: var(--v5-brand-dark); }
+.g2-bar-handle::after { content: ""; position: absolute; inset: -10px -20px -6px; } /* väčšia dotyková plocha */
+/* Oprava 13. 11.: úchyt nesmie prekryť Bábätko a Mamu – sedí NAD lištou, bez rozšírenej neviditeľnej plochy */
+#v5BottomBar.g2-bar { padding-top: 6px !important; overflow: visible !important; }
+.g2-bar-handle { top: -16px !important; width: 72px !important; height: 22px !important; border-radius: 12px 12px 0 0 !important; background: var(--v5-surface, #fff) !important; box-shadow: 0 -4px 10px rgba(58, 44, 83, .08); }
+.g2-bar-handle::after { content: none !important; }
+body.night .g2-bar-handle { background: #232838 !important; }
+.g2-askwrap .g2-ask { padding-right: 16px; }
+.g2-bar-handle { min-height: 0 !important; max-height: 22px !important; }
+/* Úchyt vnútri lišty (Samo 13. 11.: uško nad lištou pôsobilo nedokončene) – lišta vyzerá ako vyťahovací panel */
+#v5BottomBar.g2-bar { padding-top: 18px !important; }
+.g2-bar-handle { top: 0 !important; width: 120px !important; height: 18px !important; max-height: 18px !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.g2-bar-handle span { width: 40px !important; height: 4px !important; margin-top: 2px; }
+body.night .g2-bar-handle { background: transparent !important; }
+.g2-bar-handle { height: 13px !important; max-height: 13px !important; } .g2-bar-handle span { margin-top: 0 !important; }
+
+/* ===== Master 1.7 – vizuálny a textový sweep 1.6.4 (docs/master/VISUAL_SWEEP_1.6.4.md, TEXT_SWEEP_1.6.4.md) ===== */
+/* V5: pás mesiacov/týždňov sa v okne Tvoj mesiac a Plán nestlačí */
+.g2-window-body > * { flex-shrink: 0; }
+/* V6: hlavička okien – názov má viac miesta, 19 px, najviac 2 riadky */
+body.v5-active.g2-window-with-bar .v5-universal-window-head { grid-template-columns: 44px minmax(0, 1fr) 44px 44px !important; column-gap: 8px !important; }
+body.v5-active .v5-universal-window-head strong { font-size: 19px !important; line-height: 1.2 !important; }
+/* V10: Oddych / Telo / Opora – znak + neprekrýva text, čitateľné písmo */
+.v5-o-day-row { padding-bottom: 30px !important; }
+.v5-o-day-row strong { font-size: 14px !important; line-height: 1.25 !important; }
+.v5-o-day-row small { font-size: 13px !important; font-weight: 600 !important; }
+#v5OMenuSubtitle { white-space: normal; }
+#v5OMenuSubtitle:empty { display: none; }
+.v5-o-summary-copy { font-size: 14px !important; font-weight: 500 !important; }
+/* V12: Prehliadky u pediatra a knižky – pravidelný zvislý rytmus */
+.v2-visit-hint { margin: 8px 4px 4px !important; font-size: 14px !important; line-height: 1.45 !important; }
+:is(#v5ChildBookContent, #v5PregnancyBookContent) > :is(.v5-primary, .v5-secondary, .v5-empty, .v5-form-card, .v5-check-categories-button, .v2-calm-box, .v5-actions):not(:first-child) { margin-top: 12px !important; }
+/* N6: hlavička okna nepreteká o 3 px */
+body.v5-active .v5-universal-window-head { margin-left: -11px !important; margin-right: -11px !important; }
+/* V13: GuguChat – rýchle otázky a pole prilepené dole */
+.g2-chat-dock { position: sticky; bottom: 0; z-index: 2; display: grid; gap: 8px; margin: 0 -2px; padding: 8px 2px 6px; background: var(--v5-bg); }
+.g2-chat-dock .v2-chat-chips { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; }
+.v2-chat-chips button { font-size: 14px !important; }
+.v2-chat-disclaimer { font-size: 14px !important; }
+.v2-msg p + p, .v2-msg p + ul, .v2-msg ul + p { margin-top: 8px; }
+.v2-msg .g2-dots li { margin: 4px 0; font-size: 15px; line-height: 22px; }
+.v2-msg .g2-dots li::before { top: 7px; }
+.g2-msg-title strong { font-weight: 800; }
+/* S2: Nová udalosť – štítky 14 px, hodnoty 500 */
+.v5-o-compact-form label { font-size: 14px !important; font-weight: 700 !important; color: var(--v5-ink) !important; }
+.v5-o-compact-form :is(input, textarea, select) { font-weight: 500 !important; }
+/* S3: Denné záznamy – rovnaký okraj 14 px ako ostatné plávajúce okná */
+#v5QuickRecord { width: min(calc(100% - 28px), 440px) !important; }
+/* S4: Spánok – popis čitateľný, voľby zarovnané na stred */
+.v5-sleep-audio .v5-compact-head p { font-size: 14px !important; }
+#v5OMenu .v5-choice, #v5QuickRecord .v5-choice { align-items: center; text-align: center; }
+/* S5: rozcestník – obsah od vrchu, nepárna posledná karta na celú šírku */
+.v5-choice { justify-content: flex-start !important; }
+.v5-choice-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* S6: domov – ikony skratiek v jednej línii */
+.g2-short { justify-content: flex-start !important; padding-top: 10px !important; }
+/* S7: „Dnes stačí jedno“ – najviac 2 riadky namiesto orezania */
+body.v5-active .g2-today-main strong { white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* S10, S11: huby – riadok pod hlavičkou namiesto druhého nadpisu, ikony vo farbe oblasti */
+.g2-hub-sub { margin: 4px 4px 8px; font: 600 15px/22px var(--g2-font); color: var(--g2-muted, #5d5768); }
+.g2-hub-row.g2-baby .v5-icon { background: var(--g2-baby-bg) !important; color: var(--g2-baby) !important; }
+.g2-hub-row.g2-mama .v5-icon, #v5Mama .v2-book-tools .v5-icon { background: var(--g2-mama-bg) !important; color: var(--g2-mama) !important; }
+.g2-hub-row.g2-rod .v5-icon, .v5-moments-hub .v5-icon { background: var(--g2-rod-bg) !important; color: var(--g2-rod) !important; }
+.v2-mama-hero p { color: var(--g2-muted) !important; }
+/* S12: Tvoj týždeň – jednotné písmo a bodky v kartách */
+.v2-size-dev > p, .v2-size-dev .g2-more p { font: 500 16px/24px var(--g2-font) !important; }
+.v2-size-dev > p { padding-left: 22px !important; }
+.v2-size-dev > p::before { top: 9px !important; left: 4px !important; width: 9px !important; height: 9px !important; background: #c7bdf0 !important; }
+.g2-more { margin: 4px 0 0; }
+.g2-more summary { display: inline-flex; align-items: center; min-height: 44px; color: var(--v5-brand-dark); font: 700 15px/1 var(--g2-font); cursor: pointer; }
+.g2-more p { margin: 0 0 6px; color: var(--v5-ink); }
+.g2-small { margin: 6px 0 0; font-size: 14px; color: var(--v5-muted); }
+/* S13: Tehotenská knižka – štítky min. 13 px */
+.v2-book-facts span { font-size: 13px !important; font-weight: 700 !important; }
+.v2-book-group { font-size: 13px !important; }
+/* S14, S15: Keď sa bábätko trápi – upozornenie čitateľné; prvý nadpis okna nie je nalepený na hlavičku */
+.v5-care-disclaimer { margin: 12px 4px 0 !important; font-size: 14px !important; line-height: 1.45 !important; }
+body.v5-app-window-open .view.active .v5-flow-head { margin-top: 12px !important; }
+/* S16: Kontakty – formulár oddelený od prázdneho stavu, hlavná akcia na celú šírku */
+.v5-empty + .v5-form-card { margin-top: 12px; }
+#v5UtilityContent .v5-actions .v5-primary { width: 100%; }
+/* S17: odkaz späť v knižkách vždy vľavo */
+body.v5-active .v5-check-categories-button { justify-self: start; align-self: flex-start; margin-left: 0 !important; margin-right: auto !important; text-align: left; }
+/* S18: hlavné tlačidlo cez deň – plná fialová s bielym textom (7 : 1), aj v úvode */
+body.v5-active:not(.night) .v5-primary:not([disabled]), #welcome .welcome-story-actions .primary { background: #5f4fb1 !important; background-image: none !important; color: #fff !important; }
+/* S21: hľadanie – text riadku GuguChatu zarovnaný s ostatnými výsledkami */
+.g2-ask-row > span:nth-child(2) { flex: 1 1 auto; }
+/* S22: chyba v úvode pod poľami */
+#welcome .g2-field-error { margin: 12px 2px 0; color: #9b3b4b; font: 600 14px/20px var(--g2-font, Montserrat, sans-serif); }
+/* S23: úvod – jednotné nadpisy krokov, voľby zarovnané na stred, vlastné zaškrtávacie políčko */
+#welcome .welcome-story-step h2 { font-size: 24px !important; line-height: 30px !important; }
+#welcome .choice-card { align-items: center !important; }
+#welcome input[type="checkbox"] { appearance: none; -webkit-appearance: none; flex: 0 0 22px; width: 22px !important; height: 22px !important; min-width: 22px !important; min-height: 22px !important; max-height: 22px; padding: 0 !important; margin: 0; border: 2px solid #8e84bb !important; border-radius: 6px !important; background: #fff; display: inline-grid; place-items: center; cursor: pointer; align-self: center; }
+#welcome .v2-choice-chip { white-space: nowrap; font-size: 13px !important; padding-inline: 2px !important; }
+#welcome input[type="checkbox"]:checked { background: #5f4fb1; border-color: #5f4fb1; }
+#welcome input[type="checkbox"]:checked::after { content: ""; width: 6px; height: 11px; margin-top: -2px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+#welcome input[type="checkbox"]:focus-visible { outline: 2px solid #5f4fb1; outline-offset: 2px; }
+/* S24: odkaz na úpravu údajov zarovnaný s nadpisom */
+#welcome .welcome-finish-edit { align-self: flex-start; text-align: left; margin-left: 0 !important; }
+/* S25: Plán – jeden štýl štítkov sekcií, rovnaké šípky */
+.v2-journey-soon h3, .g2-plan-areas-head { display: block; margin: 0 2px 6px; font: var(--g2-t-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--g2-brand-ink) !important; }
+#g2PlanOverlay :is(.v5-row-arrow, b[aria-hidden="true"]) { font-size: 20px; }
+/* S26: Nastavenia a profil – karty 2 × 2, nič nepreteká */
+.v5-profile-tabs { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible !important; }
+.v5-profile-tabs button { white-space: normal !important; min-height: 44px; }
+/* S28: Naše momenty – rovnaké biele riadky, farba len v ikone */
+.v5-moments-hub > button { background: var(--v5-surface) !important; }
+/* S29: Kalendár – popis 14 px */
+article.v2-cal-item small { font-size: 14px !important; }
+/* V8: návrat z detailu úradu na zoznam */
+.g2-admin-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 4px; padding: 0 4px; border: 0; background: transparent; color: var(--v5-brand-dark); font: 700 15px/1 var(--g2-font); cursor: pointer; }
+.g2-admin-back span { font-size: 22px; }
+/* N9 / N2: hlavička domova bez ružovej škvrny */
+#v5Header .v5-header-brand::after { display: none !important; }
+
+/* ===== Master 1.8 – jeden spoločný systém okien (g2-windows.js) ===== */
+/* Pozadie sa pod otvoreným oknom neposúva; obsah okna sa posúva vnútri a „neprepadne“ na pozadie. */
+html.g2-layer-open, html.g2-layer-open body { overflow: hidden !important; }
+:is(.g2-window-body, #v2AdminBody, #v5OMenu, #v5QuickRecord, .v5-drawer-scroll), body.v5-active.v5-app-window-open .view.active { overscroll-behavior: contain; }
+/* Jedna hlavička: späť vľavo · názov · (lupa) · × vpravo, tlačidlá 44 × 44 */
+.g2-window-head { gap: 8px !important; }
+.g2-window-head > div { flex: 1 1 auto; min-width: 0; }
+.g2-window-head h2 { font-size: 19px !important; line-height: 1.2 !important; outline: none; }
+.g2-window-head .g2-win-search { margin-left: 0 !important; }
+.g2-window-head .v5-icon-button { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 50%; font-size: 22px; }
+:is(.g2-window-head, .v5-universal-window-head) :is(h2, strong)[tabindex="-1"]:focus { outline: none; }
+/* Úrady a doklady ako celostránkové okno (rovnako ako Plán): nad lištou, hlavička stojí, posúva sa obsah */
+body.v5-active #v2AdminOverlay { align-items: stretch; background: var(--v5-bg); -webkit-backdrop-filter: none; backdrop-filter: none; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+body.v5-active #v2AdminOverlay .v2-admin-sheet { display: flex; flex-direction: column; width: 100%; max-width: none; height: 100%; max-height: none !important; padding: 0; overflow: hidden; border-radius: 0; background: var(--v5-bg); box-shadow: none; animation: none; }
+body.v5-active #v2AdminOverlay .v2-birth-close { display: none; }
+body.v5-active #v2AdminOverlay .g2-admin-head { flex: 0 0 auto; }
+body.v5-active #v2AdminBody { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 6px max(18px, env(safe-area-inset-right)) 24px max(18px, env(safe-area-inset-left)); }
+body.v5-active #v2AdminBody .v2-admin-head h2 { font-size: 22px; }
+/* Upozornenie na rozpísané údaje */
+.g2-confirm { position: fixed; inset: 0; z-index: 420; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(41, 36, 58, .38); }
+.g2-confirm.open { display: flex; }
+.g2-confirm-card { width: min(100%, 360px); padding: 22px 20px 18px; border-radius: 24px; background: var(--v5-surface, #fff); color: var(--v5-ink); box-shadow: 0 26px 80px rgba(25, 20, 38, .28); }
+.g2-confirm-card h2 { margin: 0 0 6px; font: 800 19px/1.25 var(--g2-font, Montserrat, sans-serif); }
+.g2-confirm-card p { margin: 0 0 16px; font: 500 16px/1.45 var(--g2-font, Montserrat, sans-serif); color: var(--v5-muted); }
+.g2-confirm-actions { display: grid; gap: 8px; }
+.g2-confirm-actions button { width: 100%; min-height: 48px; }
+/* QA 1.9 S7: pokojná pomoc v hľadaní pri krízových vetách */
+.g2-crisis { padding: 16px; border-radius: 18px; background: var(--v5-surface); box-shadow: inset 0 0 0 1px var(--v5-line); }
+.g2-crisis p { margin: 0 0 10px; font: 500 16px/24px Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }
+.g2-crisis-calls { display: grid; gap: 8px; margin-top: 6px; }
+.g2-crisis-calls a { display: grid; place-items: center; min-height: 48px; border-radius: 14px; text-decoration: none; font: 700 16px/1 Montserrat, "Segoe UI", system-ui, sans-serif; }
+/* QA 1.9 S5: pri veľmi nízkej obrazovke (568 px) sa legenda kruhu nesmie orezať */
+@media (max-height: 600px) {
+  body:has(#home.view.active) .g2-ring-card { padding: 6px 10px !important; }
+  body:has(#home.view.active) .g2-ring-card .g2-ring-head { padding-bottom: 0 !important; }
+  body:has(#home.view.active) .g2-ring-legend { gap: 0 !important; }
+  body:has(#home.view.active) .g2-ring-legend button { min-height: 36px !important; font-size: 15px !important; }
+}
+/* QA 1.9 S4: na domove pás bežiaceho spánku/kŕmenia neprekrýva obsah – stav ukazuje skratka Denné záznamy („spí od …“); inde pás ostáva */
+body:has(#home.view.active) #v5PersistentTimers { display: none !important; }
+@media (max-height: 600px) { #v5Home { --g2-gap: 6px !important; } .g2-short.is-running small { font-size: 12.5px !important; line-height: 15px !important; } }
+/* Samo 15. 11.: skratky – ikony v jednej línii a obsah opticky v strede (názov má vždy miesto na 2 riadky) */
+.g2-short { justify-content: center !important; padding: 8px 6px !important; }
+.g2-short strong { min-height: 2.5em; display: flex !important; align-items: center; justify-content: center; }
+
+/* ——— Master 2.1: kruh = rýchle ovládanie, stred = živý ukazovateľ (Samo 15. 11.) ——— */
+.g2q-card .g2q-center { gap: 1px; }
+.g2q-card .g2q-center small { font-size: 11.5px; font-weight: 600; max-width: 84px; line-height: 1.15; }
+.g2q-card .g2q-center strong { font-size: 14px; line-height: 1.15; max-width: 84px; }
+.g2q-card .g2q-center .g2q-time { font: 800 22px/1.05 var(--g2-font, Montserrat, sans-serif); font-variant-numeric: tabular-nums; color: #29243a; letter-spacing: -.01em; }
+.g2q-card .g2q-center .g2q-stop { margin-top: 3px; padding: 4px 9px; border-radius: 999px; background: #5f4fb1; color: #fff !important; font: 700 11.5px/1.1 var(--g2-font, Montserrat, sans-serif); white-space: nowrap; }
+.g2q-card .g2q-center .g2q-link { margin-top: 2px; font: 700 11.5px/1.1 var(--g2-font, Montserrat, sans-serif); color: #4a3d99 !important; text-decoration: underline; text-underline-offset: 2px; }
+.g2q-card .g2q-center.is-running { box-shadow: 0 0 0 3px rgba(95, 79, 177, .35), 0 6px 18px rgba(95, 79, 177, .25) !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .g2q-card .g2q-center.is-running { animation: g2qPulse 2.4s ease-in-out infinite; }
+  @keyframes g2qPulse { 50% { box-shadow: 0 0 0 7px rgba(95, 79, 177, .12), 0 6px 18px rgba(95, 79, 177, .25); } }
+}
+.g2q-list { list-style: none; margin: 0; padding: 0; }
+.g2q-list li { display: flex; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--v5-line); }
+.g2q-list li:last-child { border-bottom: 0; }
+.g2q-list time { min-width: 46px; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* Čas pre teba – karta navrchu Mamy */
+.g2q-me { margin: 0 0 14px; padding: 12px; border-radius: 22px; background: var(--v5-surface); box-shadow: inset 0 0 0 1px var(--v5-line); }
+.g2q-me-head { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 2px 4px 8px; border: 0; background: transparent; color: var(--v5-ink); text-align: left; cursor: pointer; }
+.g2q-me-head strong { display: block; font: 800 17px/1.2 var(--g2-font, Montserrat, sans-serif); }
+.g2q-me-head small { display: block; margin-top: 2px; font: 500 14px/1.3 var(--g2-font, Montserrat, sans-serif); color: var(--v5-muted); }
+.g2q-me-head b { font-size: 22px; color: var(--v5-muted); }
+.g2q-me-parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.g2q-me .g2r-part { min-height: 56px; }
+.g2q-me :focus-visible { outline: 3px solid var(--v5-brand-dark); outline-offset: 2px; }
+/* Master 2.1: rýchly kruh – popisy priamo na kruhu (ako prototyp), bez legendy, kruh čo najväčší, stred čitateľný */
+body:has(#home.view.active) .g2q-card.g2-ring-card { display: flex !important; flex-direction: column; align-items: center; justify-content: center; padding: 8px !important; }
+body:has(#home.view.active) .g2q-card .v5-o-layout { flex: 1 1 auto; min-height: 0 !important; width: 100%; height: 100% !important; display: flex !important; align-items: center; justify-content: center; }
+body:has(#home.view.active) .g2q-card .v5-o-ring-wrap { height: 100% !important; max-height: 330px; width: auto !important; max-width: 100% !important; aspect-ratio: 1 / 1; margin: 0 auto !important; }
+body:has(#home.view.active) .g2q-card .v2-o-label { display: block !important; }
+body:has(#home.view.active) .g2q-card .v2-o-label text { font-size: 22px !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-legend { display: none !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center { width: 33% !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center small { display: block !important; }
+body:has(#home.view.active) .g2q-card .g2-ring-center strong { white-space: normal; font-size: 13px !important; }
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2q-card .g2-ring-center { width: 42% !important; padding: 2px !important; }
+  body:has(#home.view.active) .g2q-card .g2-ring-center small { font-size: 10.5px; }
+  body:has(#home.view.active) .g2q-card .g2q-center.is-running small { display: none !important; }
+  body:has(#home.view.active) .g2q-card .g2q-center .g2q-time { font-size: 19px; }
+  body:has(#home.view.active) .g2q-card .g2q-center .g2q-stop { padding: 3px 7px; font-size: 10.5px; }
+  body:has(#home.view.active) .g2q-card .g2-ring-center strong { font-size: 12px !important; }
+  body:has(#home.view.active) .g2q-card .v2-o-label text { font-size: 27px !important; }
+}
+/* ——— Master 2.2 (UI: KRUH_STRED_UI.md): farba stredu ukazuje, komu patrí obsah ——— */
+/* Nič nebeží: biely stred s tenkou linkou – nevyzerá ako štvrtý diel */
+body.v5-active .g2q-card .g2q-center:not(.is-running) { background: #fff !important; box-shadow: inset 0 0 0 1.5px #e4ddf3 !important; }
+body.v5-active .g2q-card .g2q-center:not(.is-running) strong { color: #29243a !important; }
+/* Beží časovač: odtieň a ikona dielu, bez fialového svetla */
+body.v5-active .g2q-card .g2q-center.is-running { animation: none !important; box-shadow: inset 0 0 0 2px rgba(41, 36, 58, .10) !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-1 { background: #fbe3ea !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-2 { background: #fde9d6 !important; }
+body.v5-active .g2q-card .g2q-center.g2q-run-3 { background: #e3eafb !important; }
+.g2q-card .g2q-ic svg { width: 18px; height: 18px; display: block; color: #29243a; }
+@media (prefers-reduced-motion: no-preference) { .g2q-card .g2-seg-glow { animation: g2qBreath 4s ease-in-out infinite; } @keyframes g2qBreath { 50% { filter: brightness(1.06) drop-shadow(0 0 6px rgba(255,255,255,.6)); } } }
+/* Popisy dielov – kontrast ≥ 4,5 : 1 aj na sýtom diele */
+body.v5-active .g2q-card .v2-o-label-1 text { fill: #6a2240 !important; }
+body.v5-active .g2q-card .v2-o-label-2 text { fill: #5a2f0c !important; }
+body.v5-active .g2q-card .v2-o-label-3 text { fill: #1f2d66 !important; }
+/* Noc: stred tmavý, text svetlý */
+body.v5-active.night .g2q-card .g2q-center:not(.is-running) { background: #2b2540 !important; box-shadow: inset 0 0 0 1.5px #4a4166 !important; }
+body.v5-active.night .g2q-card .g2q-center:not(.is-running) :is(strong, small, .g2q-link) { color: #f1edff !important; }
+/* Uložené · Vrátiť */
+.g2q-toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 260; display: flex; align-items: center; gap: 14px; max-width: calc(100% - 32px); padding: 10px 10px 10px 18px; border-radius: 18px; background: #29243a; color: #fff; font: 600 15px/1.3 Montserrat, "Segoe UI", system-ui, sans-serif; box-shadow: 0 12px 30px rgba(25, 20, 38, .3); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.g2q-toast.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.g2q-toast button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: #fff; color: #4a3d99; font: 700 15px/1 Montserrat, "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+/* Bruško */
+.g2q-bump { display: block; width: 100%; max-height: 46vh; object-fit: cover; border-radius: 18px; margin-bottom: 10px; }
+.g2q-file { position: relative; cursor: pointer; }
+.g2q-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+/* Malý telefón: stred bez druhého riadku, ikona nesie význam */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2q-card .g2q-center.is-running small { display: none !important; }
+  body:has(#home.view.active) .g2q-card .g2q-ic svg { width: 15px; height: 15px; }
+  body:has(#home.view.active) .g2-short { min-height: 48px !important; }
+  body:has(#home.view.active) .g2-short .g2-short-ic { display: none !important; }
+}
+.g2r-pill.g2q-last { box-shadow: inset 0 0 0 2px #5f4fb1; }
+/* Master 2.3 (Samo 15. 11., A): Bábätko, Mama, Rodina sú záložky – bez šípky späť a krížika (majú ich len okná otvorené z nich) */
+body.g2-tab-root:not(.g2-tab-sub) .view.active > .v5-universal-window-head :is([data-v5-window-back], [data-v5-window-cancel]) { display: none !important; }
+body.g2-tab-root:not(.g2-tab-sub) .view.active > .v5-universal-window-head { grid-template-columns: minmax(0, 1fr) auto !important; padding-left: 20px !important; }
+/* Master 2.5: „naposledy“ pod názvom dielu – ≥ 11 px na obrazovke (veľkosť počíta JS), farba menovky (kontrast > 7 : 1) */
+body:has(#home.view.active) .g2q-card .v2-o-label text.g2q-sub { font: 600 var(--g2q-sub, 18px)/1 var(--g2-font, Montserrat, sans-serif) !important; letter-spacing: 0; }
+.g2q-preview { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; background: var(--v5-surface-soft); white-space: pre-wrap; font: 500 15px/1.5 Montserrat, "Segoe UI", system-ui, sans-serif; color: var(--v5-ink); }

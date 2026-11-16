@@ -1,8 +1,9 @@
 (function initPrivateSpace() {
   "use strict";
 
-  const STORAGE_KEY = "guguboo-private-space-v1";
-  const AUTH_STORAGE_KEY = "guguboo-private-space-auth-v1";
+  // V2: vlastné kľúče (V1 na rovnakej doméne používa guguboo-private-space-v1).
+  const STORAGE_KEY = "guguboo-m-private-space";
+  const AUTH_STORAGE_KEY = "guguboo-m-private-space-auth";
   const SCHEMA_VERSION = 1;
   const PBKDF2_ITERATIONS = 310000;
   const INACTIVITY_MS = 2 * 60 * 1000;
@@ -13,13 +14,16 @@
   if (!root || !view) return;
   if (!window.crypto?.subtle) {
     const secureUrl = "https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash;
-    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvorte aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
+    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvor aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
     return;
   }
 
+  // Beta V2: rovnako ako hlavný stav len na čas otvorenej karty (sessionStorage).
+  // Master 2.6: zašifrovaný denník sa ukladá natrvalo v telefóne ako hlavný stav (odomknutie ostáva len na čas karty).
+  const betaStorage = window.localStorage;
   const privateStore = {
     read() {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = betaStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       try {
         const record = JSON.parse(raw);
@@ -28,8 +32,8 @@
         return null;
       }
     },
-    write(record) { localStorage.setItem(STORAGE_KEY, JSON.stringify(record)); },
-    clear() { localStorage.removeItem(STORAGE_KEY); }
+    write(record) { betaStorage.setItem(STORAGE_KEY, JSON.stringify(record)); },
+    clear() { betaStorage.removeItem(STORAGE_KEY); }
   };
 
   let privateData = null;
@@ -53,7 +57,8 @@
   const randomBytes = length => crypto.getRandomValues(new Uint8Array(length));
   const createId = () => crypto.randomUUID ? crypto.randomUUID() : bytesToBase64(randomBytes(18)).replace(/[+/=]/g, "");
   const isActive = () => view.classList.contains("active");
-  const isPostpartum = () => typeof state !== "undefined" && state.profile?.status === "born";
+  // Môj priestor je pre mamu v tehotenstve aj po pôrode (predtým sa v tehotenstve hneď zavrel).
+  const isPostpartum = () => typeof state !== "undefined" && ["born", "expecting"].includes(state.profile?.status);
   const formatDate = value => new Intl.DateTimeFormat("sk-SK", {
     dateStyle: "medium", timeStyle: "short"
   }).format(new Date(value));
@@ -143,11 +148,11 @@
 
   function renderSetup() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Nastavte si prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Nastav si prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-setup novalidate>
-        ${pinInput("privatePinNew", "Zadajte presne štyri číslice", "new-password")}
-        ${pinInput("privatePinConfirm", "Zopakujte prístupový kód", "new-password")}
-        <p class="private-security-note">Zápisy budú na tomto zariadení šifrované a chránené vaším PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
+        ${pinInput("privatePinNew", "Zadaj presne štyri číslice", "new-password")}
+        ${pinInput("privatePinConfirm", "Zopakuj prístupový kód", "new-password")}
+        <p class="private-security-note">Zápisy budú na tomto zariadení šifrované a chránené tvojím PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
         <button class="private-primary" type="submit">Nastaviť a pokračovať</button>
       </form>
@@ -157,7 +162,7 @@
 
   function renderLocked() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj priestor</h1><p>Zadajte svoj prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-unlock novalidate>
         ${pinInput("privatePinUnlock", "Prístupový kód", "current-password")}
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
@@ -173,25 +178,88 @@
     ["very-low", "😞", "Veľmi ťažko"], ["low", "🙁", "Skôr ťažko"],
     ["neutral", "😐", "Neutrálne"], ["good", "🙂", "Celkom dobre"], ["very-good", "😊", "Veľmi dobre"]
   ];
-  const types = ["Myšlienka", "Otázka", "Potrebujem"];
+  // Typy zápisov. „List“ = list pre bábätko (zobrazuje sa s jeho menom), „Nálada“ = rýchly zápis jedným ťuknutím.
+  const LETTER = "List";
+  const MOOD_ONLY = "Nálada";
+  const types = ["Myšlienka", "Vďaka", "Potrebujem", LETTER];
+  const babyName = () => (typeof state !== "undefined" && state.profile?.name) || "bábätko";
+  // „pre“ + akuzatív: Oliver → Olivera, Ema → Emu, Marko → Marka (jednoduché pravidlo, pri iných tvaroch ostane meno).
+  const babyNameAcc = () => {
+    const name = babyName();
+    if (name === "bábätko") return name;
+    if (/a$/i.test(name)) return name.slice(0, -1) + "u";
+    if (/o$/i.test(name)) return name.slice(0, -1) + "a";
+    if (/[bcčdďfghjklľmnňprsštťvzž]$/i.test(name)) return name + "a";
+    return name;
+  };
+  const typeLabel = type => type === LETTER ? "List pre " + babyNameAcc() : type;
+  const localDayKey = value => { const date = value ? new Date(value) : new Date(); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+
+  // Otázka na dnes – krátka, podľa obdobia; každý deň iná, dá sa vymeniť. Nehodnotí, len pozýva.
+  const PROMPTS = {
+    expecting: [
+      "Na čo sa najviac tešíš, keď bude bábätko na svete?",
+      "Čo ti dnes urobilo radosť?",
+      "Čo cítiš, keď sa bábätko pohne?",
+      "Čo by si chcela bábätku raz povedať o tomto období?",
+      "Čo ťa dnes trochu znepokojilo – a čo by ti pomohlo?",
+      "Za čo si dnes na sebe vďačná?",
+      "Čo potrebuješ od svojich blízkych tento týždeň?",
+      "Aké meno, pieseň alebo miesto ti dnes prišlo na myseľ pri bábätku?",
+      "Čo si chceš zapamätať z dnešného dňa?",
+      "Čo ti dnes pomohlo oddýchnuť si?"
+    ],
+    born: [
+      "Čo ťa dnes na bábätku prekvapilo?",
+      "Čo ti dnes pomohlo?",
+      "Za čo si dnes na sebe vďačná?",
+      "Ktorá chvíľa dnes bola najkrajšia?",
+      "Čo bolo dnes najťažšie – a ako si to zvládla?",
+      "Čo potrebuješ zajtra trochu viac?",
+      "Čo by si chcela bábätku raz povedať o tomto dni?",
+      "Kto ti dnes urobil radosť alebo pomohol?",
+      "Čo si chceš zapamätať, kým je bábätko takéto malé?",
+      "Čo môžeš dnes pustiť a nemusíš to riešiť?"
+    ]
+  };
+  let promptShift = 0;
+  let answeringPrompt = "";
+  let listFilter = "all";
+  function todayPrompt() {
+    const list = PROMPTS[(typeof state !== "undefined" && state.profile?.status === "born") ? "born" : "expecting"];
+    const day = Math.floor(Date.now() / 86400000);
+    return list[(day + promptShift) % list.length];
+  }
+  // Pre kruh Pohoda: „Ako sa dnes cítim“ sa odfajkne, keď je dnes v denníku zápis (ukladá sa len dátum, nie obsah).
+  function markDiaryToday() {
+    if (typeof state === "undefined") return;
+    state.v5 ||= {};
+    state.v5.diaryLastEntry = localDayKey();
+    window.GugubooV5?.persist?.();
+    window.GugubooV5?.renderHome?.();
+  }
 
   function renderEntries() {
     const list = root.querySelector("[data-private-list]");
     if (!list || !privateData) return;
-    const entries = privateData.entries.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const entries = privateData.entries
+      .filter(entry => listFilter === "letters" ? entry.type === LETTER : true)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (!entries.length) {
-      list.innerHTML = `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Keď budete chcieť, môžete si sem uložiť prvú súkromnú myšlienku.</p></div>`;
+      list.innerHTML = listFilter === "letters"
+        ? `<div class="private-empty"><span aria-hidden="true">✉</span><strong>Zatiaľ žiadny list</strong><p>Napíš pár viet o tom, čo práve prežívaš. Raz si ich spolu prečítate.</p></div>`
+        : `<div class="private-empty"><span aria-hidden="true">✦</span><strong>Zatiaľ tu nie je žiadny zápis</strong><p>Stačí ťuknúť na náladu alebo odpovedať na otázku na dnes.</p></div>`;
       return;
     }
     list.innerHTML = entries.map(entry => {
       const mood = moods.find(item => item[0] === entry.mood);
       const isOpen = openedId === entry.id;
-      const meta = [entry.type, mood?.[1]].filter(Boolean).join(" · ");
-      return `<article class="private-entry">
+      const meta = [entry.type ? typeLabel(entry.type) : "", mood?.[1]].filter(Boolean).join(" · ");
+      return `<article class="private-entry${entry.type === LETTER ? " private-letter" : ""}">
         <button class="private-entry-head" type="button" data-private-open="${escapeHtml(entry.id)}" aria-expanded="${isOpen}">
           <span><strong>${escapeHtml(meta || "Súkromný zápis")}</strong><small>${escapeHtml(formatDate(entry.createdAt))}</small></span><span aria-hidden="true">${isOpen ? "⌃" : "⌄"}</span>
         </button>
-        ${isOpen ? `<div class="private-entry-body"><p>${escapeHtml(entry.text).replace(/\n/g, "<br>")}</p>
+        ${isOpen ? `<div class="private-entry-body">${entry.prompt ? `<em class="private-entry-prompt">${escapeHtml(entry.prompt)}</em>` : ""}${entry.text ? `<p>${escapeHtml(entry.text).replace(/\n/g, "<br>")}</p>` : `<p class="private-muted">Len nálada: ${escapeHtml(mood?.[2] || "")}</p>`}
           ${entry.updatedAt !== entry.createdAt ? `<small>Upravené ${escapeHtml(formatDate(entry.updatedAt))}</small>` : ""}
           <div class="private-entry-actions"><button type="button" data-private-edit="${escapeHtml(entry.id)}">Upraviť</button><button class="private-danger" type="button" data-private-delete="${escapeHtml(entry.id)}">Vymazať</button></div></div>` : ""}
       </article>`;
@@ -199,26 +267,36 @@
   }
 
   function renderUnlocked() {
+    const todayMood = privateData.entries.find(entry => entry.type === MOOD_ONLY && localDayKey(entry.createdAt) === localDayKey())?.mood || "";
+    const letterCount = privateData.entries.filter(entry => entry.type === LETTER).length;
+    const name = escapeHtml(babyName());
+    const editorTitle = editingId ? "Upraviť zápis" : answeringPrompt ? escapeHtml(answeringPrompt) : selectedType === LETTER ? "List pre " + escapeHtml(babyNameAcc()) : "Nový zápis";
     root.innerHTML = `<div class="private-shell private-unlocked">
-      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj priestor</h1><p>Súkromné zápisy na tomto zariadení</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
+      <header class="private-heading private-unlocked-head"><span class="private-lock" aria-hidden="true">🔓</span><div><h1>Môj súkromný denník</h1><p>Len pre teba – nikto iný ho nevidí</p></div><button class="private-lock-button" type="button" data-private-lock>Uzamknúť</button></header>
       <main class="private-content">
-        <section class="private-card" aria-labelledby="privateMoodTitle"><h2 id="privateMoodTitle">Ako mi dnes je?</h2><p>Výber je nepovinný.</p>
-          <div class="private-moods" role="group" aria-label="Nálada">${moods.map(([value, emoji, label]) => `<button type="button" data-private-mood="${value}" aria-label="${label}" aria-pressed="${selectedMood === value}"><span aria-hidden="true">${emoji}</span><small>${label}</small></button>`).join("")}</div>
+        <section class="private-card" aria-labelledby="privateMoodTitle"><h2 id="privateMoodTitle">Ako sa dnes máš?</h2><p>Stačí ťuknúť – uloží sa hneď.</p>
+          <div class="private-moods" role="group" aria-label="Nálada">${moods.map(([value, emoji, label]) => `<button type="button" data-private-mood="${value}" aria-label="${label}" aria-pressed="${todayMood === value}"><span aria-hidden="true">${emoji}</span><small>${label}</small></button>`).join("")}</div>
         </section>
-        <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editingId ? "Upraviť súkromný zápis" : "Nový súkromný zápis"}</h2>
-          <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${type}</button>`).join("")}</div></fieldset>
-            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="Napíšte, čo si chcete nechať pre seba."></textarea>
+        <section class="private-card private-prompt-card" aria-labelledby="privatePromptTitle"><small>Otázka na dnes</small><h2 id="privatePromptTitle">${escapeHtml(todayPrompt())}</h2>
+          <div class="private-prompt-actions"><button class="private-primary" type="button" data-private-answer>Odpovedať</button><button type="button" data-private-next-prompt>Iná otázka</button></div>
+          <button class="private-letter-button" type="button" data-private-letter>✉ Napísať list pre ${escapeHtml(babyNameAcc())}</button>
+        </section>
+        <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editorTitle}</h2>
+          <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${escapeHtml(typeLabel(type))}</button>`).join("")}</div></fieldset>
+            <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="${selectedType === LETTER ? "Ahoj " + name + ", …" : "Stačí jedna veta."}"></textarea>
             <p class="private-message" data-private-message role="status" aria-live="polite"></p>
-            <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId ? `<button type="button" data-private-cancel-edit>Zrušiť úpravu</button>` : ""}</div>
+            <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId || answeringPrompt ? `<button type="button" data-private-cancel-edit>Zrušiť</button>` : ""}</div>
           </form>
         </section>
-        <section class="private-card private-list-card" aria-labelledby="privateListTitle"><h2 id="privateListTitle">Moje súkromné zápisy</h2><div class="private-list" data-private-list></div></section>
-        <p class="private-limit-note">PIN chráni šifrované dáta uložené v tomto prehliadači. Bez používateľského účtu ich ochrana závisí aj od zabezpečenia zariadenia a prehliadača.</p>
+        <section class="private-card private-list-card" aria-labelledby="privateListTitle"><h2 id="privateListTitle">Moje zápisy</h2>
+          <div class="private-filter" role="group" aria-label="Filter zápisov"><button type="button" data-private-filter="all" aria-pressed="${listFilter === "all"}">Všetko</button><button type="button" data-private-filter="letters" aria-pressed="${listFilter === "letters"}">Listy pre ${escapeHtml(babyNameAcc())}${letterCount ? " · " + letterCount : ""}</button></div>
+          <div class="private-list" data-private-list></div></section>
+        <p class="private-limit-note">PIN chráni šifrované zápisy, ktoré sú uložené len v tomto telefóne. Ak PIN zabudneš, zápisy sa nedajú otvoriť.</p>
       </main>
     </div>`;
     renderEntries();
     resetInactivityTimer();
-    focusSoon(editingId ? "#privateEntryText" : "[data-private-mood]");
+    if (editingId || answeringPrompt || selectedType === LETTER) focusSoon("#privateEntryText");
   }
 
   function clearEditor() {
@@ -226,6 +304,7 @@
     selectedType = "";
     editingId = "";
     openedId = "";
+    answeringPrompt = "";
   }
 
   function lock() {
@@ -243,7 +322,7 @@
     window.clearTimeout(inactivityTimer);
     inactivityTimer = window.setTimeout(() => {
       lock();
-      setMessage("Priestor bol uzamknutý po neaktivite.");
+      setMessage("Denník bol uzamknutý po neaktivite.");
     }, INACTIVITY_MS);
   }
 
@@ -272,7 +351,7 @@
     button.disabled = blocked;
     input.disabled = blocked;
     if (blocked) {
-      setMessage(`Skúste to znova o ${remaining} s.`, "error");
+      setMessage(`Skús to znova o ${remaining} s.`, "error");
       window.setTimeout(updateUnlockDelay, 250);
     }
   }
@@ -289,7 +368,7 @@
     const pin = form.elements.privatePinNew.value;
     const confirmation = form.elements.privatePinConfirm.value;
     if (!/^\d{4}$/.test(pin)) return setMessage("Prístupový kód musí mať presne štyri číslice.", "error");
-    if (pin !== confirmation) return setMessage("Prístupové kódy sa nezhodujú. Skúste ich zadať znova.", "error");
+    if (pin !== confirmation) return setMessage("Prístupové kódy sa nezhodujú. Skús ich zadať znova.", "error");
     const generation = ++operationGeneration;
     const submit = form.querySelector("button[type='submit']");
     submit.disabled = true;
@@ -307,13 +386,13 @@
       renderUnlocked();
     } catch (_) {
       submit.disabled = false;
-      setMessage("Priestor sa nepodarilo vytvoriť. Skúste to znova.", "error");
+      setMessage("Priestor sa nepodarilo vytvoriť. Skús to znova.", "error");
     }
   }
 
   async function handleUnlock(form) {
     const pin = form.elements.privatePinUnlock.value;
-    if (!/^\d{4}$/.test(pin)) return setMessage("Zadajte presne štyri číslice.", "error");
+    if (!/^\d{4}$/.test(pin)) return setMessage("Zadaj presne štyri číslice.", "error");
     const auth = readAuthState();
     if (auth.blockedUntil > Date.now()) return updateUnlockDelay();
     const generation = ++operationGeneration;
@@ -339,7 +418,7 @@
 
   async function handleEntrySave(form) {
     const text = form.querySelector("#privateEntryText").value.trim();
-    if (!text) return setMessage("Napíšte text zápisu.", "error");
+    if (!text) return setMessage("Napíš text zápisu.", "error");
     const now = new Date().toISOString();
     if (editingId) {
       const entry = privateData.entries.find(item => item.id === editingId);
@@ -351,16 +430,22 @@
     } else {
       privateData.entries.push({
         id: createId(), createdAt: now, updatedAt: now,
-        mood: selectedMood || null, type: selectedType || null, text
+        mood: selectedMood || null, type: selectedType || null, text, prompt: answeringPrompt || null
       });
     }
     try {
       await persistPrivateData();
+      // Časová os spomienok: uloží sa len dátum prvého listu bábätku, nikdy jeho obsah.
+      if (selectedType === LETTER && typeof state !== "undefined") {
+        state.v5 ||= {};
+        (state.v5.momentMarks ||= {}).firstLetter ||= now;
+      }
+      markDiaryToday();
       clearEditor();
       renderUnlocked();
       setMessage("Súkromný zápis je uložený.");
     } catch (_) {
-      setMessage("Zápis sa nepodarilo bezpečne uložiť. Skúste to znova.", "error");
+      setMessage("Zápis sa nepodarilo bezpečne uložiť. Skús to znova.", "error");
     }
   }
 
@@ -379,9 +464,48 @@
   root.addEventListener("click", async event => {
     if (privateData) resetInactivityTimer();
     const mood = event.target.closest("[data-private-mood]");
-    if (mood) {
-      selectedMood = selectedMood === mood.dataset.privateMood ? "" : mood.dataset.privateMood;
-      root.querySelectorAll("[data-private-mood]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.privateMood === selectedMood)));
+    if (mood && privateData) {
+      // Nálada jedným ťuknutím = zápis hneď (jeden za deň, ďalšie ťuknutie ho len zmení).
+      const now = new Date().toISOString();
+      const existing = privateData.entries.find(entry => entry.type === MOOD_ONLY && localDayKey(entry.createdAt) === localDayKey());
+      if (existing) { existing.mood = mood.dataset.privateMood; existing.updatedAt = now; }
+      else privateData.entries.push({ id: createId(), createdAt: now, updatedAt: now, mood: mood.dataset.privateMood, type: MOOD_ONLY, text: "" });
+      selectedMood = mood.dataset.privateMood;
+      try {
+        await persistPrivateData();
+        markDiaryToday();
+        renderUnlocked();
+        setMessage("Nálada je uložená. Ak chceš, pridaj k nej jednu vetu.");
+      } catch (_) {
+        setMessage("Náladu sa nepodarilo uložiť. Skús to znova.", "error");
+      }
+      return;
+    }
+    if (event.target.closest("[data-private-answer]")) {
+      answeringPrompt = todayPrompt();
+      editingId = "";
+      renderUnlocked();
+      return;
+    }
+    if (event.target.closest("[data-private-next-prompt]")) {
+      promptShift += 1;
+      if (answeringPrompt) answeringPrompt = todayPrompt();
+      renderUnlocked();
+      return;
+    }
+    if (event.target.closest("[data-private-letter]")) {
+      selectedType = LETTER;
+      answeringPrompt = "";
+      editingId = "";
+      renderUnlocked();
+      return;
+    }
+    const filter = event.target.closest("[data-private-filter]");
+    if (filter) {
+      listFilter = filter.dataset.privateFilter;
+      openedId = "";
+      root.querySelectorAll("[data-private-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.privateFilter === listFilter)));
+      renderEntries();
       return;
     }
     const type = event.target.closest("[data-private-type]");
@@ -415,7 +539,7 @@
     }
     const remove = event.target.closest("[data-private-delete]");
     if (remove && privateData) {
-      const confirmed = window.confirm("Naozaj chcete tento súkromný zápis natrvalo vymazať?");
+      const confirmed = window.confirm("Naozaj chceš tento súkromný zápis natrvalo vymazať?");
       if (!confirmed) return;
       privateData.entries = privateData.entries.filter(item => item.id !== remove.dataset.privateDelete);
       try {
@@ -424,7 +548,7 @@
         renderUnlocked();
         setMessage("Súkromný zápis bol vymazaný.");
       } catch (_) {
-        setMessage("Zápis sa nepodarilo vymazať. Skúste to znova.", "error");
+        setMessage("Zápis sa nepodarilo vymazať. Skús to znova.", "error");
       }
       return;
     }
@@ -433,12 +557,12 @@
       return;
     }
     if (event.target.closest("[data-private-forgot]")) {
-      const confirmed = window.confirm("Reset kódu natrvalo vymaže iba všetky dáta Môjho priestoru. Ostatné údaje aplikácie zostanú zachované. Pokračovať?");
+      const confirmed = window.confirm("Reset kódu natrvalo vymaže iba všetky zápisy v súkromnom denníku. Ostatné údaje aplikácie zostanú zachované. Pokračovať?");
       if (!confirmed) return;
       privateStore.clear();
       clearAuthState();
       lock();
-      setMessage("Môj priestor bol vymazaný. Môžete nastaviť nový kód.");
+      setMessage("Súkromný denník bol vymazaný. Môžeš nastaviť nový kód.");
     }
   });
 

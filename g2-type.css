@@ -1,0 +1,108 @@
+/* Guguboo Master – typografia a farby (Samo 13. 11.: čitateľnosť na mobile – bežný text ~16 px, sekundárny min. 14 px, 12 px len výnimočne;
+   kontrast aj v noci). Montserrat len 500/600/700/800. Podklad: docs/master/GUGUBOO_VISUAL_PROPOSAL.md. Načítava sa po master.css. */
+body.v5-active {
+  --g2-font: Montserrat, "Segoe UI", system-ui, sans-serif;
+  --g2-ink: #29243a; --g2-muted: #5d5768; --g2-brand-ink: #5f4fb1;
+  --v5-ink: #29243a; --v5-muted: #5d5768; --v5-brand-dark: #5f4fb1;
+  --g2-t-h1: 800 22px/28px var(--g2-font);
+  --g2-t-h2: 700 18px/24px var(--g2-font);
+  --g2-t-title: 700 16px/22px var(--g2-font);
+  --g2-t-body: 500 16px/24px var(--g2-font);
+  --g2-t-caption: 500 14px/20px var(--g2-font);
+  --g2-t-label: 700 13px/18px var(--g2-font);
+  --g2-t-num: 800 20px/24px var(--g2-font);
+  font: var(--g2-t-body);
+  color: var(--g2-ink);
+}
+body.v5-active.night {
+  --g2-ink: #f5f2fb; --g2-muted: #c9c3d8; --g2-brand-ink: #c6bcff;
+  --v5-ink: #f5f2fb; --v5-muted: #c9c3d8; --v5-brand-dark: #c6bcff;
+}
+
+/* Úrovne (namerané miesta pod 14 px – audit 13. 11.) */
+/* Popisy v riadkoch a kartách: min. 14 px */
+body.v5-active .view :is(button, .v5-row-card, li, label) small,
+body.v5-active .v2-mama-water-open small { font: var(--g2-t-caption) !important; color: var(--g2-muted); }
+/* Štítky (verzálky) – jediná povolená výnimka pod 14 px */
+body.v5-active :is(.g2-ring-head small, .g2-today-main small, .g2-today > small, .v2-size-kicker, .g2-hits-head, .g2-month-kicker) { font: var(--g2-t-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--g2-brand-ink) !important; }
+/* Nadpisy hubov a okien */
+body.v5-active .v2-book-hero h1, body.v5-active .v5-flow-head h1, body.v5-active .v5-flow-head h2 { font: var(--g2-t-h1) !important; letter-spacing: -.01em; }
+/* Úvodné odseky a texty v boxoch: 15–16 px */
+body.v5-active :is(.v5-flow-head p, .v2-calm-box p, .v2-mama-card p, .v2-calm-box li, .v2-mama-card li) { font: 500 15px/23px var(--g2-font) !important; }
+body.v5-active :is(.v2-source, .v2-size-hero small:not(.v2-size-kicker)) { font: 500 13px/18px var(--g2-font) !important; color: var(--g2-muted); }
+body.v5-active .v5-form-card label { font: 700 14px/20px var(--g2-font) !important; }
+body.v5-active .v5-check-categories-button { font: 700 14px/20px var(--g2-font) !important; }
+body.v5-active .is-selected small { font-size: 12px !important; font-weight: 700 !important; }
+/* Hlavička domova: pozdrav menší než nadpis týždňa */
+body.v5-active #v5Header #v5HeaderTitle { font: 700 17px/22px var(--g2-font) !important; }
+body.v5-active #v5Header #v5HeaderSubtitle { font: 500 14px/20px var(--g2-font) !important; color: var(--g2-muted); }
+/* Domov */
+body.v5-active .g2-hero-text h1 { font: 800 19px/24px var(--g2-font) !important; }
+body.v5-active .g2-hero-sub { font: var(--g2-t-caption); color: var(--g2-muted); }
+body.v5-active .g2-hero-more { font: 700 14px/20px var(--g2-font); color: var(--g2-brand-ink); }
+body.v5-active .v2-week-badge b { font: var(--g2-t-num) !important; }
+body.v5-active .v2-week-badge small { font: 700 11px/14px var(--g2-font) !important; letter-spacing: 0 !important; text-transform: none !important; } /* výnimka: odznak 52 px */
+body.v5-active .g2-short strong { font: 700 15px/19px var(--g2-font) !important; }
+body.v5-active .g2-ring-center strong { font: 700 14px/18px var(--g2-font) !important; }
+body.v5-active .g2-today-main strong { font: var(--g2-t-title); }
+body.v5-active .g2-today-later { font: 700 14px/20px var(--g2-font); color: var(--g2-brand-ink); }
+body.v5-active .g2-ring-legend button { font: 700 16px/20px var(--g2-font); }
+/* Zásuvka Všetko */
+body.v5-active .g2-tile { font: 700 15px/19px var(--g2-font); }
+body.v5-active .g2-sec h3 { font: 800 16px/20px var(--g2-font); }
+body.v5-active .g2-chips button { font: 700 14px/18px var(--g2-font); }
+/* Spodná lišta – výnimka 12,5 px (4 položky vedľa seba) */
+body.v5-active .v5-bottom-action span { font: 700 12.5px/16px var(--g2-font) !important; }
+/* Noc: kontrast (audit 13. 11.) – stred kruhu ostáva svetlý s tmavým textom, Všetko ostáva fialové, avatar bez fotky nie je biely štvorec */
+body.v5-active.night #v5Home .g2-ring-center { background: linear-gradient(145deg, #ece6fb, #d9cff3) !important; }
+body.v5-active.night #v5Home .g2-ring-center :is(strong, small) { color: #29243a !important; }
+body.v5-active.night #v5Home .g2-all { background: #7b6bc8 !important; color: #fff !important; }
+body.v5-active.night #v5Home .g2-hero .v5-baby-avatar:not(:has(img)) { background: #3a3452 !important; color: #f5f2fb !important; border-color: rgba(255,255,255,.12) !important; }
+/* QA-65: číslo týždňa v odznaku v noci */
+body.v5-active.night #v5Home .v2-week-badge { background: #3a3452 !important; }
+body.v5-active.night #v5Home .v2-week-badge :is(b, small) { color: #f5f2fb !important; }
+
+/* QA 1.6 – záverečný test */
+/* QA-80: karty, ktoré mali v noci denné svetlé pozadie so svetlým textom */
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water, .v2-size-dev) {
+  background: #2a2438 !important; background-image: none !important; color: var(--g2-ink) !important; border-color: rgba(255,255,255,.08) !important;
+}
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water, .v2-size-dev) :is(h1, h2, h3, p, strong, small, span, li, button:not(.g2-fruit-badge)) { color: var(--g2-ink) !important; background-color: transparent !important; }
+body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-size-hero, .v2-book-hero, .v2-mama-hero, .v2-mama-water) :is(small, .g2-approx, p) { color: var(--g2-muted) !important; }
+body.v5-active.night:not(.welcome-mode):not(.intro-only) .v2-size-kicker { color: var(--g2-brand-ink) !important; }
+/* QA-81: tlačidlá v GuguChate (aj krízové) v noci – tmavý text na svetlej fialovej */
+body.v5-active.night .v2-chat-action { background: #c6bcff !important; color: #1f1a2e !important; }
+/* QA-83: polia formulárov 16 px – iPhone pri písaní nepribližuje stránku */
+body.v5-active :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) { font-size: 16px !important; }
+/* QA-79: podnadpis na domove v jednom riadku (dlhé prirovnanie „(orientačne)“ inak posúvalo domov pri 568 px) */
+body.v5-active .g2-hero-sub { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.v5-active .g2-hero-text h1 { min-width: 0; }
+body.v5-active .g2-hero-text { grid-template-columns: minmax(0, 1fr) auto !important; }
+body.v5-active.night .v2-week-strip button:not(.is-selected) { background: #2a2438 !important; } body.v5-active.night .v2-week-strip button:not(.is-selected) :is(b, small) { color: var(--g2-ink) !important; }
+body.v5-active .g2-hero-sub { white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow: clip !important; }
+
+/* ===== Master 1.7 – vizuálny sweep 1.6.4 (docs/master/VISUAL_SWEEP_1.6.4.md) ===== */
+/* V2: aktívna položka lišty výraznejšia než neaktívne (deň aj noc), bez svietenia */
+body.v5-active #v5BottomBar .v5-bottom-action span { color: var(--g2-muted) !important; }
+body.v5-active #v5BottomBar .v5-bottom-action .v5-nav-icon { color: var(--g2-muted) !important; }
+body.v5-active #v5BottomBar .v5-bottom-action:is(.active, [aria-current="page"]) :is(span, .v5-nav-icon) { color: var(--g2-brand-ink) !important; }
+body.v5-active #v5BottomBar .v5-bottom-action:is(.active, [aria-current="page"]) span { font-weight: 800 !important; }
+/* V3: fakty v Tehotenskej knižke v noci – tmavý podklad (predtým biely text na bielom) */
+body.v5-active.night .v2-book-facts div { background: #3a3452 !important; }
+body.v5-active.night .v2-book-facts :is(b, span) { color: var(--g2-ink) !important; }
+/* V4: primárne tlačidlá v noci – tmavý text na svetlej fialovej (10 : 1) */
+body.v5-active.night .v5-primary:not([disabled]),
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(button, a).v5-primary:not([disabled]):not(.primary) { background: #c6bcff !important; background-color: #c6bcff !important; background-image: none !important; color: #1f1a2e !important; }
+/* S20: vybraný týždeň v noci */
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) .v2-week-strip button.is-selected:not(.primary) { background: #6a5ac0 !important; background-color: #6a5ac0 !important; background-image: none !important; }
+body.v5-active.night .v2-week-strip .is-selected :is(b, small) { color: #fff !important; }
+/* S1: fokus polí vo farbe značky (nie oranžový systémový obrys) */
+body.v5-active :is(input, select, textarea):focus-visible { outline: 2px solid var(--v5-brand-dark) !important; outline-offset: 1px; }
+/* QA 1.9 H2/H3: plávajúce karty a „Skúsme dnes“ mali v noci denné svetlé pozadie so svetlým textom */
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) {
+  background: #232838 !important; background-image: none !important; color: var(--g2-ink) !important; border-color: rgba(255,255,255,.08) !important;
+}
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) :is(h1, h2, h3, h4, p, strong, span, li, label, small, b) { color: var(--g2-ink) !important; }
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu, .v2-tour-card, .v2-picker-panel, .act2-today) :is(small, p) { color: var(--g2-muted) !important; }
+body.v5-active.night :is(#v5QuickRecord, #v5OMenu) :is(.v5-quick-tile, .v5-quick-action, button:not(.v5-primary):not(.g2-btn-primary)) { background-color: #2c3246 !important; }
+body.v5-active.night .act2-today .act2-domain { color: #5a2a3e !important; }
