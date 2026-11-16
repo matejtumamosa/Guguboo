@@ -127,7 +127,11 @@
     .float .sq .ic { width: 18px; height: 18px; }
     .float small { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); }
     .f1 { top: 90px; left: 0; } .f2 { bottom: 36px; right: 0; animation-delay: -3s; }
-    @media (min-width: 801px) { .phone { width: 320px; } .screen { min-height: 610px; font-size: 12.5px; } }
+    @media (min-width: 801px) {
+      .phone { width: 320px; } .screen { min-height: 610px; font-size: 12.5px; }
+      .hero .stage { justify-items: end; padding-right: 24px; }
+      .hero .f1 { top: 150px; left: 0; } .hero .f2 { top: auto; bottom: 150px; left: 24px; right: auto; }
+    }
     @media (max-width: 800px) { .f2 { bottom: 190px; right: -6px; } .f1 { left: -6px; top: 70px; } }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
