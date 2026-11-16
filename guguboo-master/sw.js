@@ -5,7 +5,7 @@
  * Žiadne údaje používateľky sa tu neukladajú – len súbory appky. Cudzie adresy (počasie) sa nechávajú prehliadaču.
  * Master 2.9: vlastné písmo (fonts/) je v pamäti hneď pri inštalácii – appka bez signálu má Montserrat.
  */
-const CACHE = "guguboo-m-app-3.2";
+const CACHE = "guguboo-m-app-3.3";
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["app.html", "manifest.webmanifest", "icon-192.png", "fonts/montserrat.css?v=m2.9", "fonts/montserrat-latin.woff2", "fonts/montserrat-latin-ext.woff2"])).then(() => self.skipWaiting()));

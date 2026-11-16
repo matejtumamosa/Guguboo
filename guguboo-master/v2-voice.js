@@ -40,7 +40,7 @@
       "<p class='v2-ann-intro'>",
       expecting()
         ? "Podľa NHS bábätko približne od 15. týždňa začína počuť – keď sa mu prihovoríš, pravdepodobne ťa začuje. Nahraj mu uspávanku, rozprávku alebo len pár slov. Po narodení ju nájdeš pri Spánku."
-        : "Nahraj uspávanku alebo rozprávku svojím hlasom. Pustíš ju jedným ťuknutím – aj keď bábätko uspáva niekto iný.",
+        : "Uspávanka tvojím hlasom – pustí ju ktokoľvek z rodiny.",
       "</p>",
       expecting() ? "<a class='v2-source' href='" + HEARING_SOURCE + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS, 15. týždeň ↗</a>" : "",
       "<section class='v2-voice-card'>",

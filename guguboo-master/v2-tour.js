@@ -63,7 +63,7 @@
         target: () => document.querySelector("#v5Header [data-v5-night]")?.parentElement,
         title: "Menu a nočný režim",
         items: [
-          { icon: "menu", name: "Menu", text: "tvoj profil, bábätko a nastavenia." },
+          { icon: "menu", name: "Menu", text: "profil a nastavenia." },
           { icon: "moon", name: "Nočný režim", text: "stlmí farby, keď si hore v noci." }
         ]
       },
@@ -71,7 +71,7 @@
         target: () => home?.querySelector(".g2-askwrap"),
         title: "Hľadaj alebo sa opýtaj",
         items: [
-          { icon: "search", name: "Hľadaj", text: "napíš otázku alebo čo hľadáš. GuguChat odpovie z overených zdrojov a ukáže, kde to v appke nájdeš." }
+          { icon: "search", name: "Hľadaj", text: "napíš otázku. GuguChat odpovie a ukáže, kde to nájdeš." }
         ],
         try: { label: "Vyskúšať GuguChat", run: () => home?.querySelector("[data-g2-ask]")?.click() }
       },
@@ -79,14 +79,14 @@
         target: () => home?.querySelector(".g2-hero"),
         title: "Tvoj týždeň",
         items: [
-          { icon: "baby", name: "Týždeň a veľkosť", text: "ovocie ukazuje, aké veľké je bábätko. Ťukni a uvidíš, ako práve rastie." }
+          { icon: "baby", name: "Týždeň a veľkosť", text: "ovocie ukazuje veľkosť bábätka." }
         ],
         try: { label: "Otvoriť Tvoj týždeň", run: () => V5()?.openFeature("babySize") }
       } : {
         target: () => home?.querySelector(".g2-hero"),
         title: "Tvoje bábätko",
         items: [
-          { icon: "baby", name: "Vek a Tvoj mesiac", text: "ťukni a uvidíš, čo bábätko práve objavuje. Na krúžok môžeš pridať fotku." }
+          { icon: "baby", name: "Vek a Tvoj mesiac", text: "čo bábätko práve objavuje." }
         ],
         try: { label: "Otvoriť Tvoj mesiac", run: () => home?.querySelector("[data-g2-month-open]")?.click() }
       },
@@ -110,12 +110,12 @@
       {
         target: () => byId("v5BottomBar"),
         title: "Spodná lišta",
-        lead: "Dole sú 4 časti appky – pred aj po pôrode rovnaké:",
+        lead: "4 časti appky:",
         chips: () => [...document.querySelectorAll("#v5BottomBar .v5-bottom-action")].map(button => ({
           iconHtml: button.querySelector(".v5-nav-icon")?.innerHTML || "",
           label: button.querySelector(".v5-nav-icon + span")?.textContent || ""
         })),
-        after: "Potiahni lištu nahor alebo ťukni na čiarku navrchu a uvidíš všetko v appke.",
+        after: "Potiahni lištu nahor – uvidíš všetko.",
         try: { label: "Ukázať všetko", run: () => document.querySelector("#v5BottomBar .g2-bar-handle")?.click() }
       }
     ];

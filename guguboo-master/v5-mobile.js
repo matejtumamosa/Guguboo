@@ -257,7 +257,7 @@
     night: { label: "Nočná pomoc", description: "Pokojná orientácia v noci", icon: "moon", tier: "premium", view: "night" },
     guide: { label: "Sprievodca", description: "Krok po kroku", icon: "sparkle", tier: "premium", view: "guide" },
     health: { label: "Zdravie", description: "Záznamy, alergie a report", icon: "stethoscope", tier: "premium", view: "health" },
-    teeth: { label: "Zúbky", description: "Mapa, starostlivosť a zubár", icon: "tooth", tier: "free", view: "teeth" },
+    teeth: { label: "Zúbky", description: "Mapa a zubár", icon: "tooth", tier: "free", view: "teeth" },
     growth: { label: "Rast a váha", description: "Hmotnosť, výška a obvod hlavy", icon: "growth", tier: "premium", view: "growth" },
     urgent: { label: "Kontakty na pomoc", description: "Pohotovosť, pediater a blízki", icon: "alert", tier: "free", view: "urgent" },
     checklists: { label: "Praktické zoznamy", description: "K lekárovi, na cesty", icon: "clipboard", tier: "free", view: "v5Checklists" },
@@ -278,7 +278,7 @@
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie", icon: "book", tier: "free", view: "v5ChildBook" },
     announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych", icon: "cards", tier: "free", view: "v5Announce" },
     voice: { label: "Môj hlas pre bábätko", description: "Uspávanka tvojím hlasom", icon: "sound", tier: "free", view: "v5Voice" },
-    beforeBirth: { label: "Príprava na pôrod", description: "Taška, pôrodnica a prvé dni", icon: "checklist", tier: "free", view: "v5Prenatal" },
+    beforeBirth: { label: "Príprava na pôrod", description: "Taška a pôrodnica", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady a doklady", description: "Dávky, doklady, termíny", icon: "administration", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Čo máme a čo dokúpiť", icon: "products", tier: "premium", view: "v5Utility" },
     family: { label: "Úlohy v rodine", description: "Kto čo urobí", icon: "usersThree", tier: "premium", view: "v5Utility" },
@@ -1489,31 +1489,31 @@
       if (t.active) {
         const other = g2qSideShort(t.side) === "ľavý" ? "Pravý prsník" : "Ľavý prsník";
         return g2qOpen("Kŕmenie", g2qLastLine("Beží od " + formatClock(t.start) + " · " + (g2qSideShort(t.side) || "") + " prsník") +
-          g2qAct("feed-end", "check", "Ukončiť kŕmenie", "uloží sa s časom", "", true) + g2qAct("feed-switch", "breastfeed", "Prepnúť na " + other.toLowerCase(), "uloží sa a začne druhý"));
+          g2qAct("feed-end", "check", "Ukončiť kŕmenie", "", "", true) + g2qAct("feed-switch", "breastfeed", "Prepnúť na " + other.toLowerCase(), ""));
       }
       const last = g2qLastFeed();
       // Fľaša (umelé aj odsaté mlieko) ide hore, ak bolo naposledy kŕmenie fľašou – appka sa prispôsobí rodine bez nastavovania.
       const bottleFirst = last?.method === "Fľaša";
-      const bottle = g2qAct("feed-bottle", "feeding", "Fľaša", "umelé alebo odsaté mlieko");
+      const bottle = g2qAct("feed-bottle", "feeding", "Fľaša", "umelé či odsaté");
       // Zhoda tímu: strana sa nezapisuje zvlášť – odvodí sa z posledného kŕmenia; druhá strana je prvá a väčšia (ponuka, nie pokyn).
       const lastSide = g2qSideShort(last?.side);
       const sides = lastSide === "ľavý" ? ["Pravý prsník", "Ľavý prsník"] : ["Ľavý prsník", "Pravý prsník"];
-      const breasts = sides.map((side, i) => g2qAct("feed-start", "breastfeed", side, i === 0 && lastSide ? "minule " + lastSide : "spustí časovač", " data-side='" + side + "'", i === 0 && Boolean(lastSide))).join("");
+      const breasts = sides.map((side, i) => g2qAct("feed-start", "breastfeed", side, i === 0 && lastSide ? "minule " + lastSide : "", " data-side='" + side + "'", i === 0 && Boolean(lastSide))).join("");
       return g2qOpen("Kŕmenie", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + String(last.value || "").split(" · ").slice(0, 3).join(" · ")) : g2qLastLine("Ťukni, čím začínaš.")) +
         (bottleFirst ? bottle + breasts : breasts + bottle) +
         // Master 2.7 (audit #24, Samo: appka nediktuje vek): Príkrm je vždy dostupný ako posledná, nenápadná voľba.
         "<button class='g2r-link' type='button' data-g2q='seg' data-seg='food'>Príkrm ›</button>");
     }
     if (key === "sleep") {
-      if (state.sleepTimer?.active) return g2qOpen("Spánok", g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "spánok sa uloží", "", true));
+      if (state.sleepTimer?.active) return g2qOpen("Spánok", g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "", "", true));
       const last = g2qLastSleep();
       return g2qOpen("Spánok", (last ? g2qLastLine("Naposledy " + String(last.value || "").split(" · ")[0] + " · zobudilo sa o " + formatClock(last.created)) : "") +
-        g2qAct("sleep-start", "moon", "Zaspalo teraz", "spustí časovač", " data-ago='0'", true) +
+        g2qAct("sleep-start", "moon", "Zaspalo teraz", "", " data-ago='0'", true) +
         "<p class='g2r-small'>Zaspalo skôr?</p><div class='g2r-chips g2r-rq'>" + [10, 20, 30].map(m => "<button class='g2r-pill' type='button' data-g2q='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>");
     }
     if (key === "diaper") {
       const last = g2qLastDiaper();
-      return g2qOpen("Plienky", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + (last.value || "")) : g2qLastLine("Uloží sa s aktuálnym časom.")) +
+      return g2qOpen("Plienky", (last ? g2qLastLine("Naposledy o " + formatClock(last.created) + " · " + (last.value || "")) : "") +
         g2qAct("diaper-save", "water", "Cikanie", "", " data-type='wet' data-label='Cikalo'") +
         g2qAct("diaper-save", "diaper", "Kakanie", "", " data-type='dirty' data-label='Kakalo'") +
         g2qAct("diaper-save", ["water", "diaper"], "Oboje", "", " data-type='both' data-label='Cikalo aj kakalo'"));
@@ -1521,35 +1521,35 @@
     if (key === "move") {
       const today = (state.v5.babyMoves || []).filter(m => g2qIsToday(m.time)).slice(-4).reverse();
       return g2qOpen("Pohyby", (today.length ? g2qLastLine("Dnes: " + today.map(m => formatClock(m.time)).join(", ")) : g2qLastLine("Zapíš, keď ho cítiš.")) +
-        g2qAct("move-save", "footprints", "Cítim pohyb teraz", "uloží sa s časom", "", true) +
+        g2qAct("move-save", "footprints", "Cítim pohyb teraz", "", "", true) +
         // Content & Safety (NHS Your baby's movements, overené 15. 11. 2026): pohyby sa nepočítajú, dôležitá je zmena oproti bežnému.
         "<p class='g2r-small'>" + escapeHtml(window.G2Safety?.E.E3.text || "") + " Appka pohyby nesleduje. <a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Podľa NHS (Spojené kráľovstvo) ↗</a></p>" +
-        "<button class='g2r-link' type='button' data-v5-book-section='moves' data-g2q-nav>Pohyby v Tehotenskej knižke ›</button>");
+        "<button class='g2r-link' type='button' data-v5-book-section='moves' data-g2q-nav>V Tehotenskej knižke ›</button>");
     }
     if (key === "firstmove") {
       // Pokojné očakávanie, nie úloha: bez odpočtu, bez „ešte nie“, žiadne automatické prepnutie (Content & Safety, NHS overené 15. 11. 2026).
       return g2qOpen("Prvý pohyb", "<p class='g2r-lead'>Väčšina mám pocíti bábätko medzi 16. a 24. týždňom. Pri prvom tehotenstve to často býva až po 20. týždni. Každé tehotenstvo je iné.</p>" +
         g2qAct("firstmove-save", "butterfly", "Cítila som ho", "do Našich momentov", "", true) +
         // Master 2.7 (audit #26): od 24. t. namiesto vety tlačidlo na otázku (predvyplnené), nič nehodnotíme.
-        (g2qWeek() >= 24 && window.G2Safety ? window.G2Safety.askButton("me", "Pohyby bábätka som ešte necítila.", "Zapísať ako otázku na kontrolu") : "") +
+        (g2qWeek() >= 24 && window.G2Safety ? window.G2Safety.askButton("me", "Pohyby bábätka som ešte necítila.", "Zapísať ako otázku pre lekára") : "") +
         "<p class='g2r-small'><a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Podľa NHS (Spojené kráľovstvo) ↗</a></p>");
     }
     if (key === "bump") {
       const bump = g2qBumpThisWeek();
       return g2qOpen("Bruško · " + g2qWeek() + ". týždeň", (bump?.photo ? "<img class='g2q-bump' " + mediaImgSrc(bump.photo) + " alt='Fotka bruška tento týždeň'>" : g2qLastLine("Jedna fotka týždenne, v Našich momentoch.")) +
-        "<label class='g2r-act big g2q-file'><i>" + icon("camera") + "</i><span>" + (bump ? "Vymeniť fotku" : "Odfotiť bruško") + "<small>alebo vybrať z galérie</small></span><input id='g2qBumpInput' type='file' accept='image/*'></label>");
+        "<label class='g2r-act big g2q-file'><i>" + icon("camera") + "</i><span>" + (bump ? "Vymeniť fotku" : "Odfotiť bruško") + "<small>aj z galérie</small></span><input id='g2qBumpInput' type='file' accept='image/*'></label>");
     }
     if (key === "voice") {
       const list = state.lullabies || [];
-      return g2qOpen("Hlas pre bábätko", g2qLastLine(list.length ? "Posledná: " + (list[list.length - 1].title || "Nahrávka") : g2qWeek() >= 16 ? "Bábätko ťa už začína počuť (NHS, 15. týždeň). Nahraj mu pár slov alebo pesničku." : "Nahraj bábätku pár slov alebo pesničku.") +
+      return g2qOpen("Hlas pre bábätko", g2qLastLine(list.length ? "Posledná: " + (list[list.length - 1].title || "Nahrávka") : g2qWeek() >= 16 ? "Bábätko ťa už začína počuť (NHS, 15. týždeň)." : "Nahraj bábätku pár slov alebo pesničku.") +
         (list.length ? g2qAct("voice-play", "sound", "Pustiť poslednú", "", "", true) : "") +
-        g2qAct("voice-rec", "voice", "Nahrať nové", "uspávanka, rozprávka, pár slov", "", !list.length));
+        g2qAct("voice-rec", "voice", "Nahrať nové", "", "", !list.length));
     }
     if (key === "contraction") {
-      if (state.v5.contractionTimer.active) return g2qOpen("Kontrakcie", g2qLastLine("Začala o " + formatClock(state.v5.contractionTimer.start)) + g2qAct("stop", "check", "Skončila teraz", "uloží sa dĺžka", "", true));
-      return g2qOpen("Kontrakcie", g2qContractionsHtml() + g2qAct("contraction-start", "wave", "Začala teraz", "spustí časovač", "", true));
+      if (state.v5.contractionTimer.active) return g2qOpen("Kontrakcie", g2qLastLine("Začala o " + formatClock(state.v5.contractionTimer.start)) + g2qAct("stop", "check", "Skončila teraz", "", "", true));
+      return g2qOpen("Kontrakcie", g2qContractionsHtml() + g2qAct("contraction-start", "wave", "Začala teraz", "", "", true));
     }
-    if (key === "food") return g2qOpen("Jedlo", "<p class='g2r-lead'>Čo jedlo? Vyber jedno alebo viac.</p><div class='g2r-chips g2r-rq'>" + G2Q_FOODS.map(f => "<button class='g2r-pill' type='button' data-g2q='food-chip' aria-pressed='false'>" + f + "</button>").join("") + "</div><button class='g2r-btn' type='button' data-g2q='food-save'>Uložiť</button>");
+    if (key === "food") return g2qOpen("Jedlo", "<p class='g2r-lead'>Vyber jedno alebo viac.</p><div class='g2r-chips g2r-rq'>" + G2Q_FOODS.map(f => "<button class='g2r-pill' type='button' data-g2q='food-chip' aria-pressed='false'>" + f + "</button>").join("") + "</div><button class='g2r-btn' type='button' data-g2q='food-save'>Uložiť</button>");
     if (key === "play") return openFeature("activities");
   }
   function g2qContractionsHtml() {
@@ -1557,7 +1557,7 @@
     return list.length ? "<div class='g2r-info'><ul class='g2q-list'>" + list.map((c, i) => {
       const prev = list[i + 1];
       return "<li><time>" + escapeHtml(formatClock(c.start)) + "</time><span>trvala " + escapeHtml(g2qClock(new Date(c.end) - new Date(c.start))) + (prev ? " · odstup " + Math.round((new Date(c.start) - new Date(prev.start)) / 60000) + " min" : "") + "</span></li>";
-    }).join("") + "</ul></div><p class='g2r-small'>Kedy ísť do pôrodnice, ti povie tvoj lekár alebo pôrodnica.</p>" : "<p class='g2r-lead'>Ťukni, keď kontrakcia začne. Na strede kruhu ju ukončíš.</p>";
+    }).join("") + "</ul></div><p class='g2r-small'>Kedy ísť do pôrodnice, ti povie tvoj lekár alebo pôrodnica.</p>" : "<p class='g2r-lead'>Ukončíš ju v strede kruhu.</p>";
   }
   function g2qDaySheet() {
     const items = [];
@@ -1639,7 +1639,7 @@
     if (action === "firstmove-save") {
       (state.v5.firstMoments ||= []).push({ key: "firstmove", label: "Prvý pohyb bábätka", date: new Date().toISOString() });
       (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
-      return g2qDone("Prvý pohyb je v Našich momentoch 🦋", snap);
+      return g2qDone("Prvý pohyb je v Našich momentoch", snap);
     }
     if (action === "move-save") {
       (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
@@ -1671,7 +1671,7 @@
       const lastMl = Number(state.v5.bottleLastMl) || 0;
       // Len rýchle voľby množstva (nie odporúčanie); naposledy zvolené je zvýraznené.
       return g2qOpen("Fľaša", "<div class='g2r-chips g2r-rq' role='group' aria-label='Druh mlieka'>" + ["Umelé mlieko", "Odsaté mlieko"].map(m => "<button class='g2r-pill' type='button' data-g2q='milk' data-milk='" + m + "' aria-pressed='" + String(m === milk) + "'>" + m + "</button>").join("") + "</div>" +
-        "<p class='g2r-lead' style='margin-top:12px'>Koľko vypilo? Ťuknutím sa uloží.</p><div class='g2r-chips g2r-rq'>" + [30, 60, 90, 120, 150, 180, 210].map(ml => "<button class='g2r-pill" + (ml === lastMl ? " g2q-last" : "") + "' type='button' data-g2q='bottle' data-ml='" + ml + "'>" + ml + " ml</button>").join("") + "</div><button class='g2r-link' type='button' data-g2q='seg' data-seg='feed'>Späť na výber</button>");
+        "<p class='g2r-lead' style='margin-top:12px'>Koľko vypilo?</p><div class='g2r-chips g2r-rq'>" + [30, 60, 90, 120, 150, 180, 210].map(ml => "<button class='g2r-pill" + (ml === lastMl ? " g2q-last" : "") + "' type='button' data-g2q='bottle' data-ml='" + ml + "'>" + ml + " ml</button>").join("") + "</div><button class='g2r-link' type='button' data-g2q='seg' data-seg='feed'>Späť</button>");
     }
     if (action === "bottle") {
       if (state.v5.feedingTimer.active) stopFeeding(true);
@@ -1745,7 +1745,7 @@
       : "<button class='v5-o-record v5-o-next-task' type='button' data-v5-org-section='" + firstOpenSection.id + "' aria-label='Otvoriť ďalšiu organizačnú úlohu'><span aria-hidden='true'>→</span><strong>Ďalšia úloha</strong></button>";
     if (master) {
       const anyDone = sections.some(section => progress[section.id].done > 0);
-      const masterCenter = "<button class='v5-o-record g2-ring-center' type='button' data-v5-o-section='care' aria-label='Otvoriť Čas pre teba'><strong>Pre teba</strong><small>Malá chvíľa, keď sa dá</small></button>";
+      const masterCenter = "<button class='v5-o-record g2-ring-center' type='button' data-v5-o-section='care' aria-label='Otvoriť Čas pre teba'><strong>Pre teba</strong><small>Malá chvíľa</small></button>";
       return [
         "<section class='v5-o-card g2-ring-card' aria-label='Čas pre teba'>",
         "<div class='g2-ring-head'><small>Čas pre teba</small></div>",
@@ -1988,22 +1988,22 @@
       const nextVisit = expecting ? calendarItems().filter(item => item.source === "prenatal-visit" && !item.completedAt && calendarDayKey(item.date) >= today).sort((a, b) => new Date(a.date) - new Date(b.date))[0] : null;
       const water = waterToday();
       const glasses = n => n + (n === 1 ? " pohár" : n > 1 && n < 5 ? " poháre" : " pohárov");
-      const short = (iconName, cls, label, status, attrs, running) => "<button class='g2-short " + cls + (running ? " is-running" : "") + "' type='button' " + attrs + "><span class='g2-short-ic'>" + icon(iconName, "duo") + "</span><strong>" + escapeHtml(label) + "</strong><small>" + escapeHtml(status) + "</small></button>";
+      const short = (iconName, cls, label, status, attrs, running) => "<button class='g2-short " + cls + (running ? " is-running" : "") + "' type='button' " + attrs + "><span class='g2-short-ic'>" + icon(iconName, "duo") + "</span><strong>" + escapeHtml(label) + "</strong>" + (status ? "<small>" + escapeHtml(status) + "</small>" : "") + "</button>"; // Master 3.3: prázdny podnadpis sa nekreslí
       // Domov bez posúvania (Samo 13. 11.; UX Architekt + UI Designer): 3 skratky podľa obdobia, Pitie nie je na domove (je v Mame).
       const timerStatus = state.sleepTimer?.active ? "spí od " + formatClock(state.sleepTimer.start) : state.v5.feedingTimer.active ? "kŕmenie prebieha" : "";
       // Master 2.1: Pohyby, Kontrola a Otázky sú v kruhu → skratky ukazujú iné časti (bez opakovania).
       const shorts = expecting
         ? (pregnancyWeek && pregnancyWeek < 20
           ? [
-              short("leaf", "g2-c-mama", "Čo je bežné", "telo, spánok, energia", "data-v2-mama-section='troubles'"),
-              short("mama", "g2-c-baby", "Tvoje telo", "tento týždeň", "data-v2-mama-section='body'"),
-              short("calendar", "g2-c-brand", "Kalendár", "termíny", "data-v5-feature='calendar'")
+              short("leaf", "g2-c-mama", "Čo je bežné", "telo a spánok", "data-v2-mama-section='troubles'"),
+              short("mama", "g2-c-baby", "Tvoje telo", "", "data-v2-mama-section='body'"),
+              short("calendar", "g2-c-brand", "Kalendár", "", "data-v5-feature='calendar'")
             ]
           : [
               pregnancyWeek >= 36
                 ? short("question", "g2-c-mama", "Otázky pre lekára", doctorQuestions("me").filter(item => !item.done).length ? doctorQuestions("me").filter(item => !item.done).length + " pripravené" : "zapísať otázku", "data-v5-book-section='questions'")
                 : short("leaf", "g2-c-mama", "Čo je bežné", "telo a spánok", "data-v2-mama-section='troubles'"),
-              short("calendar", "g2-c-brand", "Kalendár", "termíny", "data-v5-feature='calendar'"),
+              short("calendar", "g2-c-brand", "Kalendár", "", "data-v5-feature='calendar'"),
               short("checklist", "g2-c-baby", features.beforeBirth.label, "taška, pôrodnica", "data-v5-feature='beforeBirth'")
             ])
         : (() => {
@@ -2012,11 +2012,11 @@
             const sCare = short("health", "g2-c-mama", features.care.label, "plač, teplota, noc", "data-v5-feature='care'");
             const sBook = short("book", "g2-c-brand", "Zdravotná knižka", "prehliadky, očkovanie", "data-v5-feature='childBook'");
             const sAct = short("activity", "g2-c-mama", "Aktivity", "nápad na dnes", "data-v5-feature='activities'");
-            const sCal = short("calendar", "g2-c-brand", "Kalendár", "termíny", "data-v5-feature='calendar'");
+            const sCal = short("calendar", "g2-c-brand", "Kalendár", "", "data-v5-feature='calendar'");
             // Samo 13. 11.: „Starostlivosť o bábätko“ (pôvodne „Keď sa bábätko trápi“, premenované 15. 11. – pokojný tón) ostáva na domove celý 1. rok (vtedy je najviac neistoty); Zdravotná knižka je v Bábätku a vo Všetko.
             // Master 2.1: od 1 roka je Aktivita v kruhu → na jej mieste Denné záznamy.
             // Master 2.2.2 (Samo 15. 11.): Denné záznamy nie sú skratkou – zapisuje sa v kruhu, celý prehľad je v strede kruhu (Náš deň) a vo Všetko.
-            const sTeeth = short("tooth", "g2-c-baby", "Zúbky", "mapa, starostlivosť", "data-v5-feature='teeth'");
+            const sTeeth = short("tooth", "g2-c-baby", "Zúbky", "", "data-v5-feature='teeth'");
             return days >= 365 ? [sCal, sBook, sTeeth] : days > 42 ? [sCare, sAct, sBook] : [sCare, sBook, sCal];
           })();
       // Termín do 7 dní nahradí v riadku „Dnes“ úlohu (termín je v ten deň dôležitejší).
@@ -2130,7 +2130,7 @@
     const baby = expecting ? [
       g2Feature("pregnancy", "Bábätko", "tehotenska knizka kontrola kontroly gynekolog gynekologicka vysledky ultrazvuk usg sono krv moc odbery prehliadka"),
       g2Feature("babySize", "Bábätko", "tyzden tyzdne velkost velky velke vyvoj ovocie ako velke rastie"),
-      g2Item("moves", "Pohyby bábätka", "Zápis pohybov", "wave", "Bábätko", "data-v5-book-section='moves'", "pohyby pohyb hybe kope kopanie kopance necitim nehybe"),
+      g2Item("moves", "Pohyby bábätka", "", "wave", "Bábätko", "data-v5-book-section='moves'", "pohyby pohyb hybe kope kopanie kopance necitim nehybe"),
       g2Item("questions", "Otázky pre lekára", "Na najbližšiu kontrolu", "question", "Bábätko", "data-v5-book-section='questions'", "otazky otazka lekar gynekolog opytat zabudnem"),
       g2Feature("beforeBirth", "Bábätko", "priprava porod porodnica taska taska do porodnice balit doklady prve dni domov vybava porodny plan kontrakcie"),
       g2Feature("voice", "Bábätko", "hlas uspavanka nahravka nahrat spievat pesnicka")
@@ -2142,7 +2142,7 @@
       g2Feature("sounds", "Bábätko", "spanok spat spankovy rezim uspavanka sum biely sum zaspavanie zvuky nechce spat nespi uspat"),
       g2Feature("teeth", "Bábätko", "zubky zuby zub zubok cistenie rezu zubar"),
       g2Feature("activities", "Bábätko", "hra hry hrat aktivity rozvoj zabava cvicenie co robit"),
-      g2Item("weather", "Počasie a oblečenie", "Ako obliecť bábätko von", "weather", "Bábätko", "data-v5-quick-feature='weather'", "pocasie oblecenie obliect von prechadzka zima teplo")
+      g2Item("weather", "Počasie a oblečenie", "Oblečenie von", "weather", "Bábätko", "data-v5-quick-feature='weather'", "pocasie oblecenie obliect von prechadzka zima teplo")
     ];
     const help = g2Item("help", "Nálada a podpora", "Pocity, únava, opora", "alert", "Mama",
       expecting ? "data-g2-chat='Potrebujem pomoc a podporu'" : "data-v2-mama-section='mood'",
@@ -2170,7 +2170,7 @@
       expecting ? null : g2Feature("checklists", "Rodina", "zoznam zoznamy checklist choroba lekar cestovanie"),
       g2Feature("travel", "Rodina", "cestovanie cesta vylet dovolenka auto lietadlo"),
       // Master 2.6: údaje len v telefóne, záloha, pridanie na plochu (g2-backup.js)
-      g2Item("backup", "Appka a záloha", "Na plochu, záloha údajov", "download", "Rodina", "data-g2b-open", "zaloha zalohovat obnovit ulozit udaje data telefon plocha instalovat nainstalovat stiahnut aplikacia appka vymazat novy telefon")
+      g2Item("backup", "Appka a záloha", "Na plochu, záloha", "download", "Rodina", "data-g2b-open", "zaloha zalohovat obnovit ulozit udaje data telefon plocha instalovat nainstalovat stiahnut aplikacia appka vymazat novy telefon")
     ].filter(Boolean);
     // Len pre hľadanie (nie sú samostatné dlaždice): pomoc, profil, kartičky.
     const extra = [
@@ -3417,10 +3417,10 @@
       // V2: pokoj a kľud – bez trvalého červeného pásu s tiesňovými číslami (Samuel 28. 9.).
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Starostlivosť o bábätko</span><h1>S čím ti pomôžem?</h1></header>",
       "<div class='v5-care-grid'>",
-      "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("stethoscope") + "</span><span><strong>Návšteva lekára</strong><small>Zápis z návštevy</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("stethoscope") + "</span><span><strong>Návšteva lekára</strong></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Plač, teplota a iné</strong><small>Zápis a otázky pre pediatra</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-feature='childBook'><span class='v5-icon'>" + icon("book") + "</span><span><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Šum a uspávanky</strong><small>Na upokojenie a zaspávanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Šum a uspávanky</strong><small>Na zaspávanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-urgent><span class='v5-icon'>" + icon("contacts") + "</span><span><strong>Kontakty na pomoc</strong><small>Pediater, pohotovosť a záchranka</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "</div><p class='v5-care-disclaimer'>Guguboo informuje, neradí. Pri otázkach o zdraví ti pomôže lekár.</p>"
     ].join("");
@@ -3563,7 +3563,7 @@
       total ? "" : "<div class='v5-empty'>Keď ťa niečo napadne, zapíš si to sem.</div>",
       part("me", "Pre mňa"),
       born || doctorQuestions("baby").length ? part("baby", "Pre bábätko") : "",
-      total ? "<p class='v5-book-note'>Zaškrtni, čo ste už prebrali – otázka ostane v zozname.</p>" : ""
+      total ? "<p class='v5-book-note'>Prebrané si zaškrtni.</p>" : ""
     ].join("");
   }
   function rerenderDoctorQuestions() {
@@ -3702,28 +3702,28 @@
       const rows = (state.shopping || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("shopping") + "</span><div><strong>" + escapeHtml(row.item.item || "Položka") + "</strong><span>" + escapeHtml([row.item.category, row.item.note].filter(Boolean).join(" · ") || "Spoločný nákup") + "</span></div>" + utilityRemoveButton(section, row.index, "Kúpené") + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Zoznam je prázdny.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Pridaj prvú vec.</div>") +
         "<div class='v5-form-card'><label>Čo treba kúpiť<input id='v5UtilityItem' maxlength='80' placeholder='napr. plienky'></label><label>Poznámka — nepovinné<input id='v5UtilityNote' maxlength='100' placeholder='značka, veľkosť alebo množstvo'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='shopping'>Pridať do nákupu</button><button class='v5-secondary' type='button' data-v2-utility-sub='products'>Výbava a produkty</button></div>";
     } else if (section === "contacts") {
       const rows = (state.contacts || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("contacts") + "</span><div><strong>" + escapeHtml(row.item.name || row.item.type || "Kontakt") + "</strong><span>" + escapeHtml([row.item.type, row.item.phone].filter(Boolean).join(" · ")) + "</span></div>" + utilityRemoveButton(section, row.index) + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Pridaj pediatra, lekáreň alebo človeka, ktorému môžeš zavolať.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Pridaj pediatra, lekáreň či blízkych.</div>") +
         "<div class='v5-form-card'><label>Meno alebo názov<input id='v5UtilityName' maxlength='80' placeholder='napr. MUDr. Nováková'></label><label>Typ<select id='v5UtilityType'><option>Pediater</option><option>Gynekológ</option><option>Pôrodnica</option><option>Pôrodná asistentka</option><option>Lekáreň</option><option>Pohotovosť</option><option>Rodina</option><option>Iné</option></select></label><label>Telefón<input id='v5UtilityPhone' type='tel' maxlength='30' placeholder='+421…'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='contacts'>Uložiť kontakt</button></div>";
     } else if (section === "products") {
       const rows = (state.productFavorites || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("products") + "</span><div><strong>" + escapeHtml(row.item.item || "Produkt") + "</strong><span>" + escapeHtml([row.item.brand, row.item.size].filter(Boolean).join(" · ") || "Uložená výbava") + "</span></div><button class='v5-link-button' type='button' data-v5-product-to-shopping='" + row.index + "'>Kúpiť</button>" + utilityRemoveButton(section, row.index) + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Ulož si iba veci, ktoré používaš opakovane.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Veci, ktoré kupuješ opakovane.</div>") +
         "<div class='v5-form-card'><label>Produkt<input id='v5UtilityProduct' maxlength='80' placeholder='napr. plienky'></label><label>Značka — nepovinné<input id='v5UtilityBrand' maxlength='60'></label><label>Veľkosť — nepovinné<input id='v5UtilitySize' maxlength='30' value='" + escapeHtml(state.profile.diaperSize || "") + "'></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='products'>Uložiť produkt</button></div>";
     } else if (section === "family") {
       const rows = (state.familyTasks || []).map((item, index) => ({ item, index })).reverse();
       content = (rows.length ? "<div class='v5-list'>" + rows.map(row =>
         "<div class='v5-row-card'><span class='v5-icon'>" + icon("family") + "</span><div><strong>" + escapeHtml(row.item.task || "Rodinná úloha") + "</strong><span>" + escapeHtml([row.item.assignee || "rodina", row.item.when].filter(Boolean).join(" · ")) + "</span></div>" + utilityRemoveButton(section, row.index, "Hotovo") + "</div>"
-      ).join("") + "</div>" : "<div class='v5-empty'>Zatiaľ žiadna úloha.</div>") +
+      ).join("") + "</div>" : "<div class='v5-empty'>Pridaj prvú úlohu.</div>") +
         "<div class='v5-form-card'><label>Čo treba urobiť<input id='v5UtilityTask' maxlength='100' placeholder='napr. kúpiť plienky'></label><label>Kto<select id='v5UtilityAssignee'><option value='partner'>Partner</option><option value='mama'>Mama</option><option value='rodina'>Ktokoľvek z rodiny</option></select></label></div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-utility-add='family'>Pridať úlohu</button><button class='v5-secondary' type='button' data-v5-feature='profiles'>Spravovať rodinu</button></div>";
     } else {
@@ -3780,10 +3780,10 @@
     const lullabyCount = Array.isArray(state.lullabies) ? state.lullabies.length : 0;
     const recentLullabies = (state.lullabies || []).slice().reverse().slice(0, 3);
     return [
-      "<section class='v5-sleep-audio'><div class='v5-compact-head'><div><h3>Zvuky na zaspávanie</h3><p>Šum alebo tvoja rodinná uspávanka.</p></div></div>",
+      "<section class='v5-sleep-audio'><div class='v5-compact-head'><div><h3>Zvuky na zaspávanie</h3></div></div>",
       "<div class='v5-choice-grid v5-sleep-audio-grid'>",
-      "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>", icon("sound"), "</span><span><strong>Biely šum</strong><small>Jemné zvukové pozadie.</small></span></button>",
-      "<button class='v5-choice' type='button' data-v5-action='open-sleep-sounds'><span class='v5-icon'>", icon("family"), "</span><span><strong>Rodinné uspávanky</strong><small>", lullabyCount ? lullabyCount + " spoločných nahrávok" : "Nahrať hlas mamy alebo otca", "</small></span></button>",
+      "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>", icon("sound"), "</span><span><strong>Biely šum</strong><small>Jemné pozadie</small></span></button>",
+      "<button class='v5-choice' type='button' data-v5-action='open-sleep-sounds'><span class='v5-icon'>", icon("family"), "</span><span><strong>Rodinné uspávanky</strong><small>", lullabyCount ? lullabyCount + " spoločných nahrávok" : "Nahrať hlas", "</small></span></button>",
       "</div>",
       recentLullabies.length ? "<div class='v5-lullaby-quick-list'>" + recentLullabies.map(item => "<button type='button' data-v5-play-lullaby='" + escapeHtml(item.id) + "'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>" + escapeHtml(item.title || "Rodinná uspávanka") + "</strong><small>" + escapeHtml(item.author === "otec" ? "Nahral otec" : item.author === "mama" ? "Nahrala mama" : "Rodinná nahrávka") + "</small></span><b>Prehrať</b></button>").join("") + "</div>" : "",
       "</section>"
@@ -3829,7 +3829,7 @@
           "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='save-sleep-past'>Uložiť spánok</button><button class='v5-text-action' type='button' data-v5-flow-back>Späť</button></div>";
       } else {
         const sleeps = state.events.filter(event => normalized(event.type).includes("span") && todayKey(event.created) === todayKey()).slice().reverse();
-        html = flowHead("Spánok", "Dnešný prehľad", "Záznam môžeš neskôr opraviť v histórii.", 1, 2) +
+        html = flowHead("Spánok", "Dnešný prehľad", "Opravíš ho v histórii.", 1, 2) +
           "<div class='v5-list'>" + (sleeps.length ? sleeps.map(event =>
             "<div class='v5-row-card'><span class='v5-icon'>" + icon("moon") + "</span><div><strong>" + escapeHtml(event.value || "Spánok") + "</strong><span>" + formatClock(event.created) + "</span></div></div>"
           ).join("") : "<div class='v5-empty'>Dnešný spánok sa zapíše sem.</div>") + "</div>" +
@@ -3848,7 +3848,7 @@
           choice("feed-solids", "Príkrmy", "Jedlo a približná porcia.", "products") +
           "</div>";
       } else if (flow.step === 1 && data.method === "breast") {
-        html = flowHead("Dojčenie", "Ktorý prsník?", "Stranu môžeš počas dojčenia zmeniť.", 1, 3) +
+        html = flowHead("Dojčenie", "Ktorý prsník?", "Stranu zmeníš kedykoľvek.", 1, 3) +
           "<div class='v5-choice-grid'>" +
           choice("side-left", "Ľavý", "Začať na ľavej strane.", "feeding") +
           choice("side-right", "Pravý", "Začať na pravej strane.", "feeding") +
@@ -3941,7 +3941,7 @@
 
     if (flow.type === "weather") {
       if (flow.step === 0) {
-        html = flowHead("Počasie", "Kam sa chystáš?", "Odporúčanie sa prispôsobí situácii a veku dieťaťa.", 0, 3) +
+        html = flowHead("Počasie", "Kam sa chystáš?", "Podľa situácie a veku.", 0, 3) +
           "<div class='v5-choice-grid'>" +
           choice("weather-out", "Ideme von", "Prechádzka alebo pobyt vonku.", "weather") +
           choice("weather-stroller", "Kočík", "Zohľadníme prúdenie vzduchu.", "baby") +
@@ -4317,12 +4317,12 @@
     if (section === "home") {
       target.innerHTML = flowHead("Naše momenty", "Malé okamihy, jeden príbeh", "", 0, 1) +
         "<div class='v5-moments-hub'>" +
-        "<button type='button' data-v5-moments-section='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Naša časová os</strong><small>" + ((n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok"))((window.GugubooMoments?.collect?.() || []).length)) + " · zapisujú sa samy</small></span><b aria-hidden='true'>›</b></button>" +
+        "<button type='button' data-v5-moments-section='timeline'><span class='v5-icon'>" + icon("memory") + "</span><span><strong>Naša časová os</strong><small>" + ((n => n + (n === 1 ? " spomienka" : n > 1 && n < 5 ? " spomienky" : " spomienok"))((window.GugubooMoments?.collect?.() || []).length)) + "</small></span><b aria-hidden='true'>›</b></button>" +
         "<button type='button' data-v5-moments-section='today'><span class='v5-icon'>" + icon("camera") + "</span><span><strong>Dnešný malý moment</strong><small>Fotka alebo veta</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='firsts'><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Prvé razy</strong><small>" + (state.v5.firstMoments.length ? "Zachytené: " + state.v5.firstMoments.length : "Úsmev, zúbok, prvé kroky") + "</small></span><b>›</b></button>" +
         "<button type='button' data-v5-moments-section='albums'><span class='v5-icon'>" + icon("grid") + "</span><span><strong>Albumy</strong><small>Čakanie, 100 dní, prvý rok</small></span><b aria-hidden='true'>›</b></button>" +
         // Hotová kartička narodenia sa ukazuje tu – na domove už nie (Samuel 4. 11.).
-        (state.birthCard?.complete && state.profile.status !== "expecting" ? "<button type='button' data-v5-feature='cards'><span class='v5-icon'>" + icon("cards") + "</span><span><strong>Ukázať kartičku narodenia</strong><small>Pozrieť, upraviť alebo znova poslať</small></span><b aria-hidden='true'>›</b></button>" : "") +
+        (state.birthCard?.complete && state.profile.status !== "expecting" ? "<button type='button' data-v5-feature='cards'><span class='v5-icon'>" + icon("cards") + "</span><span><strong>Ukázať kartičku narodenia</strong><small>Pozrieť alebo poslať</small></span><b aria-hidden='true'>›</b></button>" : "") +
         "</div>";
       return;
     }
@@ -4336,7 +4336,7 @@
       return;
     }
     if (section === "today") {
-      target.innerHTML = flowHead("Naše momenty", day && day > 0 && day <= 100 ? day + ". deň spolu" : "Dnešný malý moment", "Stačí fotografia alebo jedna veta.", 0, 1) +
+      target.innerHTML = flowHead("Naše momenty", day && day > 0 && day <= 100 ? day + ". deň spolu" : "Dnešný malý moment", "", 0, 1) +
         "<div class='v5-form-card'><label>Dátum<input id='v5First100Date' type='date' value='" + escapeHtml(existing?.date || date) + "'></label>" +
         "<label>Krátka veta<textarea id='v5First100Text' placeholder='Moment, ktorý si chceš zapamätať'>" + escapeHtml(existing?.text || "") + "</textarea></label>" +
         "<label>Fotografia — nepovinné<input id='v5First100Photo' type='file' accept='image/*'></label>" +
@@ -4407,7 +4407,7 @@
       ["sky", "Nebeská modrá a jemná fialová"],
       ["powder", "Púdrová ružová a teplá béžová"]
     ];
-    target.innerHTML = flowHead("Kartičky", "Dvanásť znamení, tvoj vlastný štýl.", "Znamenie určuje iba vizuálnu tému. Neurčuje povahu dieťaťa.", 0, 1) +
+    target.innerHTML = flowHead("Kartičky", "Dvanásť znamení, tvoj vlastný štýl.", "Znamenie mení len vzhľad kartičky.", 0, 1) +
       "<section class='v5-zodiac-preview palette-" + escapeHtml(state.v5.cardPalette) + " sign-" + escapeHtml(selected[0]) + "'><span class='v5-zodiac-constellation'>" + escapeHtml(selected[3]) + "</span><span class='v5-zodiac-symbol'>" + selected[2] + "</span><small>" + escapeHtml(selected[1]) + "</small><h2>" + escapeHtml(state.profile.name || "Naše bábätko") + "</h2><p>" + escapeHtml(selected[4]) + "</p><div class='v5-zodiac-facts'><span>" + escapeHtml(state.profile.birth || "dátum") + "</span><span>" + escapeHtml(state.profile.birthTime || "čas") + "</span><span>" + escapeHtml(state.profile.weight || "hmotnosť") + "</span></div></section>" +
       "<div class='v5-form-card' style='margin-top:14px'><label>Farebná paleta<select id='v5CardPalette'>" +
       palettes.map(item => "<option value='" + item[0] + "'" + (item[0] === state.v5.cardPalette ? " selected" : "") + ">" + item[1] + "</option>").join("") +
@@ -4853,7 +4853,7 @@
     const periodRow = () => {
       const s = window.GugubooPeriod?.stats?.();
       const sub = !s?.runs?.length ? "Zápis a odhad"
-        : s.ongoing ? "Prebieha · zapíš dnešný deň"
+        : s.ongoing ? "Prebieha"
         : s.late > 0 ? "Zapíš, keď začne"
         : s.next ? "Ďalšia asi " + new Date(s.next + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) + " · odhad"
         : "Odhad po druhej zapísanej";
@@ -4866,7 +4866,7 @@
       MASTER ? "<p class='g2-hub-sub'>" + (expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth)) + "</p>"
         : "<section class='v2-book-hero v2-mama-hero'><h1>" + escapeHtml(parentDisplayName() || "Mama") + "</h1><p>" + (expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth)) + "</p></section>",
       // Master 2.1 (Samo 15. 11.): Čas pre teba sa presunul z domova sem – navrchu Mamy, tri časti na jedno ťuknutie.
-      MASTER ? "<section class='g2q-me' aria-label='Čas pre teba'><button type='button' class='g2q-me-head' data-v5-o-section='care'><span><strong>Čas pre teba</strong><small>Malá chvíľa, keď sa dá</small></span><b aria-hidden='true'>›</b></button><div class='g2q-me-parts'><button type='button' class='g2r-part g2r-p1' data-g2-ring-part='rest'>" + icon("feather") + "<span>Oddych</span></button><button type='button' class='g2r-part g2r-p2' data-g2-ring-part='body'>" + icon("personTaiChi") + "<span>Telo</span></button><button type='button' class='g2r-part g2r-p3' data-g2-ring-part='sup'>" + icon("handshake") + "<span>Opora</span></button></div></section>" : "",
+      MASTER ? "<section class='g2q-me' aria-label='Čas pre teba'><button type='button' class='g2q-me-head' data-v5-o-section='care'><span><strong>Čas pre teba</strong><small>Malá chvíľa</small></span><b aria-hidden='true'>›</b></button><div class='g2q-me-parts'><button type='button' class='g2r-part g2r-p1' data-g2-ring-part='rest'>" + icon("feather") + "<span>Oddych</span></button><button type='button' class='g2r-part g2r-p2' data-g2-ring-part='body'>" + icon("personTaiChi") + "<span>Telo</span></button><button type='button' class='g2r-part g2r-p3' data-g2-ring-part='sup'>" + icon("handshake") + "<span>Opora</span></button></div></section>" : "",
       "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) + " · nastaviť", "</small>",
       "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span></button>",
       "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
@@ -4879,9 +4879,9 @@
       !expecting && content ? row("troubles", "leaf", "Telo po pôrode", "Hojenie, prsia, panvové dno") : "",
       !expecting && content ? row("check", "calendar", "Kontrola po pôrode", "6 týždňov po pôrode") : "",
       !expecting && content ? periodRow() : "",
-      !expecting && content ? row("mood", "alert", "Nálada a spánok", "Baby blues, únava, pomoc") : "",
+      !expecting && content ? row("mood", "alert", "Nálada a spánok", "Pocity, únava, opora") : "",
       "<button type='button' data-v5-feature='privateSpace'><span class='v5-icon'>", icon("lock"), "</span><span><strong>Môj súkromný denník</strong><small>",
-      state.v5.diaryLastEntry === todayKey() ? "Dnes už zapísané · chránené PIN-om" : "Len pre teba, s PIN-om", "</small></span><b aria-hidden='true'>›</b></button>",
+      state.v5.diaryLastEntry === todayKey() ? "Dnes zapísané" : "Len pre teba, s PIN-om", "</small></span><b aria-hidden='true'>›</b></button>",
       "</div>",
       "<p class='v5-book-note'>Všeobecné informácie z NHS. Pri otázkach o zdraví ti najlepšie pomôže lekár.</p>"
     ].join("");
@@ -5019,7 +5019,7 @@
       const latest = growthRows[growthRows.length - 1];
       const block = (title, body) => body ? "<section class='v2-doctor-block'><h3>" + escapeHtml(title) + "</h3>" + body + "</section>" : "";
       target.innerHTML = [
-        flowHead("Zdravotná knižka", "Prehľad pre pediatra", "Ukáž túto obrazovku na prehliadke alebo na pohotovosti.", 0, 1),
+        flowHead("Zdravotná knižka", "Prehľad pre pediatra", "Na prehliadku aj pohotovosť.", 0, 1),
         block("Dieťa", "<p><b>" + escapeHtml(name) + "</b>" + (state.profile.birth ? " · nar. " + escapeHtml(dateLabel(state.profile.birth)) : "") + (age?.label && !age.invalid ? " · " + escapeHtml(age.label) : "") + "</p>" +
           (state.profile.weight || state.profile.height ? "<p>Pri narodení: " + escapeHtml([state.profile.weight, state.profile.height].filter(Boolean).join(" · ")) + (state.profile.gestationalWeek ? " · " + escapeHtml(state.profile.gestationalWeek) + ". týždeň" : "") + "</p>" : "") +
           (state.profile.insurance ? "<p>Poisťovňa: " + escapeHtml(state.profile.insurance) + "</p>" : "")),
@@ -5044,7 +5044,7 @@
       row("vaccines", "checklist", "Očkovanie", vaccines.length ? skCount(vaccines.length, "záznam", "záznamy", "záznamov") : "Čo a kedy"),
       // Upratanie 2.36: Teplota, merania a Zúbky majú domov tu (predtým samostatne v zásuvke a v Pomoci).
       "<button type='button' data-v5-health-overview><span class='v5-icon'>", icon("temperature"), "</span><span><strong>Teplota a merania</strong><small>Aj návštevy lekára</small></span><b aria-hidden='true'>›</b></button>",
-      "<button type='button' data-v5-feature='teeth'><span class='v5-icon'>", icon("tooth"), "</span><span><strong>Zúbky</strong><small>Mapa zúbkov</small></span><b aria-hidden='true'>›</b></button>",
+      "<button type='button' data-v5-feature='teeth'><span class='v5-icon'>", icon("tooth"), "</span><span><strong>Zúbky</strong></span><b aria-hidden='true'>›</b></button>",
       "</div><h2 class='v2-book-group'>K lekárovi</h2><div class='v2-book-tools'>",
       row("questions", "book", "Otázky pre lekára", questions.length ? skCount(questions.length, "pripravená", "pripravené", "pripravených") : "Na najbližšiu prehliadku"),
       "<button type='button' data-v5-feature='profiles'><span class='v5-icon'>", icon("profile"), "</span><span><strong>Profil dieťaťa</strong><small>Poisťovňa, pediater, alergie</small></span><b aria-hidden='true'>›</b></button>",
@@ -5091,13 +5091,13 @@
         "<button type='button' data-v5-book-section='visits'><span class='v5-icon'>", icon("health"), "</span><span><strong>Zápisy z kontrol</strong><small>", lastVisit ? "Posledná " + escapeHtml(dateLabel(lastVisit.date)) + " · spolu " + visits.length : "Po kontrole", "</small></span><b aria-hidden='true'>›</b></button>",
         "<button type='button' data-v5-book-section='results'><span class='v5-icon'>", icon("checklist"), "</span><span><strong>Výsledky vyšetrení</strong><small>", state.v5.prenatalResults.length ? state.v5.prenatalResults.length + " uložených" : "Krvná skupina, odbery, ultrazvuky", "</small></span><b aria-hidden='true'>›</b></button>",
         "<button type='button' data-v5-book-section='weight'><span class='v5-icon'>", icon("growth"), "</span><span><strong>Hmotnosť a tlak</strong><small>", visits.some(visit => visit.weight || visit.pressure) ? "Zo zápisov z kontrol" : "Graf zo zápisov", "</small></span><b aria-hidden='true'>›</b></button>",
-        "<button type='button' data-v5-book-section='moves'><span class='v5-icon'>", icon("baby"), "</span><span><strong>Pohyby bábätka</strong><small>", state.v5.babyMoves.length ? "Naposledy " + escapeHtml(new Date(state.v5.babyMoves[state.v5.babyMoves.length - 1].time).toLocaleString("sk-SK", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })) : "Zápis pohybov", "</small></span><b aria-hidden='true'>›</b></button>",
+        "<button type='button' data-v5-book-section='moves'><span class='v5-icon'>", icon("baby"), "</span><span><strong>Pohyby bábätka</strong><small>", state.v5.babyMoves.length ? "Naposledy " + escapeHtml(new Date(state.v5.babyMoves[state.v5.babyMoves.length - 1].time).toLocaleString("sk-SK", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })) : "", "</small></span><b aria-hidden='true'>›</b></button>",
         "</div>",
         "<h2 class='v2-book-group'>Príprava</h2>",
         "<div class='v2-book-tools'>",
         "<button type='button' data-v5-feature='calendar'><span class='v5-icon'>", icon("calendar"), "</span><span><strong>Kontroly a termíny</strong><small>", next ? escapeHtml(next.title) + " · " + escapeHtml(calendarHasTime(next.date) ? new Date(next.date).toLocaleString("sk-SK", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : dateLabel(next.date)) : "Pridať termín do Kalendára", "</small></span><b aria-hidden='true'>›</b></button>",
         "<button type='button' data-v5-book-section='questions'><span class='v5-icon'>", icon("question"), "</span><span><strong>Otázky pre lekára</strong><small>", openMeQuestions().length ? skCount(openMeQuestions().length, "pripravená", "pripravené", "pripravených") : "Na najbližšiu kontrolu", "</small></span><b aria-hidden='true'>›</b></button>",
-        "<button type='button' data-v5-book-section='birthplan'><span class='v5-icon'>", icon("memory"), "</span><span><strong>Plán pôrodu</strong><small>", Object.values(state.v5.birthPlan).some(Boolean) ? "Rozpracovaný" : "Čo si želáš pri pôrode", "</small></span><b aria-hidden='true'>›</b></button>",
+        "<button type='button' data-v5-book-section='birthplan'><span class='v5-icon'>", icon("memory"), "</span><span><strong>Plán pôrodu</strong><small>", Object.values(state.v5.birthPlan).some(Boolean) ? "Rozpracovaný" : "Tvoje želania", "</small></span><b aria-hidden='true'>›</b></button>",
         "</div>",
         "<button class='v5-primary v2-book-doctor' type='button' data-v5-book-section='doctor'>Prehľad pre lekára</button>",
         "<p class='v5-book-note'>Tvoj osobný prehľad. Nenahrádza oficiálnu tehotenskú knižku ani lekára.</p>"
@@ -5219,7 +5219,7 @@
       const plan = state.v5.birthPlan;
       const block = (title, body) => body ? "<section class='v2-doctor-block'><h3>" + title + "</h3>" + body + "</section>" : "";
       target.innerHTML = [
-        flowHead("Tehotenská knižka", "Prehľad pre lekára", "Ukáž túto obrazovku na kontrole alebo v pôrodnici.", 0, 1),
+        flowHead("Tehotenská knižka", "Prehľad pre lekára", "Na kontrolu aj do pôrodnice.", 0, 1),
         block("Tehotenstvo", "<p><b>" + (week ? week + ". týždeň" : "—") + "</b> · termín pôrodu " + (state.profile.due ? escapeHtml(dateLabel(state.profile.due)) : "—") + "</p><p>" + escapeHtml(state.v5.motherProfile?.name || state.user?.name || "") + (state.v5.motherProfile?.insurance ? " · " + escapeHtml(state.v5.motherProfile.insurance) : "") + "</p>"),
         block("Výsledky vyšetrení", state.v5.prenatalResults.map(result => "<p><b>" + escapeHtml(result.type) + "</b> (" + escapeHtml(dateLabel(result.date)) + ")" + (result.text ? ": " + escapeHtml(result.text) : "") + "</p>").join("")),
         block("Posledné kontroly", lastVisits.map(visit => "<p><b>" + escapeHtml(dateLabel(visit.date)) + "</b>" + (visit.weight ? " · " + escapeHtml(visit.weight) + " kg" : "") + (visit.pressure ? " · tlak " + escapeHtml(visit.pressure) : "") + (visit.note ? "<br>" + escapeHtml(visit.note) : "") + "</p>").join("")),
@@ -5268,9 +5268,9 @@
     const lullabies = (state.lullabies || []).slice().reverse();
     target.innerHTML = flowHead("Spánok", "Zvuky a rodinné uspávanky", "", 0, 1) +
       "<div class='v5-choice-grid'>" +
-      "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Biely šum</strong><small>Jemné stále pozadie.</small></span></button>" +
-      "<button class='v5-choice' type='button' data-v5-audio-type='lullaby-soft' data-v5-audio-title='Jemná uspávanka'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Jemná melódia</strong><small>Predvolená pokojná hudba.</small></span></button>" +
-      "<button class='v5-choice' type='button' data-v5-feature='voice'><span class='v5-icon'>" + icon("family") + "</span><span><strong>Nahrať uspávanku</strong><small>Hlas mamy, otca alebo blízkej osoby.</small></span></button></div>" +
+      "<button class='v5-choice' type='button' data-v5-audio-type='white' data-v5-audio-title='Biely šum'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Biely šum</strong><small>Jemné pozadie</small></span></button>" +
+      "<button class='v5-choice' type='button' data-v5-audio-type='lullaby-soft' data-v5-audio-title='Jemná uspávanka'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Jemná melódia</strong><small>Pokojná hudba</small></span></button>" +
+      "<button class='v5-choice' type='button' data-v5-feature='voice'><span class='v5-icon'>" + icon("family") + "</span><span><strong>Nahrať uspávanku</strong><small>Hlas niekoho blízkeho</small></span></button></div>" +
       (lullabies.length ? "<section class='v5-shared-lullabies'><div class='v5-compact-head'><div><h3>Naše nahrávky</h3></div></div><div class='v5-lullaby-quick-list'>" + lullabies.map(item => "<button type='button' data-v5-play-lullaby='" + escapeHtml(item.id) + "'><span class='v5-icon'>" + icon("sound") + "</span><span><strong>" + escapeHtml(item.title || "Rodinná uspávanka") + "</strong><small>" + escapeHtml(item.author === "otec" ? "Nahral otec" : item.author === "mama" ? "Nahrala mama" : "Rodinná nahrávka") + "</small></span><b>Prehrať</b></button>").join("") + "</div></section>" : "") +
       "<div class='v5-info-box'>Zvuk má byť iba jemným pozadím. Telefón ani reproduktor nedávaj k hlave dieťaťa.</div>";
   }

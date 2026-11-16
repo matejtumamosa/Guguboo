@@ -52,11 +52,11 @@
       const left = album.unlockDays && birth() ? album.unlockDays - daysTogether() : null;
       const sub = isLocked
         ? (birth() ? "Otvorí sa o " + left + (left === 1 ? " deň" : left < 5 ? " dni" : " dní") : "Otvorí sa po narodení")
-        : count ? count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Zatiaľ prázdny – spomienky pribudnú samy";
+        : count ? count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Spomienky pribudnú samy";
       return "<button type='button' class='v2-album-row" + (isLocked ? " is-locked" : "") + "' " + (isLocked ? "disabled" : "data-v5-moments-section='album-" + album.id + "'") + "><span class='v2-album-cover' aria-hidden='true'>" + album.emoji + "</span><span><strong>" + esc(album.title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>" + (isLocked ? "🔒" : "›") + "</b></button>";
     }).join("");
     return [
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Albumy</h1><p>Skladajú sa samy z vašich spomienok. Pred uložením si všetko pozrieš a vyradíš, čo nechceš.</p></header>",
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Albumy</h1><p>Skladajú sa samy z vašich spomienok.</p></header>",
       "<div class='v2-album-list'>", rows, "</div>",
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
     ].join("");
@@ -77,9 +77,9 @@
         item.text ? "<p>" + esc(item.text) + "</p>" : "",
         item.photo ? "<img " + (window.G2Media ? G2Media.srcAttr(item.photo) : "src='" + esc(item.photo) + "'") + " alt='' loading='lazy'>" : "",
         "</div></li>"
-      ].join("")).join("") + "</ol>" : "<div class='v5-empty'>Album je zatiaľ prázdny. Spomienky sa sem dostanú samy – napríklad keď si v Tehotenskej knižke zapíšeš sono alebo ťukneš na prvý raz.</div>",
+      ].join("")).join("") + "</ol>" : "<div class='v5-empty'>Spomienky sa sem pridajú samy.</div>",
       all.length ? "<div class='v2-ann-share'><button type='button' class='v5-primary' data-v2-album-share='" + esc(album.id) + "'>Zdieľať obrázok</button><button type='button' class='v5-secondary' data-v2-album-print='" + esc(album.id) + "'>Vytlačiť / PDF</button></div>" : "",
-      all.length ? "<p class='v5-book-note'>Odškrtni, čo do albumu nechceš. Obrázok sa vytvorí len z vybraných spomienok a nikam sa neposiela sám.</p>" : "",
+      all.length ? "<p class='v5-book-note'>Odškrtni, čo nechceš. Nič sa neposiela samo.</p>" : "",
       "<button class='v5-secondary' type='button' data-v5-moments-section='albums'>Všetky albumy</button>"
     ].join("");
   }

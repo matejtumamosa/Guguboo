@@ -31,7 +31,7 @@
     return [
       "<header class='v2-birth-head'><span class='v2-birth-heart' aria-hidden='true'>♡</span>",
       "<h2 id='v2BirthTitle'>Bábätko je na svete</h2>",
-      "<p>Gratulujeme! Stačí pár údajov – zvyšok Guguboo pripraví samo.</p></header>",
+      "<p>Gratulujeme. Stačí pár údajov.</p></header>",
       "<form class='v5-form-card v2-birth-form' id='v2BirthForm'>",
       "<label>Dátum narodenia<input id='v2BirthDate' type='date' required max='", todayKey(), "' value='", todayKey(), "'></label>",
       "<label>Čas narodenia — nepovinné<input id='v2BirthTime' type='time' value='", esc(state.profile.birthTime || ""), "'></label>",
@@ -43,7 +43,7 @@
       "<p class='v2-birth-error' id='v2BirthError' role='alert' hidden></p>",
       "<button class='v5-primary' type='submit'>Uložiť a pokračovať</button>",
       "</form>",
-      "<p class='v2-birth-note'>Nič sa nestratí – plán, kontakty, nahrávky aj spomienky ostávajú.</p>"
+      "<p class='v2-birth-note'>Plán, kontakty, nahrávky aj spomienky ostávajú.</p>"
     ].join("");
   }
 
@@ -52,7 +52,7 @@
     return [
       "<header class='v2-birth-head v2-birth-welcome'><span class='v2-birth-heart' aria-hidden='true'>❤️</span>",
       "<h2 id='v2BirthTitle'>Vitaj na svete, ", esc(name), "</h2>",
-      "<p>Guguboo sa prepína na prvé dni s bábätkom. Domov ti teraz ukáže len to, čo je dôležité v najbližších dňoch – a Kruh sa postará aj o teba.</p></header>",
+      "<p>Domov sa teraz prispôsobí prvým dňom s bábätkom.</p></header>",
       "<div class='v2-birth-actions'>",
       "<button class='v5-primary' type='button' data-v2-birth-card>Vytvoriť kartičku narodenia</button>",
       (window.GugubooAlbums?.count?.("cakanie") ? "<button class='v5-secondary' type='button' data-v2-birth-album>Pozrieť album Naše čakanie</button>" : ""),

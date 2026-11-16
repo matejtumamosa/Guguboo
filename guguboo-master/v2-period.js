@@ -189,8 +189,8 @@
     } else {
       if (s.late > 0) { title = dni(s.late) + " po odhade"; sub = "Odhad z tvojich cyklov je len orientačný."; }
       else if (s.next) { const left = diff(t, s.next); title = left === 0 ? "Môže prísť dnes" : "O " + dni(left); sub = "Ďalšia menštruácia asi " + short(s.next) + " · odhad"; }
-      else if (s.last) { title = "Prvá zapísaná " + short(s.last.start); sub = "Odhad ďalšej ukážeme po druhej zapísanej menštruácii."; }
-      else { title = "Zatiaľ nič zapísané"; sub = birthDays !== null && birthDays < 42 ? "Krvácanie v prvých týždňoch po pôrode nie je menštruácia – zapíš až tú." : "Keď začne menštruácia, stačí ťuknúť nižšie."; }
+      else if (s.last) { title = "Prvá zapísaná " + short(s.last.start); sub = "Odhad ukážeme po druhej menštruácii."; }
+      else { title = "Zatiaľ nič zapísané"; sub = birthDays !== null && birthDays < 42 ? "Krvácanie v prvých týždňoch po pôrode nie je menštruácia – zapíš až tú." : "Ťukni nižšie, keď začne."; }
       actions = "<button type='button' class='v5-primary' data-v2-period-today='medium'>Začala mi menštruácia</button>";
     }
     return [
@@ -268,7 +268,7 @@
       statsHtml(s),
       noticesHtml(s),
       "<section class='v2-mama-card v2-per-tools'>",
-      "<label class='v2-per-toggle'><input type='checkbox' data-v2-period-remind", p.remind ? " checked" : "", "><span><strong>Pripomenúť 2 dni vopred</strong><small>", s.next ? "Objaví sa v Kalendári." : "Funguje od druhej zapísanej menštruácie.", "</small></span></label>",
+      "<label class='v2-per-toggle'><input type='checkbox' data-v2-period-remind", p.remind ? " checked" : "", "><span><strong>Pripomenúť 2 dni vopred</strong><small>", s.next ? "Objaví sa v Kalendári." : "Od druhej zapísanej menštruácie.", "</small></span></label>",
       s.runs.length ? "<button type='button' class='v5-secondary' data-v2-period-share>Prehľad pre gynekológa</button>" : "",
       "</section>",
       infoHtml(),

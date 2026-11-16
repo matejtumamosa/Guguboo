@@ -200,7 +200,7 @@
     const expecting = state.profile?.status === "expecting";
     const tile = item => {
       const entry = saved(item.key);
-      return "<button type='button' class='" + (entry ? "is-saved" : "") + "' data-v5-first-moment='" + item.key + "' data-v5-first-label='" + esc(item.label) + "'><span class='v2-first-emoji' aria-hidden='true'>" + item.emoji + "</span><strong>" + esc(item.label) + "</strong><small>" + (entry ? esc(dateText(entry.date)) : "Ťukni, keď sa to stane") + "</small></button>";
+      return "<button type='button' class='" + (entry ? "is-saved" : "") + "' data-v5-first-moment='" + item.key + "' data-v5-first-label='" + esc(item.label) + "'><span class='v2-first-emoji' aria-hidden='true'>" + item.emoji + "</span><strong>" + esc(item.label) + "</strong><small>" + (entry ? esc(dateText(entry.date)) : "") + "</small></button>";
     };
     const block = (phase, title) => "<h3 class='v2-book-group'>" + title + "</h3><div class='v5-first-moments-grid v2-first-grid'>" + CATALOG.filter(item => item.phase === phase).map(tile).join("") + "</div>";
     return [
@@ -218,7 +218,7 @@
     state.v5.lastPromptDay = todayKey();
     V5.persist();
     V5.renderHome();
-    V5.announce("Uložené do vašich spomienok.");
+    V5.announce("Uložené v Našich momentoch.");
   }
 
   document.addEventListener("click", event => {
@@ -240,7 +240,7 @@
       state.v5.lastPromptDay = todayKey();
       V5.persist();
       V5.renderHome();
-      return V5.announce("Dobre, opýtame sa neskôr.");
+      return V5.announce("Opýtame sa neskôr.");
     }
     const never = event.target.closest("[data-v2-first-never]");
     if (never) {
@@ -331,7 +331,7 @@
     const left = n => n + (n === 1 ? " deň" : n < 5 ? " dni" : " dní");
     const daysLine = !birth || day < 1 ? "" : day < 100 ? "Do 100 dní spolu: " + left(100 - day) : day < 365 ? "Do prvého roka: " + left(365 - day) : "Váš prvý rok je za vami";
     // Master: bez odpočtov a počtov (psychologický komfort) – len pokojná veta.
-    const sub = V5.MASTER ? (duePrompt() ? "Dnes je tu aj malý návrh" : expecting ? "Fotka bruška alebo jedna veta" : "Jedna fotka alebo jedna veta") : [daysLine, count ? spomienky(count) : "Spomienky sa zapisujú samy"].filter(Boolean).join(" · ");
+    const sub = V5.MASTER ? (duePrompt() ? "Malý návrh na dnes" : expecting ? "Fotka alebo veta" : "Fotka alebo veta") : [daysLine, count ? spomienky(count) : "Spomienky sa zapisujú samy"].filter(Boolean).join(" · ");
 
     // Návrhy na dnes (zvýraznené hore v menu): otázka „Stalo sa už?“ a album k míľniku.
     // Oznámenie tehotenstva tu nie je – je ako úloha v Kruhu prípravy (Matej 4. 11.).

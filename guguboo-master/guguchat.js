@@ -207,7 +207,7 @@
         soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
         "</div>"
       ].join("") : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
       "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí počká. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
       // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
       "</footer>",
@@ -230,7 +230,7 @@
     const item = plan.what_is_relevant_now.find(entry => !/na svete/i.test(entry.title || ""));
     if (item) return row("Dnes stačí jedno", item.title, "data-v2-journey-open='" + esc(item.id) + "'", item.type === "task" ? item.id : "");
     if (plan.transition && (ctx.pregnancy_week || 0) >= 37) return row("Keď príde čas", "Bábätko je na svete?", "data-v2-birth-open", "");
-    return row("Dnes stačí jedno", "Na dnes je hotovo · celý plán", "data-g2-plan", "");
+    return row("Dnes stačí jedno", "Hotovo · celý plán", "data-g2-plan", "");
   }
   function planHtml() {
     const plan = J.compute(state);
@@ -243,7 +243,7 @@
       "<section class='v2-journey g2-plan-list' aria-label='Plán'><header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
       now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na teraz je hotovo.</p>",
       soon.length ? "<div class='v2-journey-soon'><h3>Čoskoro</h3>" + soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>" + (item.startsInDays <= 7 ? "budúci týždeň" : "o pár týždňov") + "</em></button>").join("") + "</div>" : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepneme appku na prvé dni spolu</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
       "</section>",
       "<button class='v5-row-card g2-plan-areas' type='button' data-g2-org><span class='v5-icon'>", icon("checklist"), "</span><div><strong>Príprava podľa oblastí</strong><span>Domov, taška, doklady</span></div><span class='v5-row-arrow'>›</span></button>"
     ].join("");

@@ -173,30 +173,30 @@
   // ——— Hlavné obrazovky ———
   function center() {
     const night = isNight(), born = phase() === "born";
-    if (night) return push("Nočná chvíľka", () => act("nap", "sound", "Šum na zaspávanie", "pomaly sa zosilní", true) + act("breath", "wind", "Dýchaj so mnou", "1 minúta") +
+    if (night) return push("Nočná chvíľka", () => act("nap", "sound", "Šum na zaspávanie", "", true) + act("breath", "wind", "Dýchaj so mnou", "1 minúta") +
       (born ? act("ask-night", "paperPlane", "Vymeníme sa pri ďalšom zobudení?", "prosba blízkemu") : act("sleep", "bed", "Uložiť sa na spánok", "pohodlne na boku, potom šum")) + // Master 2.7 (audit #30): bez „Kŕč v nohe“
       act("ask", "paperPlane", "Poprosiť o pomoc", "hotová prosba") + act("hard", "alert", "Nálada a podpora", "kontakty na pomoc"), { noContent: true });
-    const big = born ? ["nap", "bed", "Zdriemni si, kým spí", "šum sa pomaly zosilní"] : ["breath", "wind", "Dýchaj so mnou", "1 minúta"];
+    const big = born ? ["nap", "bed", "Zdriemni si, kým spí", ""] : ["breath", "wind", "Dýchaj so mnou", "1 minúta"];
     push("Teraz pre teba", () => act(big[0], big[1], big[2], big[3], true) + act("ask", "paperPlane", "Poprosiť o pomoc", "hotová prosba") + act("hard", "alert", "Nálada a podpora", "kontakty na pomoc"), { noContent: true });
   }
   // Vstup z Mamy a zo zásuvky: okamžitá pomoc + tri časti kruhu
   function overview() {
     const night = isNight(), born = phase() === "born";
-    const big = night ? ["nap", "sound", "Šum na zaspávanie", "pomaly sa zosilní"] : born ? ["nap", "bed", "Zdriemni si, kým spí", "šum sa pomaly zosilní"] : ["breath", "wind", "Dýchaj so mnou", "1 minúta"];
+    const big = night ? ["nap", "sound", "Šum na zaspávanie", ""] : born ? ["nap", "bed", "Zdriemni si, kým spí", ""] : ["breath", "wind", "Dýchaj so mnou", "1 minúta"];
     push("Čas pre teba", () => act(big[0], big[1], big[2], big[3], true) +
       "<div class='g2r-parts'>" + [["rest", "Oddych", "g2r-p1", "feather"], ["body", "Telo", "g2r-p2", "personTaiChi"], ["sup", "Opora", "g2r-p3", "handshake"]].map(([k, t, c, ic]) => "<button type='button' class='g2r-part " + c + "' data-g2r='sec:" + k + "'>" + V5.icon(ic) + "<span>" + t + "</span></button>").join("") + "</div>", { noContent: true });
   }
   function section(k) {
     const night = isNight(), born = phase() === "born";
     // Oddych: v tehotenstve cez deň bez zdriemnutia (NHS: popoludní a večer radšej nespi) – šum len v noci a po pôrode.
-    if (k === "rest") return push("Oddych", () => act("breath", "wind", "Dýchaj so mnou", "1 minúta, len sleduj krúžok") +
-      (night || born ? act("nap", born && !night ? "bed" : "sound", born && !night ? "Zdriemni si, kým spí" : "Šum na zaspávanie", "šum sa pomaly zosilní, potom sám stíchne") : "") +
-      (night ? "" : act("quiet", "hourglass", "Chvíľa ticha", "5, 10 alebo 15 minút")), { noContent: true });
-    if (k === "sup") return push("Opora", () => act("ask", "paperPlane", "Poprosiť o pomoc", "hotová prosba, upravíš a pošleš") + (night ? "" : act("friend", "envelope", "Napísať blízkemu", "krátka správa")) + act("hard", "alert", "Nálada a podpora", "kontakty na pomoc"), { noContent: true });
+    if (k === "rest") return push("Oddych", () => act("breath", "wind", "Dýchaj so mnou", "1 minúta") +
+      (night || born ? act("nap", born && !night ? "bed" : "sound", born && !night ? "Zdriemni si, kým spí" : "Šum na zaspávanie", "") : "") +
+      (night ? "" : act("quiet", "hourglass", "Chvíľa ticha", "5–15 minút")), { noContent: true });
+    if (k === "sup") return push("Opora", () => act("ask", "paperPlane", "Poprosiť o pomoc", "hotová prosba") + (night ? "" : act("friend", "envelope", "Napísať blízkemu", "krátka správa")) + act("hard", "alert", "Nálada a podpora", "kontakty na pomoc"), { noContent: true });
     const mamaLink = "<button class='g2r-link' type='button' data-g2r='mama'>Viac o tele v Mame ›</button>";
     // Master 2.7 (audit #30, PL): „Kŕč v nohe“ odstránený – postup pri príznaku; téma Kŕče ostáva v Mame (čo je bežné + otázka).
-    if (!born) return push("Telo", () => (night ? "" : act("legs", "couch", "Nohy hore", "10 alebo 20 minút, čas postrážim ja")) + act("sleep", "bed", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
-    push("Telo", () => act("feed", "breastfeed", "Pohodlne pri kŕmení", "usaď sa, kým začneš") + (night ? "" : act("shower", "shower", "Sprcha len pre mňa", "15 minút len pre seba") + act("pwalk", "walk", "Pokojná prechádzka", "10 alebo 20 minút von")) + mamaLink, { noContent: true });
+    if (!born) return push("Telo", () => (night ? "" : act("legs", "couch", "Nohy hore", "10 alebo 20 minút")) + act("sleep", "bed", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
+    push("Telo", () => act("feed", "breastfeed", "Pohodlne pri kŕmení", "") + (night ? "" : act("shower", "shower", "Sprcha len pre mňa", "15 minút len pre seba") + act("pwalk", "walk", "Pokojná prechádzka", "10 alebo 20 minút")) + mamaLink, { noContent: true });
   }
 
   // Postup o krokoch (Ďalej) v jednom okne
@@ -253,7 +253,7 @@
       "<button class='g2r-btn' type='button' data-g2r='nap-go'>Spustiť šum</button><p class='g2r-small'>Šum sa pomaly zosilní a na konci sám stíchne.</p>", { noContent: true });
     if (a === "nap-go") { const m = +(body.querySelector("[data-g2r-nap][aria-pressed='true']")?.dataset.g2rNap || 20); close(); return startNoise(m); }
     if (a === "nap-go20") { close(); return startNoise(20); }
-    if (a === "quiet") return push("Chvíľa ticha", () => chips("data-g2r-q", [5, 10, 15], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button><p class='g2r-small'>Na konci zaznie jemný tón. Telefón môžeš položiť.</p>", { noContent: true });
+    if (a === "quiet") return push("Chvíľa ticha", () => chips("data-g2r-q", [5, 10, 15], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button><p class='g2r-small'>Na konci zaznie jemný tón.</p>", { noContent: true });
     if (a === "timer-go") return countdown();
     if (a === "walk-go") return countdown(null, "Pekná prechádzka");
     if (a === "ask" || a === "friend" || a === "ask-night") {
@@ -261,7 +261,7 @@
       return push(a === "friend" ? "Napísať blízkemu" : "Poprosiť o pomoc", () => (list.length > 1 ? "<div class='g2r-chips g2r-rq' role='group' aria-label='Vyber prosbu'>" + list.map((t, i) => "<button class='g2r-pill' type='button' data-g2r-rq='" + i + "' aria-pressed='" + (i === 0) + "' aria-label='Prosba " + (i + 1) + "'>" + (i + 1) + "</button>").join("") + "</div>" : "") +
         "<p class='g2r-small' style='margin:12px 0 6px'>Uprav si text, ak chceš:</p><textarea id='g2rText' data-g2-no-guard aria-label='Text správy'>" + esc(list[0]) + "</textarea>" +
         "<button class='g2r-btn' type='button' data-g2r='send'>Poslať cez telefón</button><button class='g2r-btn ghost' type='button' data-g2r='copy'>Skopírovať text</button>" +
-        "<p class='g2r-small'>Pošleš cez Správy alebo WhatsApp. Appka nič neposiela sama.</p>", { noContent: true, list });
+        "<p class='g2r-small'>Appka nič neposiela sama.</p>", { noContent: true, list });
     }
     if (a === "send") {
       const t = (byId("g2rText")?.value || "").trim();
@@ -292,7 +292,7 @@
     // Master 2.7 (audit #31, #33): Nohy hore = len časovač oddychu + výnimka E2; Spánok = len informácia NHS (bez rady pri príznaku).
     const SAFE = id => window.G2Safety?.html(id) || "";
     if (a === "legs") {
-      return push("Nohy hore", () => "<p class='g2r-lead'>Ľahni si alebo si sadni a nohy si polož vyššie. Čas postrážim ja.</p>" + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" + SAFE("E2"));
+      return push("Nohy hore", () => "<p class='g2r-lead'>Nohy si polož vyššie. Čas postrážim ja.</p>" + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" + SAFE("E2"));
     }
     if (a === "sleep") {
       const ti = tr(MP(), "tiredness");
@@ -306,15 +306,15 @@
         const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah.", "Telefón a nabíjačka na dosah."];
         const pelvic = MPP().troubles?.find(t => t.id === "pelvic");
         return "<p class='g2r-lead'>Kým začneš, usaď sa:</p>" + items.map((x, i) => "<button class='g2r-check' type='button' data-g2r-check='" + i + "' aria-pressed='false'><span class='box' aria-hidden='true'></span><span>" + esc(x) + "</span></button>").join("") +
-          act("breath", "wind", "Dýchaj so mnou", "1 minúta, kým začneš") + "<p class='g2r-small'>Len pre teba, nikam sa neukladá.</p>" + source(pelvic?.source, pelvic?.reviewed);
+          act("breath", "wind", "Dýchaj so mnou", "1 minúta") + "<p class='g2r-small'>Len pre teba, nikam sa neukladá.</p>" + source(pelvic?.source, pelvic?.reviewed);
       });
     }
     if (a === "shower") {
       return push("Sprcha len pre mňa", () => {
         const stt = tr(MPP(), "stitches"), safe = safeSleep();
-        return "<p class='g2r-lead'>Daj si 15 minút len pre seba.</p>" + // Master 2.7 (audit): bez rady o stehoch
-          act("shower-ask", "paperPlane", "Poprosiť o 15 minút", "hotová prosba, pošleš cez telefón") + (safe ? "<p class='g2r-small' style='margin:8px 2px'>Ak bábätko nikto nestráži: " + esc(safe) + "</p>" : "") +
-          act("shower-go", "hourglass", "Spustiť 15 minút", "na konci zaznie jemný tón") + source(stt.source, stt.reviewed) + (safe ? "<p class='g2r-src'>Bezpečný spánok: CDC (Learn the Signs)</p>" : "");
+        return "" + // Master 2.7 (audit): bez rady o stehoch
+          act("shower-ask", "paperPlane", "Poprosiť o 15 minút", "hotová prosba") + (safe ? "<p class='g2r-small' style='margin:8px 2px'>Ak bábätko nikto nestráži: " + esc(safe) + "</p>" : "") +
+          act("shower-go", "hourglass", "Spustiť 15 minút", "") + source(stt.source, stt.reviewed) + (safe ? "<p class='g2r-src'>Bezpečný spánok: CDC (Learn the Signs)</p>" : "");
       });
     }
     if (a === "shower-ask") {
