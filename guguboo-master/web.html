@@ -4,183 +4,857 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Guguboo – sprievodca tehotenstvom a prvým rokom bábätka</title>
-  <meta name="description" content="Tehotenstvo týždeň po týždni, rýchle záznamy kŕmenia a spánku, spomienky aj úrady a príspevky na Slovensku. Po slovensky, zadarmo, bez reklám.">
+  <meta name="description" content="Tehotenstvo týždeň po týždni, rýchle záznamy kŕmenia a spánku, spomienky aj úrady a príspevky na Slovensku. Po slovensky, bez reklám a bez registrácie.">
   <!-- Náhľad: neindexovať, kým Samo nepovolí zverejnenie -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="theme-color" content="#fbf8f7">
+  <!-- Písmo z vlastného servera (žiadne Google Fonts – súkromie) -->
+  <link rel="stylesheet" href="fonts/montserrat.css">
   <!--
-    GUGUBOO – nová úvodná stránka guguboo.com (Samo 15. 11. 2026). Texty: docs/master/WEB_TEXTY.md,
-    súkromie: docs/master/WEB_SUKROMIE.md. Formulár testeriek cez Netlify Forms (data-netlify).
-    Odkazy sú relatívne – na náhľade aj na guguboo.com vedú na app.html v tom istom priečinku.
+    GUGUBOO – úvodná stránka guguboo.com, verzia 2 (UI dizajn, 16. 11. 2026, poverenie Product Lead).
+    Texty: docs/master/WEB_TEXTY.md (rozšírené, fakty nezmenené), súkromie: docs/master/WEB_SUKROMIE.md.
+    Pravidlá: sľubujeme len to, čo appka Master naozaj vie. Bez cien a balíkov („Počas testovania zadarmo“ – Samo 16. 11.),
+    bez AI, účtov, synchronizácie, komunity a diagnóz. Ukážky appky sú kreslené v HTML/CSS/SVG.
+    Ikony = cesty z iconPaths vo v5-mobile.js (Phosphor, 256×256); navyše len „check“ (Phosphor, rovnaký štýl).
+    Formulár testeriek cez Netlify Forms (data-netlify) – štruktúra, názvy polí, text súhlasu a validácia sú zachované.
   -->
   <style>
     :root {
-      --bg: #fbf8f7; --surface: #ffffff; --soft: #f3effb; --ink: #29243a; --muted: #5d5670; --line: #e9e3f2;
-      --brand: #6f5fc4; --brand-dark: #4a3d99; --pink: #f3bdcd; --peach: #f8c79b; --lilac: #b5c5f2;
-      --radius: 24px; --shadow: 0 14px 40px rgba(41, 36, 58, .08);
+      --bg: #fbf8f7; --surface: #fff; --soft: #f4f0ff; --ink: #29243a; --muted: #5d5768; --line: rgba(117, 96, 181, .14);
+      --brand: #6a4fc4; --brand-dark: #5f4fb1; --brand-deep: #4a3d99; --lilac: #8171ce;
+      --pink: #f07f98; --pink-text: #a24766; --peach: #f6c89f;
+      --baby-bg: #eaf4fb; --baby: #2f6a8f; --mama-bg: #fdecf1; --mama: #a24766; --fam-bg: #e5f3ee; --fam: #24715f; --me-bg: #fff7dc; --me: #7d5a10;
+      --card-grad: linear-gradient(145deg, #f6f0ff, #fff1ec);
+      --r: 24px; --r-sm: 16px;
+      --shadow: 0 18px 44px rgba(72, 55, 120, .10);
+      --shadow-sm: 0 8px 22px rgba(72, 55, 120, .08);
+      --font: Montserrat, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 500 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 500 17px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    img { max-width: 100%; }
     a { color: var(--brand-dark); }
-    .wrap { width: min(100% - 32px, 1040px); margin: 0 auto; }
-    header.top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
-    header.top img { height: 34px; width: auto; display: block; }
-    header.top a.small { font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 999px; background: var(--soft); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 24px; border-radius: 16px; border: 0; font: 700 17px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; text-decoration: none; cursor: pointer; }
-    .btn-main { background: #5f4fb1; color: #fff; box-shadow: 0 10px 24px rgba(95, 79, 177, .28); }
-    .btn-ghost { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
-    .btn:focus-visible, a:focus-visible, input:focus-visible, label:focus-within { outline: 3px solid var(--brand-dark); outline-offset: 3px; }
-    .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: center; padding: 28px 0 56px; }
-    .hero h1 { margin: 0 0 14px; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; }
-    .hero p.lead { margin: 0 0 24px; font-size: 19px; color: var(--muted); max-width: 34em; }
-    .hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-    .hero .facts { margin: 16px 0 0; font-size: 15px; font-weight: 600; color: var(--muted); }
-    .art { display: grid; place-items: center; }
-    .art svg { width: min(100%, 360px); height: auto; }
-    section { padding: 48px 0; }
-    h2 { margin: 0 0 22px; font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
-    .card { padding: 20px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-    .card h3 { margin: 10px 0 6px; font-size: 18px; line-height: 1.25; }
-    .card p { margin: 0; font-size: 15.5px; color: var(--muted); }
-    .dot { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; }
-    .d1 { background: #fde4ec; } .d2 { background: #ffe8d4; } .d3 { background: #e3eafc; } .d4 { background: #e8f4ea; } .d5 { background: var(--soft); }
-    .who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .who div { padding: 22px; border-radius: var(--radius); background: var(--soft); }
-    .who h3 { margin: 0 0 6px; font-size: 18px; }
-    .who p { margin: 0; font-size: 15.5px; color: var(--muted); }
-    .diff ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    .diff li { padding: 18px 20px; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: 15.5px; color: var(--muted); }
-    .diff li strong { display: block; color: var(--ink); font-size: 17px; margin-bottom: 4px; }
-    .fine { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
-    .privacy { display: flex; gap: 18px; align-items: center; padding: 26px; border-radius: var(--radius); background: #eef4ef; }
-    .privacy span { font-size: 34px; }
-    .privacy h2 { margin: 0 0 4px; font-size: 24px; }
-    .privacy p { margin: 0; color: var(--muted); }
-    .install { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .install div { padding: 22px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-    .install h3 { margin: 0 0 8px; font-size: 18px; }
-    .install ol { margin: 0; padding-left: 20px; color: var(--muted); }
-    .install li { margin: 4px 0; }
-    form { display: grid; gap: 18px; max-width: 560px; padding: 26px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-    .field label, .field legend { display: block; margin-bottom: 6px; font-weight: 700; }
-    .field small { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
-    fieldset { border: 0; margin: 0; padding: 0; }
-    input[type=text], input[type=email], input[type=number] { width: 100%; min-height: 50px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font: 500 17px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    h1, h2, h3 { color: var(--ink); }
+    .wrap { width: min(100% - 32px, 1120px); margin: 0 auto; }
+    .ic { width: 24px; height: 24px; fill: currentColor; flex: none; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    :focus-visible { outline: 3px solid var(--brand-deep); outline-offset: 3px; border-radius: 12px; }
+
+    /* ---------- hlavička ---------- */
+    .top { position: sticky; top: 0; z-index: 20; background: rgba(251, 248, 247, .86); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid transparent; transition: border-color .2s; }
+    .top.scrolled { border-bottom-color: var(--line); }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+    .top .logo img { display: block; height: 34px; width: auto; }
+    .top nav { display: flex; gap: 4px; }
+    .top nav a { padding: 10px 14px; border-radius: 999px; color: var(--ink); font-weight: 700; font-size: 15px; text-decoration: none; }
+    .top nav a:hover { background: var(--soft); }
+    .pill { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--brand-dark); color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 8px 18px rgba(95, 79, 177, .25); }
+
+    /* ---------- tlačidlá ---------- */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 26px; border-radius: 18px; border: 0; font: 700 17px/1 var(--font); text-decoration: none; cursor: pointer; transition: transform .15s ease, box-shadow .2s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-main { background: linear-gradient(135deg, #6a58c6, #5f4fb1); color: #fff; box-shadow: 0 12px 26px rgba(95, 79, 177, .30); }
+    .btn-ghost { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line), var(--shadow-sm); }
+
+    /* ---------- spoločné ---------- */
+    section { padding: 72px 0; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 13px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--brand-dark); }
+    h2 { margin: 0 0 16px; font-size: clamp(28px, 4vw, 44px); line-height: 1.12; font-weight: 800; letter-spacing: -.02em; }
+    .intro { margin: 0 0 36px; max-width: 40em; font-size: 18px; color: var(--muted); }
+    .grad { background: linear-gradient(100deg, #5f4fb1 10%, #a24766 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .center { text-align: center; } .center .intro { margin-inline: auto; }
+    .tint { background: linear-gradient(180deg, #f6f1ff 0%, #fff6f2 100%); }
+
+    /* ---------- hero ---------- */
+    .hero { position: relative; padding: 28px 0 64px; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; inset: -20% -30% auto auto; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(240, 127, 152, .16), transparent 62%); pointer-events: none; }
+    .hero::after { content: ""; position: absolute; inset: auto auto -30% -20%; width: 640px; height: 640px; border-radius: 50%; background: radial-gradient(circle, rgba(129, 113, 206, .16), transparent 62%); pointer-events: none; }
+    .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; }
+    .hero h1 { margin: 0 0 18px; font-size: clamp(36px, 5.6vw, 62px); line-height: 1.04; font-weight: 800; letter-spacing: -.03em; }
+    .hero .lead { margin: 0 0 28px; max-width: 32em; font-size: 19px; color: var(--muted); }
+    .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+    .facts { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 22px 0 0; padding: 0; list-style: none; font-size: 15px; font-weight: 700; color: var(--muted); }
+    .facts li { display: inline-flex; align-items: center; gap: 6px; }
+    .facts .ic { width: 18px; height: 18px; color: var(--fam); }
+
+    /* ---------- telefón (ukážka appky) ---------- */
+    .stage { position: relative; display: grid; place-items: center; padding: 10px 0 20px; }
+    .phone { position: relative; width: 290px; padding: 11px; border-radius: 46px; background: #2b2540; box-shadow: 0 40px 80px rgba(41, 36, 58, .25), inset 0 0 0 2px #463d63; }
+    .phone::before { content: ""; position: absolute; top: 18px; left: 50%; width: 92px; height: 24px; border-radius: 14px; background: #2b2540; transform: translateX(-50%); z-index: 3; }
+    .screen { position: relative; overflow: hidden; border-radius: 36px; background: var(--bg); padding: 44px 12px 0; display: flex; flex-direction: column; gap: 10px; min-height: 560px; font-size: 12px; line-height: 1.3; }
+    .sbar { position: absolute; top: 14px; left: 26px; right: 26px; display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; }
+    .sbar i { display: inline-block; width: 22px; height: 10px; border-radius: 3px; border: 1.5px solid var(--ink); position: relative; }
+    .sbar i::after { content: ""; position: absolute; inset: 1.5px 5px 1.5px 1.5px; border-radius: 1px; background: var(--ink); }
+    .m-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+    .m-head img { height: 20px; width: auto; display: block; }
+    .m-round { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--brand); box-shadow: var(--shadow-sm); }
+    .m-round .ic { width: 16px; height: 16px; }
+    .m-hero { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 22px; background: linear-gradient(145deg, #f4f0ff, #fff4f0); box-shadow: inset 0 0 0 1px var(--line); }
+    .badge { display: grid; place-items: center; width: 52px; height: 56px; border-radius: 16px 16px 16px 6px; background: linear-gradient(145deg, #f3eeff, #fff1ea); box-shadow: 0 6px 14px rgba(97, 77, 153, .14), inset 0 0 0 2px #fff; color: var(--brand-dark); text-align: center; }
+    .badge b { display: block; font-size: 22px; line-height: 1; font-weight: 800; }
+    .badge span { display: block; font-size: 7.5px; font-weight: 800; letter-spacing: .08em; }
+    .m-hero p { margin: 0; flex: 1; min-width: 0; }
+    .m-hero small { display: block; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-dark); }
+    .m-hero strong { display: block; font-size: 13px; font-weight: 800; }
+    .m-hero em { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 600; }
+    .fruit { width: 46px; height: 46px; flex: none; border-radius: 50%; background: #fff9f5 url("pregnancy-oval-fruits-v1.png") no-repeat 64.3% 16.7% / 800% 400%; box-shadow: 0 6px 14px rgba(72, 55, 100, .14), inset 0 0 0 2px #fff; }
+    .m-card { padding: 10px 10px 8px; border-radius: 22px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), var(--shadow-sm); }
+    .m-card > small { display: block; padding: 0 4px; font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-dark); }
+    .m-today { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .m-today .sq { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(123, 97, 200, .12); color: var(--brand); }
+    .m-today .sq .ic { width: 16px; height: 16px; }
+    .m-today small { display: block; font-size: 9.5px; color: var(--muted); font-weight: 700; }
+    .m-today b { font-size: 12px; font-weight: 800; }
+    .m-tabs { margin: auto -12px 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 6px 18px; background: #fff; border-top: 1px solid var(--line); }
+    .m-tabs span { display: grid; justify-items: center; gap: 2px; font-size: 9.5px; font-weight: 700; color: var(--muted); }
+    .m-tabs span.on { color: var(--brand-dark); font-weight: 800; }
+    .m-tabs .ic { width: 20px; height: 20px; }
+
+    /* kruh (SVG) */
+    .ring { display: block; width: 100%; height: auto; font-family: var(--font); }
+    .ring .lbl { font-size: 15px; font-weight: 800; letter-spacing: .03em; }
+    .ring .c1 { fill: #7a2848; } .ring .c2 { fill: #6a3a10; } .ring .c3 { fill: #263a80; }
+    .ring .ct { fill: var(--ink); font-weight: 800; text-anchor: middle; }
+    .ring .pulse { transform-origin: 150px 150px; animation: pulse 3.2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: .0; transform: scale(.92); } 50% { opacity: .55; transform: scale(1.08); } }
+
+    /* plávajúce kartičky */
+    .float { position: absolute; z-index: 4; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 18px; background: #fff; box-shadow: var(--shadow); font-size: 14px; line-height: 1.25; font-weight: 700; animation: bob 6s ease-in-out infinite; }
+    .float .sq { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+    .float .sq .ic { width: 18px; height: 18px; }
+    .float small { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+    .f1 { top: 70px; left: -6px; } .f2 { bottom: 70px; right: -6px; animation-delay: -3s; }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    /* ---------- pás dôvery ---------- */
+    .trust { padding: 0 0 8px; }
+    .trust ul { list-style: none; margin: 0; padding: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border-radius: var(--r); background: #fff; box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); }
+    .trust li { display: flex; align-items: center; gap: 12px; padding: 6px 8px; font-size: 15px; line-height: 1.3; font-weight: 700; }
+    .trust li small { display: block; font-weight: 600; color: var(--muted); font-size: 13.5px; }
+    .tile { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; background: rgba(123, 97, 200, .12); color: var(--brand); }
+    .t-baby { background: var(--baby-bg); color: var(--baby); } .t-mama { background: var(--mama-bg); color: var(--mama); } .t-fam { background: var(--fam-bg); color: var(--fam); } .t-me { background: var(--me-bg); color: var(--me); }
+
+    /* ---------- 3 kroky ---------- */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: s; }
+    .step { position: relative; padding: 24px; border-radius: var(--r); background: #fff; box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); }
+    .step .num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--brand-dark); color: #fff; font-weight: 800; font-size: 15px; }
+    .step h3 { margin: 14px 0 6px; font-size: 21px; line-height: 1.2; font-weight: 800; }
+    .step p { margin: 0; color: var(--muted); font-size: 16px; }
+    .viz { margin-top: 18px; padding: 14px; border-radius: 18px; background: var(--card-grad); min-height: 128px; display: grid; align-content: center; gap: 8px; font-size: 14px; }
+    .chipline { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 999px; background: #fff; font-size: 13.5px; font-weight: 700; box-shadow: inset 0 0 0 1px var(--line); }
+    .chip .ic { width: 16px; height: 16px; }
+    .chip.on { background: var(--brand-dark); color: #fff; box-shadow: none; }
+    .toast { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 14px; background: #2f2a45; color: #fff; font-weight: 700; font-size: 14px; }
+    .toast u { text-decoration: none; color: #d9cff3; font-weight: 800; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: #fff; font-weight: 700; }
+    .row time { min-width: 42px; color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .row .ic { width: 18px; height: 18px; }
+    .polas { display: flex; justify-content: center; padding: 6px 0; }
+    .pola { width: 92px; padding: 6px 6px 10px; border-radius: 10px; background: #fff; box-shadow: var(--shadow-sm); text-align: center; font-size: 11.5px; font-weight: 800; }
+    .pola + .pola { margin-left: -14px; }
+    .pola:nth-child(1) { transform: rotate(-7deg); } .pola:nth-child(2) { transform: rotate(3deg) translateY(-6px); z-index: 1; } .pola:nth-child(3) { transform: rotate(8deg); }
+    .pola .ph { height: 74px; margin-bottom: 6px; border-radius: 6px; display: grid; place-items: center; }
+    .pola .ph .ic { width: 30px; height: 30px; }
+
+    /* ---------- cesta obdobiami ---------- */
+    .journey { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding-top: 36px; }
+    .journey::before { content: ""; position: absolute; top: 52px; left: 6%; right: 6%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, #cfc4f2 0 12px, transparent 12px 22px); }
+    .stop { position: relative; padding: 52px 20px 22px; border-radius: var(--r); background: #fff; box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); }
+    .stop .dot { position: absolute; top: -18px; left: 20px; width: 64px; height: 64px; border-radius: 22px; display: grid; place-items: center; box-shadow: 0 10px 22px rgba(72, 55, 120, .14), inset 0 0 0 3px #fff; }
+    .stop .dot .ic { width: 28px; height: 28px; }
+    .stop .when { font-size: 13px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+    .stop h3 { margin: 4px 0 8px; font-size: 20px; line-height: 1.2; font-weight: 800; }
+    .stop ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; color: var(--muted); }
+    .stop li { display: flex; gap: 8px; align-items: flex-start; }
+    .stop li .ic { width: 18px; height: 18px; margin-top: 3px; color: var(--brand); }
+    .goal { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 10px 18px; border-radius: 999px; background: #fff; box-shadow: var(--shadow-sm); font-weight: 800; }
+    .goal .ic { color: var(--pink-text); }
+    .scope { margin: 10px 0 0; font-size: 15px; color: var(--muted); }
+
+    /* ---------- funkcie (striedavé bloky) ---------- */
+    .feat { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; padding: 40px 0; }
+    .feat.flip .feat-art { order: -1; }
+    .feat h3 { margin: 0 0 12px; font-size: clamp(24px, 3vw, 32px); line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
+    .feat p { margin: 0 0 14px; color: var(--muted); font-size: 17px; }
+    .ticks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+    .ticks li { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 16px; }
+    .ticks li .ic { width: 20px; height: 20px; margin-top: 2px; padding: 3px; border-radius: 50%; background: var(--fam-bg); color: var(--fam); box-sizing: content-box; }
+    .feat-art { position: relative; display: grid; place-items: center; padding: 28px; border-radius: 32px; background: var(--card-grad); box-shadow: inset 0 0 0 1px var(--line); min-height: 340px; }
+    .area { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 6px 12px 6px 6px; border-radius: 999px; font-size: 14px; font-weight: 800; }
+    .area .ic { width: 22px; height: 22px; padding: 4px; border-radius: 50%; background: #fff; box-sizing: content-box; }
+    .a-baby { background: var(--baby-bg); color: var(--baby); } .a-mama { background: var(--mama-bg); color: var(--mama); } .a-fam { background: var(--fam-bg); color: var(--fam); } .a-home { background: var(--soft); color: var(--brand-dark); }
+    .src { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--muted); }
+
+    /* okná appky v ukážkach */
+    .win { width: min(100%, 360px); padding: 18px; border-radius: 26px; background: #fff; box-shadow: var(--shadow); }
+    .win-h { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .win-h b { font-size: 17px; font-weight: 800; flex: 1; }
+    .win-h .x { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); color: var(--brand-dark); font-weight: 800; }
+    .week-art { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; padding: 16px; border-radius: 20px; background: linear-gradient(145deg, #f4f0ff, #fff4f0); }
+    .week-art .badge { width: 70px; height: 76px; border-radius: 20px 20px 20px 8px; }
+    .week-art .badge b { font-size: 30px; } .week-art .badge span { font-size: 9.5px; }
+    .big-fruit { width: 120px; height: 120px; margin: 4px auto 0; border-radius: 50%; background: #fff9f5 url("pregnancy-oval-fruits-v1.png") no-repeat 64.3% 16.7% / 800% 400%; box-shadow: 0 16px 30px rgba(72, 55, 100, .16), inset 0 0 0 4px #fff; }
+    .embryo { display: block; width: 120px; height: 120px; margin: 0 auto; }
+    .size { margin-top: 14px; text-align: center; font-size: 15px; font-weight: 700; }
+    .size b { display: block; font-size: 22px; font-weight: 800; }
+    .seg { display: inline-flex; padding: 4px; margin-bottom: 18px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .seg button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); font: 700 15px/1 var(--font); cursor: pointer; }
+    .seg button[aria-pressed="true"] { background: var(--brand-dark); color: #fff; }
+    .ring-wrap { position: relative; width: min(100%, 340px); }
+    .ring-wrap .float { font-size: 13.5px; }
+    .r1 { top: -6px; right: -18px; } .r2 { bottom: 4px; left: -18px; animation-delay: -2s; }
+    .t-line { position: relative; display: grid; gap: 10px; padding-left: 22px; }
+    .t-line::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: #ddd4f6; }
+    .t-item { position: relative; padding: 10px 12px; border-radius: 14px; background: var(--bg); font-size: 14px; line-height: 1.35; }
+    .t-item::before { content: ""; position: absolute; left: -21px; top: 14px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 3px var(--lilac); }
+    .t-item small { display: block; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--fam); }
+    .t-item b { display: block; font-weight: 800; }
+    .t-item span { color: var(--muted); font-weight: 600; font-size: 13.5px; }
+    .win .src { margin-top: 12px; }
+    .petals { display: block; width: min(100%, 300px); height: auto; font-family: var(--font); }
+    .petals text { font-weight: 800; font-size: 15px; text-anchor: middle; }
+    .info { margin-top: 12px; padding: 14px; border-radius: 16px; background: var(--mama-bg); font-size: 14.5px; line-height: 1.45; }
+    .info b { display: block; color: var(--mama); }
+    .ask-doc { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: #fff; font-size: 13.5px; font-weight: 800; color: var(--brand-dark); box-shadow: inset 0 0 0 1px var(--line); }
+    .ask-doc .ic { width: 16px; height: 16px; }
+    .share { margin-top: 12px; padding: 12px; border-radius: 16px; background: var(--fam-bg); font-size: 14px; }
+    .share b { display: block; color: var(--fam); }
+    .stack { display: grid; gap: 14px; width: min(100%, 360px); }
+
+    /* ---------- bento ---------- */
+    .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+    .b { padding: 22px; border-radius: var(--r); background: #fff; box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 10px; }
+    .b h3 { margin: 4px 0 0; font-size: 19px; line-height: 1.25; font-weight: 800; }
+    .b p { margin: 0; color: var(--muted); font-size: 15.5px; }
+    .b-2 { grid-column: span 2; } .b-3 { grid-column: span 3; } .b-4 { grid-column: span 4; }
+    .chat { display: grid; gap: 8px; margin-top: auto; padding: 14px; border-radius: 18px; background: var(--soft); font-size: 14.5px; }
+    .bub { max-width: 85%; padding: 9px 13px; border-radius: 16px; font-weight: 600; line-height: 1.35; }
+    .bub.me { justify-self: end; background: var(--brand-dark); color: #fff; border-bottom-right-radius: 6px; }
+    .bub.gg { background: #fff; border-bottom-left-radius: 6px; }
+    .bub.gg .chip { margin-top: 8px; background: var(--soft); color: var(--brand-dark); }
+    .wx { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; background: linear-gradient(145deg, #eaf4fb, #f4f0ff); }
+    .wx .ic { width: 40px; height: 40px; color: var(--baby); }
+    .wx b { display: block; font-size: 22px; font-weight: 800; }
+    .wx small { font-size: 13.5px; font-weight: 600; color: var(--muted); }
+    .qs { margin-top: auto; display: grid; gap: 8px; }
+    .qs .chipline { margin-bottom: 4px; }
+    .q { padding: 10px 12px; border-radius: 12px; background: var(--bg); font-size: 14.5px; font-weight: 600; }
+    .mini-list { margin: auto 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 14.5px; font-weight: 700; }
+    .mini-list li { display: flex; align-items: center; gap: 10px; }
+    .mini-list .ic { width: 20px; height: 20px; color: var(--brand); }
+
+    /* ---------- pre koho ---------- */
+    .who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .who article { padding: 26px; border-radius: var(--r); }
+    .who .tile { width: 52px; height: 52px; border-radius: 16px; background: #fff; }
+    .who h3 { margin: 16px 0 6px; font-size: 20px; font-weight: 800; }
+    .who p { margin: 0; color: var(--ink); opacity: .88; font-size: 16px; }
+
+    /* ---------- súkromie (tmavý blok) ---------- */
+    .dark { background: radial-gradient(circle at 85% 10%, rgba(240, 127, 152, .22), transparent 40%), radial-gradient(circle at 10% 90%, rgba(129, 113, 206, .35), transparent 45%), #2b2540; color: #f4f0ff; border-radius: 36px; padding: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .dark h2 { color: #fff; }
+    .dark .eyebrow { color: #d9cff3; }
+    .dark p { color: #e6e0f5; margin: 0 0 12px; font-size: 17px; }
+    .dark ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .dark li { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .10); font-size: 15.5px; color: #e6e0f5; }
+    .dark li b { display: block; color: #fff; font-size: 16.5px; }
+    .dark li .tile { background: rgba(255, 255, 255, .14); color: #fff; }
+    .lockart { display: grid; place-items: center; width: 132px; height: 132px; margin-bottom: 22px; border-radius: 40px; background: linear-gradient(145deg, #8171ce, #f07f98); box-shadow: 0 20px 40px rgba(0, 0, 0, .25); color: #fff; }
+    .lockart .ic { width: 64px; height: 64px; }
+    .honest { margin-top: 18px; display: flex; gap: 16px; align-items: flex-start; padding: 22px; border-radius: var(--r); background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .honest p { margin: 0; color: var(--muted); font-size: 15.5px; }
+    .honest b { color: var(--ink); display: block; font-size: 17px; margin-bottom: 2px; }
+
+    /* ---------- inštalácia ---------- */
+    .install { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .install article { padding: 24px; border-radius: var(--r); background: #fff; box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--line); }
+    .install h3 { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 19px; font-weight: 800; }
+    .install ol { margin: 0; padding: 0; list-style: none; counter-reset: i; display: grid; gap: 10px; }
+    .install li { counter-increment: i; display: flex; gap: 12px; align-items: flex-start; color: var(--muted); font-size: 16px; }
+    .install li::before { content: counter(i); flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--soft); color: var(--brand-dark); font-weight: 800; font-size: 14px; }
+    .fine { margin: 16px 0 0; font-size: 14.5px; color: var(--muted); }
+
+    /* ---------- formulár ---------- */
+    .test { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; align-items: start; }
+    .test-side { position: sticky; top: 90px; }
+    .test-side .ticks li { font-size: 16px; }
+    form { display: grid; gap: 20px; padding: 28px; border-radius: 28px; background: #fff; box-shadow: var(--shadow), inset 0 0 0 1px var(--line); }
+    .field label, .field legend { display: block; margin-bottom: 8px; font-weight: 700; }
+    .field small { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+    fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+    input[type=text], input[type=email], input[type=number] { width: 100%; min-height: 52px; padding: 0 16px; border-radius: 16px; border: 1.5px solid #ddd5ee; background: var(--bg); color: var(--ink); font: 600 17px/1 var(--font); }
+    input[type=text]:focus, input[type=email]:focus { border-color: var(--brand-dark); background: #fff; }
     .choices { display: flex; flex-wrap: wrap; gap: 8px; }
-    .choices label { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; border-radius: 999px; background: var(--soft); font-weight: 600; cursor: pointer; }
-    .choices input { width: 20px; height: 20px; accent-color: #5f4fb1; }
-    .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--muted); }
-    .consent input { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 2px; accent-color: #5f4fb1; }
-    .err { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #8a2f4e; }
+    .choices label { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; margin: 0; padding: 0 16px; border-radius: 999px; background: var(--soft); font-weight: 600; cursor: pointer; box-shadow: inset 0 0 0 1.5px transparent; }
+    .choices label:has(input:checked) { box-shadow: inset 0 0 0 1.5px var(--brand-dark); background: #ece6fb; }
+    .choices input { width: 20px; height: 20px; margin: 0; accent-color: #5f4fb1; }
+    .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; font-weight: 500 !important; color: var(--muted); }
+    .consent input { flex: 0 0 22px; width: 22px; height: 22px; margin: 2px 0 0; accent-color: #5f4fb1; }
+    label:focus-within { outline: none; }
+    .choices label:focus-within, .consent:focus-within { outline: 3px solid var(--brand-deep); outline-offset: 2px; }
+    .err { margin: 8px 0 0; font-size: 14.5px; font-weight: 700; color: #8a2f4e; }
     .err:empty { display: none; }
     .hp { position: absolute; left: -9999px; }
-    footer { padding: 36px 0 48px; border-top: 1px solid var(--line); margin-top: 24px; font-size: 14px; color: var(--muted); }
-    footer nav { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; }
-    footer nav a { font-weight: 700; }
-    @media (max-width: 760px) {
-      .hero { grid-template-columns: 1fr; padding-top: 8px; }
-      .art { order: -1; } .art svg { width: min(78%, 280px); }
-      .who, .diff ul, .install { grid-template-columns: 1fr; }
+    form .btn { width: 100%; }
+
+    /* ---------- záver a pätička ---------- */
+    .final { text-align: center; padding: 56px 24px; border-radius: 36px; background: linear-gradient(135deg, #f1ebff, #ffeef0 60%, #fff3e6); box-shadow: inset 0 0 0 1px var(--line); }
+    .final .ctas { justify-content: center; }
+    .final img { height: 44px; width: auto; margin-bottom: 12px; }
+    footer { padding: 40px 0 52px; margin-top: 56px; border-top: 1px solid var(--line); font-size: 14.5px; color: var(--muted); }
+    footer .wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+    footer nav { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 8px 0 0; }
+    footer nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; font-weight: 700; }
+    footer nav a:first-child { padding-left: 0; }
+    footer p { margin: 0 0 10px; }
+
+    /* ---------- odhaľovanie pri posúvaní (len s JS) ---------- */
+    .js .rv { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .js .rv.in { opacity: 1; transform: none; }
+
+    /* ---------- responzivita ---------- */
+    @media (max-width: 980px) {
+      .trust ul { grid-template-columns: 1fr 1fr; }
+      .journey { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+      .journey::before { display: none; }
+      .bento { grid-template-columns: repeat(2, 1fr); }
+      .b-2, .b-3, .b-4 { grid-column: span 1; }
+      .dark { grid-template-columns: 1fr; padding: 40px 28px; }
+    }
+    @media (max-width: 800px) {
+      .top nav { display: none; }
+      .hero { padding: 12px 0 40px; }
+      .hero .wrap { grid-template-columns: 1fr; gap: 26px; }
       .hero .ctas .btn { flex: 1 1 100%; }
-      section { padding: 36px 0; }
+      section { padding: 52px 0; }
+      .steps, .who, .install, .test { grid-template-columns: 1fr; }
+      .feat { grid-template-columns: 1fr; gap: 24px; padding: 28px 0; }
+      .feat.flip .feat-art { order: 0; }
+      .feat-art { padding: 22px 16px; min-height: 0; }
+      .test-side { position: static; }
+      footer .wrap { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      body { font-size: 16.5px; }
+      .wrap { width: min(100% - 28px, 1120px); }
+      .top .logo img { height: 30px; }
+      .pill { padding: 0 14px; font-size: 14.5px; }
+      .hero .lead { font-size: 17.5px; }
+      .eyebrow { font-size: 12px; letter-spacing: .06em; }
+      .intro { font-size: 17px; }
+      .trust ul { grid-template-columns: 1fr; padding: 10px; }
+      .journey { grid-template-columns: 1fr; }
+      .bento { grid-template-columns: 1fr; }
+      .phone { width: 262px; }
+      .screen { min-height: 520px; }
+      .f1 { left: -4px; top: 40px; } .f2 { right: -4px; bottom: 40px; }
+      .float { padding: 8px 12px; font-size: 13.5px; }
+      .float .sq { width: 30px; height: 30px; }
+      .r1 { right: -6px; top: -14px; } .r2 { left: -6px; bottom: -6px; }
+      form { padding: 20px 16px; }
+      .final { padding: 40px 18px; border-radius: 28px; }
+      .dark { padding: 32px 18px; border-radius: 28px; }
+      .stop { padding: 52px 18px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .js .rv { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="top">
-      <img src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo" width="94" height="34">
-      <a class="small" href="app.html">Otvoriť appku</a>
-    </header>
+  <!-- Ikony: cesty z iconPaths (guguboo-master/v5-mobile.js) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H48V120l80-80,80,80Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></symbol>
+    <symbol id="i-baby" viewBox="0 0 256 256"><path d="M92,140a12,12,0,1,1,12-12A12,12,0,0,1,92,140Zm72-24a12,12,0,1,0,12,12A12,12,0,0,0,164,116Zm-12.27,45.23a45,45,0,0,1-47.460,0,8,8,0,0,0-8.54,13.54,61,61,0,0,0,64.54,0,8,8,0,0,0-8.54-13.54ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.11,88.11,0,0,0-84.09-87.91C120.32,56.38,120,71.88,120,72a8,8,0,0,0,16,0,8,8,0,0,1,16,0,24,24,0,0,1-48,0c0-.73.13-14.3,8.46-30.63A88,88,0,1,0,216,128Z"/></symbol>
+    <symbol id="i-mama" viewBox="0 0 256 256"><path d="M245.830,121.63a15.53,15.53,0,0,0-9.52-7.33,73.51,73.51,0,0,0-22.17-2.22c4-19.85,1-35.55-2.06-44.86a16.15,16.15,0,0,0-18.79-10.88,85.53,85.53,0,0,0-28.55,12.12,94.58,94.58,0,0,0-27.11-33.25,16.05,16.05,0,0,0-19.26,0A94.480,94.480,0,0,0,91.26,68.46,85.53,85.53,0,0,0,62.71,56.34,16.15,16.15,0,0,0,43.92,67.22c-3,9.31-6,25-2.06,44.86a73.51,73.51,0,0,0-22.17,2.22,15.53,15.53,0,0,0-9.52,7.33,16,16,0,0,0-1.6,12.27c3.39,12.57,13.8,36.48,45.33,55.32S113.130,208,128.05,208s42.67,0,74-18.78c31.53-18.84,41.94-42.75,45.33-55.32A16,16,0,0,0,245.83,121.63ZM59.14,72.14a.2.2,0,0,1,.23-.15A70.43,70.43,0,0,1,85.18,83.66,118.65,118.65,0,0,0,80,119.17c0,18.74,3.77,34,9.11,46.28A123.59,123.59,0,0,1,69.57,140C51.55,108.62,55.3,84,59.14,72.14Zm3,103.35C35.47,159.57,26.82,140.05,24,129.7a59.82,59.82,0,0,1,22.5-1.17,129.08,129.08,0,0,0,9.15,19.41,142.28,142.28,0,0,0,34,39.56A114.92,114.92,0,0,1,62.1,175.49ZM128,190.4c-9.330-6.94-32-28.23-32-71.23C96,76.7,118.38,55.24,128,48c9.62,7.26,32,28.72,32,71.19C160,162.17,137.33,183.46,128,190.4ZM170.82,83.66A70.43,70.43,0,0,1,196.63,72a.2.2,0,0,1,.23.15C200.7,84,204.45,108.62,186.43,140a123.32,123.32,0,0,1-19.54,25.48c5.34-12.26,9.11-27.540,9.11-46.28A118.65,118.65,0,0,0,170.82,83.66ZM232,129.72c-2.77,10.25-11.4,29.81-38.09,45.77a114.92,114.92,0,0,1-27.55,12,142.28,142.28,0,0,0,34-39.56,129.08,129.08,0,0,0,9.15-19.41A59.69,59.690,0,0,1,232,129.71Z"/></symbol>
+    <symbol id="i-family" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></symbol>
+    <symbol id="i-feeding" viewBox="0 0 256 256"><path d="M104,64V48a24,24,0,0,1,48,0V64H136V48a8,8,0,0,0-16,0V64Z"/><path d="M80,64h96a8,8,0,0,1,8,8V92H72V72A8,8,0,0,1,80,64Z"/><path fill-rule="evenodd" d="M72,92H184V200a32,32,0,0,1-32,32H104a32,32,0,0,1-32-32ZM88,92V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V92Z"/><path d="M80,128h36a8,8,0,0,1,0,16H80ZM80,164h36a8,8,0,0,1,0,16H80Z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></symbol>
+    <symbol id="i-diaper" viewBox="0 0 256 256"><path fill-rule="evenodd" d="M40,48H216a8,8,0,0,1,8,8v56c-36,4-56,36-56,84a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16c0-48-20-80-56-84V56A8,8,0,0,1,40,48ZM48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"/></symbol>
+    <symbol id="i-admin" viewBox="0 0 256 256"><path d="M200,112a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h40A8,8,0,0,1,200,112Zm-8,24H152a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm40-80V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Zm-80.26-34a8,8,0,1,1-15.5,4c-2.63-10.26-13.06-18-24.25-18s-21.61,7.74-24.25,18a8,8,0,1,1-15.5-4,39.84,39.84,0,0,1,17.19-23.34,32,32,0,1,1,45.12,0A39.76,39.76,0,0,1,135.75,166ZM96,136a16,16,0,1,0-16-16A16,16,0,0,0,96,136Z"/></symbol>
+    <symbol id="i-memory" viewBox="0 0 256 256"><path d="M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 256 256"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/></symbol>
+    <symbol id="i-weather" viewBox="0 0 256 256"><path d="M164,72a76.2,76.2,0,0,0-20.26,2.73,55.63,55.63,0,0,0-9.41-11.54l9.51-13.57a8,8,0,1,0-13.11-9.18L121.22,54A55.9,55.9,0,0,0,96,48c-.58,0-1.16,0-1.74,0L91.37,31.71a8,8,0,1,0-15.75,2.77L78.5,50.82A56.1,56.1,0,0,0,55.23,65.67L41.61,56.14a8,8,0,1,0-9.17,13.11L46,78.77A55.55,55.55,0,0,0,40,104c0,.57,0,1.15,0,1.72L23.71,108.6a8,8,0,0,0,1.38,15.88,8.24,8.24,0,0,0,1.39-.12l16.32-2.88a55.74,55.74,0,0,0,5.86,12.42A52,52,0,0,0,84,224h80a76,76,0,0,0,0-152ZM56,104a40,40,0,0,1,72.54-23.24,76.26,76.26,0,0,0-35.62,40,52.14,52.14,0,0,0-31,4.17A40,40,0,0,1,56,104ZM164,208H84a36,36,0,1,1,4.78-71.690c-.37,2.37-.63,4.79-.77,7.23a8,8,0,0,0,16,.92,58.91,58.91,0,0,1,1.88-11.81c0-.16.09-.32.12-.48A60.06,60.06,0,1,1,164,208Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM84,116a12,12,0,1,0,12,12A12,12,0,0,0,84,116Zm88,0a12,12,0,1,0,12,12A12,12,0,0,0,172,116Zm60,12A104,104,0,0,1,79.12,219.82L45.07,231.17a16,16,0,0,1-20.24-20.24l11.35-34.050A104,104,0,1,1,232,128Zm-16,0A88,88,0,1,0,51.81,172.06a8,8,0,0,1,.66,6.54L40,216,77.4,203.53a7.85,7.85,0,0,1,2.53-.42,8,8,0,0,1,4,1.08A88,88,0,0,0,216,128Z"/></symbol>
+    <symbol id="i-question" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 256 256"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 256 256"><path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.780,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z"/></symbol>
+    <symbol id="i-checklist" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 256 256"><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64ZM160,88h40a8,8,0,0,1,0,16H160a8,8,0,0,1,0-16Zm48,40a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,128Zm0,32a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,160Z"/></symbol>
+    <symbol id="i-cards" viewBox="0 0 256 256"><path d="M184,72H40A16,16,0,0,0,24,88V200a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V88A16,16,0,0,0,184,72Zm0,128H40V88H184V200ZM232,56V176a8,8,0,0,1-16,0V56H64a8,8,0,0,1,0-16H216A16,16,0,0,1,232,56Z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 256 256"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 256 256"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></symbol>
+    <symbol id="i-growth" viewBox="0 0 256 256"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></symbol>
+    <symbol id="i-exercise" viewBox="0 0 256 256"><path d="M128,80A32,32,0,1,0,96,48,32,32,0,0,0,128,80Zm0-48a16,16,0,1,1-16,16A16,16,0,0,1,128,32Zm96,72a8,8,0,0,1-8,8H136v26.72l51.15,21.93A8,8,0,0,1,192,168v48a8,8,0,0,1-16,0V173.28l-46.45-19.91L53.35,222a8,8,0,1,1-10.7-11.9L120,140.44V112H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,104Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 256 256"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></symbol>
+    <symbol id="i-check"viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></symbol>
+    <!-- prechody kruhu (rovnaké odtiene ako kruh v appke, zosvetlené kvôli kontrastu popisov) -->
+    <linearGradient id="g-pink" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde3eb"/><stop offset="1" stop-color="#f4b6c8"/></linearGradient>
+    <linearGradient id="g-peach" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#feead6"/><stop offset="1" stop-color="#f6c49a"/></linearGradient>
+    <linearGradient id="g-blue" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#e3e9fc"/><stop offset="1" stop-color="#b6c6f2"/></linearGradient>
+    <linearGradient id="g-mid" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3effd"/><stop offset="1" stop-color="#d9cff3"/></linearGradient>
+    <path id="arc-a" d="M156.98 50.24 A100 100 0 0 1 239.88 193.84"/>
+    <path id="arc-b" d="M67.10 205.92 A100 100 0 0 0 232.90 205.92"/>
+    <path id="arc-c" d="M60.12 193.84 A100 100 0 0 1 143.02 50.24"/>
+    <g id="ring-segs">
+      <path d="M159.07 20.31 A130 130 0 0 1 266.84 206.99 L212.92 180.69 A70 70 0 0 0 154.89 80.17 Z" fill="url(#g-pink)"/>
+      <path d="M257.77 222.70 A130 130 0 0 1 42.23 222.70 L91.97 189.14 A70 70 0 0 0 208.03 189.14 Z" fill="url(#g-peach)"/>
+      <path d="M33.16 206.99 A130 130 0 0 1 140.93 20.31 L145.11 80.17 A70 70 0 0 0 87.08 180.69 Z" fill="url(#g-blue)"/>
+    </g>
+  </svg>
 
-    <main>
-      <div class="hero">
-        <div>
-          <h1>Pokojný sprievodca od bruška po prvé narodeniny</h1>
-          <p class="lead">Guguboo ti pomôže v tehotenstve aj v prvom roku bábätka – v bežnom dni, pri spomienkach aj pri úradoch.</p>
+  <header class="top" id="top">
+    <div class="wrap">
+      <a class="logo" href="#obsah" aria-label="Guguboo – na začiatok stránky"><img src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo" width="94" height="34"></a>
+      <nav aria-label="Na stránke">
+        <a href="#ako">Ako to funguje</a>
+        <a href="#funkcie">Čo appka vie</a>
+        <a href="#sukromie">Súkromie</a>
+        <a href="#testovanie">Testovanie</a>
+      </nav>
+      <a class="pill" href="app.html">Otvoriť appku</a>
+    </div>
+  </header>
+
+  <main id="obsah">
+    <!-- ================= HERO ================= -->
+    <section class="hero" aria-labelledby="h1">
+      <div class="wrap">
+        <div class="rv">
+          <p class="eyebrow"><svg class="ic" style="width:18px;height:18px" aria-hidden="true"><use href="#i-sparkle"/></svg>Po slovensky · tehotenstvo a prvý rok</p>
+          <h1 id="h1">Pokojný sprievodca <span class="grad">od bruška po prvé narodeniny</span></h1>
+          <p class="lead">Guguboo ti pomôže v tehotenstve aj v prvom roku bábätka – v bežnom dni, pri spomienkach aj pri úradoch. Jedným ťuknutím, bez tlaku a bez hodnotenia.</p>
           <div class="ctas">
             <a class="btn btn-main" href="app.html">Otvoriť appku</a>
             <a class="btn btn-ghost" href="#testovanie">Chcem testovať</a>
           </div>
-          <p class="facts">Zadarmo · bez reklám · bez registrácie</p>
+          <ul class="facts" aria-label="V skratke">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Počas testovania zadarmo</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Bez reklám</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Bez registrácie</li>
+          </ul>
         </div>
-        <div class="art" aria-hidden="true">
-          <!-- kruh ako v appke (ilustrácia) -->
-          <svg viewBox="0 0 320 320">
-            <defs>
-              <linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9d5df"/><stop offset="1" stop-color="#df91aa"/></linearGradient>
-              <linearGradient id="b" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde0c4"/><stop offset="1" stop-color="#e6955a"/></linearGradient>
-              <linearGradient id="c" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#d6e0fa"/><stop offset="1" stop-color="#768fd8"/></linearGradient>
-            </defs>
-            <g transform="translate(160 160)">
-              <path d="M8 -134 A134 134 0 0 1 120 58 L52 26 A58 58 0 0 0 4 -58 Z" fill="url(#a)"/>
-              <path d="M112 72 A134 134 0 0 1 -112 72 L-48 34 A58 58 0 0 0 48 34 Z" fill="url(#b)"/>
-              <path d="M-120 58 A134 134 0 0 1 -8 -134 L-4 -58 A58 58 0 0 0 -52 26 Z" fill="url(#c)"/>
-              <circle r="50" fill="#fff"/>
-              <text y="-4" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="17" fill="#29243a">Spí</text>
-              <text y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="20" fill="#29243a">0:47</text>
-              <text x="66" y="-56" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#6a2240" transform="rotate(38 66 -56)">Kŕmenie</text>
-              <text y="104" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#5a2f0c">Spánok</text>
-              <text x="-66" y="-56" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="15" fill="#1f2d66" transform="rotate(-38 -66 -56)">Plienky</text>
-            </g>
-          </svg>
+
+        <div class="stage rv" role="img" aria-label="Ukážka domova appky Guguboo: odznak 14. týždňa s kiwi, kruh rýchlych záznamov Bruško, Pre bábätko a Prvý pohyb so stredom Náš deň.">
+          <div class="phone" aria-hidden="true">
+            <div class="screen">
+              <div class="sbar"><span>9:41</span><i></i></div>
+              <div class="m-head"><img src="guguboo-logo-3d-pastel-v2.png" alt=""><span class="m-round"><svg class="ic"><use href="#i-search"/></svg></span></div>
+              <div class="m-hero">
+                <div class="badge"><div><b>14</b><span>TÝŽDEŇ</span></div></div>
+                <p><small>Tvoj týždeň</small><strong>asi 8,5 cm</strong><em>približne ako kiwi</em></p>
+                <span class="fruit"></span>
+              </div>
+              <div class="m-card">
+                <small>Rýchle záznamy</small>
+                <svg class="ring" viewBox="0 0 300 300">
+                  <use href="#ring-segs"/>
+                  <text class="lbl c1"><textPath href="#arc-a" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Bruško</textPath></text>
+                  <text class="lbl c2"><textPath href="#arc-b" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Pre bábätko</textPath></text>
+                  <text class="lbl c3"><textPath href="#arc-c" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Prvý pohyb</textPath></text>
+                  <circle class="pulse" cx="150" cy="150" r="64" fill="#d9cff3"/>
+                  <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
+                  <g transform="translate(138 116)" fill="#5f4fb1"><svg width="24" height="24" viewBox="0 0 256 256"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></g>
+                  <text class="ct" x="150" y="162" font-size="19">Náš deň</text>
+                  <text class="ct" x="150" y="182" font-size="12" fill="#5d5768" style="font-weight:700">prehľad dňa</text>
+                </svg>
+              </div>
+              <div class="m-today"><span class="sq"><svg class="ic"><use href="#i-question"/></svg></span><div><small>Dnes stačí jedno</small><b>Pripraviť otázky pre lekára</b></div></div>
+              <div class="m-tabs">
+                <span class="on"><svg class="ic"><use href="#i-home"/></svg>Domov</span>
+                <span><svg class="ic"><use href="#i-baby"/></svg>Bábätko</span>
+                <span><svg class="ic"><use href="#i-mama"/></svg>Mama</span>
+                <span><svg class="ic"><use href="#i-family"/></svg>Rodina</span>
+              </div>
+            </div>
+          </div>
+          <div class="float f1" aria-hidden="true"><span class="sq t-fam"><svg class="ic"><use href="#i-lock"/></svg></span><span>Údaje len v telefóne<small>bez účtu a servera</small></span></div>
+          <div class="float f2" aria-hidden="true"><span class="sq t-mama"><svg class="ic"><use href="#i-memory"/></svg></span><span>Fotka bruška<small>uložená v Našich momentoch</small></span></div>
         </div>
       </div>
+    </section>
 
-      <section aria-labelledby="co">
-        <h2 id="co">Čo ti Guguboo uľahčí</h2>
-        <div class="cards">
-          <article class="card"><div class="dot d1" aria-hidden="true">🍐</div><h3>Týždeň po týždni</h3><p>Ako rastie bábätko a čo sa deje s tvojím telom. Veľkosť ukážeme orientačne ovocím.</p></article>
-          <article class="card"><div class="dot d2" aria-hidden="true">◔</div><h3>Rýchle záznamy v kruhu</h3><p>Kŕmenie, spánok a plienky zapíšeš jedným ťuknutím. V tehotenstve pohyby, bruško a hlas pre bábätko.</p></article>
-          <article class="card"><div class="dot d3" aria-hidden="true">☾</div><h3>Čas pre teba</h3><p>Malá chvíľa pre mamu: oddych, telo a opora. Bez hodnotenia a bez tlaku.</p></article>
-          <article class="card"><div class="dot d4" aria-hidden="true">✉</div><h3>Rodina a úrady</h3><p>Spoločný kalendár, udalosť pošleš partnerovi a prehľadne nájdeš, čo sa kedy vybavuje.</p></article>
-          <article class="card"><div class="dot d5" aria-hidden="true">?</div><h3>GuguChat</h3><p>Napíš, čo hľadáš, a GuguChat ťa navedie na správne miesto v appke.</p></article>
-        </div>
-      </section>
-
-      <section aria-labelledby="komu">
-        <h2 id="komu">Pre koho je Guguboo</h2>
-        <div class="who">
-          <div><h3>Keď čakáš bábätko</h3><p>Od prvých týždňov až po pôrod, s pokojným prehľadom toho, čo ťa čaká.</p></div>
-          <div><h3>Keď už máš bábätko do 1 roka</h3><p>Denné záznamy, starostlivosť, aktivity a prvé spomienky na jednom mieste.</p></div>
-          <div><h3>Pre partnera</h3><p>Termíny a udalosti si môžete poslať, aby ste o všetkom vedeli obaja.</p></div>
-        </div>
-      </section>
-
-      <section class="diff" aria-labelledby="ine">
-        <h2 id="ine">Čím je Guguboo iné</h2>
-        <ul>
-          <li><strong>Úrady a príspevky po slovensky</strong>Čo vybaviť, kde a dokedy – vždy s odkazom na oficiálny zdroj a dátumom overenia.</li>
-          <li><strong>Jedna appka od tehotenstva po prvý rok</strong>Netreba prechádzať do inej appky, keď sa bábätko narodí.</li>
-          <li><strong>Praktické aj osobné spolu</strong>Popri zápisoch kŕmenia a spánku aj Naše momenty, fotka bruška a kartičky.</li>
-          <li><strong>Overené zdroje</strong>Informácie čerpáme z verejných oficiálnych a odborných zdrojov a pri každej uvádzame, odkiaľ sú.</li>
+    <!-- ================= PÁS DÔVERY ================= -->
+    <div class="trust">
+      <div class="wrap">
+        <ul class="rv">
+          <li><span class="tile t-me"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span>Bez reklám<small>počas testovania zadarmo</small></span></li>
+          <li><span class="tile t-fam"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span>Údaje u teba<small>len v telefóne, záloha do súboru</small></span></li>
+          <li><span class="tile t-baby"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></span><span>Overené zdroje<small>so zdrojom a dátumom</small></span></li>
+          <li><span class="tile t-mama"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span><span>Na ploche telefónu<small>Android aj iPhone</small></span></li>
         </ul>
-        <p class="fine">Guguboo je sprievodca, nie zdravotnícka aplikácia. Nenahrádza lekára ani pôrodnú asistentku.</p>
-      </section>
+      </div>
+    </div>
 
-      <section aria-labelledby="sukr">
-        <div class="privacy"><span aria-hidden="true">🔒</span><div><h2 id="sukr">Tvoje údaje ostávajú u teba</h2><p>Všetko, čo si v appke zapíšeš, sa ukladá len v tvojom telefóne – bez účtu a bez posielania na server.</p></div></div>
-      </section>
+    <!-- ================= AKO TO FUNGUJE ================= -->
+    <section id="ako" aria-labelledby="h-ako">
+      <div class="wrap">
+        <div class="center rv">
+          <p class="eyebrow">Jednoduchý deň</p>
+          <h2 id="h-ako">Zapíš. Pozri sa. <span class="grad">Uchovaj.</span></h2>
+          <p class="intro">Žiadne dlhé formuláre. Čo sa práve stalo, zapíšeš jedným ťuknutím, deň uvidíš v pokojnom prehľade a pekné chvíle si odložíš na neskôr.</p>
+        </div>
+        <div class="steps">
+          <article class="step rv">
+            <span class="num" aria-hidden="true">1</span>
+            <h3>Zapíš ťuknutím</h3>
+            <p>Ťukneš na diel kruhu, otvorí sa malé okno a uložíš. Keď sa pomýliš, jedným ťuknutím to vrátiš.</p>
+            <div class="viz" aria-hidden="true">
+              <div class="chipline"><span class="chip on"><svg class="ic"><use href="#i-feeding"/></svg>Kŕmenie</span><span class="chip"><svg class="ic"><use href="#i-moon"/></svg>Spánok</span><span class="chip"><svg class="ic"><use href="#i-diaper"/></svg>Plienky</span></div>
+              <div class="toast"><span>Uložené</span><u>Vrátiť</u></div>
+            </div>
+          </article>
+          <article class="step rv">
+            <span class="num" aria-hidden="true">2</span>
+            <h3>Pozri si Náš deň</h3>
+            <p>Celý deň prehľadne na jednom mieste. Prehľad jednoducho pošleš partnerovi, aby ste o všetkom vedeli obaja.</p>
+            <div class="viz" aria-hidden="true">
+              <div class="row"><time>7:40</time><svg class="ic" style="color:#a24766"><use href="#i-feeding"/></svg>Kŕmenie</div>
+              <div class="row"><time>8:15</time><svg class="ic" style="color:#7d5a10"><use href="#i-moon"/></svg>Spánok · 0:47</div>
+              <div class="row"><time>9:10</time><svg class="ic" style="color:#2f6a8f"><use href="#i-diaper"/></svg>Plienky</div>
+            </div>
+          </article>
+          <article class="step rv">
+            <span class="num" aria-hidden="true">3</span>
+            <h3>Uchovaj moment</h3>
+            <p>Fotka bruška, prvé razy a kartičky v Našich momentoch – spomienky, ktoré by inak zapadli v galérii.</p>
+            <div class="viz" aria-hidden="true">
+              <div class="polas">
+                <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#fdecf1,#f6c89f)"><svg class="ic" style="color:#a24766"><use href="#i-camera"/></svg></div>Bruško</div>
+                <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#f4f0ff,#d9cff3)"><svg class="ic" style="color:#5f4fb1"><use href="#i-sparkle"/></svg></div>Prvé razy</div>
+                <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#e5f3ee,#eaf4fb)"><svg class="ic" style="color:#24715f"><use href="#i-cards"/></svg></div>Kartička</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-      <section aria-labelledby="plocha">
-        <h2 id="plocha">Maj Guguboo po ruke na ploche</h2>
-        <p>Guguboo nie je v obchode s aplikáciami. Otvoríš ho v prehliadači a pridáš si ho na plochu ako bežnú appku.</p>
+    <!-- ================= CESTA OBDOBIAMI ================= -->
+    <section class="tint" aria-labelledby="h-cesta">
+      <div class="wrap">
+        <div class="rv">
+          <p class="eyebrow">Mení sa s tebou</p>
+          <h2 id="h-cesta">Od bruška po <span class="grad">prvé narodeniny</span></h2>
+          <p class="intro">Jedna appka od tehotenstva po prvý rok. Keď sa bábätko narodí, nič neprenášaš – domov sa sám prispôsobí tomu, čo práve potrebuješ.</p>
+        </div>
+        <div class="journey">
+          <article class="stop rv">
+            <span class="dot" style="background:var(--mama-bg);color:var(--mama)" aria-hidden="true"><svg class="ic"><use href="#i-mama"/></svg></span>
+            <span class="when">Tehotenstvo</span>
+            <h3>Týždeň po týždni</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Veľkosť bábätka orientačne ovocím</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu Bruško, Pre bábätko, Prvý pohyb</li>
+            </ul>
+          </article>
+          <article class="stop rv">
+            <span class="dot" style="background:var(--me-bg);color:var(--me)" aria-hidden="true"><svg class="ic"><use href="#i-clock"/></svg></span>
+            <span class="when">Od 36. týždňa</span>
+            <h3>Pokojne pred pôrodom</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>V kruhu pribudnú Kontrakcie</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Otázky pre lekára na jednom mieste</li>
+            </ul>
+          </article>
+          <article class="stop rv">
+            <span class="dot" style="background:var(--baby-bg);color:var(--baby)" aria-hidden="true"><svg class="ic"><use href="#i-baby"/></svg></span>
+            <span class="when">Prvé týždne</span>
+            <h3>Kŕmenie, spánok, plienky</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Zápis jednou rukou, aj v noci</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Telo po pôrode – čo je bežné</li>
+            </ul>
+          </article>
+          <article class="stop rv">
+            <span class="dot" style="background:var(--fam-bg);color:var(--fam)" aria-hidden="true"><svg class="ic"><use href="#i-family"/></svg></span>
+            <span class="when">Do 1. roka</span>
+            <h3>Rodina a spomienky</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Úrady a príspevky so zdrojom</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Prvé razy a Naše momenty</li>
+            </ul>
+          </article>
+        </div>
+        <p class="goal rv"><svg class="ic" aria-hidden="true"><use href="#i-memory"/></svg>Cieľ: 1. narodeniny</p>
+        <p class="scope">Guguboo dnes pokrýva tehotenstvo a prvý rok bábätka. Obdobie po prvom roku dopracujeme neskôr.</p>
+      </div>
+    </section>
+
+    <!-- ================= FUNKCIE ================= -->
+    <section id="funkcie" aria-labelledby="h-fun">
+      <div class="wrap">
+        <div class="center rv">
+          <p class="eyebrow">Čo appka vie</p>
+          <h2 id="h-fun">Čo ti Guguboo <span class="grad">uľahčí</span></h2>
+          <p class="intro">Praktické aj osobné spolu – rozdelené tak, ako v appke: Bábätko, Mama a Rodina.</p>
+        </div>
+
+        <!-- 1 Týždeň po týždni -->
+        <div class="feat rv">
+          <div>
+            <span class="area a-baby"><svg class="ic" aria-hidden="true"><use href="#i-baby"/></svg>Bábätko</span>
+            <h3>Tehotenstvo týždeň po týždni</h3>
+            <p>Ako rastie bábätko a čo sa deje s tvojím telom. Veľkosť ukážeme orientačne okrúhlym ovocím, podrobnosti s jemnou ilustráciou nájdeš v Tvojom týždni.</p>
+            <p>Po pôrode na to nadviaže Tvoj mesiac – len overené vety so zdrojom.</p>
+            <ul class="ticks">
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Krátko na prvý pohľad, viac pod „Viac“</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Každá informácia s odkazom na zdroj</li>
+            </ul>
+          </div>
+          <div class="feat-art" role="img" aria-label="Ukážka okna Tvoj týždeň: 14. týždeň, bábätko má približne 8,5 centimetra, ako kiwi. Zdroj NHS.">
+            <div class="win" aria-hidden="true">
+              <div class="win-h"><b>Tvoj týždeň</b><span class="x">×</span></div>
+              <div class="week-art">
+                <div class="badge"><div><b>14</b><span>TÝŽDEŇ</span></div></div>
+                <div><strong style="font-size:17px">2. trimester</strong><br><span style="color:var(--muted);font-weight:600;font-size:14px">Ako rastie bábätko a čo sa deje s tvojím telom.</span></div>
+              </div>
+              <div class="big-fruit" style="margin-top:18px"></div>
+              <p class="size"><b>približne 8,5 cm</b>ako kiwi</p>
+              <span class="src"><svg class="ic" style="width:16px;height:16px"><use href="#i-book"/></svg>Zdroj: NHS · týždeň 14</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Kruh -->
+        <div class="feat flip rv">
+          <div>
+            <span class="area a-home"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>Domov</span>
+            <h3>Kruh rýchlych záznamov so živým stredom</h3>
+            <p>Najčastejšie veci zapíšeš priamo z domova. Stred kruhu ukazuje, čo práve beží – napríklad spánok – a jedným ťuknutím ho ukončíš.</p>
+            <p>Pri každom dieli vidíš, kedy bol posledný záznam. Bez počítadiel a bez výčitiek – po dni sa údaj jednoducho stratí z pohľadu.</p>
+            <ul class="ticks">
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ťuk nikdy neuloží hneď – najprv malé okno</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Po uložení „Uložené · Vrátiť“</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Od 36. týždňa v kruhu pribudnú Kontrakcie</li>
+            </ul>
+          </div>
+          <div class="feat-art">
+            <div class="seg" role="group" aria-label="Ukážka kruhu">
+              <button type="button" data-ring="po" aria-pressed="true">Po pôrode</button>
+              <button type="button" data-ring="pred" aria-pressed="false">Tehotenstvo</button>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring" id="demo-ring" viewBox="0 0 300 300" role="img" aria-labelledby="demo-ring-t">
+                <title id="demo-ring-t">Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 0:47, Zobudilo sa.</title>
+                <use href="#ring-segs"/>
+                <text class="lbl c1"><textPath href="#arc-a" startOffset="50%" text-anchor="middle" dominant-baseline="middle" data-l="1">Kŕmenie</textPath></text>
+                <text class="lbl c2"><textPath href="#arc-b" startOffset="50%" text-anchor="middle" dominant-baseline="middle" data-l="2">Spánok</textPath></text>
+                <text class="lbl c3"><textPath href="#arc-c" startOffset="50%" text-anchor="middle" dominant-baseline="middle" data-l="3">Plienky</textPath></text>
+                <circle class="pulse" cx="150" cy="150" r="64" fill="#d9cff3"/>
+                <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
+                <text class="ct" x="150" y="134" font-size="15" data-c="1">Spí</text>
+                <text class="ct" x="150" y="160" font-size="26" data-c="2">0:47</text>
+                <rect x="104" y="170" width="92" height="24" rx="12" fill="#5f4fb1" data-c="bg"/>
+                <text class="ct" x="150" y="186.5" font-size="11.5" fill="#fff" style="fill:#fff" data-c="3">Zobudilo sa</text>
+              </svg>
+              <div class="float r1" aria-hidden="true" data-f="1"><span class="sq t-mama"><svg class="ic"><use href="#i-feeding"/></svg></span><span><b data-f-t>Kŕmenie</b><small data-f-s>naposledy pred 2 h</small></span></div>
+              <div class="float r2" aria-hidden="true"><span class="sq" style="background:#2f2a45;color:#fff"><svg class="ic"><use href="#i-check"/></svg></span><span>Uložené<small>Vrátiť</small></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Mama -->
+        <div class="feat rv">
+          <div>
+            <span class="area a-mama"><svg class="ic" aria-hidden="true"><use href="#i-mama"/></svg>Mama</span>
+            <h3>Čas pre teba</h3>
+            <p>Malá chvíľa pre mamu: Oddych, Telo a Opora. Stred kruhu ponúkne pomoc hneď, bez otázok. Nič sa neukladá, nič sa nehodnotí – žiadne body ani odmeny.</p>
+            <p>V časti Telo po pôrode nájdeš, čo je bežné, s pokojnou vetou, kedy sa ozvať lekárovi. Otázku si jedným ťuknutím zapíšeš do Otázok pre lekára.</p>
+          </div>
+          <div class="feat-art" role="img" aria-label="Ukážka Čas pre teba: kruh s dielmi Oddych, Telo a Opora a karta Telo po pôrode.">
+            <div class="stack" aria-hidden="true">
+              <div class="win" style="text-align:center">
+                <div class="win-h" style="text-align:left"><b>Čas pre teba</b><span class="x">×</span></div>
+                <svg class="petals" viewBox="0 0 300 300" style="margin:0 auto">
+                  <use href="#ring-segs"/>
+                  <text class="c1" style="fill:#7a2848"><textPath href="#arc-a" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Oddych</textPath></text>
+                  <text class="c2" style="fill:#6a3a10"><textPath href="#arc-b" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Telo</textPath></text>
+                  <text class="c3" style="fill:#263a80"><textPath href="#arc-c" startOffset="50%" text-anchor="middle" dominant-baseline="middle">Opora</textPath></text>
+                  <circle cx="150" cy="150" r="60" fill="url(#g-mid)"/>
+                  <g transform="translate(136 118)" fill="#a24766"><svg width="28" height="28" viewBox="0 0 256 256"><use href="#i-memory"/></svg></g>
+                  <text x="150" y="168" style="fill:#29243a;font-size:14px">Teraz</text>
+                  <text x="150" y="186" style="fill:#5d5768;font-size:12px;font-weight:700">bez otázok</text>
+                </svg>
+              </div>
+              <div class="win">
+                <div class="win-h"><b>Telo po pôrode</b></div>
+                <div class="info"><b>Čo je bežné</b>Krátko a pokojne, vždy so zdrojom. Každé telo je iné.</div>
+                <span class="ask-doc"><svg class="ic"><use href="#i-pen"/></svg>Zapísať ako otázku pre lekára</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Úrady -->
+        <div class="feat flip rv">
+          <div>
+            <span class="area a-fam"><svg class="ic" aria-hidden="true"><use href="#i-family"/></svg>Rodina</span>
+            <h3>Úrady a príspevky na Slovensku</h3>
+            <p>Čo vybaviť, kde a dokedy – na časovej osi od tehotenstva po prvé mesiace. Pri každej položke odkaz na oficiálny zdroj a dátum, kedy sme ho overili. Sumy sú už podľa pravidiel na rok 2027.</p>
+            <p class="fine" style="margin-top:0">Sumy uvádzame orientačne. Záväzné je vždy znenie na oficiálnej stránke.</p>
+          </div>
+          <div class="feat-art" role="img" aria-label="Ukážka okna Úrady a príspevky: časová os s tehotenským, materským, rodným listom a príspevkom pri narodení dieťaťa, zdroj socpoist.sk overený 16. 11. 2026.">
+            <div class="win" aria-hidden="true">
+              <div class="win-h"><span class="tile t-fam" style="width:38px;height:38px;border-radius:12px"><svg class="ic" style="width:20px;height:20px"><use href="#i-admin"/></svg></span><b>Úrady a príspevky</b><span class="x">×</span></div>
+              <div class="t-line">
+                <div class="t-item"><small>Tehotenstvo</small><b>Tehotenské</b><span>orientačne najviac 479,40 € mesačne (2027)</span></div>
+                <div class="t-item"><small>Pred pôrodom</small><b>Materské</b><span>orientačne najviac 2 396,80 € mesačne (2027)</span></div>
+                <div class="t-item"><small>Po pôrode</small><b>Rodný list</b><span>kde a ako ho vybaviť</span></div>
+                <div class="t-item"><small>Po pôrode</small><b>Príspevok pri narodení dieťaťa</b><span>čo treba a dokedy</span></div>
+              </div>
+              <span class="src"><svg class="ic" style="width:16px;height:16px"><use href="#i-book"/></svg>Zdroj: socpoist.sk · overené 16. 11. 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Momenty a kalendár -->
+        <div class="feat rv">
+          <div>
+            <span class="area a-fam"><svg class="ic" aria-hidden="true"><use href="#i-family"/></svg>Rodina</span>
+            <h3>Naše momenty a spoločný kalendár</h3>
+            <p>Fotka bruška, prvé razy a kartičky – spomienky na jednom mieste, v tvojom telefóne.</p>
+            <p>Do Kalendára si zapíšeš termíny. Udalosť pošleš partnerovi správou a jedným ťuknutím si ju uloží aj do svojho kalendára.</p>
+          </div>
+          <div class="feat-art" role="img" aria-label="Ukážka: Naše momenty s fotkou bruška a prvými razmi, a udalosť z Kalendára poslaná partnerovi správou.">
+            <div class="stack" aria-hidden="true">
+              <div class="win">
+                <div class="win-h"><b>Naše momenty</b></div>
+                <div class="polas">
+                  <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#fdecf1,#f6c89f)"><svg class="ic" style="color:#a24766"><use href="#i-camera"/></svg></div>20. týždeň</div>
+                  <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#f4f0ff,#d9cff3)"><svg class="ic" style="color:#5f4fb1"><use href="#i-sparkle"/></svg></div>Prvý úsmev</div>
+                  <div class="pola"><div class="ph" style="background:linear-gradient(145deg,#e5f3ee,#eaf4fb)"><svg class="ic" style="color:#24715f"><use href="#i-cards"/></svg></div>Kartička</div>
+                </div>
+              </div>
+              <div class="win">
+                <div class="win-h"><span class="tile t-fam" style="width:38px;height:38px;border-radius:12px"><svg class="ic" style="width:20px;height:20px"><use href="#i-calendar"/></svg></span><b>Kalendár</b></div>
+                <div class="row" style="background:var(--bg)"><time>ut 10:00</time>Návšteva u pediatra</div>
+                <div class="share"><b>Poslať partnerovi</b>Správa s udalosťou a súbor do kalendára.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bento – ďalšie -->
+        <div class="bento" style="margin-top:28px">
+          <article class="b b-3 rv">
+            <span class="tile"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></span>
+            <h3>GuguChat – navigátor po appke</h3>
+            <p>Napíš, čo hľadáš, a GuguChat ťa navedie na správne miesto v appke. Nie je to lekár ani umelá inteligencia.</p>
+            <div class="chat" aria-hidden="true">
+              <span class="bub me">kde zapíšem spánok?</span>
+              <span class="bub gg">Spánok zapíšeš v kruhu na domove.<br><span class="chip">Otvoriť kruh</span></span>
+            </div>
+          </article>
+          <article class="b b-3 rv">
+            <span class="tile t-baby"><svg class="ic" aria-hidden="true"><use href="#i-question"/></svg></span>
+            <h3>Otázky pre lekára</h3>
+            <p>Čo ťa napadne cez deň, zapíšeš si na jedno miesto – aby ti na prehliadke nič neušlo.</p>
+            <div class="qs" aria-hidden="true">
+              <div class="chipline"><span class="chip on">Pre mňa</span><span class="chip">Pre bábätko</span></div>
+              <div class="q">Na čo sa opýtať pri ďalšej kontrole</div>
+            </div>
+          </article>
+          <article class="b b-2 rv">
+            <span class="tile t-baby"><svg class="ic" aria-hidden="true"><use href="#i-weather"/></svg></span>
+            <h3>Počasie a oblečenie</h3>
+            <p>Podľa mesta alebo približnej polohy. Poloha sa neukladá.</p>
+            <div class="wx" aria-hidden="true"><svg class="ic"><use href="#i-weather"/></svg><div><b>8 °C</b><small>pocitovo chladno</small></div></div>
+          </article>
+          <article class="b b-2 rv">
+            <span class="tile t-fam"><svg class="ic" aria-hidden="true"><use href="#i-family"/></svg></span>
+            <h3>Pre partnera</h3>
+            <p>Prehľad dňa aj udalosti z kalendára mu pošleš cez telefón – bez účtu a bez servera.</p>
+            <ul class="mini-list" aria-hidden="true"><li><svg class="ic"><use href="#i-checklist"/></svg>Poslať prehľad partnerovi</li><li><svg class="ic"><use href="#i-calendar"/></svg>Udalosť do kalendára</li></ul>
+          </article>
+          <article class="b b-2 rv">
+            <span class="tile t-me"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span>
+            <h3>Všetko na jedno ťuknutie</h3>
+            <p>Hľadanie rozumie aj hovorovým slovám a preklepom. Pod ním všetky funkcie v skupinách Bábätko, Mama, Rodina.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRE KOHO ================= -->
+    <section class="tint" aria-labelledby="h-komu">
+      <div class="wrap">
+        <div class="rv">
+          <p class="eyebrow">Pre koho</p>
+          <h2 id="h-komu">Pre koho je Guguboo</h2>
+        </div>
+        <div class="who">
+          <article class="rv" style="background:var(--mama-bg)"><span class="tile" style="color:var(--mama)"><svg class="ic" aria-hidden="true"><use href="#i-mama"/></svg></span><h3>Keď čakáš bábätko</h3><p>Od prvých týždňov až po pôrod, s pokojným prehľadom toho, čo ťa čaká.</p></article>
+          <article class="rv" style="background:var(--baby-bg)"><span class="tile" style="color:var(--baby)"><svg class="ic" aria-hidden="true"><use href="#i-baby"/></svg></span><h3>Keď už máš bábätko do 1 roka</h3><p>Denné záznamy, starostlivosť, aktivity a prvé spomienky na jednom mieste.</p></article>
+          <article class="rv" style="background:var(--fam-bg)"><span class="tile" style="color:var(--fam)"><svg class="ic" aria-hidden="true"><use href="#i-family"/></svg></span><h3>Pre partnera</h3><p>Termíny a udalosti si môžete poslať, aby ste o všetkom vedeli obaja.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SÚKROMIE ================= -->
+    <section id="sukromie" aria-labelledby="h-sukr">
+      <div class="wrap">
+        <div class="dark rv">
+          <div>
+            <div class="lockart" aria-hidden="true"><svg class="ic"><use href="#i-lock"/></svg></div>
+            <p class="eyebrow">Súkromie</p>
+            <h2 id="h-sukr">Tvoje údaje ostávajú u teba</h2>
+            <p>Všetko, čo si v appke zapíšeš, sa ukladá len v tvojom telefóne – bez účtu a bez posielania na server.</p>
+            <p><a href="sukromie.html" style="color:#fff;font-weight:700">Ochrana súkromia</a></p>
+          </div>
+          <ul>
+            <li><span class="tile"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span><b>Len v telefóne</b>Záznamy, fotky aj otázky ostávajú v tvojom zariadení.</span></li>
+            <li><span class="tile"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg></span><span><b>Záloha do súboru</b>Zálohu si uložíš ako súbor a kedykoľvek ju obnovíš.</span></li>
+            <li><span class="tile"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span><b>Bez registrácie</b>Žiadny účet, žiadne heslo. Otvoríš a ideš.</span></li>
+          </ul>
+        </div>
+        <div class="honest rv">
+          <span class="tile t-baby"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></span>
+          <p><b>Informujeme, neradíme</b>Guguboo je sprievodca, nie zdravotnícka aplikácia. Nenahrádza lekára ani pôrodnú asistentku. Pri zdravotných témach ukáže, čo je bežné, so zdrojom – a pokojne pripomenie, kedy sa ozvať lekárovi.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= NA PLOCHU ================= -->
+    <section class="tint" id="plocha" aria-labelledby="h-plocha">
+      <div class="wrap">
+        <div class="rv">
+          <p class="eyebrow">Ako appka</p>
+          <h2 id="h-plocha">Maj Guguboo po ruke na ploche</h2>
+          <p class="intro">Guguboo nie je v obchode s aplikáciami. Otvoríš ho v prehliadači a pridáš si ho na plochu ako bežnú appku.</p>
+        </div>
         <div class="install">
-          <div><h3>Android (Chrome)</h3><ol><li>Otvor Guguboo v Chrome.</li><li>Ťukni na ⋮ vpravo hore.</li><li>Vyber „Pridať na plochu“ alebo „Inštalovať aplikáciu“.</li><li>Potvrď.</li></ol></div>
-          <div><h3>iPhone (Safari)</h3><ol><li>Otvor Guguboo v Safari.</li><li>Ťukni na Zdieľať (štvorček so šípkou).</li><li>Vyber „Pridať na plochu“.</li><li>Ťukni na „Pridať“.</li></ol></div>
+          <article class="rv"><h3><span class="tile t-fam"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span>Android (Chrome)</h3><ol><li>Otvor Guguboo v Chrome.</li><li>Ťukni na ⋮ vpravo hore.</li><li>Vyber „Pridať na plochu“ alebo „Inštalovať aplikáciu“.</li><li>Potvrď.</li></ol></article>
+          <article class="rv"><h3><span class="tile"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span>iPhone (Safari)</h3><ol><li>Otvor Guguboo v Safari.</li><li>Ťukni na Zdieľať (štvorček so šípkou).</li><li>Vyber „Pridať na plochu“.</li><li>Ťukni na „Pridať“.</li></ol></article>
         </div>
         <p class="fine">Rovnaký návod nájdeš aj v appke: Všetko → Appka a záloha.</p>
-      </section>
+      </div>
+    </section>
 
-      <section id="testovanie" aria-labelledby="test">
-        <h2 id="test">Pomôž nám Guguboo vylepšiť</h2>
-        <p>Hľadáme mamičky a budúce mamičky, ktoré si appku vyskúšajú a povedia nám, čo im pomáha a čo nie. Ozveme sa e-mailom.</p>
-        <form name="testerky" method="POST" action="dakujeme.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+    <!-- ================= TESTOVANIE ================= -->
+    <section id="testovanie" aria-labelledby="test">
+      <div class="wrap test">
+        <div class="test-side rv">
+          <p class="eyebrow">Testovanie</p>
+          <h2 id="test">Pomôž nám Guguboo vylepšiť</h2>
+          <p class="intro" style="margin-bottom:12px">Hľadáme mamičky a budúce mamičky, ktoré si appku vyskúšajú a povedia nám, čo im pomáha a čo nie. Ozveme sa e-mailom.</p>
+          <ul class="ticks">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Stačí prezývka a e-mail</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Počas testovania zadarmo</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Súhlas môžeš kedykoľvek odvolať</li>
+          </ul>
+        </div>
+        <form name="testerky" method="POST" action="dakujeme.html" data-netlify="true" netlify-honeypot="bot-field" novalidate class="rv">
           <input type="hidden" name="form-name" value="testerky">
           <p class="hp"><label>Toto pole nevypĺňaj <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
           <div class="field">
@@ -220,20 +894,41 @@
             <p class="err" id="e-consent"></p>
           </div>
           <button class="btn btn-main" type="submit">Prihlásiť sa na testovanie</button>
-          <p class="fine">Údaje použijeme len na pozvanie do testovania a po skončení ich zmažeme. Nikomu ich nepredávame.</p>
+          <p class="fine" style="margin:0">Údaje použijeme len na pozvanie do testovania a po skončení ich zmažeme. Nikomu ich nepredávame.</p>
           <p class="err" id="e-send" role="status"></p>
         </form>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <footer>
-      <strong>Guguboo – sprievodca tehotenstvom a prvým rokom bábätka</strong>
-      <nav><a href="app.html">Otvoriť appku</a><a href="sukromie.html">Ochrana súkromia</a><a href="sukromie.html#kontakt">Kontakt</a></nav>
-      <p>Guguboo je sprievodca, nie zdravotnícka aplikácia. Pri otázkach o zdraví sa obráť na svojho lekára alebo pôrodnú asistentku.</p>
-      <p>Informácie o úradoch a príspevkoch uvádzame so zdrojom a dátumom overenia; záväzné je vždy znenie na oficiálnej stránke.</p>
-      <p>© 2026 Guguboo</p>
-    </footer>
-  </div>
+    <!-- ================= ZÁVER ================= -->
+    <section aria-labelledby="h-final" style="padding-top:0">
+      <div class="wrap">
+        <div class="final rv">
+          <img src="guguboo-logo-3d-pastel-v2.png" alt="" width="121" height="44">
+          <h2 id="h-final">Pomoc pre bežný deň. <span class="grad">Spomienky na celý život.</span></h2>
+          <p class="intro">Otvor Guguboo v prehliadači a pridaj si ho na plochu. Bez registrácie – stačí pár ťuknutí.</p>
+          <div class="ctas">
+            <a class="btn btn-main" href="app.html">Otvoriť appku</a>
+            <a class="btn btn-ghost" href="#testovanie">Chcem testovať</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong style="color:var(--ink)">Guguboo – sprievodca tehotenstvom a prvým rokom bábätka</strong>
+        <nav aria-label="Pätička"><a href="app.html">Otvoriť appku</a><a href="sukromie.html">Ochrana súkromia</a><a href="sukromie.html#kontakt">Kontakt</a><a href="mailto:feedback@tumamosa.com">feedback@tumamosa.com</a></nav>
+        <p>© 2026 Guguboo</p>
+      </div>
+      <div>
+        <p>Guguboo je sprievodca, nie zdravotnícka aplikácia. Pri otázkach o zdraví sa obráť na svojho lekára alebo pôrodnú asistentku.</p>
+        <p>Informácie o úradoch a príspevkoch uvádzame so zdrojom a dátumom overenia; záväzné je vždy znenie na oficiálnej stránke.</p>
+      </div>
+    </div>
+  </footer>
 
   <script>
     // Kontrola formulára pokojnými vetami (bez výkričníkov); odoslanie bežným POST na Netlify Forms.
@@ -253,6 +948,41 @@
         if (!form.suhlas.checked) { say("e-consent", "Na odoslanie potrebujeme tvoj súhlas."); ok = false; }
         if (!ok) { event.preventDefault(); const bad = form.querySelector(".err:not(:empty)")?.closest(".field"); bad?.querySelector("input")?.focus(); bad?.scrollIntoView({ block: "center" }); }
       });
+    })();
+
+    // Vzhľad stránky: odhaľovanie pri posúvaní, tieň hlavičky, prepínač ukážky kruhu.
+    (function () {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const top = document.getElementById("top");
+      const onScroll = () => top.classList.toggle("scrolled", window.scrollY > 8);
+      window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+      if (!reduce && "IntersectionObserver" in window) {
+        document.documentElement.classList.add("js");
+        const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+        document.querySelectorAll(".rv").forEach(el => io.observe(el));
+      }
+
+      // Ukážka kruhu: po pôrode / tehotenstvo (texty presne ako v appke)
+      const ring = document.getElementById("demo-ring");
+      const modes = {
+        po:   { l: ["Kŕmenie", "Spánok", "Plienky"], c: ["Spí", "0:47", "Zobudilo sa"], f: ["Kŕmenie", "naposledy pred 2 h"],
+                t: "Kruh po pôrode: Kŕmenie, Spánok, Plienky. V strede: Spí 0:47, Zobudilo sa." },
+        pred: { l: ["Bruško", "Pre bábätko", "Prvý pohyb"], c: ["", "Náš deň", "Otvoriť"], f: ["Bruško", "naposledy pred 2 h"],
+                t: "Kruh v tehotenstve: Bruško, Pre bábätko, Prvý pohyb. V strede: Náš deň. Od 36. týždňa pribudnú Kontrakcie." }
+      };
+      document.querySelectorAll("[data-ring]").forEach(btn => btn.addEventListener("click", () => {
+        const m = modes[btn.dataset.ring];
+        document.querySelectorAll("[data-ring]").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+        m.l.forEach((t, i) => { ring.querySelector('[data-l="' + (i + 1) + '"]').textContent = t; });
+        m.c.forEach((t, i) => { ring.querySelector('[data-c="' + (i + 1) + '"]').textContent = t; });
+        const big = ring.querySelector('[data-c="2"]');
+        big.setAttribute("font-size", btn.dataset.ring === "po" ? "26" : "20");
+        big.setAttribute("y", btn.dataset.ring === "po" ? "160" : "152");
+        document.querySelector("[data-f-t]").textContent = m.f[0];
+        document.querySelector("[data-f-s]").textContent = m.f[1];
+        document.getElementById("demo-ring-t").textContent = m.t;
+      }));
     })();
   </script>
 </body>
