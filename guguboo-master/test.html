@@ -19,7 +19,7 @@
       - Poistka: pred testami sa odfotí skutočný stav guguboo-m-*, po testoch sa porovná a pri rozdiele obnoví.
         Počas testov preto nemaj appku otvorenú v inej karte (jej zápisy by poistka vrátila).
     Náhľad bez skutočných údajov (na ručnú kontrolu, napr. v okne 375 × 667):
-      test.html?nahlad=pred | po | uvod   (&noc=1 = nočný režim, &w=375&h=667 = pevná veľkosť rámca)
+      test.html?nahlad=pred | po | uvod | foto   (foto = po pôrode s testovacími fotkami; &noc=1 = nočný režim, &w=375&h=667 = pevná veľkosť rámca)
     Automaticky (bez klikania): výsledok je aj v <body data-vysledok="ok|chyba"> a v window.__g2TestResult.
     Nový test: pridaj ho do zoznamu SUITES nižšie – funkcia vráti nič (OK), vyhodí chybu (červené) alebo zavolá known(…).
   -->
@@ -126,10 +126,10 @@
       doc.close(); frame.remove();
       throw new Error("Izolované úložisko sa v tomto prehliadači nepodarilo nastaviť – appka sa NEspustila (skutočné údaje sú v bezpečí).");
     }
-    // Master 2.9: fotky a nahrĂˇvky idĂş do vlastnej testovacej databĂˇzy (skutoÄŤnĂˇ guguboo-m-media sa nedotkne).
-    // opts.mediaDb = tĂˇ istĂˇ databĂˇza pre ÄŹalĹˇie spustenie; opts.noIdb = prehliadaÄŤ bez IndexedDB.
+    // Master 2.9: fotky a nahrávky idú do vlastnej testovacej databázy (skutočná guguboo-m-media sa nedotkne).
+    // opts.mediaDb = tá istá databáza pre ďalšie spustenie; opts.noIdb = prehliadač bez IndexedDB.
     const mediaDb = opts.mediaDb || newTestDb();
-    if (opts.noIdb) { try { Object.defineProperty(win, "indexedDB", { value: undefined, configurable: true }); } catch (_) { /* niÄŤ */ } }
+    if (opts.noIdb) { try { Object.defineProperty(win, "indexedDB", { value: undefined, configurable: true }); } catch (_) { /* nič */ } }
     win.__g2t = { storage, session, mediaDb, report: (kind, msg) => errors.push(kind + ": " + msg) };
     doc.write(html.replace(/<head[^>]*>/i, m => m + GUARD));
     doc.close();
@@ -141,24 +141,24 @@
     }
     await sleep(opts.settle ?? 800);
     const remove = async (keepDb = !!opts.mediaDb) => {
-      try { win.G2Media?.close(); } catch (_) { /* niÄŤ */ }
+      try { win.G2Media?.close(); } catch (_) { /* nič */ }
       frame.remove();
       if (!keepDb) await deleteDb(mediaDb);
     };
     return { frame, win, doc, storage, session, errors, mediaDb, state: () => win.eval("state"), remove };
   }
 
-  // â€”â€”â€” Testovacie databĂˇzy fotiek (IndexedDB) â€”â€”â€”
+  // ——— Testovacie databázy fotiek (IndexedDB) ———
   const TEST_DB = PREFIX + "media-test-";
   let dbCounter = 0;
   const newTestDb = () => TEST_DB + Date.now().toString(36) + "-" + (++dbCounter);
   const deleteDb = name => new Promise(resolve => {
-    if (!name || !name.startsWith(TEST_DB)) return resolve(); // poistka: nikdy nie skutoÄŤnĂˇ databĂˇza
+    if (!name || !name.startsWith(TEST_DB)) return resolve(); // poistka: nikdy nie skutočná databáza
     const request = indexedDB.deleteDatabase(name);
     request.onsuccess = request.onerror = () => resolve();
     request.onblocked = () => setTimeout(resolve, 500);
   });
-  // PoÄŤet zĂˇznamov v skutoÄŤnej databĂˇze guguboo-m-media (null = databĂˇza neexistuje / nedĂˇ sa zistiĹĄ) â€“ bez jej vytvorenia.
+  // Počet záznamov v skutočnej databáze guguboo-m-media (null = databáza neexistuje / nedá sa zistiť) – bez jej vytvorenia.
   async function realMediaCount() {
     if (!indexedDB.databases) return null;
     const list = await indexedDB.databases().catch(() => []);
@@ -173,7 +173,7 @@
       request.onerror = () => resolve(null);
     });
   }
-  // MalĂ© testovacie mĂ©diĂˇ (dataURL): 1Ă—1 PNG a krĂˇtky â€žzvukâ€ś.
+  // Malé testovacie médiá (dataURL): 1×1 PNG a krátky „zvuk“.
   const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
   const PNG2 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
   const AUDIO = "data:audio/webm;codecs=opus;base64," + btoa("GUGUBOO-TEST-AUDIO-" + "x".repeat(200));
@@ -181,8 +181,8 @@
     const base = seed("po", extra);
     const s = JSON.parse(base[PREFIX + "state"]);
     s.profile.photo = PNG;
-    s.diary = [{ id: "d1", date: iso(addDays(-1)), text: "BruĹˇko Â· 30. tĂ˝ĹľdeĹ", photo: PNG2, bumpWeek: 30, created: new Date().toISOString() }];
-    s.lullabies = [{ id: "l1", title: "UspĂˇvanka", src: AUDIO, author: "mama", created: new Date().toISOString() }];
+    s.diary = [{ id: "d1", date: iso(addDays(-1)), text: "Bruško · 30. týždeň", photo: PNG2, bumpWeek: 30, created: new Date().toISOString() }];
+    s.lullabies = [{ id: "l1", title: "Uspávanka", src: AUDIO, author: "mama", created: new Date().toISOString() }];
     s.v5.prenatalResults = [{ id: "r1", date: iso(addDays(-90)), type: "Ultrazvuk", text: "", photo: PNG, created: new Date().toISOString() }];
     s.v2 = { moments: { announced: iso(addDays(-120)), announcedImg: PNG2 } };
     base[PREFIX + "state"] = JSON.stringify(s);
@@ -458,6 +458,225 @@
       }
     },
     {
+      name: "Fotky a nahrávky v IndexedDB (g2-media.js, Master 2.9)",
+      tests: {
+        "put → get → delete; odkaz media:<id>; objectURL sa po zmazaní uvoľní": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const M = app.win.G2Media;
+            assert(await M.ready, "IndexedDB v tomto prehliadači nie je dostupná");
+            const id = await M.put(M.dataUrlToBlob(PNG));
+            assert(M.isRef("media:" + id), "odkaz");
+            eq(await bytesOf(await M.get(id)), bytesOfDataUrl(PNG), "bajty");
+            const url = await M.url("media:" + id);
+            assert(url.startsWith("blob:") && M.owns(url), "objectURL");
+            await M.del(id);
+            eq(await M.get(id), null, "po zmazaní");
+            assert(!M.owns(url), "objectURL nebol uvoľnený");
+            eq([M.src(PNG), M.src(""), M.src(undefined)], [PNG, "", ""], "dataURL a prázdna hodnota bez zmeny");
+          } finally { await app.remove(); }
+        },
+        "Jednorazový prevod: profilová fotka, bruško, výsledok, kartička a nahrávka idú do IndexedDB, v stave len odkazy": async () => {
+          const app = await bootApp(mediaSeed(), { settle: 300 });
+          try {
+            const M = app.win.G2Media;
+            assert(await M.ready, "IndexedDB nie je dostupná");
+            const st = app.state();
+            const refs = [st.profile.photo, st.diary[0].photo, st.lullabies[0].src, st.v5.prenatalResults[0].photo, st.v2.moments.announcedImg];
+            assert(refs.every(M.isRef), "nie všetko je odkaz: " + refs.map(r => String(r).slice(0, 24)).join(", "));
+            eq(st.schema, 2, "schéma stavu");
+            const saved = app.storage.getItem(PREFIX + "state");
+            assert(!/data:(image|audio)/.test(saved), "v uloženom stave ostal dataURL");
+            eq(JSON.parse(saved).profile.photo, st.profile.photo, "uložený odkaz");
+            eq(await bytesOf(await M.get(refs[0].slice(6))), bytesOfDataUrl(PNG), "profilová fotka");
+            eq(await bytesOf(await M.get(refs[1].slice(6))), bytesOfDataUrl(PNG2), "bruško");
+            const audio = await M.get(refs[2].slice(6));
+            eq(await bytesOf(audio), bytesOfDataUrl(AUDIO), "nahrávka");
+            assert(/^audio\/webm/.test(audio.type), "typ nahrávky: " + audio.type);
+            eq(app.errors, [], "chyby v konzole");
+          } finally { await app.remove(); }
+        },
+        "Zavrieť a otvoriť appku: fotka na domove je z IndexedDB (objectURL), nahrávka je pripravená": async () => {
+          const db = newTestDb();
+          const first = await bootApp(mediaSeed(), { settle: 300, mediaDb: db });
+          let saved;
+          try { await first.win.G2Media.ready; first.win.GugubooV5.persist(); saved = dump(first.storage); } finally { await first.remove(true); }
+          const app = await bootApp(saved, { settle: 300, mediaDb: db });
+          try {
+            const M = app.win.G2Media;
+            await M.ready;
+            const check = where => {
+              const img = app.doc.querySelector(".v5-photo-avatar img");
+              assert(img, where + ": fotka na domove chýba");
+              assert(img.dataset.g2m && img.getAttribute("src").startsWith("blob:"), where + ": src = " + img.getAttribute("src").slice(0, 40));
+            };
+            check("po načítaní");
+            app.win.GugubooV5.renderHome(); await sleep(50);
+            check("po prekreslení");
+            assert(M.cached(app.state().lullabies[0].src).startsWith("blob:"), "nahrávka nie je pripravená na prehratie");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { await app.remove(false); }
+        },
+        "Nová fotka bruška (kruh) sa uloží a o chvíľu presunie do IndexedDB": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const M = app.win.G2Media;
+            assert(await M.ready, "IndexedDB nie je dostupná");
+            const input = app.doc.createElement("input");
+            input.type = "file"; input.id = "g2qBumpInput";
+            app.doc.body.appendChild(input);
+            const dt = new app.win.DataTransfer();
+            dt.items.add(new app.win.File([M.dataUrlToBlob(PNG)], "bruska.png", { type: "image/png" }));
+            input.files = dt.files;
+            input.dispatchEvent(new app.win.Event("change", { bubbles: true }));
+            let photo = "";
+            for (let i = 0; i < 40 && !M.isRef(photo); i++) { await sleep(100); photo = (app.state().diary || []).slice(-1)[0]?.photo || ""; }
+            assert(M.isRef(photo), "fotka nie je odkaz: " + String(photo).slice(0, 30));
+            assert(!/data:image/.test(app.storage.getItem(PREFIX + "state")), "v uloženom stave ostal dataURL");
+            assert((await M.get(photo.slice(6)))?.size > 0, "fotka v IndexedDB chýba");
+            input.remove();
+            eq(app.errors, [], "chyby v konzole");
+          } finally { await app.remove(); }
+        },
+        "Bez IndexedDB appka nespadne a fotky/nahrávky ostanú v stave ako dataURL (ako do 2.8)": async () => {
+          const app = await bootApp(mediaSeed(), { settle: 300, noIdb: true });
+          try {
+            const M = app.win.G2Media;
+            eq(await M.ready, false, "ready");
+            await sleep(300);
+            const st = app.state();
+            eq([st.profile.photo, st.lullabies[0].src], [PNG, AUDIO], "dataURL v stave");
+            const img = app.doc.querySelector(".v5-photo-avatar img");
+            assert(img && img.getAttribute("src") === PNG, "fotka na domove");
+            st.diary.push({ id: "d2", date: iso(new Date()), photo: PNG2, created: new Date().toISOString() });
+            app.win.GugubooV5.persist(); await sleep(300);
+            assert(app.storage.getItem(PREFIX + "state").includes(PNG2), "nová fotka sa neuložila");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { await app.remove(); }
+        },
+        "Upratovanie: záznam bez odkazu sa zmaže až po hodine, použité fotky ostanú": async () => {
+          const app = await bootApp(mediaSeed(), { settle: 300 });
+          try {
+            const M = app.win.G2Media;
+            await M.ready;
+            const orphan = await M.put(M.dataUrlToBlob(PNG));
+            eq(await M.gc(Date.now()), 0, "čerstvý záznam bez odkazu ostáva (Vrátiť, druhá karta)");
+            eq(await M.gc(Date.now() + 2 * 3600e3), 1, "po hodine sa zmaže");
+            eq(await M.get(orphan), null, "záznam bez odkazu");
+            assert(await M.get(app.state().profile.photo.slice(6)), "použitá fotka zmizla");
+          } finally { await app.remove(); }
+        },
+        "Vymazanie všetkého zmaže aj databázu fotiek": async () => {
+          const app = await bootApp(mediaSeed(), { settle: 300 });
+          try {
+            const M = app.win.G2Media;
+            await M.ready;
+            assert(await M.clearAll(), "databáza sa nezmazala");
+            if (indexedDB.databases) assert(!(await indexedDB.databases()).some(d => d.name === app.mediaDb), "databáza stále existuje");
+          } finally { await app.remove(); }
+        }
+      }
+    },
+    {
+      name: "Záloha schéma 2 s fotkami a nahrávkami (g2-backup.js, Master 2.9)",
+      tests: {
+        "Fotky a nahrávka sú v súbore; po vymazaní databázy a údajov ich obnova vráti (bajty sedia)": async () => {
+          const app = await bootApp(mediaSeed(), { settle: 300 });
+          try {
+            const M = app.win.G2Media, B = app.win.G2Backup;
+            await M.ready;
+            app.win.GugubooV5.persist();
+            const before = dump(app.storage);
+            const backup = B.parseBackup(await B.exportPayload());
+            eq(backup.schema, 2, "schéma");
+            const st = app.state();
+            const ids = [st.profile.photo, st.diary[0].photo, st.lullabies[0].src].map(r => r.slice(6));
+            ids.forEach(id => assert(backup.media[id], "v zálohe chýba " + id));
+            eq(bytesOfDataUrl("data:x;base64," + backup.media[ids[2]].data), bytesOfDataUrl(AUDIO), "nahrávka v zálohe");
+            assert(!/data:(image|audio)/.test(JSON.stringify(backup.data)), "údaje v zálohe majú dataURL");
+            assert(await B.backupBytes() > 0, "veľkosť zálohy");
+            await M.clearAll();
+            Object.keys(app.storage).forEach(k => app.storage.removeItem(k));
+            eq(await M.get(ids[0]), null, "databáza je vymazaná");
+            await B.applyBackup(backup);
+            eq(dump(app.storage), before, "údaje po obnove");
+            eq(await bytesOf(await M.get(ids[0])), bytesOfDataUrl(PNG), "profilová fotka po obnove");
+            eq(await bytesOf(await M.get(ids[1])), bytesOfDataUrl(PNG2), "bruško po obnove");
+            eq(await bytesOf(await M.get(ids[2])), bytesOfDataUrl(AUDIO), "nahrávka po obnove");
+          } finally { await app.remove(); }
+        },
+        "Obnova schémy 2 v prehliadači bez IndexedDB vloží fotky späť do stavu ako dataURL": async () => {
+          const src = await bootApp(mediaSeed(), { settle: 300 });
+          let text;
+          try { await src.win.G2Media.ready; src.win.GugubooV5.persist(); text = await src.win.G2Backup.exportPayload(); } finally { await src.remove(); }
+          const app = await bootApp(seed("pred"), { settle: 300, noIdb: true });
+          try {
+            await app.win.G2Backup.applyBackup(app.win.G2Backup.parseBackup(text));
+            const s = JSON.parse(app.storage.getItem(PREFIX + "state"));
+            eq([s.profile.photo, s.diary[0].photo, s.lullabies[0].src], [PNG, PNG2, AUDIO], "dataURL v stave");
+          } finally { await app.remove(); }
+        },
+        "Staršia záloha (schéma 1, fotky ako dataURL) sa obnoví a po spustení sa fotky presunú do IndexedDB": async () => {
+          const old = mediaSeed();
+          const text = JSON.stringify({ app: "guguboo", kind: "zaloha", schema: 1, created: "2026-11-10T10:00:00.000Z", data: old });
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          const db = app.mediaDb;
+          let saved;
+          try {
+            await app.win.G2Backup.applyBackup(app.win.G2Backup.parseBackup(text));
+            eq(app.storage.getItem(PREFIX + "state"), old[PREFIX + "state"], "stav zo zálohy");
+            saved = dump(app.storage);
+          } finally { await app.remove(true); }
+          const again = await bootApp(saved, { settle: 300, mediaDb: db });
+          try {
+            const M = again.win.G2Media;
+            await M.ready;
+            const st = again.state();
+            assert(M.isRef(st.profile.photo) && M.isRef(st.lullabies[0].src), "nepresunuté");
+            eq(await bytesOf(await M.get(st.profile.photo.slice(6))), bytesOfDataUrl(PNG), "profilová fotka");
+            eq(again.errors, [], "chyby v konzole");
+          } finally { await again.remove(false); }
+        },
+        "Novšia záloha (schéma 3) sa odmietne; médiá s neznámym typom sa ignorujú": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const B = app.win.G2Backup;
+            let msg = "";
+            try { B.parseBackup(JSON.stringify({ app: "guguboo", schema: 3, data: {} })); } catch (e) { msg = e.message; }
+            eq(msg, "novsia", "schéma 3");
+            const b = B.parseBackup(JSON.stringify({ app: "guguboo", schema: 2, data: {}, media: { abcd1234: { type: "text/html", data: "PGI+" }, efgh5678: { type: "image/png", data: PNG.split(",")[1] } } }));
+            eq(Object.keys(b.media), ["efgh5678"], "povolené médiá");
+          } finally { await app.remove(); }
+        }
+      }
+    },
+    {
+      name: "Vlastné písmo Montserrat (Master 2.9, bez Google Fonts)",
+      tests: {
+        "app.html ani service worker neodkazujú na Google Fonts; súbory písma a licencia sa dajú stiahnuť": async () => {
+          const html = await appHtml();
+          assert(!/fonts\.(googleapis|gstatic)\.com/.test(html), "app.html odkazuje na Google Fonts");
+          assert(/fonts\/montserrat\.css/.test(html), "chýba fonts/montserrat.css");
+          const bad = [];
+          await Promise.all(["fonts/montserrat.css", "fonts/montserrat-latin.woff2", "fonts/montserrat-latin-ext.woff2", "fonts/OFL.txt"].map(async u => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) bad.push(u); }));
+          eq(bad, [], "nedostupné");
+          const sw = await (await fetch("sw.js?t=" + Date.now(), { cache: "no-store" })).text();
+          assert(sw.includes("fonts/montserrat-latin-ext.woff2") && sw.includes("fonts/montserrat-latin.woff2"), "písmo nie je v sw.js");
+        },
+        "Montserrat sa v appke načíta aj so slovenskými znakmi (ľ ĺ ŕ ô)": async () => {
+          const app = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            await app.doc.fonts.load("700 16px Montserrat", "Ľúbim ľ ĺ ŕ ô ä");
+            await app.doc.fonts.ready;
+            const faces = [...app.doc.fonts].filter(f => f.family.replace(/["']/g, "") === "Montserrat");
+            assert(faces.length >= 2, "@font-face Montserrat chýba");
+            const loaded = faces.filter(f => f.status === "loaded").length;
+            eq(loaded, 2, "načítané časti písma (latin + latin-ext)");
+          } finally { await app.remove(); }
+        }
+      }
+    },
+    {
       name: "Zvyšky starších verzií nevidno (Plán F1-2: Premium, „Prihlásenie spustíme čoskoro“)",
       tests: {
         "Pred pôrodom: domov, Všetko a každá funkcia bez Premium": async () => scanAll("pred"),
@@ -505,6 +724,9 @@
     document.body.innerHTML = "<h1>Guguboo Master – testy</h1><div class='sum' id='g2tSum'>Bežia testy…</div><div id='g2tOut'></div><div id='g2tHost'></div>";
     const out = document.getElementById("g2tOut");
     const before = realSnapshot();
+    const mediaBefore = await realMediaCount(); // Master 2.9: skutočná databáza fotiek sa nesmie zmeniť
+    // Zvyšky testovacích databáz z prerušeného behu alebo náhľadu.
+    if (indexedDB.databases) for (const d of await indexedDB.databases().catch(() => [])) if (d.name?.startsWith(TEST_DB)) await deleteDb(d.name);
     let pass = 0, fail = 0, found = 0;
     try { await loadScript("journey-engine.js"); await loadScript("g2-safety.js"); } catch (e) { out.innerHTML = "<p>" + esc(e.message) + "</p>"; }
     for (const suite of SUITES) {
@@ -530,7 +752,13 @@
     const after = realSnapshot();
     if (sameSnap(before, after)) { row.className = "t ok"; row.textContent = "Skutočné údaje guguboo-m-* sa nezmenili (" + Object.keys(before.local).length + " kľúčov)."; pass++; }
     else { restoreReal(before); row.className = "t chyba"; row.innerHTML = "Skutočné údaje sa počas testov zmenili – pôvodný stav je obnovený.<small>Ak bola appka otvorená v inej karte, zatvor ju a spusti testy znova.</small>"; fail++; }
-    sec.appendChild(row); out.appendChild(sec);
+    sec.appendChild(row);
+    const mediaAfter = await realMediaCount();
+    const mrow = document.createElement("div");
+    if (mediaBefore === mediaAfter) { mrow.className = "t ok"; mrow.textContent = mediaBefore === null ? "Skutočná databáza fotiek guguboo-m-media v tomto prehliadači nie je (testy ju nevytvorili)." : "Skutočná databáza fotiek sa nezmenila (" + mediaBefore + " záznamov)."; pass++; }
+    else { mrow.className = "t chyba"; mrow.innerHTML = "Počet záznamov v skutočnej databáze fotiek sa zmenil (" + mediaBefore + " → " + mediaAfter + ").<small>Ak bola appka otvorená v inej karte, zatvor ju a spusti testy znova.</small>"; fail++; }
+    sec.appendChild(mrow);
+    out.appendChild(sec);
     const sum = document.getElementById("g2tSum");
     sum.className = "sum " + (fail ? "chyba" : "ok");
     sum.textContent = fail ? fail + " červených · " + pass + " zelených" + (found ? " · " + found + " nález" : "") : "Všetko zelené (" + pass + ")" + (found ? " · " + found + " známy nález na rozhodnutie" : "");
@@ -545,7 +773,9 @@
     document.body.className = "nahlad";
     const host = document.createElement("div");
     document.body.appendChild(host);
-    const app = await bootApp(seed(kind, { night: params.get("noc") === "1" }), { host, width: +params.get("w") || window.innerWidth, height: +params.get("h") || window.innerHeight, settle: 300 });
+    // Master 2.9: nahlad=foto = po pôrode s testovacími fotkami a nahrávkou (fotky idú do testovacej databázy).
+    const data = kind === "foto" ? mediaSeed({ night: params.get("noc") === "1" }) : seed(kind, { night: params.get("noc") === "1" });
+    const app = await bootApp(data, { host, width: +params.get("w") || window.innerWidth, height: +params.get("h") || window.innerHeight, settle: 300 });
     window.__g2Preview = app;
     document.body.dataset.chyby = String(app.errors.length);
     document.body.dataset.zhrnutie = app.errors.join(" | ");
