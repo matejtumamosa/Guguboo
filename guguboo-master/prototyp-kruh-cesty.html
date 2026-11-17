@@ -72,7 +72,7 @@
   .seg-hit:focus-visible { stroke: rgba(111, 84, 158, .75); stroke-width: 4; }
   .seg-fill { transition: opacity .4s ease; }
   .sic { pointer-events: none; }
-  .last { font: 700 19px Montserrat, "Segoe UI", system-ui, sans-serif; text-anchor: middle; pointer-events: none; }
+  .last { font: 700 15px Montserrat, "Segoe UI", system-ui, sans-serif; text-anchor: middle; pointer-events: none; }
   .seg-pulse { transform-box: fill-box; transform-origin: center; animation: segPulse .9s ease; }
   @keyframes segPulse { 40% { transform: scale(1.04); filter: brightness(1.06); } }
 
@@ -299,7 +299,7 @@
   const ago = k => { const m = S.last[k] + (Date.now() - S.lastAt) / 60000; if (m < 1) return "teraz"; if (m < 60) return "pred " + Math.floor(m) + " min"; if (m < 1440) return "pred " + Math.floor(m / 60) + " h"; return ""; };
 
   // ——— Geometria (viewBox 420, stred 210) – esovitý diel ako adaptiveOSegmentPath v appke ———
-  const geo = small => small ? { R: 170, r: 98, bend: 40, T: 194, icon: 48, line: 3 } : { R: 166, r: 82, bend: 44, T: 193, icon: 40, line: 2.4 };
+  const geo = small => small ? { R: 180, r: 100, T: 197, icon: 46, line: 3 } : { R: 182, r: 92, T: 199, icon: 34, line: 2.4 }; // Samo 17. 11.: hrubšie diely, menší stred, linka času tesne okolo
   const pt = (a, r) => { const t = a * Math.PI / 180; return [210 + r * Math.cos(t), 210 + r * Math.sin(t)]; };
   const n2 = v => Math.round(v * 100) / 100;
   function cut(a, g) {
@@ -358,19 +358,31 @@
       this.el.classList.toggle("post", !pre);
       let defs = "<filter id='" + id + "d' x='-40%' y='-40%' width='180%' height='180%'><feGaussianBlur in='SourceAlpha' stdDeviation='6' result='a'/><feOffset in='a' dx='1' dy='8' result='o'/><feFlood flood-color='#684a78' flood-opacity='" + (S.night ? .3 : .1) + "'/><feComposite in2='o' operator='in' result='s'/><feSpecularLighting in='a' surfaceScale='4' specularConstant='" + (S.night ? .03 : .1) + "' specularExponent='22' lighting-color='#fff9fc' result='l'><fePointLight x='125' y='25' z='175'/></feSpecularLighting><feComposite in='l' in2='SourceAlpha' operator='in' result='cl'/><feMerge><feMergeNode in='s'/><feMergeNode in='SourceGraphic'/><feMergeNode in='cl'/></feMerge></filter>";
       let mid = "";
+      // Samo 17. 11.: čisté rovnomerné diely (oblúky s medzerou a zaoblenými rohmi), ikona a text presne v strede dielu.
+      const GAP = 4, RR = 10;
+      const band = (a1, a2) => {
+        if (a2 - a1 < 2) return "";
+        const ro = g.R, ri = g.r, d = RR, ao = d / ro * 180 / Math.PI, ai = d / ri * 180 / Math.PI;
+        const P = (a, r) => pt(a, r).map(n2).join(" ");
+        const lo = (a2 - a1 - 2 * ao) > 180 ? 1 : 0, li = (a2 - a1 - 2 * ai) > 180 ? 1 : 0;
+        return "M " + P(a1 + ao, ro) + " A " + ro + " " + ro + " 0 " + lo + " 1 " + P(a2 - ao, ro) +
+          " Q " + P(a2, ro) + " " + P(a2, ro - d) + " L " + P(a2, ri + d) + " Q " + P(a2, ri) + " " + P(a2 - ai, ri) +
+          " A " + ri + " " + ri + " 0 " + li + " 0 " + P(a1 + ai, ri) + " Q " + P(a1, ri) + " " + P(a1, ri + d) +
+          " L " + P(a1, ro - d) + " Q " + P(a1, ro) + " " + P(a1 + ao, ro) + " Z";
+      };
       (pre ? PREP : QUICK).forEach((s, i) => {
-        const st = this.segAngles()[i], c = COL[i], a = pt(st, (g.R + g.r) / 2), b = pt(st + 120, (g.R + g.r) / 2), full = seg(st, 120, g);
-        // ikona na uhle ťažiska dielu, ale v strede pásu (nie pri okraji stredu)
-        const c0 = centroid(st, 120, g), ce = pt(Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI, (g.R + g.r) / 2 + 2);
+        const st = this.segAngles()[i] + GAP / 2, en = st + 120 - GAP, mc = (st + en) / 2, c = COL[i], a = pt(st, (g.R + g.r) / 2), b = pt(en, (g.R + g.r) / 2), full = band(st, en);
+        const seg = (x, span) => band(x, x + span - (span >= 120 ? GAP : 0));
+        const ce = pt(mc, g.r + (g.R - g.r) * .56);
         defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + n2(a[0]) + "' y1='" + n2(a[1]) + "' x2='" + n2(b[0]) + "' y2='" + n2(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.55' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
         // pred pôrodom diel dorastá (p); po pôrode je celý ako v appke, bežiaci diel naplno
         const span = pre ? 120 * s.p : 120, op = pre ? (S.night ? .7 : 1) : (run && s.k === "sleep" ? 1 : (S.night ? .5 : .62));
         const lastTxt = !pre && !this.small ? (run && s.k === "sleep" ? "" : ago(s.k)) : "";
-        const iy = ce[1] - g.icon / 2 - (lastTxt ? 9 : 0);
+        const iy = ce[1] - g.icon / 2 - (lastTxt ? 8 : 0);
         mid += "<path class='seg-base' d='" + full + "' fill='" + (S.night ? c.nb : c.base) + "'/>" +
           "<path class='seg-fill' data-i='" + i + "' d='" + seg(st, span, g) + "' fill='url(#" + id + "g" + i + ")' filter='url(#" + id + "d)' opacity='" + op + "'/>" +
           "<g class='sic' fill='currentColor' style='color:" + (S.night ? c.ni : c.ink) + "' transform='translate(" + n2(ce[0] - g.icon / 2) + " " + n2(iy) + ") scale(" + (g.icon / 256).toFixed(4) + ")'>" + ICON[s.icon] + "</g>" +
-          (lastTxt ? "<text class='last' x='" + n2(ce[0]) + "' y='" + n2(iy + g.icon + 19) + "' fill='" + (S.night ? c.ni : c.ink) + "'>" + lastTxt + "</text>" : "") +
+          (lastTxt ? "<text class='last' x='" + n2(ce[0]) + "' y='" + n2(iy + g.icon + 17) + "' fill='" + (S.night ? c.ni : c.ink) + "'>" + lastTxt + "</text>" : "") +
           "<path class='seg-hit' d='" + full + "' data-seg='" + i + "' role='button' tabindex='0' aria-label='" + s.label + (lastTxt ? ", naposledy " + lastTxt : "") + "'/>";
       });
       // Linka času: celý kruh tichou farbou, prejdená časť o tón tmavšia, jedna bodka = dnes
