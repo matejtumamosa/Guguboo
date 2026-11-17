@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp – Cesta a rýchle záznamy</title>
+<link rel="stylesheet" href="fonts/montserrat.css">
+<style>
+  /* Prototyp (Samo 17. 11.): tehotenstvo = kruh cesty k narodeniu + 3 okrúhle tlačidlá; po pôrode = pás časovača + 3 dlaždice. */
+  :root {
+    --ink: #29243a; --muted: #5d5768; --brand: #5f4fb1; --line: rgba(117, 96, 181, .14);
+    --page: #f3effa; --phone: #fbf8ff; --card: #ffffff; --ph: #efe9f8; --trk: #f1ebfb;
+    --pink: #f07f98; --lilac: #8171ce;
+    --t1: #fde6ee; --t1i: #a8486a; --t2: #fff0e1; --t2i: #9a5a22; --t3: #e8edfd; --t3i: #3f57a8;
+    --sheet: #ffffff; --shadow: 0 10px 30px rgba(80, 60, 140, .10), 0 2px 6px rgba(80, 60, 140, .06);
+  }
+  .night {
+    --ink: #f3effc; --muted: #c9c1dc; --brand: #cbbcff; --line: rgba(200, 185, 255, .14);
+    --phone: #1f1a2e; --card: #2a2340; --ph: #2f2846; --trk: #3a3155;
+    --t1: #4a3346; --t1i: #f6c7d4; --t2: #4a3c30; --t2i: #f8d6b4; --t3: #333a5a; --t3i: #c9d3f7;
+    --sheet: #2d2644; --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: #29243a; font-family: Montserrat, "Segoe UI", system-ui, sans-serif; }
+  .bar { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, .94); border-bottom: 1px solid rgba(117, 96, 181, .12); }
+  .bar strong { font-weight: 800; margin-right: 6px; }
+  .grp { display: inline-flex; background: #efe9f8; border-radius: 999px; padding: 3px; }
+  .grp button { border: 0; background: transparent; font: 700 13px Montserrat, system-ui, sans-serif; color: #5d5768; padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+  .grp button[aria-pressed="true"] { background: #fff; color: #5f4fb1; box-shadow: 0 1px 4px rgba(80, 60, 140, .15); }
+  .note { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; color: #5d5768; }
+  #stage { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; padding: 22px 16px 60px; }
+  .cap { text-align: center; font: 700 12px Montserrat, system-ui, sans-serif; color: #8a83a0; margin: 0 0 6px; }
+
+  /* Telefón: zvyšok domova len ako tiché zástupné bloky */
+  .phone { position: relative; overflow: hidden; border-radius: 34px; background: var(--phone); box-shadow: 0 20px 50px rgba(60, 40, 120, .18); display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 0; color: var(--ink); }
+  .ph { background: var(--ph); border-radius: 18px; flex: none; display: grid; place-items: center; font: 700 11px Montserrat, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: rgba(130, 115, 170, .55); }
+  .ph-head { height: 56px; } .ph-search { height: 44px; border-radius: 22px; } .ph-hero { height: 76px; } .ph-row { height: 88px; } .ph-dnes { height: 56px; } .ph-nav { height: 72px; margin: 0 -14px; border-radius: 22px 22px 0 0; }
+  .s667 .ph-head { height: 50px; } .s667 .ph-hero { height: 64px; } .s667 .ph-row { height: 76px; } .s667 .ph-dnes { height: 50px; } .s667 .ph-nav { height: 64px; }
+
+  /* ——— Karta ——— */
+  .card { flex: 1 1 0; min-height: 0; background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); container-type: size; position: relative; overflow: hidden; }
+  .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 0%, rgba(240, 127, 152, .07), transparent 60%), radial-gradient(90% 70% at 100% 100%, rgba(129, 113, 206, .08), transparent 60%); pointer-events: none; }
+  .in { position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 12px; }
+
+  /* Tehotenstvo: kruh cesty */
+  .journey { position: relative; width: min(66cqh, 80cqw, 230px); aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; color: inherit; -webkit-tap-highlight-color: transparent; }
+  .journey svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .journey .trk { fill: none; stroke: var(--trk); }
+  .journey .prog { fill: none; stroke-linecap: round; }
+  .journey .glow { fill: none; stroke-linecap: round; opacity: .35; filter: blur(6px); }
+  .journey .goal { fill: var(--card); stroke: var(--pink); stroke-width: 3; }
+  .journey .knob { fill: #fff; stroke: var(--lilac); stroke-width: 4; filter: drop-shadow(0 2px 4px rgba(95, 79, 177, .35)); }
+  .journey .halo { fill: var(--lilac); opacity: .18; transform-box: fill-box; transform-origin: center; animation: halo 2.8s ease-in-out infinite; }
+  @keyframes halo { 0%, 100% { transform: scale(1); opacity: .22; } 50% { transform: scale(1.9); opacity: 0; } }
+  .mid { position: absolute; inset: 19%; border-radius: 50%; display: grid; place-content: center; justify-items: center; text-align: center; background: radial-gradient(circle at 35% 25%, #fff, #f8f4ff 70%); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px rgba(95, 79, 177, .10); transition: transform .2s ease; }
+  .night .mid { background: radial-gradient(circle at 35% 25%, #3a3156, #2c2544 75%); }
+  .journey:active .mid { transform: scale(.96); }
+  .big { font: 800 clamp(26px, 13cqh, 46px)/1 Montserrat, system-ui, sans-serif; letter-spacing: -.02em; background: linear-gradient(135deg, #5f4fb1, #c2668f); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+  .night .big { background: linear-gradient(135deg, #e3dbff, #f6c7d4); -webkit-background-clip: text; background-clip: text; }
+  .small { font: 600 clamp(11px, 4.2cqh, 14px)/1.25 Montserrat, system-ui, sans-serif; color: var(--muted); margin-top: 4px; }
+  .mid .tm { font: 800 clamp(22px, 10cqh, 36px)/1 Montserrat, system-ui, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .mid .stop { margin-top: 6px; font: 700 12px Montserrat, system-ui, sans-serif; color: #fff; background: var(--brand); padding: 4px 10px; border-radius: 999px; }
+  .night .mid .stop { color: #2a2340; }
+
+  /* tri okrúhle tlačidlá pod kruhom */
+  .row3 { display: flex; gap: clamp(14px, 7cqw, 30px); justify-content: center; }
+  .rb { border: 0; background: none; padding: 0; display: grid; justify-items: center; gap: 5px; cursor: pointer; color: var(--ink); -webkit-tap-highlight-color: transparent; min-width: 64px; }
+  .rb .o { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(160deg, var(--card), var(--tb) 70%); color: var(--ti); box-shadow: 0 6px 14px rgba(95, 79, 177, .12), inset 0 0 0 1px var(--line); transition: transform .18s cubic-bezier(.3, 1.6, .5, 1); }
+  .night .rb .o { background: var(--tb); box-shadow: 0 4px 12px rgba(0, 0, 0, .3); }
+  .rb:active .o { transform: scale(.9); }
+  .rb svg { width: 26px; height: 26px; }
+  .rb b { font: 700 13px/1 Montserrat, system-ui, sans-serif; }
+  .rb small { font: 600 11px/1 Montserrat, system-ui, sans-serif; color: var(--muted); min-height: 11px; }
+  .c1 { --tb: var(--t1); --ti: var(--t1i); } .c2 { --tb: var(--t2); --ti: var(--t2i); } .c3 { --tb: var(--t3); --ti: var(--t3i); }
+  .pop .o { animation: pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+  @keyframes pop { 0% { transform: scale(.8); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+  /* nízka karta (375 × 667): kruh vľavo, tlačidlá vpravo */
+  @container (max-height: 260px) {
+    .in.pre { flex-direction: row; gap: 16px; }
+    .in.pre .journey { width: min(88cqh, 50cqw); }
+    .in.pre .row3 { flex-direction: column; gap: 6px; }
+    .in.pre .rb { grid-template-columns: 40px auto; justify-items: start; align-items: center; column-gap: 10px; row-gap: 2px; min-width: 0; }
+    .in.pre .rb .o { width: 40px; height: 40px; grid-row: span 2; } .in.pre .rb svg { width: 21px; height: 21px; }
+    .in.pre .rb small:empty { display: none; }
+    .in.pre .rb:has(small:empty) b { grid-row: span 2; align-self: center; }
+  }
+
+  /* Po pôrode: pás časovača + tri veľké dlaždice */
+  .in.post { justify-content: center; gap: 12px; padding: 14px; }
+  .run { width: 100%; border: 0; cursor: pointer; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 20px; color: #fff; background: linear-gradient(120deg, #8171ce, #a77ccc 55%, #e39ab4); box-shadow: 0 8px 20px rgba(129, 113, 206, .35); text-align: left; position: relative; overflow: hidden; font-family: inherit; }
+  .run::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .22) 50%, transparent 70%); transform: translateX(-100%); animation: sheen 3.6s ease-in-out infinite; pointer-events: none; }
+  @keyframes sheen { 60%, 100% { transform: translateX(100%); } }
+  .run .ri { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .22); }
+  .run .ri svg { width: 24px; height: 24px; }
+  .run .rl { font: 600 13px/1.1 Montserrat, system-ui, sans-serif; opacity: .9; }
+  .run .rt { font: 800 26px/1.05 Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  .run .rs { font: 700 13px Montserrat, system-ui, sans-serif; background: #fff; color: #5f4fb1; padding: 8px 12px; border-radius: 999px; position: relative; z-index: 1; }
+  .tiles { width: 100%; flex: 1 1 0; min-height: 0; max-height: 190px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tile { border: 0; cursor: pointer; border-radius: 22px; background: linear-gradient(165deg, var(--card) 0%, var(--tb) 75%); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px 6px; box-shadow: inset 0 0 0 1px var(--line), 0 4px 14px rgba(95, 79, 177, .08); transition: transform .18s cubic-bezier(.3, 1.6, .5, 1); -webkit-tap-highlight-color: transparent; position: relative; font-family: inherit; }
+  .night .tile { background: var(--tb); box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
+  .tile:active { transform: scale(.95); }
+  .tile .o { width: clamp(44px, 22cqh, 64px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: var(--card); color: var(--ti); box-shadow: 0 4px 12px rgba(95, 79, 177, .12); }
+  .tile svg { width: 52%; height: 52%; }
+  .tile b { font: 700 15px/1 Montserrat, system-ui, sans-serif; }
+  .tile small { font: 600 12px/1.2 Montserrat, system-ui, sans-serif; color: var(--muted); min-height: 14px; text-align: center; }
+  .tile.on .o { box-shadow: 0 0 0 3px var(--card), 0 0 0 5px color-mix(in srgb, var(--ti) 35%, transparent); animation: breathe 2.6s ease-in-out infinite; }
+  @keyframes breathe { 50% { box-shadow: 0 0 0 3px var(--card), 0 0 0 10px color-mix(in srgb, var(--ti) 8%, transparent); } }
+  .tile.pop .o { animation: pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+  .day { border: 0; background: none; cursor: pointer; font: 700 13px Montserrat, system-ui, sans-serif; color: var(--brand); padding: 4px 10px; }
+  @container (max-height: 260px) {
+    .in.post { gap: 8px; padding: 10px; }
+    .run { padding: 6px 10px; grid-template-columns: 34px 1fr auto; gap: 10px; border-radius: 16px; }
+    .run .ri { width: 34px; height: 34px; } .run .ri svg { width: 19px; height: 19px; } .run .rt { font-size: 20px; } .run .rl { font-size: 12px; }
+    .tile { gap: 4px; border-radius: 18px; } .tile b { font-size: 14px; } .tile small { font-size: 11px; }
+    .day { display: none; }
+  }
+
+  /* malé okno a hlásenie */
+  .scrim { position: absolute; inset: 0; background: rgba(30, 20, 60, .28); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 5; }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+  .sheet { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 6; background: var(--sheet); color: var(--ink); border-radius: 26px; padding: 18px; box-shadow: 0 -10px 40px rgba(40, 20, 90, .25); transform: translateY(115%); transition: transform .32s cubic-bezier(.2, .9, .3, 1.1); }
+  .sheet.open { transform: none; }
+  .sh-h { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sh-h .o { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--tb); color: var(--ti); }
+  .sh-h svg { width: 22px; height: 22px; }
+  .sh-h h3 { margin: 0; font: 800 18px Montserrat, system-ui, sans-serif; flex: 1; }
+  .x { border: 0; background: var(--ph); color: var(--ink); width: 36px; height: 36px; border-radius: 50%; font: 700 18px Montserrat, system-ui, sans-serif; cursor: pointer; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 700 14px Montserrat, system-ui, sans-serif; padding: 11px 14px; border-radius: 999px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: transparent; }
+  .night .chip[aria-pressed="true"] { color: #2a2340; }
+  .save { width: 100%; border: 0; background: var(--brand); color: #fff; font: 800 16px Montserrat, system-ui, sans-serif; padding: 14px; border-radius: 16px; cursor: pointer; }
+  .night .save { color: #2a2340; }
+  .toast { position: absolute; left: 50%; bottom: 86px; z-index: 7; transform: translate(-50%, 20px); opacity: 0; transition: .25s; background: #29243a; color: #fff; font: 700 14px Montserrat, system-ui, sans-serif; padding: 10px 10px 10px 16px; border-radius: 999px; display: flex; gap: 12px; align-items: center; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .toast button { border: 0; background: rgba(255, 255, 255, .16); color: #fff; font: 700 13px Montserrat, system-ui, sans-serif; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+  .tag { font-size: 12px; color: #8a83a0; margin: 0; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <strong>Cesta a rýchle záznamy</strong>
+  <span class="grp"><button data-k="period" data-v="pred">Pred pôrodom</button><button data-k="period" data-v="w36">Od 36. týždňa</button><button data-k="period" data-v="po">Po pôrode</button></span>
+  <span class="grp"><button data-k="night" data-v="0">Deň</button><button data-k="night" data-v="1">Noc</button></span>
+  <span class="grp"><button data-k="run" data-v="0">Nič nebeží</button><button data-k="run" data-v="1">Beží časovač</button></span>
+  <span class="grp"><button data-k="size" data-v="390">390 × 844</button><button data-k="size" data-v="375">375 × 667</button><button data-k="size" data-v="obe">obe</button></span>
+  <p class="note">Prototyp – nič sa neukladá. Sivé bloky = zvyšok domova bez zmeny.</p>
+</div>
+<div id="stage"></div>
+<script>
+  const ICON = {
+  wave: "<path d='M239.24,131.4c-22,46.8-41.4,68.6-61.2,68.6-25.1,0-40.73-33.32-57.28-68.6C107.7,103.56,92.9,72,78,72c-16.4,0-36.31,37.21-46.72,59.4a8,8,0,0,1-14.48-6.8C38.71,77.8,58.16,56,78,56c25.1,0,40.73,33.32,57.28,68.6C148.3,152.44,163.1,184,178,184c16.4,0,36.31-37.21,46.72-59.4a8,8,0,0,1,14.48,6.8Z'/>",
+  moon: "<path d='M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z'/>",
+  camera: "<path d='M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z'/>",
+  voice: "<path d='M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z'/>",
+  feeding: "<path d='M104,64V48a24,24,0,0,1,48,0V64H136V48a8,8,0,0,0-16,0V64Z'/><path d='M80,64h96a8,8,0,0,1,8,8V92H72V72A8,8,0,0,1,80,64Z'/><path fill-rule='evenodd' d='M72,92H184V200a32,32,0,0,1-32,32H104a32,32,0,0,1-32-32ZM88,92V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V92Z'/><path d='M80,128h36a8,8,0,0,1,0,16H80ZM80,164h36a8,8,0,0,1,0,16H80Z'/>",
+  diaper: "<path fill-rule='evenodd' d='M40,48H216a8,8,0,0,1,8,8v56c-36,4-56,36-56,84a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16c0-48-20-80-56-84V56A8,8,0,0,1,40,48ZM48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z'/>",
+  footprints: "<path d='M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8.05,8.05,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.82,6.22,17.29,19.89c11.1,23.41,15.29,58,3.9,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z'/>",
+  butterfly: "<path d='M232.7,50.48C229,45.7,221.84,40,209,40c-16.85,0-38.46,11.28-57.81,30.16A140.07,140.07,0,0,0,136,87.53V56a8,8,0,0,0-16,0V87.53a140.07,140.07,0,0,0-15.15-17.37C85.49,51.28,63.88,40,47,40,34.16,40,27,45.7,23.3,50.48c-6.82,8.77-12.18,24.08-.21,71.2,6.05,23.83,19.51,33,30.63,36.42A44,44,0,0,0,128,205.27a44,44,0,0,0,74.28-47.17c11.12-3.4,24.57-12.59,30.63-36.42C239.63,95.24,244.85,66.1,232.7,50.48ZM92,208A28.12,28.12,0,0,1,88.86,152a8,8,0,1,0-1.76-15.9A43.64,43.64,0,0,0,66.36,144c-8.43.09-22-3.57-27.76-26.26C35.72,106.39,27,71.86,35.94,60.3,37.37,58.46,40.09,56,47,56c27.27,0,73,44.88,73,71.67V180A28,28,0,0,1,92,208ZM217.4,117.74c-5.77,22.69-19.33,26.34-27.77,26.26a43.6,43.6,0,0,0-20.74-7.95,8,8,0,1,0-1.76,15.9A28.11,28.11,0,1,1,136,180V127.67C136,100.88,181.69,56,209,56c6.95,0,9.66,2.46,11.1,4.3C229.05,71.86,220.28,106.39,217.4,117.74Z'/>",
+};
+  const DUO = {
+  wave: "<path d='M232,128c-52,110.85-78,55.43-104,0ZM24,128H128C102,72.57,76,17.15,24,128Z' opacity='.2'/>",
+  moon: "<path d='M227.89,147.89A96,96,0,1,1,108.11,28.11,96.09,96.09,0,0,0,227.89,147.89Z' opacity='.2'/>",
+  camera: "<path d='M208,64H176L160,40H96L80,64H48A16,16,0,0,0,32,80V192a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V80A16,16,0,0,0,208,64ZM128,168a36,36,0,1,1,36-36A36,36,0,0,1,128,168Z' opacity='.2'/>",
+  voice: "<path d='M168,64v64a40,40,0,0,1-40,40h0a40,40,0,0,1-40-40V64a40,40,0,0,1,40-40h0A40,40,0,0,1,168,64Z' opacity='.2'/>",
+  feeding: "<path d='M88,92h80V200a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16Z' opacity='.2'/>",
+  diaper: "<path d='M48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z' opacity='.2'/>",
+  footprints: "<path d='M152,192h56v12a28,28,0,0,1-56,0ZM48,180a28,28,0,0,0,56,0V168H48ZM76,24c-24.52,0-51.46,80-25.26,112h50.52C127.46,104,100.52,24,76,24ZM205.26,160c26.2-32-.74-112-25.26-112s-51.46,80-25.26,112Z' opacity='.2'/>",
+  butterfly: "<path d='M225.12,119.71c-7.86,30.94-29.31,32.71-37.36,32.23h-1A36,36,0,1,1,128,180a36,36,0,1,1-58.72-28.06h-1c-8,.48-29.5-1.29-37.36-32.23C22.79,87.84,15.78,48,47.07,48S128,95.8,128,127.67C128,95.8,177.64,48,208.93,48S233.21,87.84,225.12,119.71Z' opacity='.2'/>",
+};
+(() => {
+  "use strict";
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ic = (n, duo) => "<svg viewBox='0 0 256 256' fill='currentColor' aria-hidden='true'>" + (duo ? (DUO[n] || "") : "") + ICON[n] + "</svg>";
+
+  // ——— Ukážkové údaje ———
+  const DUE_DAYS = { pred: 112, w36: 24 };
+  const S = { period: "pred", night: false, run: false, size: "390" };
+  const Q = new URLSearchParams(location.search);
+  if (["pred", "w36", "po"].includes(Q.get("period"))) S.period = Q.get("period");
+  S.night = Q.get("night") === "1"; S.run = Q.get("run") === "1";
+  if (["390", "375", "obe"].includes(Q.get("size"))) S.size = Q.get("size");
+  const demoSince = () => Date.now() - (S.period === "po" ? 47 * 60000 + 12000 : 42000); // ukážka: spánok 47 min, kontrakcia 42 s
+  let runSince = demoSince();
+  const last = { move: "dnes 14:20", bump: "", voice: "", feed: 125, sleep: 190, diaper: 62, contraction: "" };
+  let lastAt = Date.now();
+
+  const BTN = {
+    pred: [{ k: "move", l: "Pohyby", i: "footprints" }, { k: "bump", l: "Bruško", i: "camera" }, { k: "voice", l: "Hlas", i: "voice" }],
+    w36: [{ k: "move", l: "Pohyby", i: "footprints" }, { k: "contraction", l: "Kontrakcie", i: "wave" }, { k: "bump", l: "Bruško", i: "camera" }],
+    po: [{ k: "feed", l: "Kŕmenie", i: "feeding" }, { k: "sleep", l: "Spánok", i: "moon" }, { k: "diaper", l: "Plienky", i: "diaper" }]
+  };
+  const SHEET = {
+    move: ["Pohyby", ["Teraz", "Pred chvíľou"]], bump: ["Bruško", ["Odfotiť bruško"]], voice: ["Hlas", ["Nahrať pár slov"]],
+    contraction: ["Kontrakcie", ["Začala teraz"]], feed: ["Kŕmenie", ["Ľavý prs", "Pravý prs", "Fľaša"]],
+    sleep: ["Spánok", ["Zaspáva teraz", "Práve sa zobudilo"]], diaper: ["Plienky", ["Cikanie", "Kakanie", "Oboje"]]
+  };
+  const ago = k => {
+    const v = last[k];
+    if (typeof v !== "number") return v || "";
+    const m = v + (Date.now() - lastAt) / 60000;
+    return m < 1 ? "práve teraz" : m < 60 ? "pred " + Math.floor(m) + " min" : m < 1440 ? "pred " + Math.floor(m / 60) + " h" : "";
+  };
+  const clock = () => { const s = Math.floor((Date.now() - runSince) / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+  const runKey = () => S.run ? (S.period === "po" ? "sleep" : S.period === "w36" ? "contraction" : null) : null;
+
+  // ——— Kruh cesty (tehotenstvo) ———
+  function journey() {
+    const days = DUE_DAYS[S.period], p = Math.max(0, Math.min(1, (280 - days) / 280));
+    const R = 82, C = 2 * Math.PI * R, a = (-90 + p * 360) * Math.PI / 180, kx = 100 + R * Math.cos(a), ky = 100 + R * Math.sin(a);
+    const rk = runKey();
+    const mid = rk
+      ? "<span class='small'>Kontrakcia</span><span class='tm' data-clock>" + clock() + "</span><span class='stop'>Skončila</span>"
+      : "<span class='big' data-count='" + days + "'>" + days + "</span><span class='small'>dní do termínu</span>";
+    return "<button type='button' class='journey' data-act='" + (rk ? "stop" : "week") + "' aria-label='" + (rk ? "Kontrakcia beží – ťuknutím ukončíš" : days + " dní do termínu – Tvoj týždeň") + "'>" +
+      "<svg viewBox='0 0 200 200' aria-hidden='true'><defs><linearGradient id='jg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f07f98'/><stop offset='.5' stop-color='#f6b48f'/><stop offset='1' stop-color='#8171ce'/></linearGradient></defs>" +
+      "<circle class='trk' cx='100' cy='100' r='" + R + "' stroke-width='14'/>" +
+      "<circle class='glow' cx='100' cy='100' r='" + R + "' stroke='url(#jg)' stroke-width='14' stroke-dasharray='" + (C * p).toFixed(1) + " " + C.toFixed(1) + "' transform='rotate(-90 100 100)' data-arc/>" +
+      "<circle class='prog' cx='100' cy='100' r='" + R + "' stroke='url(#jg)' stroke-width='14' stroke-dasharray='" + (C * p).toFixed(1) + " " + C.toFixed(1) + "' transform='rotate(-90 100 100)' data-arc data-len='" + (C * p).toFixed(1) + "' data-c='" + C.toFixed(1) + "'/>" +
+      
+      "<circle class='halo' cx='" + kx.toFixed(1) + "' cy='" + ky.toFixed(1) + "' r='9'/><circle class='knob' cx='" + kx.toFixed(1) + "' cy='" + ky.toFixed(1) + "' r='8'/>" +
+      "</svg><span class='mid'>" + mid + "</span></button>";
+  }
+  function preCard() {
+    return "<div class='in pre'>" + journey() + "<div class='row3'>" + BTN[S.period].map((b, i) =>
+      "<button type='button' class='rb c" + (i + 1) + "' data-act='open' data-k='" + b.k + "'><span class='o'>" + ic(b.i) + "</span><b>" + b.l + "</b><small>" + ago(b.k) + "</small></button>").join("") + "</div></div>";
+  }
+  // ——— Po pôrode: pás časovača + 3 dlaždice ———
+  function postCard() {
+    const rk = runKey();
+    return "<div class='in post'>" +
+      (rk ? "<button type='button' class='run' data-act='stop'><span class='ri'>" + ic("moon", true) + "</span><span><span class='rl'>Spí</span><br><span class='rt' data-clock>" + clock() + "</span></span><span class='rs'>Zobudilo sa</span></button>" : "") +
+      "<div class='tiles'>" + BTN.po.map((b, i) => "<button type='button' class='tile c" + (i + 1) + (rk === b.k ? " on" : "") + "' data-act='" + (rk === b.k ? "stop" : "open") + "' data-k='" + b.k + "'><span class='o'>" + ic(b.i, rk === b.k) + "</span><b>" + b.l + "</b><small>" + (rk === b.k ? "spí" : ago(b.k)) + "</small></button>").join("") + "</div>" +
+      "<button type='button' class='day' data-act='day'>" + (S.night ? "Naša noc" : "Náš deň") + " ›</button></div>";
+  }
+
+  // ——— Telefóny ———
+  const stage = document.getElementById("stage");
+  const phone = (w, h) => "<div><p class='cap'>" + w + " × " + h + "</p><div class='phone s" + h + (S.night ? " night" : "") + "' style='width:" + w + "px;height:" + h + "px'>" +
+    "<div class='ph ph-head'>hlavička</div><div class='ph ph-search'>hľadanie</div><div class='ph ph-hero'>karta týždňa / veku</div><div class='ph ph-row'>3 skratky</div>" +
+    "<section class='card' aria-label='" + (S.period === "po" ? "Rýchle záznamy" : "Cesta k narodeniu") + "'>" + (S.period === "po" ? postCard() : preCard()) + "</section>" +
+    "<div class='ph ph-dnes'>dnes stačí jedno</div><div class='ph ph-nav'>lišta</div>" +
+    "<div class='scrim'></div><div class='sheet' role='dialog' aria-modal='true'></div><div class='toast' role='status'></div></div></div>";
+  function render(animate) {
+    const sizes = S.size === "obe" ? [[390, 844], [375, 667]] : S.size === "375" ? [[375, 667]] : [[390, 844]];
+    stage.innerHTML = sizes.map(s => phone(s[0], s[1])).join("");
+    if (animate && !reduced) intro();
+  }
+  // Úvodný pohyb: oblúk dorastie, číslo dobehne (len pri zmene obdobia)
+  function intro() {
+    stage.querySelectorAll("[data-len]").forEach(el => {
+      const len = +el.dataset.len, C = +el.dataset.c, glow = el.previousElementSibling, t0 = performance.now();
+      const num = el.closest(".journey").querySelector("[data-count]"), target = num ? +num.dataset.count : 0;
+      const step = now => {
+        const k = Math.min(1, (now - t0) / 1300), e = 1 - Math.pow(1 - k, 3);
+        [el, glow].forEach(x => x.setAttribute("stroke-dasharray", (len * e).toFixed(1) + " " + C));
+        if (num) num.textContent = Math.round(280 - (280 - target) * e);
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  setInterval(() => stage.querySelectorAll("[data-clock]").forEach(el => { el.textContent = clock(); }), 1000);
+
+  // ——— Ovládanie ———
+  function toast(ph, text, undo) {
+    const t = ph.querySelector(".toast");
+    t.innerHTML = "<span>" + text + "</span>" + (undo ? "<button type='button'>Vrátiť</button>" : "");
+    t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 4500);
+    if (undo) t.querySelector("button").onclick = () => { undo(); t.classList.remove("show"); };
+  }
+  function sheet(ph, k) {
+    const sh = ph.querySelector(".sheet"), sc = ph.querySelector(".scrim"), all = BTN.pred.concat(BTN.w36, BTN.po), b = all.find(x => x.k === k);
+    const idx = BTN[S.period].findIndex(x => x.k === k) + 1;
+    if (k === "day") {
+      sh.innerHTML = "<div class='sh-h c3'><span class='o'>" + ic("moon") + "</span><h3>" + (S.night ? "Naša noc" : "Náš deň") + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div><p class='tag'>[ukážka] Prehľad dnešných záznamov po hodinách.</p>";
+    } else {
+      const [t, chips] = SHEET[k];
+      sh.innerHTML = "<div class='sh-h c" + idx + "'><span class='o'>" + ic(b.i) + "</span><h3>" + t + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div>" +
+        "<div class='chips'>" + chips.map((c, j) => "<button class='chip' aria-pressed='" + (j === 0) + "' data-j='" + j + "'>" + c + "</button>").join("") + "</div><button class='save' data-save='" + k + "'>Uložiť</button>";
+    }
+    sh.classList.add("open"); sc.classList.add("open");
+  }
+  function closeSheet(ph) { ph.querySelector(".sheet").classList.remove("open"); ph.querySelector(".scrim").classList.remove("open"); }
+
+  stage.addEventListener("click", e => {
+    const ph = e.target.closest(".phone"); if (!ph) return;
+    if (e.target.closest(".scrim, [data-close]")) return closeSheet(ph);
+    const chip = e.target.closest(".chip");
+    if (chip) { chip.parentNode.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === chip))); return; }
+    const sv = e.target.closest("[data-save]");
+    if (sv) {
+      const k = sv.dataset.save, j = +(ph.querySelector(".chip[aria-pressed='true']")?.dataset.j || 0), prev = { ...last }, prevRun = S.run, prevSince = runSince;
+      closeSheet(ph);
+      if ((k === "sleep" && j === 0) || k === "contraction") { S.run = true; runSince = Date.now(); }
+      else last[k] = typeof last[k] === "number" ? 0 : "dnes " + new Date().toTimeString().slice(0, 5);
+      lastAt = Date.now(); sync(); render(false);
+      const p2 = stage.querySelector(".phone"); p2.querySelector("[data-k='" + k + "']")?.classList.add("pop");
+      toast(p2, "Uložené", () => { Object.assign(last, prev); S.run = prevRun; runSince = prevSince; sync(); render(false); });
+      return;
+    }
+    const a = e.target.closest("[data-act]"); if (!a) return;
+    const act = a.dataset.act;
+    if (act === "open") return sheet(ph, a.dataset.k);
+    if (act === "day") return sheet(ph, "day");
+    if (act === "week") return toast(ph, "[ukážka] Otvorí sa Tvoj týždeň");
+    if (act === "stop") {
+      const k = runKey(), prevSince = runSince;
+      S.run = false; if (k === "sleep") { last.sleep = 0; lastAt = Date.now(); } else last.contraction = "dnes " + new Date().toTimeString().slice(0, 5);
+      sync(); render(false);
+      toast(stage.querySelector(".phone"), "Uložené", () => { S.run = true; runSince = prevSince; sync(); render(false); });
+    }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") stage.querySelectorAll(".phone").forEach(closeSheet); });
+
+  function sync() {
+    document.querySelectorAll("#bar button").forEach(b => {
+      const k = b.dataset.k, v = b.dataset.v;
+      b.setAttribute("aria-pressed", String(k === "period" ? S.period === v : k === "night" ? String(+S.night) === v : k === "run" ? String(+S.run) === v : S.size === v));
+    });
+    const q = new URLSearchParams({ period: S.period }); if (S.night) q.set("night", 1); if (S.run) q.set("run", 1); if (S.size !== "390") q.set("size", S.size);
+    try { history.replaceState(null, "", "?" + q); } catch (err) { /* súbor */ }
+  }
+  document.getElementById("bar").addEventListener("click", e => {
+    const b = e.target.closest("button[data-k]"); if (!b) return;
+    const k = b.dataset.k, v = b.dataset.v;
+    if (k === "period") S.period = v; if (k === "night") S.night = v === "1"; if (k === "size") S.size = v;
+    if (k === "run" || k === "period") runSince = demoSince();
+    if (k === "run") S.run = v === "1";
+    sync(); render(k === "period");
+  });
+  sync(); render(true);
+})();
+</script>
+</body>
+</html>
