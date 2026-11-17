@@ -52,7 +52,7 @@
   .journey .knob { fill: #fff; stroke: var(--lilac); stroke-width: 4; filter: drop-shadow(0 2px 4px rgba(95, 79, 177, .35)); }
   .journey .halo { fill: var(--lilac); opacity: .18; transform-box: fill-box; transform-origin: center; animation: halo 2.8s ease-in-out infinite; }
   @keyframes halo { 0%, 100% { transform: scale(1); opacity: .22; } 50% { transform: scale(1.9); opacity: 0; } }
-  .mid { position: absolute; inset: 19%; border-radius: 50%; display: grid; place-content: center; justify-items: center; text-align: center; background: radial-gradient(circle at 35% 25%, #fff, #f8f4ff 70%); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px rgba(95, 79, 177, .10); transition: transform .2s ease; }
+  .mid { position: absolute; inset: 24%; border-radius: 50%; display: grid; place-content: center; justify-items: center; text-align: center; background: radial-gradient(circle at 35% 25%, #fff, #f8f4ff 70%); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px rgba(95, 79, 177, .10); transition: transform .2s ease; }
   .night .mid { background: radial-gradient(circle at 35% 25%, #3a3156, #2c2544 75%); }
   .journey:active .mid { transform: scale(.96); }
   .big { font: 800 clamp(26px, 13cqh, 46px)/1 Montserrat, system-ui, sans-serif; letter-spacing: -.02em; background: linear-gradient(135deg, #5f4fb1, #c2668f); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
@@ -136,6 +136,38 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
   .toast button { border: 0; background: rgba(255, 255, 255, .16); color: #fff; font: 700 13px Montserrat, system-ui, sans-serif; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
   .tag { font-size: 12px; color: #8a83a0; margin: 0; }
+
+  /* ——— Denník cesty: stopy záznamov v kruhu ——— */
+  .journey { touch-action: none; }
+  .mk { transform-box: fill-box; transform-origin: center; }
+  .mk.m1 { fill: #f07f98; } .mk.m2 { fill: #f2a66a; } .mk.m3 { fill: #7d93e0; } .mk.m4 { fill: #b58be0; }
+  .night .mk.m1 { fill: #f6a3b6; } .night .mk.m2 { fill: #f8c08f; } .night .mk.m3 { fill: #a9b8f2; }
+  .mk.star { stroke: var(--card); stroke-width: 1.2; }
+  .mk.new { animation: mkpop .7s cubic-bezier(.3, 1.6, .5, 1); }
+  @keyframes mkpop { 0% { transform: scale(0); } 60% { transform: scale(2.2); } 100% { transform: scale(1); } }
+  .mk.dim { opacity: .25; transition: opacity .2s; }
+  .wkhl { fill: none; stroke: var(--lilac); stroke-width: 18; opacity: .12; stroke-linecap: round; }
+  .fly { position: absolute; z-index: 8; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; pointer-events: none; box-shadow: 0 0 10px 3px currentColor; background: currentColor; }
+  .mid .wk { font: 800 clamp(15px, 6.5cqh, 21px)/1 Montserrat, system-ui, sans-serif; color: var(--ink); white-space: nowrap; }
+  .mid .sum { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; margin-top: 6px; font: 700 11px/1.2 Montserrat, system-ui, sans-serif; color: var(--muted); max-width: 120px; }
+  .mid .sum i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 3px; vertical-align: 0; }
+  .mid .thumb { width: clamp(28px, 13cqh, 40px); aspect-ratio: 1; border-radius: 50%; margin: 0 auto 4px; display: grid; place-items: center; color: #9a5a22; background: linear-gradient(135deg, #ffe3c9, #f8c79b); box-shadow: 0 2px 6px rgba(154, 90, 34, .25); }
+  .mid .thumb svg { width: 55%; height: 55%; }
+  .journey.scrub .mid { transform: scale(1.04); }
+  .mid > * { animation: fadein .18s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(3px); } }
+
+  /* Po pôrode: dve strany karty (Teraz · Náš prvý rok), potiahnutím do strany */
+  .pager { position: relative; height: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .pager::-webkit-scrollbar { display: none; }
+  .page { flex: 0 0 100%; scroll-snap-align: start; height: 100%; container-type: size; }
+  .dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 6px; z-index: 2; pointer-events: none; }
+  .dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--trk); transition: width .25s, background .25s; }
+  .dots i.on { width: 16px; background: var(--lilac); }
+  .page .in.post { padding-bottom: 20px; }
+  .page .in.year { padding-bottom: 20px; }
+  .year .journey { width: min(78cqh, 80cqw, 240px); }
+  .peek { position: absolute; right: 0; top: 50%; width: 5px; height: 38px; margin-top: -19px; border-radius: 3px 0 0 3px; background: var(--trk); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -175,9 +207,8 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ic = (n, duo) => "<svg viewBox='0 0 256 256' fill='currentColor' aria-hidden='true'>" + (duo ? (DUO[n] || "") : "") + ICON[n] + "</svg>";
 
-  // ——— Ukážkové údaje ———
-  const DUE_DAYS = { pred: 112, w36: 24 };
-  const S = { period: "pred", night: false, run: false, size: "390" };
+  // ——— Stav prototypu ———
+  const S = { period: "pred", night: false, run: false, size: "390", page: 0 };
   const Q = new URLSearchParams(location.search);
   if (["pred", "w36", "po"].includes(Q.get("period"))) S.period = Q.get("period");
   S.night = Q.get("night") === "1"; S.run = Q.get("run") === "1";
@@ -186,12 +217,30 @@
   let runSince = demoSince();
   const last = { move: "dnes 14:20", bump: "", voice: "", feed: 125, sleep: 190, diaper: 62, contraction: "" };
   let lastAt = Date.now();
+  const WEEK = { pred: 24, w36: 36 }, DUE_DAYS = { pred: 112, w36: 24 }, DAY = 96;
+
+  // Ukážkový denník (pevný, aby sa pri prekreslení nemenil): stopy záznamov po týždňoch / dňoch
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const MARKS = { pred: [], w36: [], po: [] };
+  ["pred", "w36"].forEach(p => {
+    seed = 7;
+    for (let w = 6; w <= WEEK[p]; w++) {
+      if (w >= 9 && rnd() < .8) MARKS[p].push({ w: w + .5, c: 2, k: "bump" });
+      if (w >= 19) { const n = Math.floor(rnd() * 3) + (w > 26 ? 2 : 1); for (let q = 0; q < n; q++) MARKS[p].push({ w: w + (q + .5) / n, c: 1, k: "move" }); }
+      if (w >= 8 && rnd() < .45) MARKS[p].push({ w: w + .5, c: 3, k: "voice" });
+    }
+    MARKS[p].push({ w: 19.5, c: 4, k: "first", star: true, t: "Prvý pohyb" });
+  });
+  seed = 11;
+  for (let d = 0; d < DAY; d++) { MARKS.po.push({ d: d + .15, c: 1 }, { d: d + .45, c: 2 }, { d: d + .75, c: 3 }); }
+  MARKS.po.push({ d: 0, c: 4, star: true, t: "Narodenie" }, { d: 42, c: 4, star: true, t: "Prvý úsmev" }, { d: 81, c: 4, star: true, t: "Prvý smiech" });
 
   const BTN = {
-    pred: [{ k: "move", l: "Pohyby", i: "footprints" }, { k: "bump", l: "Bruško", i: "camera" }, { k: "voice", l: "Hlas", i: "voice" }],
-    w36: [{ k: "move", l: "Pohyby", i: "footprints" }, { k: "contraction", l: "Kontrakcie", i: "wave" }, { k: "bump", l: "Bruško", i: "camera" }],
-    po: [{ k: "feed", l: "Kŕmenie", i: "feeding" }, { k: "sleep", l: "Spánok", i: "moon" }, { k: "diaper", l: "Plienky", i: "diaper" }]
+    pred: [{ k: "move", l: "Pohyby", i: "footprints", c: 1 }, { k: "bump", l: "Bruško", i: "camera", c: 2 }, { k: "voice", l: "Hlas", i: "voice", c: 3 }],
+    w36: [{ k: "move", l: "Pohyby", i: "footprints", c: 1 }, { k: "contraction", l: "Kontrakcie", i: "wave", c: 2 }, { k: "bump", l: "Bruško", i: "camera", c: 3 }],
+    po: [{ k: "feed", l: "Kŕmenie", i: "feeding", c: 1 }, { k: "sleep", l: "Spánok", i: "moon", c: 2 }, { k: "diaper", l: "Plienky", i: "diaper", c: 3 }]
   };
+  const MARKC = { move: 1, bump: 2, voice: 3, contraction: 2, feed: 1, sleep: 2, diaper: 3 };
   const SHEET = {
     move: ["Pohyby", ["Teraz", "Pred chvíľou"]], bump: ["Bruško", ["Odfotiť bruško"]], voice: ["Hlas", ["Nahrať pár slov"]],
     contraction: ["Kontrakcie", ["Začala teraz"]], feed: ["Kŕmenie", ["Ľavý prs", "Pravý prs", "Fľaša"]],
@@ -206,63 +255,171 @@
   const clock = () => { const s = Math.floor((Date.now() - runSince) / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
   const runKey = () => S.run ? (S.period === "po" ? "sleep" : S.period === "w36" ? "contraction" : null) : null;
 
-  // ——— Kruh cesty (tehotenstvo) ———
-  function journey() {
-    const days = DUE_DAYS[S.period], p = Math.max(0, Math.min(1, (280 - days) / 280));
-    const R = 82, C = 2 * Math.PI * R, a = (-90 + p * 360) * Math.PI / 180, kx = 100 + R * Math.cos(a), ky = 100 + R * Math.sin(a);
-    const rk = runKey();
-    const mid = rk
-      ? "<span class='small'>Kontrakcia</span><span class='tm' data-clock>" + clock() + "</span><span class='stop'>Skončila</span>"
-      : "<span class='big' data-count='" + days + "'>" + days + "</span><span class='small'>dní do termínu</span>";
-    return "<button type='button' class='journey' data-act='" + (rk ? "stop" : "week") + "' aria-label='" + (rk ? "Kontrakcia beží – ťuknutím ukončíš" : days + " dní do termínu – Tvoj týždeň") + "'>" +
-      "<svg viewBox='0 0 200 200' aria-hidden='true'><defs><linearGradient id='jg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f07f98'/><stop offset='.5' stop-color='#f6b48f'/><stop offset='1' stop-color='#8171ce'/></linearGradient></defs>" +
+  // ——— Geometria kruhu (viewBox 200) ———
+  const R = 82, CIRC = 2 * Math.PI * R;
+  const year = () => S.period === "po";
+  const SPAN = () => year() ? 365 : 40;                     // celý kruh = 40 týždňov / 365 dní
+  const NOW = () => year() ? DAY : WEEK[S.period] + .5;     // dnešok na kruhu
+  const ang = v => -90 + v / SPAN() * 360;
+  const P = (a, r) => [100 + r * Math.cos(a * Math.PI / 180), 100 + r * Math.sin(a * Math.PI / 180)];
+  const n1 = v => v.toFixed(1);
+  function markSvg(m, i) {
+    const v = year() ? m.d : m.w, a = ang(v);
+    const r = year() ? (m.star ? 69 : 60 + m.c * 3.4) : [0, 70, 64.5, 59, 64.5][m.c]; // dráhy: pohyby vonku, bruško v strede, hlas dnu
+    const [x, y] = P(a, r), sz = m.star ? 3.4 : year() ? 1.15 : m.c === 1 ? 1.9 : 2.3;
+    return "<circle class='mk m" + m.c + (m.star ? " star" : "") + (m.isNew ? " new" : "") + "' data-v='" + n1(v) + "' cx='" + n1(x) + "' cy='" + n1(y) + "' r='" + sz + "'" + (year() && !m.star ? " opacity='.55'" : "") + "/>";
+  }
+  function ringSvg() {
+    const p = Math.min(1, NOW() / SPAN()), [kx, ky] = P(ang(NOW()), R), id = "jg" + Math.random().toString(36).slice(2, 6);
+    return "<svg viewBox='0 0 200 200' aria-hidden='true'><defs><linearGradient id='" + id + "' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f07f98'/><stop offset='.5' stop-color='#f6b48f'/><stop offset='1' stop-color='#8171ce'/></linearGradient></defs>" +
       "<circle class='trk' cx='100' cy='100' r='" + R + "' stroke-width='14'/>" +
-      "<circle class='glow' cx='100' cy='100' r='" + R + "' stroke='url(#jg)' stroke-width='14' stroke-dasharray='" + (C * p).toFixed(1) + " " + C.toFixed(1) + "' transform='rotate(-90 100 100)' data-arc/>" +
-      "<circle class='prog' cx='100' cy='100' r='" + R + "' stroke='url(#jg)' stroke-width='14' stroke-dasharray='" + (C * p).toFixed(1) + " " + C.toFixed(1) + "' transform='rotate(-90 100 100)' data-arc data-len='" + (C * p).toFixed(1) + "' data-c='" + C.toFixed(1) + "'/>" +
-      
-      "<circle class='halo' cx='" + kx.toFixed(1) + "' cy='" + ky.toFixed(1) + "' r='9'/><circle class='knob' cx='" + kx.toFixed(1) + "' cy='" + ky.toFixed(1) + "' r='8'/>" +
-      "</svg><span class='mid'>" + mid + "</span></button>";
+      "<circle class='glow' cx='100' cy='100' r='" + R + "' stroke='url(#" + id + ")' stroke-width='14' stroke-dasharray='" + n1(CIRC * p) + " " + n1(CIRC) + "' transform='rotate(-90 100 100)'/>" +
+      "<circle class='prog' cx='100' cy='100' r='" + R + "' stroke='url(#" + id + ")' stroke-width='14' stroke-dasharray='" + n1(CIRC * p) + " " + n1(CIRC) + "' transform='rotate(-90 100 100)' data-len='" + n1(CIRC * p) + "'/>" +
+      "<path class='wkhl' d='' />" +
+      "<g class='marks'>" + MARKS[S.period].map(markSvg).join("") + "</g>" +
+      "<circle class='halo' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='9'/><circle class='knob' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='8'/></svg>";
+  }
+  function midToday() {
+    const rk = runKey();
+    if (rk === "contraction") return "<span class='small'>Kontrakcia</span><span class='tm' data-clock>" + clock() + "</span><span class='stop'>Skončila</span>";
+    if (year()) return "<span class='big'>" + DAY + "</span><span class='small'>dní spolu</span>";
+    return "<span class='big' data-count='" + DUE_DAYS[S.period] + "'>" + DUE_DAYS[S.period] + "</span><span class='small'>dní do termínu</span>";
+  }
+  // Stred pri ťahaní: čo sa v danom týždni / mesiaci stalo (len vlastné záznamy)
+  function midAt(v) {
+    const list = MARKS[S.period];
+    if (year()) {
+      const mo = Math.min(12, Math.floor(v / 30.4375) + 1), from = (mo - 1) * 30.4375, to = mo * 30.4375;
+      const stars = list.filter(m => m.star && m.d >= from && m.d < to);
+      const future = from > DAY;
+      return "<span class='wk'>" + mo + ". mesiac</span>" + (future ? "<span class='small'>ešte pred vami</span>" :
+        stars.length ? "<span class='sum'>" + stars.map(s => "<span><i style='background:#b58be0'></i>" + s.t + "</span>").join("") + "</span>" : "<span class='small'>deň po dni spolu</span>");
+    }
+    const w = Math.max(1, Math.min(40, Math.floor(v) || 1)), now = WEEK[S.period];
+    if (w > now) return "<span class='wk'>" + w + ". týždeň</span><span class='small'>o " + (w - now) + " " + (w - now === 1 ? "týždeň" : w - now < 5 ? "týždne" : "týždňov") + "</span>";
+    const inW = list.filter(m => Math.floor(m.w) === w), cnt = k => inW.filter(m => m.k === k).length;
+    const star = inW.find(m => m.star), parts = [];
+    if (cnt("move")) parts.push("<span><i style='background:#f07f98'></i>" + cnt("move") + "× pohyb</span>");
+    if (cnt("voice")) parts.push("<span><i style='background:#7d93e0'></i>hlas</span>");
+    if (star) parts.push("<span><i style='background:#b58be0'></i>" + star.t + "</span>");
+    return (cnt("bump") ? "<span class='thumb'>" + ic("camera") + "</span>" : "") + "<span class='wk'>" + w + ". týždeň</span>" +
+      (parts.length ? "<span class='sum'>" + parts.join("") + "</span>" : "<span class='small'>" + (w === now ? "tento týždeň" : "bez záznamu") + "</span>");
+  }
+  function journey(isYear) {
+    const rk = isYear ? null : runKey();
+    const label = rk ? "Kontrakcia beží – ťuknutím ukončíš" : isYear ? "Náš prvý rok – potiahni po kruhu na iný mesiac" : DUE_DAYS[S.period] + " dní do termínu – potiahni po kruhu na iný týždeň";
+    return "<button type='button' class='journey' data-act='" + (rk ? "stop" : "week") + "' aria-label='" + label + "'>" + ringSvg() + "<span class='mid'>" + midToday() + "</span></button>";
   }
   function preCard() {
-    return "<div class='in pre'>" + journey() + "<div class='row3'>" + BTN[S.period].map((b, i) =>
-      "<button type='button' class='rb c" + (i + 1) + "' data-act='open' data-k='" + b.k + "'><span class='o'>" + ic(b.i) + "</span><b>" + b.l + "</b><small>" + ago(b.k) + "</small></button>").join("") + "</div></div>";
+    return "<div class='in pre'>" + journey(false) + "<div class='row3'>" + BTN[S.period].map(b =>
+      "<button type='button' class='rb c" + b.c + "' data-act='open' data-k='" + b.k + "'><span class='o'>" + ic(b.i) + "</span><b>" + b.l + "</b><small>" + ago(b.k) + "</small></button>").join("") + "</div></div>";
   }
-  // ——— Po pôrode: pás časovača + 3 dlaždice ———
-  function postCard() {
+  function postNow() {
     const rk = runKey();
     return "<div class='in post'>" +
       (rk ? "<button type='button' class='run' data-act='stop'><span class='ri'>" + ic("moon", true) + "</span><span><span class='rl'>Spí</span><br><span class='rt' data-clock>" + clock() + "</span></span><span class='rs'>Zobudilo sa</span></button>" : "") +
-      "<div class='tiles'>" + BTN.po.map((b, i) => "<button type='button' class='tile c" + (i + 1) + (rk === b.k ? " on" : "") + "' data-act='" + (rk === b.k ? "stop" : "open") + "' data-k='" + b.k + "'><span class='o'>" + ic(b.i, rk === b.k) + "</span><b>" + b.l + "</b><small>" + (rk === b.k ? "spí" : ago(b.k)) + "</small></button>").join("") + "</div>" +
+      "<div class='tiles'>" + BTN.po.map(b => "<button type='button' class='tile c" + b.c + (rk === b.k ? " on" : "") + "' data-act='" + (rk === b.k ? "stop" : "open") + "' data-k='" + b.k + "'><span class='o'>" + ic(b.i, rk === b.k) + "</span><b>" + b.l + "</b><small>" + (rk === b.k ? "spí" : ago(b.k)) + "</small></button>").join("") + "</div>" +
       "<button type='button' class='day' data-act='day'>" + (S.night ? "Naša noc" : "Náš deň") + " ›</button></div>";
+  }
+  function postCard() {
+    return "<div class='pager'><div class='page'>" + postNow() + "</div><div class='page'><div class='in year'>" + journey(true) + "</div></div></div>" +
+      "<div class='dots' aria-hidden='true'><i class='" + (S.page === 0 ? "on" : "") + "'></i><i class='" + (S.page === 1 ? "on" : "") + "'></i></div>";
   }
 
   // ——— Telefóny ———
   const stage = document.getElementById("stage");
   const phone = (w, h) => "<div><p class='cap'>" + w + " × " + h + "</p><div class='phone s" + h + (S.night ? " night" : "") + "' style='width:" + w + "px;height:" + h + "px'>" +
     "<div class='ph ph-head'>hlavička</div><div class='ph ph-search'>hľadanie</div><div class='ph ph-hero'>karta týždňa / veku</div><div class='ph ph-row'>3 skratky</div>" +
-    "<section class='card' aria-label='" + (S.period === "po" ? "Rýchle záznamy" : "Cesta k narodeniu") + "'>" + (S.period === "po" ? postCard() : preCard()) + "</section>" +
+    "<section class='card' aria-label='" + (year() ? "Rýchle záznamy a náš prvý rok" : "Cesta k narodeniu") + "'>" + (year() ? postCard() : preCard()) + "</section>" +
     "<div class='ph ph-dnes'>dnes stačí jedno</div><div class='ph ph-nav'>lišta</div>" +
     "<div class='scrim'></div><div class='sheet' role='dialog' aria-modal='true'></div><div class='toast' role='status'></div></div></div>";
   function render(animate) {
     const sizes = S.size === "obe" ? [[390, 844], [375, 667]] : S.size === "375" ? [[375, 667]] : [[390, 844]];
     stage.innerHTML = sizes.map(s => phone(s[0], s[1])).join("");
+    stage.querySelectorAll(".pager").forEach(pg => {
+      if (S.page) pg.scrollLeft = pg.clientWidth;
+      pg.addEventListener("scroll", () => {
+        const i = Math.round(pg.scrollLeft / pg.clientWidth);
+        if (i !== S.page) { S.page = i; stage.querySelectorAll(".dots").forEach(d => d.querySelectorAll("i").forEach((x, j) => x.classList.toggle("on", j === i))); }
+      }, { passive: true });
+    });
+    stage.querySelectorAll(".journey").forEach(bindRing);
     if (animate && !reduced) intro();
   }
-  // Úvodný pohyb: oblúk dorastie, číslo dobehne (len pri zmene obdobia)
+  // Úvod: oblúk dorastie, číslo dobehne, stopy sa postupne rozsvietia
   function intro() {
-    stage.querySelectorAll("[data-len]").forEach(el => {
-      const len = +el.dataset.len, C = +el.dataset.c, glow = el.previousElementSibling, t0 = performance.now();
-      const num = el.closest(".journey").querySelector("[data-count]"), target = num ? +num.dataset.count : 0;
+    stage.querySelectorAll(".journey").forEach(j => {
+      const el = j.querySelector(".prog"), glow = j.querySelector(".glow"), len = +el.dataset.len, t0 = performance.now();
+      const num = j.querySelector("[data-count]"), target = num ? +num.dataset.count : 0, mks = [...j.querySelectorAll(".mk")];
+      mks.forEach(m => { m.style.opacity = 0; });
       const step = now => {
-        const k = Math.min(1, (now - t0) / 1300), e = 1 - Math.pow(1 - k, 3);
-        [el, glow].forEach(x => x.setAttribute("stroke-dasharray", (len * e).toFixed(1) + " " + C));
+        const k = Math.min(1, (now - t0) / 1400), e = 1 - Math.pow(1 - k, 3);
+        [el, glow].forEach(x => x.setAttribute("stroke-dasharray", n1(len * e) + " " + n1(CIRC)));
         if (num) num.textContent = Math.round(280 - (280 - target) * e);
-        if (k < 1) requestAnimationFrame(step);
+        const vis = e * NOW();
+        mks.forEach(m => { if (+m.dataset.v <= vis) m.style.opacity = ""; });
+        if (k < 1) requestAnimationFrame(step); else mks.forEach(m => { m.style.opacity = ""; });
       };
       requestAnimationFrame(step);
     });
   }
   setInterval(() => stage.querySelectorAll("[data-clock]").forEach(el => { el.textContent = clock(); }), 1000);
+
+  // ——— Ťahanie po kruhu: cestovanie po týždňoch / mesiacoch ———
+  function bindRing(j) {
+    const svg = j.querySelector("svg"), mid = j.querySelector(".mid"), knob = j.querySelector(".knob"), halo = j.querySelector(".halo"), hl = j.querySelector(".wkhl");
+    let drag = null, unit = null, raf = 0;
+    const toV = e => {
+      const b = svg.getBoundingClientRect(), a = Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)) * 180 / Math.PI;
+      let v = ((a + 90 + 360) % 360) / 360 * SPAN();
+      return Math.max(.01, Math.min(SPAN() - .01, v));
+    };
+    const put = v => {
+      const [x, y] = P(ang(v), R);
+      [knob, halo].forEach(c => { c.setAttribute("cx", n1(x)); c.setAttribute("cy", n1(y)); });
+      const u = year() ? Math.floor(v / 30.4375) : Math.floor(v);
+      if (u !== unit) {
+        unit = u;
+        if (drag) {
+          mid.innerHTML = midAt(v);
+          const from = year() ? u * 30.4375 : u, to = year() ? (u + 1) * 30.4375 : u + 1, [ax, ay] = P(ang(from), R), [bx, by] = P(ang(to), R);
+          hl.setAttribute("d", "M " + n1(ax) + " " + n1(ay) + " A " + R + " " + R + " 0 0 1 " + n1(bx) + " " + n1(by));
+          j.querySelectorAll(".mk").forEach(m => { const mv = +m.dataset.v; m.classList.toggle("dim", mv < from || mv >= to); });
+          if (navigator.vibrate && navigator.userActivation?.hasBeenActive) try { navigator.vibrate(4); } catch (err) { /* bez vibrácie */ }
+        }
+      }
+    };
+    j.addEventListener("pointerdown", e => {
+      const b = svg.getBoundingClientRect(), d = Math.hypot(e.clientX - (b.left + b.width / 2), e.clientY - (b.top + b.height / 2));
+      if (d < b.width * .3) return;                      // stred = ťuk
+      cancelAnimationFrame(raf); drag = { x: e.clientX, y: e.clientY, moved: false }; unit = null;
+      try { j.setPointerCapture(e.pointerId); } catch (err) { /* */ }
+    });
+    j.addEventListener("pointermove", e => {
+      if (!drag) return;
+      if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+      if (!drag.moved) { drag.moved = true; j.classList.add("scrub"); }
+      put(toV(e));
+    });
+    const end = () => {
+      if (!drag) return;
+      const moved = drag.moved; drag = null; j.classList.remove("scrub");
+      if (!moved) return;
+      j._noTap = true; setTimeout(() => { j._noTap = false; }, 50);
+      hl.setAttribute("d", ""); j.querySelectorAll(".mk.dim").forEach(m => m.classList.remove("dim"));
+      // pružný návrat na dnešok
+      const from = year() ? (unit + .5) * 30.4375 : unit + .5, to = NOW();
+      let x = from, vel = 0, t = performance.now();
+      const step = now => {
+        const dt = Math.min(.032, (now - t) / 1000); t = now;
+        vel += (-90 * (x - to) - 13 * vel) * dt; x += vel * dt;
+        put(x);
+        if (Math.abs(x - to) > .01 || Math.abs(vel) > .02) raf = requestAnimationFrame(step); else { put(to); unit = null; mid.innerHTML = midToday(); }
+      };
+      if (reduced) { put(to); unit = null; mid.innerHTML = midToday(); } else raf = requestAnimationFrame(step);
+    };
+    j.addEventListener("pointerup", end); j.addEventListener("pointercancel", end);
+  }
 
   // ——— Ovládanie ———
   function toast(ph, text, undo) {
@@ -272,18 +429,37 @@
     if (undo) t.querySelector("button").onclick = () => { undo(); t.classList.remove("show"); };
   }
   function sheet(ph, k) {
-    const sh = ph.querySelector(".sheet"), sc = ph.querySelector(".scrim"), all = BTN.pred.concat(BTN.w36, BTN.po), b = all.find(x => x.k === k);
-    const idx = BTN[S.period].findIndex(x => x.k === k) + 1;
+    const sh = ph.querySelector(".sheet"), sc = ph.querySelector(".scrim"), b = BTN[S.period].find(x => x.k === k);
     if (k === "day") {
       sh.innerHTML = "<div class='sh-h c3'><span class='o'>" + ic("moon") + "</span><h3>" + (S.night ? "Naša noc" : "Náš deň") + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div><p class='tag'>[ukážka] Prehľad dnešných záznamov po hodinách.</p>";
     } else {
       const [t, chips] = SHEET[k];
-      sh.innerHTML = "<div class='sh-h c" + idx + "'><span class='o'>" + ic(b.i) + "</span><h3>" + t + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div>" +
+      sh.innerHTML = "<div class='sh-h c" + b.c + "'><span class='o'>" + ic(b.i) + "</span><h3>" + t + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div>" +
         "<div class='chips'>" + chips.map((c, j) => "<button class='chip' aria-pressed='" + (j === 0) + "' data-j='" + j + "'>" + c + "</button>").join("") + "</div><button class='save' data-save='" + k + "'>Uložiť</button>";
     }
     sh.classList.add("open"); sc.classList.add("open");
+    sh._from = k;
   }
   function closeSheet(ph) { ph.querySelector(".sheet").classList.remove("open"); ph.querySelector(".scrim").classList.remove("open"); }
+  // Iskrička: z tlačidla odletí do kruhu na dnešné miesto a zanechá stopu
+  function fly(ph, k, done) {
+    const btn = ph.querySelector("[data-k='" + k + "'] .o"), j = ph.querySelector(".in.pre .journey");
+    if (!btn || !j || reduced) return done();
+    const pb = ph.getBoundingClientRect(), a = btn.getBoundingClientRect(), sv = j.querySelector("svg").getBoundingClientRect();
+    const [tx, ty] = P(ang(NOW()), 68), ex = sv.left + tx / 200 * sv.width - pb.left, ey = sv.top + ty / 200 * sv.height - pb.top;
+    const sx = a.left + a.width / 2 - pb.left, sy = a.top + a.height / 2 - pb.top;
+    const dot = document.createElement("i"); dot.className = "fly";
+    dot.style.color = ["", "#f07f98", "#f2a66a", "#7d93e0"][MARKC[k]];
+    ph.appendChild(dot);
+    const t0 = performance.now(), cx = (sx + ex) / 2 + (ex > sx ? -40 : 40), cy = Math.min(sy, ey) - 60;
+    const step = now => {
+      const t = Math.min(1, (now - t0) / 650), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, u = 1 - e;
+      dot.style.left = (u * u * sx + 2 * u * e * cx + e * e * ex) + "px"; dot.style.top = (u * u * sy + 2 * u * e * cy + e * e * ey) + "px";
+      dot.style.transform = "scale(" + (1 - .4 * e) + ")";
+      if (t < 1) requestAnimationFrame(step); else { dot.remove(); done(); }
+    };
+    requestAnimationFrame(step);
+  }
 
   stage.addEventListener("click", e => {
     const ph = e.target.closest(".phone"); if (!ph) return;
@@ -292,21 +468,27 @@
     if (chip) { chip.parentNode.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === chip))); return; }
     const sv = e.target.closest("[data-save]");
     if (sv) {
-      const k = sv.dataset.save, j = +(ph.querySelector(".chip[aria-pressed='true']")?.dataset.j || 0), prev = { ...last }, prevRun = S.run, prevSince = runSince;
+      const k = sv.dataset.save, j = +(ph.querySelector(".chip[aria-pressed='true']")?.dataset.j || 0), prev = { ...last }, prevRun = S.run, prevSince = runSince, prevMarks = MARKS[S.period].length;
       closeSheet(ph);
       if ((k === "sleep" && j === 0) || k === "contraction") { S.run = true; runSince = Date.now(); }
       else last[k] = typeof last[k] === "number" ? 0 : "dnes " + new Date().toTimeString().slice(0, 5);
-      lastAt = Date.now(); sync(); render(false);
-      const p2 = stage.querySelector(".phone"); p2.querySelector("[data-k='" + k + "']")?.classList.add("pop");
-      toast(p2, "Uložené", () => { Object.assign(last, prev); S.run = prevRun; runSince = prevSince; sync(); render(false); });
+      lastAt = Date.now();
+      const mk = year() ? { d: DAY - .3, c: MARKC[k], isNew: true } : { w: NOW() - .1 + Math.random() * .3, c: MARKC[k], k, isNew: true };
+      const undo = () => { Object.assign(last, prev); S.run = prevRun; runSince = prevSince; MARKS[S.period].length = prevMarks; sync(); render(false); };
+      fly(ph, k, () => {
+        MARKS[S.period].push(mk); sync(); render(false); delete mk.isNew;
+        const p2 = stage.querySelector(".phone"); p2.querySelector("[data-k='" + k + "']")?.classList.add("pop");
+        toast(p2, "Uložené", undo);
+      });
       return;
     }
     const a = e.target.closest("[data-act]"); if (!a) return;
     const act = a.dataset.act;
     if (act === "open") return sheet(ph, a.dataset.k);
     if (act === "day") return sheet(ph, "day");
-    if (act === "week") return toast(ph, "[ukážka] Otvorí sa Tvoj týždeň");
+    if (act === "week") { if (a._noTap) return; return toast(ph, year() ? "[ukážka] Otvorí sa Tvoj mesiac" : "[ukážka] Otvorí sa Tvoj týždeň"); }
     if (act === "stop") {
+      if (a._noTap) return;
       const k = runKey(), prevSince = runSince;
       S.run = false; if (k === "sleep") { last.sleep = 0; lastAt = Date.now(); } else last.contraction = "dnes " + new Date().toTimeString().slice(0, 5);
       sync(); render(false);
@@ -326,7 +508,8 @@
   document.getElementById("bar").addEventListener("click", e => {
     const b = e.target.closest("button[data-k]"); if (!b) return;
     const k = b.dataset.k, v = b.dataset.v;
-    if (k === "period") S.period = v; if (k === "night") S.night = v === "1"; if (k === "size") S.size = v;
+    if (k === "period") { S.period = v; S.page = 0; }
+    if (k === "night") S.night = v === "1"; if (k === "size") S.size = v;
     if (k === "run" || k === "period") runSince = demoSince();
     if (k === "run") S.run = v === "1";
     sync(); render(k === "period");
