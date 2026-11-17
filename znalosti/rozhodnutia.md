@@ -3,6 +3,11 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-17 – Samo (kruh)
+- **Verzie kruhu** sú uložené ako snímky v `znalosti/kruh-verzie/` (README s poznámkami). Smer: návrat k originálu (Master 2.9) alebo k variantu D (živá scéna), prípadne niečo medzi.
+- **Pravidlo pre návrhy:** pochopí to unavená mama za 2 sekundy bez vysvetlenia – žiadne farebné kódy ani abstraktné grafy; pred ukázaním Samovi návrh posúdi nezávislý agent len zo snímky.
+- **Ikony ostávajú** (3.0), texty čo najkratšie (3.3); 3.1 (návrat ikon) bol omyl.
+
 ## 2026-11-16 – Samo (plán k 9–10/10, spustenie)
 - **Plán Fáza 1 schválený** (zhoda tímu: hodnotiteľ, stratég, UI, UX, Content & Safety, architekt):
   testovacia stránka · úrady a sumy k 1. 1. 2027 · skryť zvyšky Premium · fotky a hlas do IndexedDB + záloha ·
