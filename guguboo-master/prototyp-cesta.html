@@ -49,10 +49,10 @@
   .journey .prog { fill: none; stroke-linecap: round; }
   .journey .glow { fill: none; stroke-linecap: round; opacity: .35; filter: blur(6px); }
   .journey .goal { fill: var(--card); stroke: var(--pink); stroke-width: 3; }
-  .journey .knob { fill: #fff; stroke: var(--lilac); stroke-width: 4; filter: drop-shadow(0 2px 4px rgba(95, 79, 177, .35)); }
+  .journey .knob { fill: #fff; stroke: var(--lilac); stroke-width: 3.5; filter: drop-shadow(0 2px 4px rgba(95, 79, 177, .35)); }
   .journey .halo { fill: var(--lilac); opacity: .18; transform-box: fill-box; transform-origin: center; animation: halo 2.8s ease-in-out infinite; }
   @keyframes halo { 0%, 100% { transform: scale(1); opacity: .22; } 50% { transform: scale(1.9); opacity: 0; } }
-  .mid { position: absolute; inset: 24%; border-radius: 50%; display: grid; place-content: center; justify-items: center; text-align: center; background: radial-gradient(circle at 35% 25%, #fff, #f8f4ff 70%); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px rgba(95, 79, 177, .10); transition: transform .2s ease; }
+  .mid { position: absolute; inset: 15%; border-radius: 50%; display: grid; place-content: center; justify-items: center; text-align: center; background: radial-gradient(circle at 35% 25%, #fff, #f8f4ff 70%); box-shadow: 0 8px 22px rgba(95, 79, 177, .10); transition: transform .2s ease; }
   .night .mid { background: radial-gradient(circle at 35% 25%, #3a3156, #2c2544 75%); }
   .journey:active .mid { transform: scale(.96); }
   .big { font: 800 clamp(26px, 13cqh, 46px)/1 Montserrat, system-ui, sans-serif; letter-spacing: -.02em; background: linear-gradient(135deg, #5f4fb1, #c2668f); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
@@ -271,13 +271,12 @@
   }
   function ringSvg() {
     const p = Math.min(1, NOW() / SPAN()), [kx, ky] = P(ang(NOW()), R), id = "jg" + Math.random().toString(36).slice(2, 6);
-    return "<svg viewBox='0 0 200 200' aria-hidden='true'><defs><linearGradient id='" + id + "' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f07f98'/><stop offset='.5' stop-color='#f6b48f'/><stop offset='1' stop-color='#8171ce'/></linearGradient></defs>" +
+    return "<svg viewBox='0 0 200 200' aria-hidden='true'><defs><linearGradient id='" + id + "' x1='1' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#f8b4c5'/><stop offset='.5' stop-color='#ee8aa6'/><stop offset='1' stop-color='#8171ce'/></linearGradient></defs>" +
       "<circle class='trk' cx='100' cy='100' r='" + R + "' stroke-width='14'/>" +
       "<circle class='glow' cx='100' cy='100' r='" + R + "' stroke='url(#" + id + ")' stroke-width='14' stroke-dasharray='" + n1(CIRC * p) + " " + n1(CIRC) + "' transform='rotate(-90 100 100)'/>" +
       "<circle class='prog' cx='100' cy='100' r='" + R + "' stroke='url(#" + id + ")' stroke-width='14' stroke-dasharray='" + n1(CIRC * p) + " " + n1(CIRC) + "' transform='rotate(-90 100 100)' data-len='" + n1(CIRC * p) + "'/>" +
       "<path class='wkhl' d='' />" +
-      "<g class='marks'>" + MARKS[S.period].map(markSvg).join("") + "</g>" +
-      "<circle class='halo' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='9'/><circle class='knob' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='8'/></svg>";
+      "<circle class='halo' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='7'/><circle class='knob' cx='" + n1(kx) + "' cy='" + n1(ky) + "' r='6.5'/></svg>";
   }
   function midToday() {
     const rk = runKey();
@@ -292,18 +291,14 @@
       const mo = Math.min(12, Math.floor(v / 30.4375) + 1), from = (mo - 1) * 30.4375, to = mo * 30.4375;
       const stars = list.filter(m => m.star && m.d >= from && m.d < to);
       const future = from > DAY;
-      return "<span class='wk'>" + mo + ". mesiac</span>" + (future ? "<span class='small'>ešte pred vami</span>" :
-        stars.length ? "<span class='sum'>" + stars.map(s => "<span><i style='background:#b58be0'></i>" + s.t + "</span>").join("") + "</span>" : "<span class='small'>deň po dni spolu</span>");
+      const nowMo = Math.floor(DAY / 30.4375) + 1;
+      return "<span class='wk'>" + mo + ". mesiac</span><span class='small'>" + (future ? "ešte pred vami" : stars.length ? stars.map(s => s.t).join(", ") : mo === nowMo ? "teraz" : "spolu") + "</span>";
     }
     const w = Math.max(1, Math.min(40, Math.floor(v) || 1)), now = WEEK[S.period];
     if (w > now) return "<span class='wk'>" + w + ". týždeň</span><span class='small'>o " + (w - now) + " " + (w - now === 1 ? "týždeň" : w - now < 5 ? "týždne" : "týždňov") + "</span>";
-    const inW = list.filter(m => Math.floor(m.w) === w), cnt = k => inW.filter(m => m.k === k).length;
-    const star = inW.find(m => m.star), parts = [];
-    if (cnt("move")) parts.push("<span><i style='background:#f07f98'></i>" + cnt("move") + "× pohyb</span>");
-    if (cnt("voice")) parts.push("<span><i style='background:#7d93e0'></i>hlas</span>");
-    if (star) parts.push("<span><i style='background:#b58be0'></i>" + star.t + "</span>");
-    return (cnt("bump") ? "<span class='thumb'>" + ic("camera") + "</span>" : "") + "<span class='wk'>" + w + ". týždeň</span>" +
-      (parts.length ? "<span class='sum'>" + parts.join("") + "</span>" : "<span class='small'>" + (w === now ? "tento týždeň" : "bez záznamu") + "</span>");
+    const inW = list.filter(m => Math.floor(m.w) === w), bump = inW.some(m => m.k === "bump");
+    const back = now - w;
+    return (bump ? "<span class='thumb' title='Tvoja fotka bruška'>" + ic("camera") + "</span>" : "") + "<span class='wk'>" + w + ". týždeň</span><span class='small'>" + (back === 0 ? "tento týždeň" : bump ? "tvoja fotka bruška" : "pred " + back + " " + (back === 1 ? "týždňom" : "týždňami")) + "</span>";
   }
   function journey(isYear) {
     const rk = isYear ? null : runKey();
@@ -446,7 +441,7 @@
     const btn = ph.querySelector("[data-k='" + k + "'] .o"), j = ph.querySelector(".in.pre .journey");
     if (!btn || !j || reduced) return done();
     const pb = ph.getBoundingClientRect(), a = btn.getBoundingClientRect(), sv = j.querySelector("svg").getBoundingClientRect();
-    const [tx, ty] = P(ang(NOW()), 68), ex = sv.left + tx / 200 * sv.width - pb.left, ey = sv.top + ty / 200 * sv.height - pb.top;
+    const [tx, ty] = P(ang(NOW()), R), ex = sv.left + tx / 200 * sv.width - pb.left, ey = sv.top + ty / 200 * sv.height - pb.top;
     const sx = a.left + a.width / 2 - pb.left, sy = a.top + a.height / 2 - pb.top;
     const dot = document.createElement("i"); dot.className = "fly";
     dot.style.color = ["", "#f07f98", "#f2a66a", "#7d93e0"][MARKC[k]];
@@ -476,7 +471,7 @@
       const mk = year() ? { d: DAY - .3, c: MARKC[k], isNew: true } : { w: NOW() - .1 + Math.random() * .3, c: MARKC[k], k, isNew: true };
       const undo = () => { Object.assign(last, prev); S.run = prevRun; runSince = prevSince; MARKS[S.period].length = prevMarks; sync(); render(false); };
       fly(ph, k, () => {
-        MARKS[S.period].push(mk); sync(); render(false); delete mk.isNew;
+        sync(); render(false);
         const p2 = stage.querySelector(".phone"); p2.querySelector("[data-k='" + k + "']")?.classList.add("pop");
         toast(p2, "Uložené", undo);
       });
