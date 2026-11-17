@@ -178,6 +178,12 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+  .core .hint.day { width: auto; height: auto; padding: 3px 10px; border-radius: 999px; font: 700 12px/16px Montserrat, "Segoe UI", system-ui, sans-serif; }
+  .day-list { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 8px; }
+  .day-list li { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px; font: 600 15px/20px Montserrat, "Segoe UI", system-ui, sans-serif; }
+  .day-list li > span:last-child { color: #5d5768; font-size: 14px; }
+  .night .day-list li > span:last-child { color: #c9c1dc; }
+  .day-list .sh-ic svg { width: 20px; height: 20px; }
 </style>
 </head>
 <body>
@@ -425,8 +431,9 @@
         return;
       }
       const l1 = pre ? PRE.week + ". týždeň" : unitOf(false, today(false)) + ". mesiac", l2 = pre ? "ešte " + PRE.daysLeft + " dní" : POST.day + ". deň spolu";
-      this.core.innerHTML = "<span class='l1'>" + l1 + "</span><span class='l2'>" + l2 + "</span><span class='hint'>" + icon("plus") + "</span>";
-      this.core.setAttribute("aria-label", l1 + ", " + l2 + ". Rýchle záznamy: " + PETALS[S.period].map(p => p.l).join(", ") + ".");
+      // Samo 17. 11.: po pôrode ťuk na stred = Náš deň (ikony by len opakovali diely kruhu).
+      this.core.innerHTML = "<span class='l1'>" + l1 + "</span><span class='l2'>" + l2 + "</span>" + (pre ? "<span class='hint'>" + icon("plus") + "</span>" : "<span class='hint day'>Náš deň</span>");
+      this.core.setAttribute("aria-label", l1 + ", " + l2 + (pre ? ". Rýchle záznamy: " + PETALS[S.period].map(p => p.l).join(", ") + "." : ". Ťukni pre Náš deň."));
     }
     renderBloom() {
       const g = geo(this.small), sc = this.S / 420;
@@ -518,6 +525,7 @@
       this.core.addEventListener("click", e => {
         if (this.open) return this.closeBloom(true);
         if (!this.pre && S.run) return App.stopTimer(this);
+        if (!this.pre) return App.openSheet(this, "day");
         this.openBloom(e.detail === 0);
       });
       this.bloom.addEventListener("click", e => { const p = e.target.closest(".petal"); if (p) { this.closeBloom(); App.openSheet(this, p.dataset.k); } });
@@ -597,7 +605,11 @@
     openSheet(ring, k, i) {
       const ph = ring.ph, sh = ph.querySelector(".sheet"), scrim = ph.querySelector(".scrim"), tid = sh.getAttribute("aria-labelledby");
       let head, body;
-      if (k === "prep") {
+      if (k === "day") {
+        head = ["Náš deň", "moon"];
+        body = "<ul class='day-list'>" + QUICK.map(q => { const t = ago(q.k); return "<li><span class='sh-ic'>" + icon(q.icon) + "</span><b>" + q.label + "</b><span>" + (t || "dnes zatiaľ nie") + "</span></li>"; }).join("") + "</ul>" +
+          "<p class='sh-note'>Celý deň po hodinách a poslanie prehľadu blízkym. <span class='tag'>[ukážka]</span></p><button type='button' class='save' data-close>Zavrieť</button>";
+      } else if (k === "prep") {
         const s = PREP[i];
         head = [s.label, s.icon];
         body = "<p class='sh-note'>Tu sa otvorí Plán – " + s.label + ". <span class='tag'>[ukážka]</span></p><button type='button' class='save' data-close>Otvoriť Plán</button>";
