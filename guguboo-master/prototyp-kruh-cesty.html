@@ -4,14 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prototyp – Kruh cesty</title>
-<!-- Prototyp „Kruh cesty“ (smer schválil Samo 17. 11. 2026). Samostatný súbor, appka naň neodkazuje.
-     Tri vrstvy jedného prvku: vonkajší tenký prstenec = čas (otáčanie prstom), stredný prstenec = dorastajúci kruh
-     prípravy (pred pôrodom) / hodiny dňa 24 h (po pôrode), stred = dnešok + rýchle záznamy (vykvitnú po ťuknutí).
-     Ikony = cesty z iconPaths vo v5-mobile.js; ovocie = baby-figure.js; veľkosti = content/pregnancy-weeks.js
-     (+ APPROX_ROUND z guguchat.js); vety o mesiacoch = content/baby-months.js. Záznamy dňa sú ukážkové. -->
+<!-- Prototyp „Kruh cesty“ – 2. verzia, radikálne zjednodušená (Samo 17. 11. 2026: hodiny dňa „chaotické“ → preč).
+     Samostatný súbor, appka naň neodkazuje.
+     Tri vrstvy: tichá linka času (otáčanie prstom, náhľad v strede) · pôvodný kruh z appky
+     (pred pôrodom 3 diely prípravy Domov · Taška · Vybaviť, ktoré dorastajú; po pôrode Kŕmenie · Spánok · Plienky)
+     · stred = dnešok / časovač, ťuk = 3 rýchle záznamy.
+     Ikony = iconPaths vo v5-mobile.js; ovocie = baby-figure.js; veľkosti = content/pregnancy-weeks.js (+ APPROX_ROUND
+     z guguchat.js); vety o mesiacoch = content/baby-months.js. Najviac 3 farby (ružová, broskyňová, modrá). -->
 <link rel="stylesheet" href="fonts/montserrat.css">
 <style>
-  :root { --brand: #5f4fb1; --brand-l: #8171ce; --ic: #6a4fc4; --pink: #f07f98; }
+  :root { --brand: #5f4fb1; --ic: #6a4fc4; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Montserrat, "Segoe UI", system-ui, sans-serif; background: #ece7f4; color: #29243a; }
   button { font-family: inherit; }
@@ -32,11 +34,12 @@
   /* ——— Telefón + sivé zástupné bloky domova ——— */
   .phone { --ink: #29243a; --muted: #5d5768; --card: rgba(255, 253, 255, .97); --card-solid: #fff; --line: rgba(117, 96, 181, .14);
     --ph: rgba(117, 96, 181, .075); --sep: #fffdff; --gap: 14px;
+    --track: #e7e1f3; --done: #c9bdea; --dot: #7b6bc8;
     position: relative; display: flex; flex-direction: column; gap: var(--gap); padding: 16px 16px 0; overflow: hidden; border-radius: 34px;
     color: var(--ink); background: linear-gradient(165deg, #f4f0ff 0%, #fbf8ff 48%, #fff4f0 100%);
     box-shadow: 0 30px 60px rgba(60, 40, 90, .18), 0 0 0 8px #fff, 0 0 0 9px rgba(117, 96, 181, .2); }
   .phone.night { --ink: #f1ecfa; --muted: #c2b9d6; --card: #262036; --card-solid: #2b2440; --line: rgba(190, 170, 255, .16);
-    --ph: rgba(255, 255, 255, .06); --sep: #262036;
+    --ph: rgba(255, 255, 255, .06); --sep: #262036; --track: #3a3350; --done: #5f548a; --dot: #b9adf0;
     background: linear-gradient(165deg, #1d1829 0%, #211b30 55%, #261d2c 100%); box-shadow: 0 30px 60px rgba(20, 10, 40, .4), 0 0 0 8px #3a3350, 0 0 0 9px rgba(0, 0, 0, .3); }
   .phone.s667 { --gap: 10px; padding-top: 12px; }
   .ph { flex: none; border-radius: 20px; background: var(--ph); }
@@ -62,105 +65,65 @@
   .dial:focus-visible { box-shadow: 0 0 0 3px rgba(123, 97, 200, .55); }
 
   .mid { transform-box: view-box; transform-origin: 210px 210px; transition: opacity .3s ease, transform .5s cubic-bezier(.3, 1.4, .5, 1); }
-  .ring.open .mid { opacity: .28; transform: scale(.95); }
-  .ring.pv .mid { opacity: .4; transform: scale(.97); }
+  .ring.open .mid { opacity: .25; transform: scale(.95); }
+  .ring.pv .mid { opacity: .35; transform: scale(.97); }
   .seg-base { stroke: var(--sep); stroke-width: 5; stroke-linejoin: round; }
   .seg-hit { fill: transparent; stroke: none; cursor: pointer; outline: none; }
   .seg-hit:focus-visible { stroke: rgba(111, 84, 158, .75); stroke-width: 4; }
-  .seg-fill { transition: opacity .3s; }
+  .seg-fill { transition: opacity .4s ease; }
   .sic { pointer-events: none; }
-  .seg-glow { opacity: .35; }
-  @keyframes glow { 50% { opacity: .85; } }
-  .gloss { fill: none; stroke: rgba(255, 255, 255, .6); stroke-linecap: round; opacity: .14; pointer-events: none; }
-  .night .gloss { opacity: .08; }
+  .last { font: 700 19px Montserrat, "Segoe UI", system-ui, sans-serif; text-anchor: middle; pointer-events: none; }
+  .seg-pulse { transform-box: fill-box; transform-origin: center; animation: segPulse .9s ease; }
+  @keyframes segPulse { 40% { transform: scale(1.04); filter: brightness(1.06); } }
 
-  .track { fill: none; stroke: rgba(123, 97, 200, .16); stroke-width: 1.2; }
-  .night .track { stroke: rgba(200, 185, 255, .14); }
-  .wk { transition: r .25s ease, fill .25s ease; }
-  .wk.f { fill: #dcd5ea; }
-  .night .wk.f { fill: #4b4363; }
-  .wk.f.pv { fill: #c3b5f1; }
-  .night .wk.f.pv { fill: #8f7fd6; }
-  .wk.goal { fill: none; stroke: #f07f98; stroke-width: 1.8; }
-  .wk.sel { fill: #8171ce; }
-  .mo { fill: none; stroke-linecap: round; transition: stroke .25s ease; }
-  .mo.f { stroke: #e1daee; }
-  .night .mo.f { stroke: #453d5c; }
-  .mo.f.pv { stroke: #c3b5f1; }
-  .night .mo.f.pv { stroke: #8f7fd6; }
-  .bead { pointer-events: none; }
-  .bead-halo { fill: #f07f98; opacity: .22; transform-box: fill-box; transform-origin: center; }
-  .bead-dot { stroke: #fff; stroke-width: 3; }
-  .night .bead-dot { stroke: #2b2440; }
-  .ring.scrub .bead-halo { opacity: .32; }
-  @keyframes halo { 50% { transform: scale(1.35); opacity: .08; } }
-  .anchor { fill: none; stroke: #f07f98; stroke-width: 2; opacity: 0; transition: opacity .2s; }
-  .anchor.on { opacity: .9; }
-
-  .dayhalf { fill: none; }
-  path.ev { fill: none; stroke-linecap: round; }
-  .ev-run { animation: runPulse 2.4s ease-in-out infinite; }
-  @keyframes runPulse { 50% { opacity: .55; } }
-  .hand line { stroke: #5f4fb1; stroke-width: 3; stroke-linecap: round; }
-  .hand circle { fill: #5f4fb1; stroke: #fff; stroke-width: 2.5; }
-  .night .hand line { stroke: #cfc4ff; }
-  .night .hand circle { fill: #cfc4ff; stroke: #262036; }
-  .tick { fill: rgba(123, 97, 200, .35); }
-  .night .tick { fill: rgba(200, 185, 255, .35); }
-  .dic { color: #a99be0; }
-  .night .dic { color: #8f84b3; }
-  .ping { fill: none; stroke-width: 3; transform-box: fill-box; transform-origin: center; animation: ping 1s cubic-bezier(.2, .8, .3, 1) forwards; pointer-events: none; }
-  @keyframes ping { from { transform: scale(.4); opacity: 1; } to { transform: scale(2.6); opacity: 0; } }
+  /* Linka času: jedna farba, prejdené o tón tmavšie, jedna bodka = dnes */
+  .track { fill: none; stroke: var(--track); }
+  .done { fill: none; stroke: var(--done); stroke-linecap: round; }
+  .today { fill: var(--dot); stroke: var(--sep); stroke-width: 2.5; pointer-events: none; }
 
   /* Stred = dnešok */
   .core { position: absolute; left: 50%; top: 50%; width: var(--C); height: var(--C); margin: calc(var(--C) / -2) 0 0 calc(var(--C) / -2);
     display: grid; place-content: center; justify-items: center; gap: 2px; padding: 0; border: 0; border-radius: 50%; text-align: center; color: var(--ink); cursor: pointer;
     background: radial-gradient(circle at 38% 28%, #fff 0%, #fcfaff 52%, #f1ebfb 100%);
-    box-shadow: 0 10px 22px rgba(84, 57, 101, .15), inset 0 -6px 14px rgba(123, 97, 200, .08), inset 0 2px 0 #fff;
+    box-shadow: 0 10px 22px rgba(84, 57, 101, .14), inset 0 -6px 14px rgba(123, 97, 200, .07), inset 0 2px 0 #fff;
     transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease; z-index: 2; }
   .night .core { background: radial-gradient(circle at 38% 28%, #3d3456 0%, #322a49 55%, #2a2340 100%);
     box-shadow: 0 10px 22px rgba(0, 0, 0, .35), inset 0 -6px 14px rgba(0, 0, 0, .15), inset 0 1px 0 rgba(255, 255, 255, .08); }
-  .core::before { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid rgba(123, 97, 200, .2); pointer-events: none; }
   .core:focus-visible { outline: 3px solid rgba(123, 97, 200, .6); outline-offset: 4px; }
   .core .l1 { font-size: 17px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }
   .core .l2 { font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--muted); }
-  .core .hint { display: grid; place-items: center; width: 24px; height: 24px; margin-top: 5px; border-radius: 50%; background: rgba(123, 97, 200, .13); color: var(--ic); }
+  .core .hint { display: grid; place-items: center; width: 22px; height: 22px; margin-top: 5px; border-radius: 50%; background: rgba(123, 97, 200, .12); color: var(--ic); }
   .night .core .hint { background: rgba(200, 185, 255, .16); color: #d9cfff; }
-  .core .hint svg { width: 13px; height: 13px; }
-  .core .tm { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.05; }
-  .core .tic { width: 20px; height: 20px; color: #768fd8; }
-  .core .stop { display: block; width: 10px; height: 10px; margin-top: 5px; border-radius: 3px; background: #768fd8; opacity: .8; }
+  .core .hint svg { width: 12px; height: 12px; }
+  .core .tm { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.05; }
+  .core .tic { width: 18px; height: 18px; color: #768fd8; }
   .core .xx { width: 22px; height: 22px; color: var(--muted); }
   .ring.open .core { transform: scale(.6); }
   .ring.small.open .core { transform: scale(.5); }
   .ring.pv .core { opacity: 0; }
   .ring.small .core .l2 { display: none; }
+  .ring.small .core.run .l2 { display: block; }
   .ring.small .core .l1 { font-size: 15px; }
   .ring.small .core .tm { font-size: 18px; }
-  .ring.small .core .hint { width: 22px; height: 22px; margin-top: 3px; }
 
   /* Náhľad pri otáčaní */
   .preview { position: absolute; left: 50%; top: 50%; width: var(--PV); height: var(--PV); margin: calc(var(--PV) / -2) 0 0 calc(var(--PV) / -2);
-    display: grid; place-content: center; justify-items: center; gap: 3px; padding: 0 11%; border-radius: 50%; text-align: center; pointer-events: none;
+    display: grid; place-content: center; justify-items: center; padding: 0 11%; border-radius: 50%; text-align: center; pointer-events: none;
     background: radial-gradient(circle at 40% 28%, #fff 0%, #f8f4ff 55%, #fff3ee 100%);
-    box-shadow: 0 18px 38px rgba(84, 57, 101, .2), inset 0 2px 0 #fff; opacity: 0; transform: scale(.5);
+    box-shadow: 0 18px 38px rgba(84, 57, 101, .18), inset 0 2px 0 #fff; opacity: 0; transform: scale(.5);
     transition: transform .5s cubic-bezier(.3, 1.45, .5, 1), opacity .22s ease; z-index: 3; }
   .night .preview { background: radial-gradient(circle at 40% 28%, #3f355a 0%, #30284a 60%, #2c2238 100%); box-shadow: 0 18px 38px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .08); }
   .ring.pv .preview { opacity: 1; transform: none; }
-  .pv-art svg { display: block; width: 46px; height: 46px; }
-  .pv-art .bb { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: rgba(123, 97, 200, .12); color: var(--ic); }
-  .night .pv-art .bb { color: #d9cfff; }
-  .pv-art .bb svg { width: 26px; height: 26px; }
-  .pv-l1 { font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
-  .pv-l2 { font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--muted); }
+  .ring.post .preview { padding: 0 12%; }
   .pv-in { display: grid; justify-items: center; gap: 3px; }
   .pv-in.swap { animation: swap .28s ease; }
   @keyframes swap { from { opacity: .35; transform: translateY(4px); } }
-  .ring.small .pv-art svg, .ring.small .pv-art .bb { width: 34px; height: 34px; }
+  .pv-art svg { display: block; width: 44px; height: 44px; }
+  .pv-l1 { font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
+  .pv-l2 { font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--muted); }
+  .ring.small .pv-art svg { width: 34px; height: 34px; }
   .ring.small .pv-l1 { font-size: 16px; }
   .ring.small .pv-l2 { font-size: 13px; }
-  .ring.small.post .pv-art { display: none; }
-  .ring.post .preview { padding: 0 12%; }
 
   /* Rýchle záznamy – vykvitnú zo stredu */
   .petal { position: absolute; left: 50%; top: 50%; width: var(--P); height: var(--P); margin: calc(var(--P) / -2) 0 0 calc(var(--P) / -2);
@@ -175,9 +138,8 @@
   .petal:focus-visible { outline: 3px solid rgba(123, 97, 200, .6); outline-offset: 3px; }
   .ring.open .petal { opacity: 1; pointer-events: auto; transform: translate(var(--x), var(--y)) scale(1);
     transition: transform .62s cubic-bezier(.28, 1.6, .5, 1) calc(var(--i) * 55ms), opacity .22s ease calc(var(--i) * 55ms); }
-  .petal:active { filter: brightness(.97); }
 
-  /* Malé okno (spoločný vzor: × / ťuk vedľa / Esc) */
+  /* Malé okno (× / ťuk vedľa / Esc) */
   .scrim { position: absolute; inset: 0; z-index: 8; background: rgba(41, 36, 58, .3); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
   .scrim.open { opacity: 1; pointer-events: auto; }
   .sheet { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 9; padding: 16px 16px 18px; border-radius: 26px; background: var(--card-solid);
@@ -197,9 +159,6 @@
   .chip[aria-pressed="true"] { border-color: #7b6bc8; background: #f3eeff; color: #4a3d99; }
   .night .chip[aria-pressed="true"] { background: #3d3360; color: #f1ecfa; border-color: #a99be0; }
   .sh-note { margin: 12px 0 16px; color: var(--muted); font-size: 14px; font-weight: 600; line-height: 1.4; }
-  .legend { display: grid; gap: 10px; margin: 14px 0 16px; padding: 0; list-style: none; font-size: 15px; font-weight: 700; }
-  .legend li { display: flex; align-items: center; gap: 12px; }
-  .legend i { display: block; flex: none; width: 30px; height: 12px; border-radius: 99px; }
   .save { width: 100%; min-height: 52px; border: 0; border-radius: 18px; color: #fff; font-size: 16px; font-weight: 800; cursor: pointer;
     background: linear-gradient(135deg, #8171ce, #5f4fb1); box-shadow: 0 8px 18px rgba(95, 79, 177, .28); }
   .tag { color: #9a8fb0; font-size: 12px; font-weight: 700; }
@@ -214,20 +173,8 @@
   .night .toast button { background: rgba(95, 79, 177, .14); color: #4a3d99; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  /* Úvodné dorastanie */
-  @keyframes dotIn { from { opacity: 0; } }
-  @keyframes midIn { from { opacity: 0; transform: scale(.88); } }
-  @keyframes beadIn { from { opacity: 0; } 60% { opacity: 0; } }
-  .ring.intro .wk, .ring.intro .mo { animation: dotIn .45s ease both; animation-delay: var(--d); }
-  .ring.intro .bead { animation: beadIn 1.2s ease both; }
-  .ring.intro.post .mid { animation: midIn .9s cubic-bezier(.3, 1.3, .5, 1) both; }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .core::before { animation: breathe 4.8s ease-in-out infinite; }
-    .seg-glow { animation: glow 3.8s ease-in-out infinite; }
-    .bead-halo { animation: halo 3.2s ease-in-out infinite; }
-  }
-  @keyframes breathe { 0%, 100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.05); opacity: 1; } }
+  @keyframes midIn { from { opacity: 0; transform: scale(.9); } }
+  .ring.intro .mid { animation: midIn .8s cubic-bezier(.3, 1.3, .5, 1) both; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -240,7 +187,7 @@
   <span class="grp"><button type="button" data-k="night" data-v="0">Deň</button><button type="button" data-k="night" data-v="1">Noc</button></span>
   <span class="grp"><button type="button" data-k="run" data-v="t" id="runBtn">Beží časovač</button></span>
   <span class="grp"><button type="button" data-k="size" data-v="390">390 × 844</button><button type="button" data-k="size" data-v="375">375 × 667</button><button type="button" data-k="size" data-v="obe">obe</button></span>
-  <small>Potiahni prstom po kruhu = iný týždeň / mesiac (pustíš → späť na dnešok). Ťukni na stred = rýchle záznamy. Záznamy dňa sú ukážkové; nič sa neukladá. Adresa: ?period=po&amp;night=1&amp;run=1&amp;size=obe</small>
+  <small>Potiahni prstom po kruhu = iný týždeň / mesiac (pustíš → späť na dnešok). Ťukni na stred = rýchle záznamy. Nič sa neukladá. Adresa: ?period=po&amp;night=1&amp;run=1&amp;size=obe</small>
 </div>
 <main class="stage" id="stage"></main>
 
@@ -251,21 +198,16 @@
 
   // ——— Ikony: cesty skopírované z iconPaths vo v5-mobile.js (Phosphor, MIT) ———
   const ICON = {
-    administration: "<path d='M200,112a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h40A8,8,0,0,1,200,112Zm-8,24H152a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm40-80V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Zm-80.26-34a8,8,0,1,1-15.5,4c-2.63-10.26-13.06-18-24.25-18s-21.610,7.740-24.25,18a8,8,0,1,1-15.5-4,39.840,39.840,0,0,1,17.19-23.34,32,32,0,1,1,45.12,0A39.76,39.76,0,0,1,135.75,166ZM96,136a16,16,0,1,0-16-16A16,16,0,0,0,96,136Z'/>",
-    health: "<path d='M230.33,141.06a24.34,24.34,0,0,0-18.61-4.770C230.5,117.33,240,98.48,240,80c0-26.470-21.290-48-47.460-48A47.58,47.58,0,0,0,156,48.75,47.58,47.58,0,0,0,119.46,32C93.290,32,72,53.530,72,80c0,11,3.240,21.690,10.060,33a31.870,31.870,0,0,0-14.750,8.4L44.69,144H16A16,16,0,0,0,0,160v40a16,16,0,0,0,16,16H120a7.930,7.930,0,0,0,1.940-.24l64-16a6.940,6.940,0,0,0,1.190-.4L226,182.82l.44-.2a24.6,24.6,0,0,0,3.930-41.560ZM119.46,48A31.150,31.150,0,0,1,148.6,67a8,8,0,0,0,14.8,0,31.150,31.150,0,0,1,29.140-19C209.59,48,224,62.650,224,80c0,19.510-15.790,41.580-45.660,63.9l-11.090,2.550A28,28,0,0,0,140,112H100.68C92.050,100.36,88,90.120,88,80,88,62.650,102.41,48,119.46,48ZM16,160H40v40H16Zm203.43,8.210-38,16.180L119,200H56V155.31l22.630-22.620A15.860,15.860,0,0,1,89.940,128H140a12,12,0,0,1,0,24H112a8,8,0,0,0,0,16h32a8.320,8.320,0,0,0,1.790-.2l67-15.410.31-.08a8.6,8.6,0,0,1,6.3,15.9Z'/>",
-    travel: "<path d='M104,88v96a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Zm24-8a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V88A8,8,0,0,0,128,80Zm32,0a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V88A8,8,0,0,0,160,80Zm48-16V208a16,16,0,0,1-16,16H176v16a8,8,0,0,1-16,0V224H96v16a8,8,0,0,1-16,0V224H64a16,16,0,0,1-16-16V64A16,16,0,0,1,64,48H88V24A24,24,0,0,1,112,0h32a24,24,0,0,1,24,24V48h24A16,16,0,0,1,208,64ZM104,48h48V24a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8Zm88,160V64H64V208H192Z'/>",
-    babyHub: "<path d='M160,32h-8a16,16,0,0,0-16,16v56H55.2A40.07,40.07,0,0,0,16,72a8,8,0,0,0,0,16,24,24,0,0,1,24,24,80.09,80.09,0,0,0,80,80h40a80,80,0,0,0,0-160Zm63.48,72H166.81l41.86-33.49A63.730,63.730,0,0,1,223.48,104ZM160,48a63.59,63.59,0,0,1,36.69,11.61L152,95.35V48Zm0,128H120a64.090,64.090,0,0,1-63.5-56h167A64.090,64.090,0,0,1,160,176Zm-56,48a16,16,0,1,1-16-16A16,16,0,0,1,104,224Zm104,0a16,16,0,1,1-16-16A16,16,0,0,1,208,224Z'/>",
-    stethoscope: "<path d='M220,160a12,12,0,1,1-12-12A12,12,0,0,1,220,160Zm-4.55,39.29A48.08,48.08,0,0,1,168,240H144a48.05,48.05,0,0,1-48-48V151.49A64,64,0,0,1,40,88V40a8,8,0,0,1,8-8H72a8,8,0,0,1,0,16H56V88a48,48,0,0,0,48.64,48c26.11-.34,47.36-22.25,47.36-48.83V48H136a8,8,0,0,1,0-16h24a8,8,0,0,1,8,8V87.17c0,32.84-24.53,60.29-56,64.31V192a32,32,0,0,0,32,32h24a32.06,32.06,0,0,0,31.22-25,40,40,0,1,1,16.23.27ZM232,160a24,24,0,1,0-24,24A24,24,0,0,0,232,160Z'/>",
-    mama: "<path d='M245.83,121.63a15.53,15.53,0,0,0-9.52-7.33,73.51,73.51,0,0,0-22.17-2.22c4-19.85,1-35.55-2.06-44.86a16.15,16.15,0,0,0-18.79-10.88,85.53,85.53,0,0,0-28.55,12.12,94.58,94.58,0,0,0-27.11-33.25,16.05,16.05,0,0,0-19.26,0A94.48,94.48,0,0,0,91.26,68.46,85.53,85.53,0,0,0,62.71,56.34,16.15,16.15,0,0,0,43.92,67.22c-3,9.31-6,25-2.06,44.86a73.51,73.51,0,0,0-22.17,2.22,15.53,15.53,0,0,0-9.52,7.33,16,16,0,0,0-1.6,12.27c3.39,12.57,13.8,36.48,45.33,55.32S113.13,208,128.05,208s42.67,0,74-18.78c31.53-18.84,41.94-42.75,45.33-55.32A16,16,0,0,0,245.83,121.63ZM59.14,72.14a.2.2,0,0,1,.23-.15A70.43,70.43,0,0,1,85.18,83.66,118.65,118.65,0,0,0,80,119.17c0,18.74,3.77,34,9.11,46.28A123.59,123.59,0,0,1,69.57,140C51.55,108.62,55.3,84,59.14,72.14Zm3,103.35C35.47,159.57,26.82,140.05,24,129.7a59.82,59.82,0,0,1,22.5-1.17,129.08,129.08,0,0,0,9.15,19.41,142.28,142.28,0,0,0,34,39.56A114.92,114.92,0,0,1,62.1,175.49ZM128,190.4c-9.33-6.94-32-28.23-32-71.23C96,76.7,118.38,55.24,128,48c9.62,7.26,32,28.72,32,71.19C160,162.17,137.33,183.46,128,190.4ZM170.82,83.66A70.43,70.43,0,0,1,196.63,72a.2.2,0,0,1,.23.15C200.7,84,204.45,108.62,186.43,140a123.32,123.32,0,0,1-19.54,25.48c5.34-12.26,9.11-27.54,9.11-46.28A118.650,118.650,0,0,0,170.82,83.66ZM232,129.72c-2.77,10.25-11.4,29.81-38.09,45.77a114.92,114.92,0,0,1-27.55,12,142.28,142.28,0,0,0,34-39.56,129.08,129.08,0,0,0,9.15-19.41A59.69,59.69,0,0,1,232,129.71Z'/>",
-    footprints: "<path d='M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.890-76.110C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8.05,8.05,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.82,6.22,17.29,19.89c11.1,23.41,15.29,58,3.9,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z'/>",
+    home: "<path d='M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H48V120l80-80,80,80Z'/>",
+    checklist: "<path d='M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z'/>",
+    book: "<path d='M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64ZM160,88h40a8,8,0,0,1,0,16H160a8,8,0,0,1,0-16Zm48,40a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,128Zm0,32a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,160Z'/>",
+    footprints: "<path d='M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.930,29.38-18.56,73,.29,96A8.05,8.05,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.82,6.22,17.29,19.89c11.1,23.41,15.29,58,3.9,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z'/>",
     camera: "<path d='M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z'/>",
     voice: "<path d='M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z'/>",
     feeding: "<path d='M104,64V48a24,24,0,0,1,48,0V64H136V48a8,8,0,0,0-16,0V64Z'/><path d='M80,64h96a8,8,0,0,1,8,8V92H72V72A8,8,0,0,1,80,64Z'/><path fill-rule='evenodd' d='M72,92H184V200a32,32,0,0,1-32,32H104a32,32,0,0,1-32-32ZM88,92V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V92Z'/><path d='M80,128h36a8,8,0,0,1,0,16H80ZM80,164h36a8,8,0,0,1,0,16H80Z'/>",
     moon: "<path d='M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z'/>",
-    sun: "<path d='M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z'/>",
     diaper: "<path fill-rule='evenodd' d='M40,48H216a8,8,0,0,1,8,8v56c-36,4-56,36-56,84a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16c0-48-20-80-56-84V56A8,8,0,0,1,40,48ZM48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z'/>",
     plus: "<path d='M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z'/>",
-    baby: "<path d='M92,140a12,12,0,1,1,12-12A12,12,0,0,1,92,140Zm72-24a12,12,0,1,0,12,12A12,12,0,0,0,164,116Zm-12.27,45.23a45,45,0,0,1-47.46,0,8,8,0,0,0-8.54,13.54,61,61,0,0,0,64.54,0,8,8,0,0,0-8.54-13.54ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.11,88.11,0,0,0-84.09-87.91C120.32,56.38,120,71.88,120,72a8,8,0,0,0,16,0,8,8,0,0,1,16,0,24,24,0,0,1-48,0c0-.73.13-14.3,8.46-30.63A88,88,0,1,0,216,128Z'/>",
     close: "<path d='M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z'/>"
   };
   const icon = (n, cls) => "<svg class='" + (cls || "") + "' viewBox='0 0 256 256' fill='currentColor' aria-hidden='true'>" + ICON[n] + "</svg>";
@@ -309,27 +251,28 @@
   // Veľkosť podľa content/pregnancy-weeks.js (NHS, sk); podlhovasté prirovnania nahradené APPROX_ROUND z guguchat.js.
   const WK = { 4: ["2 mm", ""], 5: ["2 mm", ""], 6: ["6 mm", "hrášok"], 7: ["10 mm", "bobuľa hrozna"], 8: ["16 mm", "malina"], 9: ["22 mm", "jahoda"], 10: ["30 mm", "malá marhuľa"], 11: ["41 mm", "figa"], 12: ["5,4 cm", "slivka"], 13: ["7,4 cm", "broskyňa"], 14: ["8,5 cm", "kiwi"], 15: ["10,1 cm", "jablko"], 16: ["11,6 cm", "pomaranč"], 17: ["12 cm", "granátové jablko"], 18: ["14,2 cm", "paprika"], 19: ["15,3 cm", "veľká mäsitá paradajka"], 20: ["25,6 cm", "grapefruit"], 21: ["26,7 cm", "veľký grapefruit"], 22: ["27,8 cm", "pomelo"], 23: ["28,9 cm", "veľké pomelo"], 24: ["30 cm", "hlávka ľadového šalátu"], 25: ["34,6 cm", "hlávka ľadového šalátu"], 26: ["35,6 cm", "malý karfiol"], 27: ["36,6 cm", "hlávka karfiolu"], 28: ["37,6 cm", "veľký karfiol"], 29: ["38,6 cm", "tekvica hokkaido"], 30: ["39,9 cm", "hlávka kapusty"], 31: ["41,1 cm", "kokosový orech"], 32: ["42,4 cm", "tekvica hokkaido"], 33: ["43,7 cm", "malý melón"], 34: ["45 cm", "cantaloupe melón"], 35: ["46,2 cm", "medový melón"], 36: ["47,4 cm", "veľký medový melón"], 37: ["48,6 cm", "malý vodový melón"], 38: ["49,8 cm", "malý vodový melón"], 39: ["50,7 cm", "vodový melón"], 40: ["51,2 cm", "tekvica"] };
   // Jedna overená veta na mesiac – doslovne z content/baby-months.js (PBB / CDC).
-  const MONTH = ["Ešte nevidí ostro, ale rozozná svetlo a tmu.", "Vydáva aj iné zvuky ako plač a reaguje na hlasné zvuky.", "Na tvoj úsmev môže odpovedať úsmevom.", "So záujmom si prezerá rúčky a dáva si ich do úst.", "Siaha po hračke, ktorú chce, a veci skúma ústami.", "Všímaj si jeho nálady a uč sa im rozumieť.", "Keď skúma a pohybuje sa po byte, buď nablízku, nech vie, že si pri ňom.", "Pred jeho očami schovaj hračku pod deku a nechaj ho hľadať ju.", "Bábätkám je lepšie, keď vedia, čo ich čaká – pomáha pravidelný rytmus spánku a jedla.", "Priprav mu bezpečné miesta, kde môže objavovať.", "Daj mu hrnce a pokrievky alebo malý bubienok a nechaj ho robiť hluk.", "Pravidelné časy spánku všetko uľahčujú."];
+  const MONTH = ["Ešte nevidí ostro, ale rozozná svetlo a tmu.", "Vydáva aj iné zvuky ako plač a reaguje na hlasné zvuky.", "Na tvoj úsmev môže odpovedať úsmevom.", "So záujmom si prezerá rúčky a dáva si ich do úst.", "Siaha po hračke, ktorú chce, a veci skúma ústami.", "Všímaj si jeho nálady a uč sa im rozumieť.", "Keď skúma a pohybuje sa po byte, buď nablízku, nech vie, že si pri ňom.", "Pred jeho očami schovaj hračku pod deku a nechaj ho hľadať ju.", "Pozrie sa, keď ho zavoláš menom, a džavoce rôzne slabiky ako „mamama“ či „bababa“.", "Priprav mu bezpečné miesta, kde môže objavovať.", "Daj mu hrnce a pokrievky alebo malý bubienok a nechaj ho robiť hluk.", "Pravidelné časy spánku všetko uľahčujú."];
 
   // ——— Ukážkový profil ———
   const PRE = { week: 24, daysLeft: 112 };
   const POST = { day: 96 };
-  const POST_POS = POST.day / 30.4375; // 3,15 → 4. mesiac
-  const today = pre => pre ? PRE.week : POST_POS;
-  const unitOf = (pre, pos) => pre ? Math.max(1, Math.min(40, Math.round(pos))) : Math.max(1, Math.min(12, Math.floor(pos) + 1));
+  const PER = pre => pre ? 40 : 12;
+  const today = pre => pre ? PRE.week : POST.day / 30.4375; // 3,15 → 4. mesiac
+  const unitOf = (pre, pos) => pre ? Math.max(1, Math.min(40, Math.ceil(pos - 1e-6))) : Math.max(1, Math.min(12, Math.floor(pos) + 1));
 
-  // Diely prípravy – farby oblastí zo znalosti/dizajn.md + prechody z pôvodného kruhu. p = dorastanie (čas + úlohy), nikdy „nesplnené“.
-  const SEGS = [
-    { label: "Úrady", icon: "administration", base: "#dfe6fb", nb: "#3d4566", g: ["#d6e0fa", "#93a8e6", "#768fd8"], ink: "#3f57a8", ni: "#c9d3f7", p: .74 },
-    { label: "Pôrodnica", icon: "health", base: "#fcdde6", nb: "#5b3c4f", g: ["#f9d5df", "#eca5ba", "#df91aa"], ink: "#a8486a", ni: "#f6c7d4", p: .5, next: true },
-    { label: "Taška do pôrodnice", icon: "travel", base: "#fde7d2", nb: "#5a4736", g: ["#fde0c4", "#f4b680", "#e99d62"], ink: "#9a5a22", ni: "#f8d6b4", p: .36 },
-    { label: "Výbava", icon: "babyHub", base: "#ddf1e8", nb: "#2e4f47", g: ["#d6efe4", "#9ad2bb", "#73ba9f"], ink: "#24715f", ni: "#bce6d6", p: .6 },
-    { label: "Pediater", icon: "stethoscope", base: "#e1eef9", nb: "#2f4a5f", g: ["#ddebf8", "#a5c9e7", "#82b2d9"], ink: "#2f6a8f", ni: "#c3def3", p: .42 },
-    { label: "Ja", icon: "mama", base: "#fcf1d3", nb: "#574c2e", g: ["#fff1cc", "#f5d684", "#e9bf55"], ink: "#7d5a10", ni: "#f3e0aa", p: .82 }
+  // Tri farby kruhu z appky (v5OPink / v5OLilac / v5OPurple + základ z v2.css); rovnaké pred aj po pôrode.
+  const COL = [
+    { base: "#fcd9e3", nb: "#563a4b", g: ["#f9d5df", "#eca5ba", "#df91aa"], ink: "#a8486a", ni: "#f6c7d4" },
+    { base: "#fde4cc", nb: "#554433", g: ["#fde0c4", "#f1ac74", "#e6955a"], ink: "#9a5a22", ni: "#f8d6b4" },
+    { base: "#dbe3fa", nb: "#39405e", g: ["#d6e0fa", "#93a8e6", "#768fd8"], ink: "#3f57a8", ni: "#c9d3f7" }
   ];
+  // Pred pôrodom: pôvodné 3 diely prípravy z appky (prenatalOrganizationSections) – dorastajú, nikdy „prázdne“.
+  const PREP = [{ label: "Domov", icon: "home", p: .72 }, { label: "Taška", icon: "checklist", p: .42 }, { label: "Vybaviť", icon: "book", p: .58 }];
+  // Po pôrode: pôvodný kruh rýchlych záznamov (G2Q_SEG_ICON). last = minúty od posledného záznamu (ukážka).
+  const QUICK = [{ k: "feed", label: "Kŕmenie", icon: "feeding" }, { k: "sleep", label: "Spánok", icon: "moon" }, { k: "diaper", label: "Plienky", icon: "diaper" }];
   const PETALS = {
-    pred: [{ k: "move", l: "Pohyby", ic: "footprints", c: "#e6e0fa", n: "#3b3360", i: "#5f4fb1", ni: "#d9cfff" }, { k: "bump", l: "Bruško", ic: "camera", c: "#fbd5e0", n: "#4a3040", i: "#a8486a", ni: "#f6c7d4" }, { k: "voice", l: "Hlas", ic: "voice", c: "#fde0c6", n: "#4a3a2c", i: "#9a5a22", ni: "#f8d6b4" }],
-    po: [{ k: "feed", l: "Kŕmenie", ic: "feeding", c: "#fbd5e0", n: "#4a3040", i: "#a8486a", ni: "#f6c7d4" }, { k: "sleep", l: "Spánok", ic: "moon", c: "#dbe3fa", n: "#2f3650", i: "#3f57a8", ni: "#c9d3f7" }, { k: "diaper", l: "Plienky", ic: "diaper", c: "#fde0c6", n: "#4a3a2c", i: "#9a5a22", ni: "#f8d6b4" }]
+    pred: [{ k: "move", l: "Pohyby", ic: "footprints" }, { k: "bump", l: "Bruško", ic: "camera" }, { k: "voice", l: "Hlas", ic: "voice" }],
+    po: QUICK.map(q => ({ k: q.k, l: q.label, ic: q.icon }))
   };
   const SHEETS = {
     move: { t: "Pohyby", ic: "footprints", chips: ["Teraz", "Pred chvíľou"] },
@@ -347,34 +290,22 @@
     night: Q.get("night") === "1",
     run: Q.get("run") === "1",
     size: ["390", "375", "obe"].includes(Q.get("size")) ? Q.get("size") : "390",
-    runBase: 47 * 60, runSince: Date.now(), added: []
+    runBase: 47 * 60, runSince: Date.now(),
+    last: { feed: 125, sleep: 190, diaper: 62 }, lastAt: Date.now(), hinted: false
   };
-  const LOAD = Date.now();
-  const nowH = () => ((S.night ? 2 + 40 / 60 : 14 + 20 / 60) + (Date.now() - LOAD) / 3.6e6) % 24;
   const elapsed = () => S.runBase + (Date.now() - S.runSince) / 1000;
   const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+  // „naposledy“ ako v appke: do hodiny v minútach, potom v hodinách, po 24 h nič
+  const ago = k => { const m = S.last[k] + (Date.now() - S.lastAt) / 60000; if (m < 1) return "teraz"; if (m < 60) return "pred " + Math.floor(m) + " min"; if (m < 1440) return "pred " + Math.floor(m / 60) + " h"; return ""; };
 
-  // Ukážkové záznamy posledných 24 h (hodiny dňa; d = trvanie v hodinách)
-  const BASE = {
-    day: [["sleep", 15.3, 1.0], ["sleep", 19.4, .6], ["sleep", 21.2, 2.5], ["sleep", .5, 2.7], ["sleep", 3.9, 2.6], ["sleep", 9.4, 1.1], ["sleep", 11.8, .9],
-      ["feed", 17.1], ["feed", 20.6], ["feed", 23.8], ["feed", 3.3], ["feed", 6.6], ["feed", 8.9], ["feed", 13.0],
-      ["diaper", 17.3], ["diaper", 23.95], ["diaper", 6.8], ["diaper", 9.05], ["diaper", 12.75]],
-    night: [["sleep", 3.5, 2.4], ["sleep", 9.5, 1.2], ["sleep", 12.6, 1.0], ["sleep", 15.4, .9], ["sleep", 19.6, 2.3], ["sleep", 22.6, 2.0],
-      ["feed", 6.2], ["feed", 9.1], ["feed", 11.9], ["feed", 14.6], ["feed", 17.8], ["feed", 22.3], ["feed", 1.1],
-      ["diaper", 6.4], ["diaper", 12.1], ["diaper", 17.9], ["diaper", 22.45], ["diaper", 1.25]]
-  };
-
-  // ——— Geometria (viewBox 420, stred 210) ———
-  const geo = small => small
-    ? { R: 168, r: 106, bend: 20, T: 197, icon: 42, dot: [4.6, 3.1], mo: 4.4, lane: { s: 154, sw: 16, f: 134, fw: 12, d: 117, dr: 5.6 } }
-    : { R: 168, r: 94, bend: 24, T: 196, icon: 37, dot: [3.7, 2.5], mo: 3.4, lane: { s: 152, sw: 17, f: 129, fw: 13, d: 109, dr: 6.5 } };
+  // ——— Geometria (viewBox 420, stred 210) – esovitý diel ako adaptiveOSegmentPath v appke ———
+  const geo = small => small ? { R: 170, r: 98, bend: 40, T: 194, icon: 48, line: 3 } : { R: 166, r: 82, bend: 44, T: 193, icon: 40, line: 2.4 };
   const pt = (a, r) => { const t = a * Math.PI / 180; return [210 + r * Math.cos(t), 210 + r * Math.sin(t)]; };
   const n2 = v => Math.round(v * 100) / 100;
   function cut(a, g) {
     const o = pt(a, g.R), i = pt(a, g.r), t = a * Math.PI / 180, tx = -Math.sin(t), ty = Math.cos(t);
     return { o, i, c1: [o[0] + tx * g.bend, o[1] + ty * g.bend], c2: [i[0] + tx * g.bend, i[1] + ty * g.bend] };
   }
-  // Rovnaký esovitý tvar dielu ako adaptiveOSegmentPath v appke, len pre 6 dielov po 60°.
   function seg(st, span, g) {
     if (span <= .5) return "";
     const f = cut(st, g), t = cut(st + span, g);
@@ -393,9 +324,7 @@
     return [cx / (3 * A), cy / (3 * A)];
   }
   const arc = (a1, a2, r) => { const p = pt(a1, r), q = pt(a2, r); return "M " + n2(p[0]) + " " + n2(p[1]) + " A " + r + " " + r + " 0 " + (a2 - a1 > 180 ? 1 : 0) + " 1 " + n2(q[0]) + " " + n2(q[1]); };
-  const mix = (a, b, k) => "#" + [0, 2, 4].map(i => Math.round(parseInt(a.substr(1 + i, 2), 16) * (1 - k) + parseInt(b.substr(1 + i, 2), 16) * k).toString(16).padStart(2, "0")).join("");
-  const hAng = h => -90 + h * 15;
-  const posAng = (pre, pos) => pre ? -90 + (pos - .5) * 9 : -90 + pos * 30;
+  const posAng = (pre, pos) => -90 + pos / PER(pre) * 360;
 
   // ——— Jeden kruh (inštancia v jednom telefóne) ———
   let uid = 0;
@@ -417,115 +346,85 @@
       this.S = Sz; this.small = Sz < 235;
       const g = geo(this.small), st = this.el.style;
       st.setProperty("--S", Sz + "px");
-      st.setProperty("--C", Math.round(2 * g.r / 420 * Sz - 10) + "px");
-      st.setProperty("--P", (this.small ? 50 : 60) + "px");
-      st.setProperty("--PV", Math.round(Sz * (this.small ? .78 : .66)) + "px");
+      st.setProperty("--C", Math.round(2 * g.r / 420 * Sz - 4) + "px");
+      st.setProperty("--P", (this.small ? 50 : 58) + "px");
+      st.setProperty("--PV", Math.round(Sz * (this.small ? .8 : .7)) + "px");
       this.el.classList.toggle("small", this.small);
       this.render();
     }
+    segAngles() { return [-90, 30, 150]; }
     render() {
-      const g = geo(this.small), pre = this.pre, id = this.id;
+      const g = geo(this.small), pre = this.pre, id = this.id, run = !pre && S.run;
       this.el.classList.toggle("post", !pre);
-      let defs = "<filter id='" + id + "d' x='-40%' y='-40%' width='180%' height='180%'><feGaussianBlur in='SourceAlpha' stdDeviation='6' result='a'/><feOffset in='a' dx='1' dy='8' result='o'/><feFlood flood-color='#684a78' flood-opacity='" + (S.night ? .3 : .12) + "'/><feComposite in2='o' operator='in' result='s'/><feSpecularLighting in='a' surfaceScale='4' specularConstant='" + (S.night ? .04 : .1) + "' specularExponent='22' lighting-color='#fff9fc' result='l'><fePointLight x='125' y='25' z='175'/></feSpecularLighting><feComposite in='l' in2='SourceAlpha' operator='in' result='cl'/><feMerge><feMergeNode in='s'/><feMergeNode in='SourceGraphic'/><feMergeNode in='cl'/></feMerge></filter>" +
-        "<filter id='" + id + "b' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='9'/></filter>" +
-        "<linearGradient id='" + id + "bd' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#8171ce'/><stop offset='1' stop-color='#f07f98'/></linearGradient>" +
-        "<linearGradient id='" + id + "sl' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#a5b7ee'/><stop offset='1' stop-color='#768fd8'/></linearGradient>" +
-        "<linearGradient id='" + id + "fd' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f3b4c6'/><stop offset='1' stop-color='#df91aa'/></linearGradient>";
-      let mid = "", time = "";
-      if (pre) {
-        SEGS.forEach((s, i) => {
-          const st = -90 + i * 60, a = pt(st, (g.R + g.r) / 2), b = pt(st + 60, (g.R + g.r) / 2), c = centroid(st, 60, g), full = seg(st, 60, g);
-          defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + n2(a[0]) + "' y1='" + n2(a[1]) + "' x2='" + n2(b[0]) + "' y2='" + n2(b[1]) + "'><stop offset='0' stop-color='" + s.g[0] + "'/><stop offset='.55' stop-color='" + s.g[1] + "'/><stop offset='1' stop-color='" + s.g[2] + "'/></linearGradient>";
-          const gl1 = pt(st + 7, (g.R + g.r) / 2 + 14), gl2 = pt(st + Math.max(9, 60 * s.p - 10), (g.R + g.r) / 2 + 14);
-          mid += (s.next ? "<path class='seg-glow' d='" + full + "' fill='url(#" + id + "g" + i + ")' filter='url(#" + id + "b)'/>" : "") +
-            "<path class='seg-base' d='" + full + "' fill='" + (S.night ? s.nb : s.base) + "'/>" +
-            "<path class='seg-fill' data-i='" + i + "' d='" + seg(st, 60 * s.p, g) + "' fill='url(#" + id + "g" + i + ")' filter='url(#" + id + "d)'" + (S.night ? " opacity='.66'" : "") + "/>" +
-            "<path class='gloss' d='M " + n2(gl1[0]) + " " + n2(gl1[1]) + " A " + ((g.R + g.r) / 2 + 14) + " " + ((g.R + g.r) / 2 + 14) + " 0 0 1 " + n2(gl2[0]) + " " + n2(gl2[1]) + "' stroke-width='" + (this.small ? 8 : 10) + "'/>" +
-            "<g class='sic' fill='currentColor' style='color:" + (S.night ? s.ni : s.ink) + "' transform='translate(" + n2(c[0] - g.icon / 2) + " " + n2(c[1] - g.icon / 2) + ") scale(" + (g.icon / 256).toFixed(4) + ")'>" + ICON[s.icon] + "</g>" +
-            "<path class='seg-hit' d='" + full + "' data-seg='" + i + "' role='button' tabindex='0' aria-label='" + s.label + "'/>";
-        });
-        time = "<circle class='track' cx='210' cy='210' r='" + g.T + "'/>";
-        for (let i = 1; i <= 40; i++) {
-          const p = pt(-90 + (i - .5) * 9, g.T), past = i <= PRE.week;
-          const cls = i === 40 ? "wk f goal" : past ? "wk p" : "wk f";
-          time += "<circle class='" + cls + "' data-u='" + i + "' cx='" + n2(p[0]) + "' cy='" + n2(p[1]) + "' r='" + (past ? g.dot[0] : i === 40 ? g.dot[0] + .6 : g.dot[1]) + "'" + (past ? " fill='" + mix("#b3a5ea", "#ee9fb6", i / 40) + "'" : "") + " style='--d:" + (i * 16) + "ms'/>";
-        }
-      } else {
-        const mr = (g.R + g.r) / 2, w = g.R - g.r, L = g.lane, now = nowH();
-        const dayT = S.night ? "#2c2640" : "#fbf4ee", nightT = S.night ? "#201b31" : "#eeeaf9";
-        mid += "<path class='dayhalf' d='" + arc(0, 180, mr) + "' stroke='" + dayT + "' stroke-width='" + w + "'/>" +
-          "<path class='dayhalf' d='" + arc(180, 360, mr) + "' stroke='" + nightT + "' stroke-width='" + w + "'/>" +
-          "<circle cx='210' cy='210' r='" + g.R + "' fill='none' stroke='var(--line)' stroke-width='1'/><circle cx='210' cy='210' r='" + g.r + "' fill='none' stroke='var(--line)' stroke-width='1'/>";
-        for (let h = 0; h < 24; h += 3) { if (h % 12 === 0) continue; const p = pt(hAng(h), g.R - 6); mid += "<circle class='tick' cx='" + n2(p[0]) + "' cy='" + n2(p[1]) + "' r='" + (h % 6 ? 1.6 : 2.4) + "'/>"; }
-        const isz = this.small ? 18 : 16;
-        [["moon", 0], ["sun", 12]].forEach(([n, h]) => { const p = pt(hAng(h), (g.R + g.T) / 2 - 1); mid += "<g class='dic' fill='currentColor' transform='translate(" + n2(p[0] - isz / 2) + " " + n2(p[1] - isz / 2) + ") scale(" + (isz / 256).toFixed(4) + ")'>" + ICON[n] + "</g>"; });
-        const evs = BASE[S.night ? "night" : "day"].map(e => ({ type: e[0], t: e[1], d: e[2] })).concat(S.added.filter(e => e.type !== "move"));
-        const age = t => ((now - t) % 24 + 24) % 24;
-        const op = t => (1 - .5 * age(t) / 24).toFixed(2);
-        evs.forEach(e => {
-          const nw = e.isNew ? " data-new='1'" : "";
-          if (e.type === "sleep") mid += "<path class='ev' d='" + arc(hAng(e.t), hAng(e.t + e.d), L.s) + "' stroke='url(#" + id + "sl)' stroke-width='" + L.sw + "' opacity='" + op(e.t + e.d) + "'" + nw + " data-a='" + hAng(e.t + e.d) + "' data-r='" + L.s + "'/>";
-          if (e.type === "feed") mid += "<path class='ev' d='" + arc(hAng(e.t), hAng(e.t + .3), L.f) + "' stroke='url(#" + id + "fd)' stroke-width='" + L.fw + "' opacity='" + op(e.t) + "'" + nw + " data-a='" + hAng(e.t) + "' data-r='" + L.f + "'/>";
-          if (e.type === "diaper") { const p = pt(hAng(e.t), L.d); mid += "<circle class='ev' cx='" + n2(p[0]) + "' cy='" + n2(p[1]) + "' r='" + L.dr + "' fill='#f1ac74' opacity='" + op(e.t) + "'" + nw + " data-a='" + hAng(e.t) + "' data-r='" + L.d + "'/>"; }
-        });
-        if (S.run) mid += "<path class='ev ev-run' d='" + arc(hAng(now - elapsed() / 3600), hAng(now), L.s) + "' stroke='url(#" + id + "sl)' stroke-width='" + L.sw + "'/>";
-        mid += "<g class='hand' transform='rotate(" + n2(hAng(now) + 90) + " 210 210)'><line x1='210' y1='" + (210 - g.r + 3) + "' x2='210' y2='" + (210 - g.R - 2) + "'/><circle cx='210' cy='" + (210 - g.R - 2) + "' r='5'/></g>";
-        mid += "<circle class='band-hit' cx='210' cy='210' r='" + mr + "' fill='none' stroke='transparent' stroke-width='" + w + "' data-band='1' role='button' tabindex='0' aria-label='Náš deň – spánok, kŕmenie a plienky za posledných 24 hodín'/>";
-        time = "";
-        const cur = Math.floor(POST_POS), frac = POST_POS - cur;
-        for (let m = 0; m < 12; m++) {
-          const a1 = -90 + m * 30 + 2.2, a2 = -90 + (m + 1) * 30 - 2.2, col = mix("#b3a5ea", "#ee9fb6", (m + 1) / 12);
-          if (m < cur) time += "<path class='mo p' data-u='" + (m + 1) + "' d='" + arc(a1, a2, g.T) + "' stroke='" + col + "' stroke-width='" + g.mo + "' style='--d:" + (m * 50) + "ms'/>";
-          else if (m === cur) time += "<path class='mo f' data-u='" + (m + 1) + "' d='" + arc(a1, a2, g.T) + "' stroke-width='" + g.mo + "' style='--d:" + (m * 50) + "ms'/><path class='mo p' d='" + arc(a1, Math.max(a1 + .5, -90 + POST_POS * 30), g.T) + "' stroke='" + col + "' stroke-width='" + g.mo + "' style='--d:" + (m * 50) + "ms'/>";
-          else time += "<path class='mo f' data-u='" + (m + 1) + "' d='" + arc(a1, a2, g.T) + "' stroke-width='" + (g.mo - .8) + "' style='--d:" + (m * 50) + "ms'/>";
-        }
-      }
+      let defs = "<filter id='" + id + "d' x='-40%' y='-40%' width='180%' height='180%'><feGaussianBlur in='SourceAlpha' stdDeviation='6' result='a'/><feOffset in='a' dx='1' dy='8' result='o'/><feFlood flood-color='#684a78' flood-opacity='" + (S.night ? .3 : .1) + "'/><feComposite in2='o' operator='in' result='s'/><feSpecularLighting in='a' surfaceScale='4' specularConstant='" + (S.night ? .03 : .1) + "' specularExponent='22' lighting-color='#fff9fc' result='l'><fePointLight x='125' y='25' z='175'/></feSpecularLighting><feComposite in='l' in2='SourceAlpha' operator='in' result='cl'/><feMerge><feMergeNode in='s'/><feMergeNode in='SourceGraphic'/><feMergeNode in='cl'/></feMerge></filter>";
+      let mid = "";
+      (pre ? PREP : QUICK).forEach((s, i) => {
+        const st = this.segAngles()[i], c = COL[i], a = pt(st, (g.R + g.r) / 2), b = pt(st + 120, (g.R + g.r) / 2), full = seg(st, 120, g);
+        // ikona na uhle ťažiska dielu, ale v strede pásu (nie pri okraji stredu)
+        const c0 = centroid(st, 120, g), ce = pt(Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI, (g.R + g.r) / 2 + 2);
+        defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + n2(a[0]) + "' y1='" + n2(a[1]) + "' x2='" + n2(b[0]) + "' y2='" + n2(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.55' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
+        // pred pôrodom diel dorastá (p); po pôrode je celý ako v appke, bežiaci diel naplno
+        const span = pre ? 120 * s.p : 120, op = pre ? (S.night ? .7 : 1) : (run && s.k === "sleep" ? 1 : (S.night ? .5 : .62));
+        const lastTxt = !pre && !this.small ? (run && s.k === "sleep" ? "" : ago(s.k)) : "";
+        const iy = ce[1] - g.icon / 2 - (lastTxt ? 9 : 0);
+        mid += "<path class='seg-base' d='" + full + "' fill='" + (S.night ? c.nb : c.base) + "'/>" +
+          "<path class='seg-fill' data-i='" + i + "' d='" + seg(st, span, g) + "' fill='url(#" + id + "g" + i + ")' filter='url(#" + id + "d)' opacity='" + op + "'/>" +
+          "<g class='sic' fill='currentColor' style='color:" + (S.night ? c.ni : c.ink) + "' transform='translate(" + n2(ce[0] - g.icon / 2) + " " + n2(iy) + ") scale(" + (g.icon / 256).toFixed(4) + ")'>" + ICON[s.icon] + "</g>" +
+          (lastTxt ? "<text class='last' x='" + n2(ce[0]) + "' y='" + n2(iy + g.icon + 19) + "' fill='" + (S.night ? c.ni : c.ink) + "'>" + lastTxt + "</text>" : "") +
+          "<path class='seg-hit' d='" + full + "' data-seg='" + i + "' role='button' tabindex='0' aria-label='" + s.label + (lastTxt ? ", naposledy " + lastTxt : "") + "'/>";
+      });
+      // Linka času: celý kruh tichou farbou, prejdená časť o tón tmavšia, jedna bodka = dnes
+      const t = today(pre), endA = posAng(pre, t);
+      const time = "<circle class='track' cx='210' cy='210' r='" + g.T + "' stroke-width='" + g.line + "'/>" +
+        "<path class='done' d='" + arc(-90, Math.max(-89, endA), g.T) + "' stroke-width='" + g.line + "'/>";
       this.svg.innerHTML = "<defs>" + defs + "</defs><g class='mid'>" + mid + "</g><g class='time'>" + time + "</g>" +
-        "<circle class='anchor' r='" + (this.small ? 9 : 8) + "' cx='0' cy='0'/>" +
-        "<g class='bead'><circle class='bead-halo' r='" + (this.small ? 16 : 14) + "' cx='0' cy='0'/><circle class='bead-dot' r='" + (this.small ? 8.5 : 7.5) + "' cx='0' cy='0' fill='url(#" + id + "bd)'/></g><g class='pings'></g>";
-      this.bead = this.svg.querySelector(".bead"); this.anchor = this.svg.querySelector(".anchor");
-      const tp = pt(posAng(pre, today(pre)), g.T); this.anchor.setAttribute("cx", n2(tp[0])); this.anchor.setAttribute("cy", n2(tp[1]));
+        "<circle class='today' r='" + (this.small ? 7 : 6) + "' cx='0' cy='0'/>";
+      this.dot = this.svg.querySelector(".today");
       this.renderCore(); this.renderBloom();
       this.dial.setAttribute("aria-label", pre ? "Cesta tehotenstvom – šípkami na iný týždeň" : "Prvý rok – šípkami na iný mesiac");
-      this.dial.setAttribute("aria-valuemin", 1); this.dial.setAttribute("aria-valuemax", pre ? 40 : 12);
-      this.unit = null; this.setPos(this.scrubbing ? this.pos : today(pre));
-      if (this.first && !reduced) this.intro();
+      this.dial.setAttribute("aria-valuemin", 1); this.dial.setAttribute("aria-valuemax", PER(pre));
+      this.unit = null; this.setPos(this.scrubbing ? this.pos : t);
+      if (this.first && !reduced) { this.el.classList.add("intro"); setTimeout(() => this.el.classList.remove("intro"), 900); }
+      if (!S.hinted && !reduced) { S.hinted = true; setTimeout(() => this.hint(), 1100); }
       this.first = false;
-      this.svg.querySelectorAll("[data-new]").forEach(el => this.ping(+el.dataset.a, +el.dataset.r, el.getAttribute("stroke") || el.getAttribute("fill")));
-      S.added.forEach(e => delete e.isNew);
     }
-    intro() {
-      this.el.classList.add("intro");
-      setTimeout(() => this.el.classList.remove("intro"), 1500);
-      if (!this.pre) return;
-      const g = geo(this.small), fills = [...this.svg.querySelectorAll(".seg-fill")], t0 = performance.now();
-      const ease = k => 1 - Math.pow(1 - k, 3);
+    // Jednorazová nápoveda bez textu: bodka sa raz pomaly pohne po obvode dopredu a späť.
+    hint() {
+      if (this.scrubbing || this.open) return;
+      const t0 = performance.now(), base = today(this.pre), amp = PER(this.pre) * .07, dur = 2200;
+      this.hinting = true;
       const step = now => {
-        const t = (now - t0) / 1000; let more = false;
-        fills.forEach((f, i) => { const k = Math.max(0, Math.min(1, (t - i * .08) / .8)); if (k < 1) more = true; f.setAttribute("d", seg(-90 + i * 60, Math.max(14, 60 * SEGS[i].p * ease(k)), g)); f.style.opacity = k >= 1 ? "" : Math.min(1, k * 3) * (S.night ? .66 : 1); });
-        if (more) requestAnimationFrame(step);
+        const k = Math.min(1, (now - t0) / dur);
+        this.setPos(base + amp * Math.sin(Math.PI * k) * Math.sin(Math.PI * k));
+        if (k < 1 && this.hinting) this.raf = requestAnimationFrame(step); else { this.hinting = false; this.setPos(base); }
       };
-      requestAnimationFrame(step);
+      this.raf = requestAnimationFrame(step);
     }
     renderCore() {
       const pre = this.pre;
+      this.core.classList.remove("run");
       if (this.open) { this.core.innerHTML = icon("close", "xx"); this.core.setAttribute("aria-label", "Zavrieť rýchle záznamy"); this.core.setAttribute("aria-expanded", "true"); return; }
       this.core.setAttribute("aria-expanded", "false");
       if (!pre && S.run) {
-        this.core.innerHTML = icon("moon", "tic") + "<span class='l2' style='display:block'>Spí</span><span class='tm'>" + fmt(elapsed()) + "</span><i class='stop' aria-hidden='true'></i>";
+        this.core.classList.add("run");
+        this.core.innerHTML = icon("moon", "tic") + "<span class='l2'>Spí</span><span class='tm'>" + fmt(elapsed()) + "</span>";
         this.core.setAttribute("aria-label", "Spí " + Math.floor(elapsed() / 60) + " minút. Ťuknutím časovač zastavíš.");
         this.core.removeAttribute("aria-expanded");
         return;
       }
-      const l1 = pre ? PRE.week + ". týždeň" : (Math.floor(POST_POS) + 1) + ". mesiac", l2 = pre ? "ešte " + PRE.daysLeft + " dní" : POST.day + ". deň spolu";
+      const l1 = pre ? PRE.week + ". týždeň" : unitOf(false, today(false)) + ". mesiac", l2 = pre ? "ešte " + PRE.daysLeft + " dní" : POST.day + ". deň spolu";
       this.core.innerHTML = "<span class='l1'>" + l1 + "</span><span class='l2'>" + l2 + "</span><span class='hint'>" + icon("plus") + "</span>";
       this.core.setAttribute("aria-label", l1 + ", " + l2 + ". Rýchle záznamy: " + PETALS[S.period].map(p => p.l).join(", ") + ".");
     }
     renderBloom() {
-      const D = this.S * (this.small ? .36 : .31);
+      const g = geo(this.small), sc = this.S / 420;
       this.bloom.innerHTML = PETALS[S.period].map((p, i) => {
-        const a = (-90 + i * 120) * Math.PI / 180;
-        return "<button type='button' class='petal' data-k='" + p.k + "' style='--i:" + i + ";--x:" + Math.round(D * Math.cos(a)) + "px;--y:" + Math.round(D * Math.sin(a)) + "px;--pc:" + p.c + ";--pn:" + p.n + ";--pi:" + p.i + ";--pin:" + p.ni + "' tabindex='" + (this.open ? 0 : -1) + "'>" + icon(p.ic) + "<b>" + p.l + "</b></button>";
+        // po pôrode ikona vyskočí presne nad svojím dielom (rovnaká farba) – nie je to druhá, iná ponuka
+        let x, y;
+        if (!this.pre) { const c0 = centroid(this.segAngles()[i], 120, g), c = pt(Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI, (g.R + g.r) / 2 - 6); x = (c[0] - 210) * sc; y = (c[1] - 210) * sc; }
+        else { const a = (-90 + i * 120) * Math.PI / 180, D = this.S * (this.small ? .36 : .31); x = D * Math.cos(a); y = D * Math.sin(a); }
+        const c = COL[i];
+        return "<button type='button' class='petal' data-k='" + p.k + "' style='--i:" + i + ";--x:" + Math.round(x) + "px;--y:" + Math.round(y) + "px;--pc:" + c.base + ";--pn:" + c.nb + ";--pi:" + c.ink + ";--pin:" + c.ni + "' tabindex='" + (this.open ? 0 : -1) + "'>" + icon(p.ic) + "<b>" + p.l + "</b></button>";
       }).join("");
     }
     // ——— Otáčanie po obvode ———
@@ -533,14 +432,11 @@
       const pre = this.pre, g = geo(this.small);
       this.pos = pos;
       const p = pt(posAng(pre, pos), g.T);
-      this.bead.setAttribute("transform", "translate(" + n2(p[0]) + " " + n2(p[1]) + ")");
+      this.dot.setAttribute("cx", n2(p[0])); this.dot.setAttribute("cy", n2(p[1]));
       const t = today(pre), u = unitOf(pre, pos), tu = unitOf(pre, t);
-      this.anchor.classList.toggle("on", Math.abs(pos - t) > .5);
-      this.el.classList.toggle("pv", u !== tu && Math.abs(pos - t) > .45);
-      if (u === this.unit) return;
+      this.el.classList.toggle("pv", !this.hinting && u !== tu && Math.abs(pos - t) > .45);
+      if (u === this.unit || this.hinting) return;
       this.unit = u;
-      this.svg.querySelectorAll(".f[data-u]").forEach(el => { const k = +el.dataset.u; el.classList.toggle("pv", k > tu && k <= u); });
-      if (pre) this.svg.querySelectorAll(".wk.p").forEach(el => el.classList.toggle("sel", +el.dataset.u === u && u !== tu));
       this.dial.setAttribute("aria-valuenow", u);
       if (u !== tu) {
         if (pre) {
@@ -548,7 +444,7 @@
           this.pv.innerHTML = "<span class='pv-art'>" + fruitSvg(w ? w[1] : "") + "</span><span class='pv-l1'>" + u + ". týždeň</span>" + (w ? "<span class='pv-l2'>" + (w[1] ? "Asi ako " + w[1] + "<br>" + w[0] : "Asi " + w[0]) + "</span>" : "");
           this.dial.setAttribute("aria-valuetext", u + ". týždeň" + (w ? ", asi " + (w[1] ? "ako " + w[1] + ", " : "") + w[0] : ""));
         } else {
-          this.pv.innerHTML = "<span class='pv-art'><span class='bb'>" + icon("baby") + "</span></span><span class='pv-l1'>" + u + ". mesiac</span><span class='pv-l2'>" + MONTH[u - 1] + "</span>";
+          this.pv.innerHTML = "<span class='pv-l1'>" + u + ". mesiac</span><span class='pv-l2'>" + MONTH[u - 1] + "</span>";
           this.dial.setAttribute("aria-valuetext", u + ". mesiac. " + MONTH[u - 1]);
         }
         this.pv.classList.remove("swap"); void this.pv.offsetWidth; this.pv.classList.add("swap");
@@ -557,13 +453,13 @@
         this.dial.setAttribute("aria-valuetext", pre ? PRE.week + ". týždeň, dnes" : u + ". mesiac, dnes");
       }
     }
-    unitToPos(u) { const pre = this.pre; if (u === unitOf(pre, today(pre))) return today(pre); return pre ? u : u - .5; }
+    unitToPos(u) { const pre = this.pre; if (u === unitOf(pre, today(pre))) return today(pre); return pre ? u - .5 : u - .5; }
     rawPos(ang) {
-      const pre = this.pre, a = ((ang + 90) % 360 + 360) % 360, per = pre ? 40 : 12;
-      let p = pre ? a / 9 + .5 : a / 30;
+      const pre = this.pre, per = PER(pre), a = ((ang + 90) % 360 + 360) % 360;
+      let p = a / 360 * per;
       const last = this.pos == null ? today(pre) : this.pos;
       [p - per, p + per].forEach(c => { if (Math.abs(c - last) < Math.abs(p - last)) p = c; });
-      return pre ? Math.max(1, Math.min(40, p)) : Math.max(.02, Math.min(11.98, p));
+      return Math.max(.05, Math.min(per - .05, p));
     }
     springTo(target) {
       cancelAnimationFrame(this.raf);
@@ -601,36 +497,39 @@
         if (!this.drag) return;
         const d = this.drag; this.drag = null;
         if (this.scrubbing) { this.scrubbing = false; el.classList.remove("scrub"); this.springTo(today(this.pre)); return; }
-        if (e.type === "pointerup" && !d.moved) this.tapMid(d.target);
+        if (e.type === "pointerup" && !d.moved) this.tapSeg(d.target);
       };
       el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
       el.addEventListener("keydown", e => {
-        if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-seg], [data-band]")) { e.preventDefault(); this.tapMid(e.target); }
+        if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-seg]")) { e.preventDefault(); this.tapSeg(e.target); }
       });
       this.core.addEventListener("click", e => {
         if (this.open) return this.closeBloom(true);
         if (!this.pre && S.run) return App.stopTimer(this);
-        this.openBloom(e.detail === 0); // detail 0 = Enter/medzerník → fokus na prvú ikonu
+        this.openBloom(e.detail === 0);
       });
       this.bloom.addEventListener("click", e => { const p = e.target.closest(".petal"); if (p) { this.closeBloom(); App.openSheet(this, p.dataset.k); } });
       this.dial.addEventListener("keydown", e => {
-        const pre = this.pre, max = pre ? 40 : 12, step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 4, PageDown: -4 }[e.key];
+        const pre = this.pre, max = PER(pre), step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 4, PageDown: -4 }[e.key];
         let u = this.unit;
         if (step) u += step; else if (e.key === "Home") u = unitOf(pre, today(pre)); else if (e.key === "End") u = max; else return;
-        e.preventDefault(); cancelAnimationFrame(this.raf);
+        e.preventDefault(); cancelAnimationFrame(this.raf); this.hinting = false;
         this.setPos(this.unitToPos(Math.max(1, Math.min(max, u))));
         clearTimeout(this.kt); this.kt = setTimeout(() => this.springTo(today(pre)), 2800);
       });
       this.dial.addEventListener("blur", () => { clearTimeout(this.kt); this.springTo(today(this.pre)); });
     }
     startScrub(ang) {
-      cancelAnimationFrame(this.raf); this.scrubbing = true; this.el.classList.add("scrub");
+      cancelAnimationFrame(this.raf); this.hinting = false; this.scrubbing = true; this.el.classList.add("scrub");
       this.setPos(this.rawPos(ang));
     }
-    tapMid(target) {
+    tapSeg(target) {
       const s = target.closest && target.closest("[data-seg]");
-      if (s) return App.openSheet(this, "seg", +s.dataset.seg);
-      if (target.closest && target.closest("[data-band]")) return App.openSheet(this, "band");
+      if (!s) return;
+      const i = +s.dataset.seg;
+      if (this.pre) App.openSheet(this, "prep", i);
+      else if (QUICK[i].k === "sleep" && S.run) App.stopTimer(this);
+      else App.openSheet(this, QUICK[i].k);
     }
     openBloom(kbd) {
       this.open = true; this.el.classList.add("open"); this.renderCore();
@@ -643,19 +542,13 @@
       this.bloom.querySelectorAll(".petal").forEach(p => p.tabIndex = -1);
       if (focusCore) this.core.focus({ preventScroll: true });
     }
-    ping(a, r, color) {
-      if (reduced) return;
-      const p = pt(a, r), c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      c.setAttribute("class", "ping"); c.setAttribute("cx", n2(p[0])); c.setAttribute("cy", n2(p[1])); c.setAttribute("r", 12);
-      c.setAttribute("stroke", color && !color.startsWith("url") ? color : "#8171ce");
-      this.svg.querySelector(".pings").appendChild(c); setTimeout(() => c.remove(), 1100);
+    pulse(k) {
+      const i = QUICK.findIndex(q => q.k === k); if (i < 0 || reduced) return;
+      const f = this.svg.querySelector(".seg-fill[data-i='" + i + "']"); if (f) f.classList.add("seg-pulse");
     }
     tick() {
       if (this.pre || !S.run || this.open) return;
       const tm = this.core.querySelector(".tm"); if (tm) tm.textContent = fmt(elapsed());
-      const g = geo(this.small), now = nowH(), run = this.svg.querySelector(".ev-run");
-      if (run) run.setAttribute("d", arc(hAng(now - elapsed() / 3600), hAng(now), g.lane.s));
-      const h = this.svg.querySelector(".hand"); if (h) h.setAttribute("transform", "rotate(" + n2(hAng(now) + 90) + " 210 210)");
     }
   }
 
@@ -692,20 +585,16 @@
     openSheet(ring, k, i) {
       const ph = ring.ph, sh = ph.querySelector(".sheet"), scrim = ph.querySelector(".scrim"), tid = sh.getAttribute("aria-labelledby");
       let head, body;
-      if (k === "seg") {
-        const s = SEGS[i];
+      if (k === "prep") {
+        const s = PREP[i];
         head = [s.label, s.icon];
         body = "<p class='sh-note'>Tu sa otvorí Plán – " + s.label + ". <span class='tag'>[ukážka]</span></p><button type='button' class='save' data-close>Otvoriť Plán</button>";
-      } else if (k === "band") {
-        head = ["Náš deň", "clock"];
-        body = "<ul class='legend'><li><i style='background:linear-gradient(90deg,#a5b7ee,#768fd8)'></i>Spánok</li><li><i style='width:16px;background:#e9a2b8'></i>Kŕmenie</li><li><i style='width:12px;height:12px;background:#f1ac74'></i>Plienky</li></ul><button type='button' class='save' data-close>Otvoriť Náš deň</button>";
       } else {
         const d = SHEETS[k];
         head = [d.t, d.ic];
         body = "<div class='chips' role='group' aria-label='" + d.t + "'>" + d.chips.map((c, j) => "<button type='button' class='chip' aria-pressed='" + (j === 0) + "' data-j='" + j + "'>" + c + "</button>").join("") + "</div>" + (d.note ? "<p class='sh-note'>" + d.note + "</p>" : "") + "<button type='button' class='save' data-save>Uložiť</button>";
       }
-      const ic = ICON[head[1]] ? icon(head[1]) : "<svg viewBox='0 0 256 256' fill='none' stroke='currentColor' stroke-width='16'><circle cx='128' cy='128' r='96'/><path d='M128 72v56l36 24' stroke-linecap='round'/></svg>";
-      sh.innerHTML = "<div class='sh-head'><span class='sh-ic'>" + ic + "</span><h3 id='" + tid + "'>" + head[0] + "</h3><button type='button' class='x' data-close aria-label='Zavrieť'>" + icon("close") + "</button></div>" + body;
+      sh.innerHTML = "<div class='sh-head'><span class='sh-ic'>" + icon(head[1]) + "</span><h3 id='" + tid + "'>" + head[0] + "</h3><button type='button' class='x' data-close aria-label='Zavrieť'>" + icon("close") + "</button></div>" + body;
       sh.classList.add("open"); scrim.classList.add("open");
       const close = () => { sh.classList.remove("open"); scrim.classList.remove("open"); sh.onclick = null; scrim.onclick = null; ph.onkeydown = null; ring.core.focus({ preventScroll: true }); };
       scrim.onclick = close;
@@ -718,27 +607,20 @@
       };
       setTimeout(() => sh.querySelector(".chip, .save")?.focus({ preventScroll: true }), reduced ? 0 : 300);
     },
+    snapshot() { const now = Date.now(), last = {}; Object.keys(S.last).forEach(k => { last[k] = S.last[k] + (now - S.lastAt) / 60000; }); return { last, run: S.run, base: S.runBase, since: S.runSince }; },
+    restore(p) { S.last = p.last; S.lastAt = Date.now(); S.run = p.run; S.runBase = p.base; S.runSince = p.since; },
     save(ring, k, j) {
-      const now = nowH();
-      let undo;
-      if (k === "sleep" && j === 0) {
-        const prev = { run: S.run, base: S.runBase, since: S.runSince };
-        S.run = true; S.runBase = 0; S.runSince = Date.now();
-        undo = () => { S.run = prev.run; S.runBase = prev.base; S.runSince = prev.since; };
-      } else {
-        const e = k === "feed" ? { type: "feed", t: now - .3, isNew: true } : k === "diaper" ? { type: "diaper", t: now - .02, isNew: true } : k === "sleep" ? { type: "sleep", t: now - .66, d: .64, isNew: true } : { type: "move", isNew: true };
-        S.added.push(e);
-        undo = () => { S.added = S.added.filter(x => x !== e); };
-      }
-      sync(); rerender();
-      if (ring.pre) ring.ping(posAng(true, PRE.week), geo(ring.small).T, "#f07f98");
-      App.toast(ring, undo);
+      const prev = App.snapshot();
+      if (S.last[k] != null) { S.last = prev.last; S.last[k] = 0; S.lastAt = Date.now(); }
+      if (k === "sleep" && j === 0) { S.run = true; S.runBase = 0; S.runSince = Date.now(); }
+      sync(); rerender(); rings.forEach(r => r.pulse(k));
+      App.toast(ring, () => App.restore(prev));
     },
     stopTimer(ring) {
-      const e = { type: "sleep", t: nowH() - elapsed() / 3600, d: elapsed() / 3600, isNew: true }, prev = { base: S.runBase, since: S.runSince };
-      S.run = false; S.added.push(e);
-      sync(); rerender();
-      App.toast(ring, () => { S.added = S.added.filter(x => x !== e); S.run = true; S.runBase = prev.base; S.runSince = prev.since; });
+      const prev = App.snapshot();
+      S.run = false; S.last = prev.last; S.last.sleep = 0; S.lastAt = Date.now();
+      sync(); rerender(); rings.forEach(r => r.pulse("sleep"));
+      App.toast(ring, () => App.restore(prev));
     },
     toast(ring, undo) {
       const t = ring.ph.querySelector(".toast");
@@ -752,7 +634,7 @@
   document.querySelector(".bar").addEventListener("click", e => {
     const b = e.target.closest("button[data-k]"); if (!b || b.disabled) return;
     const k = b.dataset.k, v = b.dataset.v;
-    if (k === "period") { S.period = v; S.added = []; }
+    if (k === "period") S.period = v;
     if (k === "night") S.night = v === "1";
     if (k === "run") { S.run = !S.run; S.runBase = 47 * 60; S.runSince = Date.now(); }
     if (k === "size") { S.size = v; sync(); build(); return; }
@@ -760,7 +642,6 @@
     if (k === "period") rings.forEach(r => { r.first = true; });
     rerender();
   });
-  // Ťuk vedľa zavrie rozkvitnuté ikony; Esc tiež.
   document.addEventListener("pointerdown", e => rings.forEach(r => { if (r.open && !r.el.contains(e.target)) r.closeBloom(); }), true);
   document.addEventListener("keydown", e => { if (e.key === "Escape") rings.forEach(r => r.closeBloom(true)); });
   setInterval(() => rings.forEach(r => r.tick()), 1000);
