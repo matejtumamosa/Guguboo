@@ -237,29 +237,7 @@
     return ["M", f1(f.o[0]), f1(f.o[1]), "A", G.R, G.R, 0, large, 1, f1(t.o[0]), f1(t.o[1]), "C", f1(t.c1[0]), f1(t.c1[1]), f1(t.c2[0]), f1(t.c2[1]), f1(t.i[0]), f1(t.i[1]),
       "A", G.r, G.r, 0, large, 0, f1(f.i[0]), f1(f.i[1]), "C", f1(f.c2[0]), f1(f.c2[1]), f1(f.c1[0]), f1(f.c1[1]), f1(f.o[0]), f1(f.o[1]), "Z"].join(" ");
   }
-  // Skutočné ťažisko esovitého dielu (plocha mnohouholníka) – obsah sedí opticky v strede pri 3 aj 5 dieloch.
-  // Stred vodorovnej tetivy dielu vo výške y (interval, v ktorom leží x0) – blok textu sa vycentruje na šírku dielu.
-  function chordMid(st, sp, y, x0) {
-    const pts = shape(st, sp), xs = [];
-    pts.forEach((p, q) => { const n = pts[(q + 1) % pts.length]; if ((p[1] - y) * (n[1] - y) < 0) xs.push(p[0] + (y - p[1]) * (n[0] - p[0]) / (n[1] - p[1])); });
-    xs.sort((a, b) => a - b);
-    for (let q = 0; q + 1 < xs.length; q += 2) if (x0 >= xs[q] && x0 <= xs[q + 1]) return [xs[q], xs[q + 1]];
-    return [x0, x0];
-  }
-  // Os bloku: stred spoločnej šírky dielu v hornej aj dolnej hrane riadku názvu (diel je esovitý, okraje sú šikmé).
-  function blockX(st, sp, y0, y1, x0) {
-    const a = chordMid(st, sp, y0, x0), b = chordMid(st, sp, y1, x0);
-    return (Math.max(a[0], b[0]) + Math.min(a[1], b[1])) / 2;
-  }
-  function shape(st, sp) {
-    const bend = bendOf(sp), f = cut(st, bend), t = cut(st + sp, bend), pts = [];
-    const bz = (p0, p1, p2, p3, k) => { const u = 1 - k; return [0, 1].map(j => u * u * u * p0[j] + 3 * u * u * k * p1[j] + 3 * u * k * k * p2[j] + k * k * k * p3[j]); };
-    for (let q = 0; q <= 60; q++) pts.push(P(st + sp * q / 60, G.R));
-    for (let q = 1; q <= 24; q++) pts.push(bz(t.o, t.c1, t.c2, t.i, q / 24));
-    for (let q = 1; q <= 60; q++) pts.push(P(st + sp - sp * q / 60, G.r));
-    for (let q = 1; q < 24; q++) pts.push(bz(f.i, f.c2, f.c1, f.o, q / 24));
-    return pts;
-  }
+  // Skutočné ťažisko esovitého dielu (plocha mnohouholníka) – už sa nepoužíva na umiestnenie, len pre porovnanie.
   function centroid(st, sp) {
     const bend = bendOf(sp), f = cut(st, bend), t = cut(st + sp, bend), pts = [];
     const bz = (p0, p1, p2, p3, k) => { const u = 1 - k; return [0, 1].map(j => u * u * u * p0[j] + 3 * u * u * k * p1[j] + 3 * u * k * k * p2[j] + k * k * k * p3[j]); };
@@ -271,6 +249,35 @@
     pts.forEach((p, q) => { const n = pts[(q + 1) % pts.length], c = p[0] * n[1] - n[0] * p[1]; A += c; x += (p[0] + n[0]) * c; y += (p[1] + n[1]) * c; });
     return [x / (3 * A), y / (3 * A)];
   }
+  // Uhol (oproti uhlu rezu a na okraji), v ktorom esovitý rez pretína kružnicu s polomerom rho – jemné vzorkovanie + lineárna interpolácia.
+  function cutAngleAt(a, sp, rho) {
+    const c = cut(a, bendOf(sp)), N = 400;
+    let prev = null;
+    for (let q = 0; q <= N; q++) {
+      const k = q / N, u = 1 - k, p = [0, 1].map(j => u * u * u * c.o[j] + 3 * u * u * k * c.c1[j] + 3 * u * k * k * c.c2[j] + k * k * k * c.i[j]);
+      const r = Math.hypot(p[0] - 210, p[1] - 210), ang = Math.atan2(p[1] - 210, p[0] - 210) * 180 / Math.PI;
+      if (prev && (prev.r - rho) * (r - rho) <= 0) {
+        const t = (prev.r - rho) / (prev.r - r || 1);
+        let d = ang - prev.ang; d = ((d + 540) % 360) - 180;
+        const at = prev.ang + d * t;
+        return ((at - a + 540) % 360) - 180;
+      }
+      prev = { r, ang };
+    }
+    return 0;
+  }
+  // Skutočný rámik kresby ikony v jej súradniciach 256 (vrátane polovice ťahu 16 pri linkových ikonách); meria sa raz.
+  const BOX = {};
+  function iconBox(n) {
+    if (BOX[n]) return BOX[n];
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 256 256"); s.style.cssText = "position:absolute;width:256px;height:256px;visibility:hidden";
+    s.innerHTML = "<g fill='currentColor'>" + ICON[n] + "</g>"; document.body.appendChild(s);
+    const bb = s.firstChild.getBBox(), sw = ICON[n].includes("stroke-width") ? 8 : 0; s.remove();
+    return (BOX[n] = { x: bb.x - sw, y: bb.y - sw, w: bb.width + 2 * sw, h: bb.height + 2 * sw });
+  }
+  // Optické vyrovnanie veľkosti: široké/plné kresby o kúsok menšie, úzke o kúsok väčšie.
+  const OPT = { diaperFront: .88, doctorQ: .92, bellyWave: .94, sleepZ: .96, tummyTime: .94, glassWater: .98, capsule: 1.02, bellyKick: 1.02, breastfeed: 1.08, breastPump: 1.06 };
   let uid = 0;
   // o.px = skutočná šírka kruhu na obrazovke (písmo a ikona v px, nie v jednotkách), o.k = zmenšenie pri kontrole, o.sub = stav pod názvom
   function ringHtml(o = {}) {
@@ -284,7 +291,9 @@
     const IS = (small ? 30 : 36) * kk * u, /* rámik ikony; kresba ~ 28–32 px */ fS = (small ? 10 : 10.5) * kk * u, g1 = 3 * kk * u;
     // Vodorovný blok sa najlepšie zmestí do dielov hore/dole/na bokoch, najhoršie do šikmých. Pri 3 dieloch ostáva pôvodné natočenie
     // (rez hore); pri 4 sú diely vpravo · dole · vľavo · hore (dlhé názvy hore/dole), pri 5 sú dlhé Odsávanie a Na brušku v dolných dieloch.
-    const d0 = (() => { const c0 = centroid(0, sp); return Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI - sp / 2; })(); // posun ťažiska esovitého dielu
+    // Jedno pravidlo umiestnenia (Samo 24. 11.): polomer stredu pásu r_m je rovnaký pre všetky diely; uhol skupiny = stred medzi
+    // priesečníkmi ľavého a pravého esovitého rezu s kružnicou r_m (stred viditeľného oblúka dielu), nie ťažisko plochy.
+    const rm = (G.R + G.r) / 2, d0 = cutAngleAt(0, sp, rm); // o koľko je rez na r_m posunutý oproti rezu na okraji
     const start = n === 3 ? -90 : (n === 4 ? 0 : 198) - sp / 2 - d0;
     let defs = "", body = "";
     CUR = {};
@@ -292,19 +301,22 @@
       const s = SEG[k], prev = i ? CUR[keys[i - 1]] : null, first = i === n - 1 ? CUR[keys[0]] : null;
       CUR[k] = s.c !== prev && s.c !== first ? s.c : PAL.find(p => p !== prev && p !== first && !Object.values(CUR).includes(p));
       const c = COL[CUR[k]], st = start + i * sp, a0 = P(st, G.R), a1 = P(st + sp, G.R);
-      // Optické ťažisko: smer skutočného ťažiska plochy, polomer = stred prstenca (skutočné ťažisko 120° oblúka leží pri vnútornom okraji).
-      const c0 = centroid(st, sp), cen = P(Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI, (G.R + G.r) / 2);
+      // Bod skupiny: (uhol skupiny, r_m). Ľavý rez pretína r_m v uhle st + d0, pravý v st + sp + d0 → stred = st + sp/2 + d0.
+      const gAng = st + d0 + sp / 2, cen = P(gAng, rm);
       // pôvodný lineárny prechod: od začiatku dielu (svetlejšie) k jeho koncu v smere hodín (sýtejšie)
       defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a0[0]) + "' y1='" + f1(a0[1]) + "' x2='" + f1(a1[0]) + "' y2='" + f1(a1[1]) + "'>" +
         c.g.map((col, j) => "<stop offset='" + [0, .3, .72, 1][j] + "' stop-color='" + col + "'/>").join("") + "</linearGradient>";
       // 7. kolo (grafická kontrola): jeden kompaktný vodorovný blok v ťažisku dielu, vždy zhora nadol ikona → názov → stav.
       // Žiadny text po oblúku ani zvislý text. Stav sa vynechá, ak by sa nezmestil (ostáva v okne dielu a v Prehľade dňa).
+      // Skupina = ikona (skutočná kresba vrátane ťahu, nie rámik 256) + medzera + stav; jej stred leží presne v bode skupiny.
+      // Ikony sú opticky vyrovnané: najdlhší rozmer kresby = rovnaký cieľ × korekcia (široké/plné menšie, úzke väčšie).
       const tx = RUN[k] || !withSub || (o.drop && o.drop.has(k)) ? "" : sub(k), lS = fS * 1.15;
-      const H = IS + (tx ? g1 + lS : 0), top = cen[1] - H / 2, yS = top + IS + g1 + lS / 2;
-      if (tx) cen[0] = blockX(st, sp, yS - .6 * fS - 6, yS + .6 * fS + 6, cen[0]); // os bloku = stred šírky dielu v pásme stavu (najširší riadok)
-      body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
+      const b = iconBox(s.i), sc = IS * .86 * (OPT[s.i] || 1) / Math.max(b.w, b.h), iw = b.w * sc, ih = b.h * sc;
+      const H = ih + (tx ? g1 + lS : 0), top = cen[1] - H / 2, yS = top + ih + g1 + lS / 2;
+      const itx = cen[0] - (b.x + b.w / 2) * sc, ity = top - b.y * sc;
+      body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' data-ang='" + gAng.toFixed(1) + "' data-cx='" + cen[0].toFixed(2) + "' data-cy='" + cen[1].toFixed(2) + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
         "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")' stroke='url(#" + id + "g" + i + ")'/>" +
-        "<g class='sic' fill='currentColor' style='color:" + c.ink + "' transform='translate(" + f1(cen[0] - IS / 2) + " " + f1(top) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
+        "<g class='sic' fill='currentColor' style='color:" + c.ink + "' transform='translate(" + f1(itx) + " " + f1(ity) + ") scale(" + sc.toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
         (tx ? "<text class='sub' x='" + f1(cen[0]) + "' y='" + f1(yS) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fS) + "' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
     return "<div class='ring' style='--core-w:" + (200 * G.r / 420 - .4).toFixed(1) + "%' data-k='" + kk + "' data-sub='" + (withSub ? (o.drop && o.drop.size ? "bez:" + [...o.drop].join(",") : 1) : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
@@ -315,7 +327,7 @@
     ring.querySelectorAll(".seg").forEach(g => {
       const path = g.querySelector(".fill"), rects = [];
       // getBBox() nezahŕňa ťah – linkové ikony majú ťah 16, preto sa rámik zväčší o polovicu ťahu (8 jednotiek ikony).
-      const ic = g.querySelector(".sic"), bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix, sw = 8;
+      const ic = g.querySelector(".sic"), bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix, sw = ic.innerHTML.includes("stroke-width") ? 8 : 0;
       rects.push({ w: "ikona", x: (bb.x - sw) * m.a + m.e, y: (bb.y - sw) * m.d + m.f, width: (bb.width + 2 * sw) * m.a, height: (bb.height + 2 * sw) * m.d });
       const inFill = (pts, w) => { if (pts.some(p => !path.isPointInFill(new DOMPoint(p[0], p[1])))) bad.push(g.dataset.k + ": " + w); };
       rects.forEach(r => {
@@ -361,6 +373,13 @@
   }
   // Ladenie: __ringTry({k, sub}) vykreslí prvý kruh s danými voľbami a vráti, čo vybieha (bez automatického zmenšenia).
   window.__ringTry = o => { const r = stage.querySelector(".ring"), f = document.createRange().createContextualFragment(ringHtml({ px: r.getBoundingClientRect().width, ...o })).firstElementChild; r.replaceWith(f); return ringCheck(f, o.M); };
+  // Ladenie: tabuľka umiestnenia – uhol skupiny, polomer bodu skupiny a polomer nameraného stredu skupiny (z vykreslenej ikony a stavu).
+  window.__ringTable = () => [...stage.querySelectorAll(".ring")].map(r => [...r.querySelectorAll(".seg")].map(g => {
+    const ic = g.querySelector(".sic"), bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix, sw = ic.innerHTML.includes("stroke-width") ? 8 : 0;
+    const top = (bb.y - sw) * m.d + m.f, bot0 = (bb.y + bb.height + sw) * m.d + m.f, cx = (bb.x + bb.width / 2) * m.a + m.e, t = g.querySelector("text");
+    const bot = t ? t.getStartPositionOfChar(0).y + .25 * parseFloat(t.getAttribute("font-size")) : bot0, my = (top + bot) / 2;
+    return { diel: g.dataset.k, uhol: +g.dataset.ang, polomer: +Math.hypot(+g.dataset.cx - 210, +g.dataset.cy - 210).toFixed(2), namerany: +Math.hypot(cx - 210, my - 210).toFixed(2), stav: !!t };
+  }));
   window.__ringCheck = () => [...stage.querySelectorAll(".ring")].map(r => ({ px: Math.round(r.getBoundingClientRect().width), k: r.dataset.k, sub: r.dataset.sub, bad: ringCheck(r) }));
   function running() { const k = Object.keys(RUN).sort((a, b) => RUN[b].t - RUN[a].t)[0]; return k ? { k, ...RUN[k] } : null; }
   const RUNTXT = { sleep: ["Spí", "Zobudilo sa"], feed: ["Kŕmenie", "Ukončiť"], tummy: ["Na brušku", "Hotovo"], contraction: ["Kontrakcia", "Skončila"] };
