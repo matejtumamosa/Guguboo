@@ -44,13 +44,17 @@
   .seg path.fill { stroke: var(--sep); stroke-width: 5; stroke-linejoin: round; }
   .seg.on path.fill { filter: drop-shadow(0 0 10px rgba(255, 210, 120, .6)); }
   .night .seg path.fill { opacity: .82; }
-  .lbl { font: 800 19px Montserrat, system-ui, sans-serif; letter-spacing: .02em; pointer-events: none; }
-  .sub { font: 700 14px Montserrat, system-ui, sans-serif; pointer-events: none; opacity: .9; }
+  .lbl { font: 800 20px Montserrat, system-ui, sans-serif; pointer-events: none; }
+  .lbl.lg { font-size: 17px; }
+  .bb { position: relative; }
+  .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+  .night .tag2 { color: #1f1a2e; }
+  .sub { font: 700 15px Montserrat, system-ui, sans-serif; pointer-events: none; }
   .night .lbl, .night .sub { fill: #1f1a2e !important; }
   .small .sub { display: none; }
   .core { position: absolute; left: 50%; top: 50%; width: 37%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: radial-gradient(circle at 35% 25%, var(--core), color-mix(in srgb, var(--core) 92%, #b9a8f0)); box-shadow: 0 8px 22px rgba(95, 79, 177, .16), inset 0 0 0 1px var(--line); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
   .core:active { transform: translate(-50%, -50%) scale(.95); }
-  .core b { font: 800 clamp(13px, 5.2cqh, 16px)/1.1 Montserrat, system-ui, sans-serif; }
+  .core b { font: 800 clamp(14px, 5.6cqh, 17px)/1.1 Montserrat, system-ui, sans-serif; white-space: nowrap; }
   .core u { font: 700 12px Montserrat, system-ui, sans-serif; color: var(--brand); }
   .core .cl { font: 600 12px/1 Montserrat, system-ui, sans-serif; color: var(--muted); }
   .core .tm { font: 800 clamp(18px, 8cqh, 26px)/1.05 Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
@@ -170,9 +174,9 @@
   };
   const SEG = {
     feed: { l: "Kŕmenie", c: "pink", i: "feeding" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
-    pump: { l: "Odsávanie", c: "lilac", i: "dropHalf" }, tummy: { l: "Na brušku", c: "mint", i: "baby" },
+    pump: { l: "Odsávanie", c: "lilac", i: "dropHalf", t: "Odsávanie mlieka" }, tummy: { l: "Na brušku", c: "mint", i: "baby" },
     move: { l: "Pohyby", c: "pink", i: "footprints" }, drink: { l: "Pitie", c: "blue", i: "water" }, vit: { l: "Vitamíny", c: "peach", i: "check" },
-    question: { l: "Otázka", c: "lilac", i: "question" }, contraction: { l: "Kontrakcie", c: "peach", i: "wave" }
+    question: { l: "Pre lekára", c: "lilac", i: "question" }, contraction: { l: "Kontrakcie", c: "peach", i: "wave" }
   };
   const segsNow = () => S.period === "po" ? ["feed", "sleep", "diaper"].concat(S.pump ? ["pump"] : [], S.tummy ? ["tummy"] : [])
     : S.period === "w36" ? ["move", "contraction", "vit", "question"] : ["move", "drink", "vit", "question"];
@@ -183,7 +187,7 @@
   function sub(k) {
     if (RUN[k]) return k === "sleep" ? "spí" : k === "feed" ? "beží · " + RUN[k].side.toLowerCase() : "beží";
     const r = last(k);
-    if (k === "sleep") { const e = r && (r.end || r.t); return e && now() - e < 1440 * MIN ? "hore " + span(now() - e) : ""; }
+    if (k === "sleep") { const e = r && (r.end || r.t); const m = (now() - e) / MIN; return e && m < 1440 ? "bdie " + (m < 60 ? Math.max(1, Math.floor(m)) + " min" : Math.floor(m / 60) + " h") : ""; }
     if (k === "feed") return r && ago(r.t) ? ago(r.t) + " · " + (r.side ? r.side.toLowerCase() : "fľaša") : "";
     if (k === "move") { const d = today(k); return d.length ? "dnes " + hm(d.sort((a, b) => b.t - a.t)[0].t) : ""; }
     if (k === "drink") { const n = today(k).length; return n ? "dnes " + n + "×" : ""; }
@@ -219,13 +223,12 @@
       const s = SEG[k], c = COL[s.c], st = -90 - sp / 2 + i * sp + (n === 3 ? 0 : 0), mid = st + sp / 2 + 8 * sp / 120;
       const a = P(st, 140), b = P(st + sp, 140);
       defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a[0]) + "' y1='" + f1(a[1]) + "' x2='" + f1(b[0]) + "' y2='" + f1(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.6' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
-      const tx = sub(k), lower = Math.sin(mid * Math.PI / 180) > .2;
-      const nameR = tx ? (lower ? 128 : 150) : 139, subR = lower ? 156 : 122;
-      const A = textArc(mid, nameR, sp, id + "n" + i), B = textArc(mid, subR, sp, id + "s" + i);
+      // Nezávislý posudok 24. 11.: všetky nápisy vodorovne (natočený text sa v noci nečíta), tmavá farba dielu pre kontrast.
+      const tx = sub(k), [cx, cy] = P(mid, 140), long = s.l.length > 8;
       body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
-        "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")'/>" + A.d + (tx ? B.d : "") +
-        "<text class='lbl' dy='7' fill='" + c.ink + "'><textPath href='#" + id + "n" + i + "' startOffset='50%' text-anchor='middle'>" + s.l + "</textPath></text>" +
-        (tx ? "<text class='sub' dy='5' fill='" + c.ink + "'><textPath href='#" + id + "s" + i + "' startOffset='50%' text-anchor='middle'>" + tx + "</textPath></text>" : "") + "</g>";
+        "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")'/>" +
+        "<text class='lbl" + (long ? " lg" : "") + "' x='" + f1(cx) + "' y='" + f1(cy + (tx ? -2 : 7)) + "' text-anchor='middle' fill='" + c.ink + "'>" + s.l + "</text>" +
+        (tx ? "<text class='sub' x='" + f1(cx) + "' y='" + f1(cy + 20) + "' text-anchor='middle' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
     return "<div class='ring'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
   }
@@ -234,7 +237,7 @@
   function coreHtml() {
     const r = running(), night = S.night;
     if (r) return "<button type='button' class='core' data-act='stop' data-k='" + r.k + "'>" + ic(SEG[r.k].i) + "<span class='cl'>" + (r.k === "feed" ? r.side + " prsník" : RUNTXT[r.k][0]) + "</span><span class='tm' data-since='" + r.t + "'>" + clock(r.t) + "</span><span class='st'>" + RUNTXT[r.k][1] + "</span></button>";
-    return "<button type='button' class='core' data-act='day'><b>" + (night ? "Naša noc" : "Náš deň") + "</b><u>Prehľad</u></button>";
+    return "<button type='button' class='core' data-act='day'><b>" + (night ? "Naša noc" : "Náš deň") + " ›</b></button>";
   }
 
   // ——— Telefóny ———
@@ -277,9 +280,9 @@
     if (k === "feed") {
       if (RUN.feed) return head(k, "Kŕmenie") + "<p class='last'>" + RUN.feed.side + " prsník · beží " + span(now() - RUN.feed.t) + "</p><div class='big2'><button class='bb' data-do='feed-switch'>Prepnúť<small>na " + (RUN.feed.side === "Ľavý" ? "pravý" : "ľavý") + "</small></button><button class='bb' data-do='feed-stop'>Ukončiť<small>uloží sa</small></button></div>";
       const lastSide = REC.filter(x => x.k === "feed" && x.side).sort((a, b) => b.t - a.t)[0]?.side, tab = arg || "prs";
-      return head(k, "Kŕmenie") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + (r.side ? r.side.toLowerCase() + " prsník" : "fľaša " + r.ml + " ml") + "</p>" : "") +
+      return head(k, "Kŕmenie") + (r ? "<p class='last'>Naposledy " + ago(r.t) + " (" + hm(r.t) + ") · " + (r.side ? r.side.toLowerCase() + " prsník" : "fľaša " + r.ml + " ml") + "</p>" : "") +
         "<div class='seg-tabs'><button data-tab='prs' aria-pressed='" + (tab === "prs") + "'>Prsník</button><button data-tab='flasa' aria-pressed='" + (tab === "flasa") + "'>Fľaša</button></div>" +
-        (tab === "prs" ? "<div class='big2'>" + ["Ľavý", "Pravý"].map(s => "<button class='bb" + (lastSide && s !== lastSide ? " hint" : "") + "' data-do='feed-start' data-side='" + s + "'>" + s + "<small>" + (lastSide && s !== lastSide ? "na rade" : "spustí čas") + "</small></button>").join("") + "</div><button class='link' data-sheet='feed-back'>Zapísať spätne ›</button>"
+        (tab === "prs" ? "<div class='big2'>" + ["Ľavý", "Pravý"].map(s => "<button class='bb" + (lastSide && s !== lastSide ? " hint" : "") + "' data-do='feed-start' data-side='" + s + "'>" + (lastSide && s !== lastSide ? "<i class='tag2'>na rade</i>" : "") + s + "<small>spustí čas</small></button>").join("") + "</div><button class='link' data-sheet='feed-back'>Zapísať spätne ›</button>"
           : chips("milk", [["Umelé", "Umelé mlieko"], ["Odsaté", "Odsaté mlieko"]], "Umelé") + "<p class='lab'>Koľko vypilo</p>" + chips("ml", [30, 60, 90, 120, 150, 180].map(v => [String(v), v + " ml"]), "90") + "<button class='save' data-do='feed-bottle'>Uložiť</button>");
     }
     if (k === "feed-back") return head("feed", "Kŕmenie spätne") + "<p class='lab'>Prsník</p>" + chips("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"]], "Ľavý") + "<p class='lab'>Kedy</p>" + chips("ago", [[15, "pred 15 min"], [30, "pred 30 min"], [60, "pred 1 h"], [120, "pred 2 h"]].map(v => [String(v[0]), v[1]]), "30") + "<p class='lab'>Ako dlho</p>" + chips("dur", [5, 10, 15, 20, 30].map(v => [String(v), v + " min"]), "15") + "<button class='save' data-do='feed-backsave'>Uložiť</button>";
@@ -289,7 +292,7 @@
         "<div class='chips'>" + [10, 20, 30].map(m => "<button class='chip' data-do='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>";
     }
     if (k === "diaper") return head(k, "Plienky") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.kind.toLowerCase() + "</p>" : "") + "<div class='big3'>" + ["Cikanie", "Kakanie", "Oboje"].map(v => "<button class='bb' data-do='diaper' data-v='" + v + "'>" + v + "</button>").join("") + "</div>";
-    if (k === "pump") return head(k, "Odsávanie") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.ml + " ml</p>" : "") + chips("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"], ["Oba", "Oba"]], "Oba") + "<p class='lab'>Koľko</p>" + chips("ml", [30, 60, 90, 120, 150, 200].map(v => [String(v), v + " ml"]), "90") + "<button class='save' data-do='pump'>Uložiť</button>";
+    if (k === "pump") return head(k, "Odsávanie mlieka") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.ml + " ml</p>" : "") + chips("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"], ["Oba", "Oba"]], "Oba") + "<p class='lab'>Koľko</p>" + chips("ml", [30, 60, 90, 120, 150, 200].map(v => [String(v), v + " ml"]), "90") + "<button class='save' data-do='pump'>Uložiť</button>";
     if (k === "tummy") {
       if (RUN.tummy) return head(k, "Na brušku") + "<p class='last'>Beží " + span(now() - RUN.tummy.t) + "</p><div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='tummy-stop'>Hotovo<small>uloží sa</small></button></div>";
       return head(k, "Na brušku") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.dur + " min</p>" : "") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='tummy-start'>Začať<small>spustí čas</small></button></div>";
