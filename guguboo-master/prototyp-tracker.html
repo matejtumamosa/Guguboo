@@ -144,9 +144,9 @@
       "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M160,48H200L160,96H200'/>",
     diaperFront: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M44,72H212V112C212,164 180,196 152,200H104C76,196 44,164 44,112Z'/><path d='M44,100H212'/><path d='M44,82H28V118H44M212,82H228V118H212'/><path d='M104,200C104,170 92,150 72,140M152,200C152,170 164,150 184,140'/></g>",
     // Odsávačka: veľký lievik (široký kužeľ s okrajom) priložený zboku k hlave na fľaške
-    breastPump: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M140,64H180A12,12,0,0,1,192,76V108H128V76A12,12,0,0,1,140,64Z'/><path d='M128,78L66,46C48,70 48,130 66,154L128,104'/><path d='M140,108V208A16,16,0,0,0,156,224H164A16,16,0,0,0,180,208V108'/></g>",
+    breastPump: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><rect x='120' y='72' width='80' height='36' rx='14'/><path d='M120,84C100,84 84,64 68,52C46,70 46,130 68,148C84,136 100,108 120,100'/><rect x='132' y='108' width='56' height='116' rx='24'/><path d='M160,148H176M160,180H176'/></g>",
     // Na brušku: bábätko z boku leží na podložke, veľká zdvihnutá hlavička, ruka opretá o podložku
-    tummyTime: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><circle cx='72' cy='96' r='34'/><path d='M104,140C136,136 164,140 188,152C216,166 224,188 212,204'/><path d='M100,144L92,204H60'/><path d='M20,204H236'/></g>",
+    tummyTime: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><circle cx='76' cy='92' r='42'/><path d='M116,140C156,140 196,160 220,196'/><path d='M104,150L96,196H64'/><rect x='20' y='196' width='216' height='32' rx='16'/></g>",
     // Pohyby: silueta tehotnej z boku (hlava, chrbát, výrazné bruško) + pohybové čiarky pri bruchu
     bellyKick: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><circle cx='96' cy='40' r='24'/><path d='M100,76C108,100 112,112 124,118C176,128 196,172 168,196C156,206 136,206 120,200V236'/><path d='M84,76C68,112 68,172 84,200V236'/><path d='M204,132L228,120M212,164H238M204,196L228,208'/></g>",
     // Kŕmenie: mama (hlava) drží v náručí bábätko (hlavička na ruke) – neutrálne k dojčeniu aj fľaši
@@ -198,7 +198,7 @@
   const PAL = ["pink", "peach", "blue", "lilac", "mint"];
   let CUR = {}; // farba dielu v aktuálnom kruhu (susedné diely nikdy rovnakej farby) – rovnaká farba aj v hlavičke okna
   const SEG = {
-    feed: { l: "Kŕmenie", c: "pink", i: "feedHold" }, sleep: { l: "Spánok", c: "peach", i: "sleepZ" }, diaper: { l: "Plienky", c: "blue", i: "diaperFront" },
+    feed: { l: "Kŕmenie", c: "pink", i: "breastfeed" }, sleep: { l: "Spánok", c: "peach", i: "sleepZ" }, diaper: { l: "Plienky", c: "blue", i: "diaperFront" },
     pump: { l: "Odsávanie", c: "lilac", i: "breastPump", t: "Odsávanie mlieka" }, tummy: { l: "Na brušku", c: "mint", i: "tummyTime" },
     move: { l: "Pohyby", c: "pink", i: "bellyKick" }, drink: { l: "Pitie", c: "blue", i: "glassWater" }, vit: { l: "Vitamíny", c: "peach", i: "capsule" },
     question: { l: "Pre lekára", c: "lilac", i: "doctorQ" }, contraction: { l: "Kontrakcie", c: "peach", i: "bellyWave" }
@@ -299,7 +299,7 @@
         c.g.map((col, j) => "<stop offset='" + [0, .3, .72, 1][j] + "' stop-color='" + col + "'/>").join("") + "</linearGradient>";
       // 7. kolo (grafická kontrola): jeden kompaktný vodorovný blok v ťažisku dielu, vždy zhora nadol ikona → názov → stav.
       // Žiadny text po oblúku ani zvislý text. Stav sa vynechá, ak by sa nezmestil (ostáva v okne dielu a v Prehľade dňa).
-      const tx = RUN[k] || !withSub ? "" : sub(k), lS = fS * 1.15;
+      const tx = RUN[k] || !withSub || (o.drop && o.drop.has(k)) ? "" : sub(k), lS = fS * 1.15;
       const H = IS + (tx ? g1 + lS : 0), top = cen[1] - H / 2, yS = top + IS + g1 + lS / 2;
       if (tx) cen[0] = blockX(st, sp, yS - .6 * fS - 6, yS + .6 * fS + 6, cen[0]); // os bloku = stred šírky dielu v pásme stavu (najširší riadok)
       body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
@@ -307,7 +307,7 @@
         "<g class='sic' fill='currentColor' style='color:" + c.ink + "' transform='translate(" + f1(cen[0] - IS / 2) + " " + f1(top) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
         (tx ? "<text class='sub' x='" + f1(cen[0]) + "' y='" + f1(yS) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fS) + "' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
-    return "<div class='ring' style='--core-w:" + (200 * G.r / 420 - .4).toFixed(1) + "%' data-k='" + kk + "' data-sub='" + (withSub ? 1 : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
+    return "<div class='ring' style='--core-w:" + (200 * G.r / 420 - .4).toFixed(1) + "%' data-k='" + kk + "' data-sub='" + (withSub ? (o.drop && o.drop.size ? "bez:" + [...o.drop].join(",") : 1) : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
   }
   // Kontrola: každý znak názvu/stavu a ikona (rohy a stredy hrán obdĺžnika zväčšeného o M jednotiek) musia ležať vo výplni svojho dielu.
   function ringCheck(ring, M = 6) {
@@ -337,17 +337,26 @@
     });
     return bad;
   }
-  // Ak by sa obsah nezmestil: najprv jemne zmenšiť, potom vynechať stav (názov a ikona ostávajú vždy).
-  const FIT = [[1, 1], [.94, 1], [1, 0], [.94, 0], [.88, 0], [.82, 0]];
+  // Ak by sa obsah nezmestil: stav sa vynechá LEN v diele, kde sa nezmestí (Samo 24. 11.); ikona ostáva vždy.
+  // Skúša sa plná veľkosť a mierne zmenšenie (94 %) – vyhrá to, kde ostane najviac stavov (pri zhode väčšia veľkosť).
+  // Až keď by sa nezmestila ani samotná ikona, zmenší sa ďalej (88 %, 82 %).
   function fitRings() {
     stage.querySelectorAll(".ring").forEach(ring => {
       const px = ring.getBoundingClientRect().width;
-      let el = ring;
-      for (const [kk, sb] of FIT) {
-        const fresh = document.createRange().createContextualFragment(ringHtml({ px, k: kk, sub: !!sb })).firstElementChild;
-        el.replaceWith(fresh); el = fresh;
-        if (!ringCheck(el).length) break;
+      let el = ring, best = null;
+      const put = (kk, drop) => { const f = document.createRange().createContextualFragment(ringHtml({ px, k: kk, drop })).firstElementChild; el.replaceWith(f); el = f; return ringCheck(el); };
+      for (const kk of [1, .94, .88, .82]) {
+        if (best && kk < .94) break;
+        const drop = new Set();
+        for (let t = 0; t < 6; t++) {
+          const bad = put(kk, drop), keys = new Set(bad.map(b => b.split(":")[0]));
+          if (!bad.length) { if (!best || drop.size < best.drop.size) best = { kk, drop: new Set(drop) }; break; }
+          if ([...keys].every(x => drop.has(x))) break; // nezmestí sa ani samotná ikona → menšia veľkosť
+          keys.forEach(x => drop.add(x));
+        }
+        if (best && !best.drop.size) break;
       }
+      if (best) put(best.kk, best.drop);
     });
   }
   // Ladenie: __ringTry({k, sub}) vykreslí prvý kruh s danými voľbami a vráti, čo vybieha (bez automatického zmenšenia).
