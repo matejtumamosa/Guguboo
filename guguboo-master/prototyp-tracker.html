@@ -41,16 +41,16 @@
   .seg { cursor: pointer; transition: filter .2s, transform .2s; transform-origin: 210px 210px; outline: none; }
   .seg:active { transform: scale(.985); }
   .seg:focus-visible path.fill { stroke: var(--brand); stroke-width: 4; }
-  .seg path.fill { stroke: var(--sep); stroke-width: 4; stroke-linejoin: round; }
+  .seg path.fill { stroke: var(--card); stroke-width: 7; stroke-linejoin: round; }
   .seg.on path.fill { filter: drop-shadow(0 0 10px rgba(255, 210, 120, .6)); }
   .night .seg path.fill { opacity: .82; }
-  .lbl { font: 800 16px Montserrat, system-ui, sans-serif; pointer-events: none; }
+  .lbl { font: 700 15px Montserrat, system-ui, sans-serif; pointer-events: none; }
   .night .lbl { fill: #1f1a2e !important; }
 
   .bb { position: relative; }
   .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
   .night .tag2 { color: #1f1a2e; }
-  .sub { font: 600 14px Montserrat, system-ui, sans-serif; pointer-events: none; opacity: .85; }
+  .sub { font: 600 13px Montserrat, system-ui, sans-serif; pointer-events: none; opacity: .75; }
   .chip { fill: #fff; filter: drop-shadow(0 3px 6px rgba(80, 50, 120, .18)); transition: transform .15s; transform-box: fill-box; transform-origin: center; }
   .seg:active .chip { transform: scale(.92); }
   .sic { pointer-events: none; fill: currentColor; }
@@ -60,9 +60,9 @@
   .ring svg { filter: drop-shadow(0 10px 18px rgba(95, 79, 177, .14)); }
   .night .ring svg { filter: none; }
   .small .sub { display: none; }
-  .core { position: absolute; left: 50%; top: 50%; width: 37%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: radial-gradient(circle at 35% 25%, var(--core), color-mix(in srgb, var(--core) 92%, #b9a8f0)); box-shadow: 0 8px 22px rgba(95, 79, 177, .16), inset 0 0 0 1px var(--line); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
+  .core { position: absolute; left: 50%; top: 50%; width: 37%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: var(--core); box-shadow: 0 6px 20px rgba(95, 79, 177, .14); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
   .core:active { transform: translate(-50%, -50%) scale(.95); }
-  .core b { font: 800 clamp(13px, 5.2cqh, 15px)/1.15 Montserrat, system-ui, sans-serif; text-align: center; }
+  .core b { font: 700 clamp(13px, 5cqh, 15px)/1.2 Montserrat, system-ui, sans-serif; text-align: center; color: var(--ink); }
   .core > svg:first-child { width: 22px; height: 22px; margin-bottom: 2px; }
   .core u { font: 700 12px Montserrat, system-ui, sans-serif; color: var(--brand); }
   .core .cl { font: 600 12px/1 Montserrat, system-ui, sans-serif; color: var(--muted); }
@@ -217,7 +217,7 @@
     return { o, i, c1: [o[0] + tx * bend, o[1] + ty * bend], c2: [i[0] + tx * bend, i[1] + ty * bend] };
   }
   function segPath(st, sp) {
-    const bend = 46 * sp / 120, f = cut(st, bend), t = cut(st + sp, bend), large = sp > 180 ? 1 : 0;
+    const bend = 16 * sp / 120, f = cut(st, bend), t = cut(st + sp, bend), large = sp > 180 ? 1 : 0;
     return ["M", f1(f.o[0]), f1(f.o[1]), "A", G.R, G.R, 0, large, 1, f1(t.o[0]), f1(t.o[1]), "C", f1(t.c1[0]), f1(t.c1[1]), f1(t.c2[0]), f1(t.c2[1]), f1(t.i[0]), f1(t.i[1]),
       "A", G.r, G.r, 0, large, 0, f1(f.i[0]), f1(f.i[1]), "C", f1(f.c2[0]), f1(f.c2[1]), f1(f.c1[0]), f1(f.c1[1]), f1(f.o[0]), f1(f.o[1]), "Z"].join(" ");
   }
@@ -232,17 +232,17 @@
     const keys = segsNow(), n = keys.length, sp = 360 / n, id = "r" + (++uid);
     let defs = "", body = "";
     keys.forEach((k, i) => {
-      const s = SEG[k], c = COL[s.c], st = -90 - sp / 2 + i * sp + (n === 3 ? 0 : 0), mid = st + sp / 2 + 8 * sp / 120;
+      const s = SEG[k], c = COL[s.c], st = -90 - sp / 2 + i * sp + (n === 3 ? 0 : 0), mid = st + sp / 2 + 3 * sp / 120;
       const a = P(st, 140), b = P(st + sp, 140);
-      defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a[0]) + "' y1='" + f1(a[1]) + "' x2='" + f1(b[0]) + "' y2='" + f1(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.6' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
+      defs += "<radialGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' cx='210' cy='210' r='196'><stop offset='.42' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[0] + "'/></radialGradient>"; // Samo 24. 11.: jednotný mäkký prechod zvnútra von
       // Samo 24. 11.: v dieli ikona v bielom kruhu (vyzerá ako tlačidlo) + pod ňou len krátky čas; názov je v aria-label.
       // Posudok 3: ikona + krátke slovo (samotné ikony nestačia), pod tým čas; pri bežiacom čase stav len v strede.
-      const tx = RUN[k] ? "" : sub(k), [cx, cy] = P(mid, 139), R0 = 22, IS = 25, oy = cy - (tx ? 24 : 14);
+      const tx = RUN[k] ? "" : sub(k), [cx, cy] = P(mid, 139), R0 = 21, IS = 24, oy = cy - (tx ? 19 : 10); // skupina ikona + názov + čas presne v strede dielu
       body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
         "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")'/>" +
         "<circle class='chip' cx='" + f1(cx) + "' cy='" + f1(oy) + "' r='" + R0 + "'/>" +
         "<g class='sic' style='color:" + c.ti + "' transform='translate(" + f1(cx - IS / 2) + " " + f1(oy - IS / 2) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
-        "<text class='lbl' x='" + f1(cx) + "' y='" + f1(oy + R0 + 18) + "' text-anchor='middle' fill='" + c.ink + "'>" + s.l + "</text>" +
+        "<text class='lbl' x='" + f1(cx) + "' y='" + f1(oy + R0 + 19) + "' text-anchor='middle' fill='" + c.ink + "'>" + s.l + "</text>" +
         (tx ? "<text class='sub' x='" + f1(cx) + "' y='" + f1(oy + R0 + 36) + "' text-anchor='middle' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
     return "<div class='ring'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
