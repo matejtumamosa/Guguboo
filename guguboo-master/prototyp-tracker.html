@@ -48,7 +48,8 @@
   .seg .fill { stroke-width: 1.2; } /* ťah v tej istej farbe ako výplň – len zakryje vlásočnicu medzi dielmi, nie je vidieť */
   .night .ring svg { filter: brightness(.9) saturate(.92); } /* noc: celý kruh naraz o kúsok tlmenejší, bez obrysov */
   .sub { font-family: Montserrat, system-ui, sans-serif; font-weight: 600; pointer-events: none; opacity: .62; } /* jemný stav – nižší kontrast, nesúperí s ikonou */
-  .sic { pointer-events: none; }
+  .sic { pointer-events: none; opacity: .58; } /* Samo 24. 11.: ikony jemnejšie, nie takmer čierne */
+  .night .sic { opacity: .7; }
 
   .bb { position: relative; }
   .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
