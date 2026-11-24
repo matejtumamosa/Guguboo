@@ -38,8 +38,8 @@
   .card { flex: 1 1 0; min-height: 0; background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); container-type: size; position: relative; display: grid; place-items: center; }
   /* Kruh (Samo 24. 11., 6. kolo): presne pôvodný kruh 2.9 – esovité diely, lineárny prechod v smere hodín (v5OPink/…),
      jemná hĺbka (v5ODepth), oddelenie len tenkým švom v rezoch; žiadne biele obrysy okolo dielov ani tieň celého SVG. */
-  .ring { position: relative; width: min(94cqh, 92cqw, 330px); aspect-ratio: 1; container-type: inline-size; }
-  @container (max-width: 260px) { .ring .core { width: 37%; } .ring .core[data-act="stop"] > svg:first-child { display: none; } .ring .core .st { font-size: 10px; padding: 2px 6px; margin-top: 2px; white-space: nowrap; } .ring .core .tm { font-size: 19px; } } /* nízka obrazovka: beží časovač – bez ikony, nech sa „Zobudilo sa“ zmestí do kruhu */
+  .ring { position: relative; width: min(94cqh, 92cqw, 340px); aspect-ratio: 1; container-type: inline-size; }
+  @container (max-width: 260px) { .ring .core[data-act="stop"] > svg:first-child { display: none; } .ring .core .st { font-size: 10px; padding: 2px 6px; margin-top: 2px; white-space: nowrap; } .ring .core .tm { font-size: 19px; } } /* nízka obrazovka: beží časovač – bez ikony, nech sa „Zobudilo sa“ zmestí do kruhu */
   .ring svg { width: 100%; height: 100%; display: block; overflow: visible; }
   .seg { cursor: pointer; outline: none; transform-box: view-box; transform-origin: 210px 210px; transition: transform .18s ease, filter .25s ease; }
   .seg:hover { filter: brightness(1.03); }
@@ -54,14 +54,14 @@
   .bb { position: relative; }
   .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
   .night .tag2 { color: #1f1a2e; }
-  .core { position: absolute; left: 50%; top: 50%; width: 37%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: var(--core); box-shadow: 0 2px 10px rgba(95, 79, 177, .08); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
+  .core { position: absolute; left: 50%; top: 50%; width: var(--core-w, 34%); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: var(--core); box-shadow: 0 2px 10px rgba(95, 79, 177, .08); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
   .core:active { transform: translate(-50%, -50%) scale(.95); }
   .core b { font: 700 clamp(13px, 5cqh, 15px)/1.2 Montserrat, system-ui, sans-serif; text-align: center; color: var(--ink); }
   .core > svg:first-child { width: 22px; height: 22px; margin-bottom: 2px; }
   .core u { font: 700 12px Montserrat, system-ui, sans-serif; color: var(--brand); }
   .core .cl { font: 600 12px/1 Montserrat, system-ui, sans-serif; color: var(--muted); }
-  .core .tm { font: 800 clamp(18px, 8cqh, 26px)/1.05 Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
-  .core .st { font: 700 11px Montserrat, system-ui, sans-serif; color: #fff; background: var(--brand); padding: 3px 9px; border-radius: 999px; margin-top: 3px; }
+  .core .tm { font: 800 clamp(18px, 8cqh, 23px)/1.05 Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  .core .st { font: 700 11px Montserrat, system-ui, sans-serif; color: #fff; background: var(--brand); padding: 3px 8px; border-radius: 999px; margin-top: 2px; white-space: nowrap; }
   .night .core .st { color: #1f1a2e; }
   .core svg { width: 18px; height: 18px; color: var(--brand); }
 
@@ -221,6 +221,28 @@
       "A", G.r, G.r, 0, large, 0, f1(f.i[0]), f1(f.i[1]), "C", f1(f.c2[0]), f1(f.c2[1]), f1(f.c1[0]), f1(f.c1[1]), f1(f.o[0]), f1(f.o[1]), "Z"].join(" ");
   }
   // Skutočné ťažisko esovitého dielu (plocha mnohouholníka) – obsah sedí opticky v strede pri 3 aj 5 dieloch.
+  // Stred vodorovnej tetivy dielu vo výške y (interval, v ktorom leží x0) – blok textu sa vycentruje na šírku dielu.
+  function chordMid(st, sp, y, x0) {
+    const pts = shape(st, sp), xs = [];
+    pts.forEach((p, q) => { const n = pts[(q + 1) % pts.length]; if ((p[1] - y) * (n[1] - y) < 0) xs.push(p[0] + (y - p[1]) * (n[0] - p[0]) / (n[1] - p[1])); });
+    xs.sort((a, b) => a - b);
+    for (let q = 0; q + 1 < xs.length; q += 2) if (x0 >= xs[q] && x0 <= xs[q + 1]) return [xs[q], xs[q + 1]];
+    return [x0, x0];
+  }
+  // Os bloku: stred spoločnej šírky dielu v hornej aj dolnej hrane riadku názvu (diel je esovitý, okraje sú šikmé).
+  function blockX(st, sp, y0, y1, x0) {
+    const a = chordMid(st, sp, y0, x0), b = chordMid(st, sp, y1, x0);
+    return (Math.max(a[0], b[0]) + Math.min(a[1], b[1])) / 2;
+  }
+  function shape(st, sp) {
+    const bend = bendOf(sp), f = cut(st, bend), t = cut(st + sp, bend), pts = [];
+    const bz = (p0, p1, p2, p3, k) => { const u = 1 - k; return [0, 1].map(j => u * u * u * p0[j] + 3 * u * u * k * p1[j] + 3 * u * k * k * p2[j] + k * k * k * p3[j]); };
+    for (let q = 0; q <= 60; q++) pts.push(P(st + sp * q / 60, G.R));
+    for (let q = 1; q <= 24; q++) pts.push(bz(t.o, t.c1, t.c2, t.i, q / 24));
+    for (let q = 1; q <= 60; q++) pts.push(P(st + sp - sp * q / 60, G.r));
+    for (let q = 1; q < 24; q++) pts.push(bz(f.i, f.c2, f.c1, f.o, q / 24));
+    return pts;
+  }
   function centroid(st, sp) {
     const bend = bendOf(sp), f = cut(st, bend), t = cut(st + sp, bend), pts = [];
     const bz = (p0, p1, p2, p3, k) => { const u = 1 - k; return [0, 1].map(j => u * u * u * p0[j] + 3 * u * u * k * p1[j] + 3 * u * k * k * p2[j] + k * k * k * p3[j]); };
@@ -232,46 +254,46 @@
     pts.forEach((p, q) => { const n = pts[(q + 1) % pts.length], c = p[0] * n[1] - n[0] * p[1]; A += c; x += (p[0] + n[0]) * c; y += (p[1] + n[1]) * c; });
     return [x / (3 * A), y / (3 * A)];
   }
-  // Oblúk pre text (ako pôvodný kruh): hore sa číta po obvode, dole obrátene – text je vždy „hlavou hore“.
-  function textArc(mid, r, h, lower, id) {
-    const a = P(mid + (lower ? h : -h), r), b = P(mid + (lower ? -h : h), r);
-    return "<path id='" + id + "' fill='none' d='M " + f1(a[0]) + " " + f1(a[1]) + " A " + f1(r) + " " + f1(r) + " 0 0 " + (lower ? 0 : 1) + " " + f1(b[0]) + " " + f1(b[1]) + "'/>";
-  }
   let uid = 0;
   // o.px = skutočná šírka kruhu na obrazovke (písmo a ikona v px, nie v jednotkách), o.k = zmenšenie pri kontrole, o.sub = stav pod názvom
   function ringHtml(o = {}) {
-    const px = o.px || 330, kk = o.k || 1, withSub = o.sub !== false, u = 420 / px, small = px < 260;
+    const px = o.px || 340, kk = o.k || 1, withSub = o.sub !== false, u = 420 / px, small = px < 260;
+    // Proporcie ako vzor 01 (R : r = 156 : 68, tenký prstenec, veľký biely stred): na 390 asi 260 px kruh so vzduchom v karte.
+    // Nízka obrazovka (kruh obmedzený výškou karty): ten istý tvar, len vyplní viac zo svojho štvorca.
+    if (small) { G.R = 200; G.r = 88; } else { G.R = 170; G.r = 74; }
+    G.bend = 45 * G.R / 156;
     const keys = segsNow(), n = keys.length, sp = 360 / n, id = "r" + (++uid);
-    const IS = (small ? 27 : 32) * kk * u, /* rámik ikony; samotná kresba ~ 26 px */ fN = (small ? 11 : 12) * kk * u, fS = (small ? 10 : 11) * kk * u, g2 = 1 * kk * u;
+    const IS = (small ? 22 : 26) * kk * u, /* rámik ikony; kresba ~ 21–24 px */ fN = (small ? 11 : 12) * kk * u, fS = (small ? 10 : 11) * kk * u, g1 = 2 * kk * u, g2 = 0 * u;
+    // Vodorovný blok sa najlepšie zmestí do dielov hore/dole/na bokoch, najhoršie do šikmých. Pri 3 dieloch ostáva pôvodné natočenie
+    // (rez hore); pri 4 sú diely vpravo · dole · vľavo · hore (dlhé názvy hore/dole), pri 5 sú dlhé Odsávanie a Na brušku v dolných dieloch.
+    const d0 = (() => { const c0 = centroid(0, sp); return Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI - sp / 2; })(); // posun ťažiska esovitého dielu
+    const start = n === 3 ? -90 : (n === 4 ? 0 : 198) - sp / 2 - d0;
     let defs = "", body = "";
     CUR = {};
     keys.forEach((k, i) => {
       const s = SEG[k], prev = i ? CUR[keys[i - 1]] : null, first = i === n - 1 ? CUR[keys[0]] : null;
       CUR[k] = s.c !== prev && s.c !== first ? s.c : PAL.find(p => p !== prev && p !== first && !Object.values(CUR).includes(p));
-      const c = COL[CUR[k]], st = -90 + i * sp, a0 = P(st, G.R), a1 = P(st + sp, G.R);
-      const cen = centroid(st, sp), ang = Math.atan2(cen[1] - 210, cen[0] - 210) * 180 / Math.PI, lower = Math.sin(ang * Math.PI / 180) > .2;
+      const c = COL[CUR[k]], st = start + i * sp, a0 = P(st, G.R), a1 = P(st + sp, G.R);
+      // Optické ťažisko: smer skutočného ťažiska plochy, polomer = stred prstenca (skutočné ťažisko 120° oblúka leží pri vnútornom okraji).
+      const c0 = centroid(st, sp), cen = P(Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI, (G.R + G.r) / 2);
       // pôvodný lineárny prechod: od začiatku dielu (svetlejšie) k jeho koncu v smere hodín (sýtejšie)
       defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a0[0]) + "' y1='" + f1(a0[1]) + "' x2='" + f1(a1[0]) + "' y2='" + f1(a1[1]) + "'>" +
         c.g.map((col, j) => "<stop offset='" + [0, .3, .72, 1][j] + "' stop-color='" + col + "'/>").join("") + "</linearGradient>";
-      // Obsah ako v appke 3.3, zhora nadol na obrazovke: ikona · názov · stav – jeden blok v ťažisku dielu, na jeho osi.
-      // Jedno pravidlo pre všetky diely (6. kolo, grafická kontrola): ikona v skutočnom ťažisku plochy dielu;
-      // názov po oblúku na ROVNAKOM polomere vo všetkých dieloch (pri vonkajšom okraji), na tej istej radiálnej osi ako ikona;
-      // stav malým písmom po oblúku hneď vedľa názvu smerom k stredu. Hore sa číta po smere, dole obrátene (vždy hlavou hore).
-      const tx = RUN[k] || !withSub ? "" : sub(k);
-      const rN = G.R - 9 - .6 * fN, rS = rN - .6 * fN - g2 - .6 * fS, tIn = (tx ? rS - .6 * fS : rN - .6 * fN);
-      const h = Math.min(sp / 2 + 14, 80);
-      // Ikona v ťažisku; len ak by sa pri 4–5 dieloch dotkla stavu, posunie sa po tej istej osi o pár jednotiek k stredu (najviac 4).
-      const cR = Math.hypot(cen[0] - 210, cen[1] - 210), iR = Math.max(cR - 4, Math.min(cR, tIn - 3 - .41 * IS)), [ix, iy] = P(ang, iR);
-      body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' data-tin='" + f1(tIn) + "' data-ishift='" + f1(cR - iR) + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
+      // 7. kolo (grafická kontrola): jeden kompaktný vodorovný blok v ťažisku dielu, vždy zhora nadol ikona → názov → stav.
+      // Žiadny text po oblúku ani zvislý text. Stav sa vynechá, ak by sa nezmestil (ostáva v okne dielu a v Prehľade dňa).
+      const tx = RUN[k] || !withSub ? "" : sub(k), lN = fN * 1.15, lS = fS * 1.15;
+      const H = IS + g1 + lN + (tx ? g2 + lS : 0), top = cen[1] - H / 2, yN = top + IS + g1 + lN / 2, yS = yN + lN / 2 + g2 + lS / 2;
+      cen[0] = blockX(st, sp, yN - .6 * fN - 6, yN + .6 * fN + 6, cen[0]); // os bloku = stred šírky dielu v pásme názvu (najdlhší riadok)
+      body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
         "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")' stroke='url(#" + id + "g" + i + ")'/>" +
-        "<g class='sic' fill='" + c.ink + "' transform='translate(" + f1(ix - IS / 2) + " " + f1(iy - IS / 2) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
-        textArc(ang, rN, h, lower, id + "n" + i) + "<text class='nm' font-size='" + f1(fN) + "' dy='.35em' fill='" + c.ink + "'><textPath href='#" + id + "n" + i + "' startOffset='50%' text-anchor='middle'>" + s.l + "</textPath></text>" +
-        (tx ? textArc(ang, rS, h, lower, id + "s" + i) + "<text class='sub' font-size='" + f1(fS) + "' dy='.35em' fill='" + c.ink + "'><textPath href='#" + id + "s" + i + "' startOffset='50%' text-anchor='middle'>" + tx + "</textPath></text>" : "") + "</g>";
+        "<g class='sic' fill='" + c.ink + "' transform='translate(" + f1(cen[0] - IS / 2) + " " + f1(top) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
+        "<text class='nm' x='" + f1(cen[0]) + "' y='" + f1(yN) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fN) + "' fill='" + c.ink + "'>" + s.l + "</text>" +
+        (tx ? "<text class='sub' x='" + f1(cen[0]) + "' y='" + f1(yS) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fS) + "' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
-    return "<div class='ring' data-k='" + kk + "' data-sub='" + (withSub ? 1 : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
+    return "<div class='ring' style='--core-w:" + (200 * G.r / 420 - .4).toFixed(1) + "%' data-k='" + kk + "' data-sub='" + (withSub ? 1 : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
   }
   // Kontrola: každý znak názvu/stavu a ikona (rohy a stredy hrán obdĺžnika zväčšeného o M jednotiek) musia ležať vo výplni svojho dielu.
-  function ringCheck(ring, M = 8) {
+  function ringCheck(ring, M = 6) {
     const bad = [];
     ring.querySelectorAll(".seg").forEach(g => {
       const path = g.querySelector(".fill"), rects = [];
@@ -284,7 +306,7 @@
       });
       // Ikona sa nesmie dotknúť žiadneho znaku (odstup aspoň 3 jednotky): body obrysu kresby ikony vs. natočený obdĺžnik znaku (celá výška písma).
       const pts = [];
-      ic.querySelectorAll("path").forEach(p => { const L = p.getTotalLength(); for (let q = 0; q < 120; q++) { const v = p.getPointAtLength(L * q / 120); pts.push([v.x * m.a + m.e, v.y * m.d + m.f]); } });
+      ic.querySelectorAll("path").forEach(p => { const L = p.getTotalLength(); for (let q = 0; q < 40; q++) { const v = p.getPointAtLength(L * q / 40); pts.push([v.x * m.a + m.e, v.y * m.d + m.f]); } });
       g.querySelectorAll("text").forEach(t => {
         const fs = parseFloat(t.getAttribute("font-size"));
         for (let q = 0; q < t.getNumberOfChars(); q++) {
