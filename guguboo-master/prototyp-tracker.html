@@ -44,12 +44,13 @@
   .seg path.fill { stroke: var(--sep); stroke-width: 4; stroke-linejoin: round; }
   .seg.on path.fill { filter: drop-shadow(0 0 10px rgba(255, 210, 120, .6)); }
   .night .seg path.fill { opacity: .82; }
-  .lbl { font: 800 20px Montserrat, system-ui, sans-serif; pointer-events: none; }
-  .lbl.lg { font-size: 16px; }
+  .lbl { font: 800 16px Montserrat, system-ui, sans-serif; pointer-events: none; }
+  .night .lbl { fill: #1f1a2e !important; }
+
   .bb { position: relative; }
   .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
   .night .tag2 { color: #1f1a2e; }
-  .sub { font: 700 16px Montserrat, system-ui, sans-serif; pointer-events: none; }
+  .sub { font: 600 14px Montserrat, system-ui, sans-serif; pointer-events: none; opacity: .85; }
   .chip { fill: #fff; filter: drop-shadow(0 3px 6px rgba(80, 50, 120, .18)); transition: transform .15s; transform-box: fill-box; transform-origin: center; }
   .seg:active .chip { transform: scale(.92); }
   .sic { pointer-events: none; fill: currentColor; }
@@ -183,7 +184,7 @@
     mint: { g: ["#d9f2e9", "#97d6bf", "#62b99c"], ink: "#123f33", tb: "#e3f5ee", ti: "#24715f" }
   };
   const SEG = {
-    feed: { l: "Kŕmenie", c: "pink", i: "feeding" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
+    feed: { l: "Kŕmenie", c: "pink", i: "breastfeed" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
     pump: { l: "Odsávanie", c: "lilac", i: "dropHalf", t: "Odsávanie mlieka" }, tummy: { l: "Na brušku", c: "mint", i: "baby" },
     move: { l: "Pohyby", c: "pink", i: "footprints" }, drink: { l: "Pitie", c: "blue", i: "water" }, vit: { l: "Vitamíny", c: "peach", i: "pill" },
     question: { l: "Pre lekára", c: "lilac", i: "question" }, contraction: { l: "Kontrakcie", c: "peach", i: "wave" }
@@ -235,12 +236,14 @@
       const a = P(st, 140), b = P(st + sp, 140);
       defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a[0]) + "' y1='" + f1(a[1]) + "' x2='" + f1(b[0]) + "' y2='" + f1(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.6' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
       // Samo 24. 11.: v dieli ikona v bielom kruhu (vyzerá ako tlačidlo) + pod ňou len krátky čas; názov je v aria-label.
-      const tx = sub(k), [cx, cy] = P(mid, 139), oy = tx ? cy - 9 : cy, R0 = 27, IS = 30;
+      // Posudok 3: ikona + krátke slovo (samotné ikony nestačia), pod tým čas; pri bežiacom čase stav len v strede.
+      const tx = RUN[k] ? "" : sub(k), [cx, cy] = P(mid, 139), R0 = 22, IS = 25, oy = cy - (tx ? 24 : 14);
       body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
         "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")'/>" +
         "<circle class='chip' cx='" + f1(cx) + "' cy='" + f1(oy) + "' r='" + R0 + "'/>" +
         "<g class='sic' style='color:" + c.ti + "' transform='translate(" + f1(cx - IS / 2) + " " + f1(oy - IS / 2) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
-        (tx ? "<text class='sub' x='" + f1(cx) + "' y='" + f1(oy + R0 + 19) + "' text-anchor='middle' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
+        "<text class='lbl' x='" + f1(cx) + "' y='" + f1(oy + R0 + 18) + "' text-anchor='middle' fill='" + c.ink + "'>" + s.l + "</text>" +
+        (tx ? "<text class='sub' x='" + f1(cx) + "' y='" + f1(oy + R0 + 36) + "' text-anchor='middle' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
     return "<div class='ring'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
   }
