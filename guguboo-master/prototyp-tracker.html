@@ -47,8 +47,7 @@
   .seg:focus-visible .fill { stroke: var(--brand); stroke-width: 4; }
   .seg .fill { stroke-width: 1.2; } /* ťah v tej istej farbe ako výplň – len zakryje vlásočnicu medzi dielmi, nie je vidieť */
   .night .ring svg { filter: brightness(.9) saturate(.92); } /* noc: celý kruh naraz o kúsok tlmenejší, bez obrysov */
-  .nm { font-family: Montserrat, system-ui, sans-serif; font-weight: 800; letter-spacing: .01em; pointer-events: none; }
-  .sub { font-family: Montserrat, system-ui, sans-serif; font-weight: 700; pointer-events: none; opacity: .84; }
+  .sub { font-family: Montserrat, system-ui, sans-serif; font-weight: 600; pointer-events: none; opacity: .62; } /* jemný stav – nižší kontrast, nesúperí s ikonou */
   .sic { pointer-events: none; }
 
   .bb { position: relative; }
@@ -140,9 +139,22 @@
     wave: "<path d='M239.24,131.4c-22,46.8-41.4,68.6-61.2,68.6-25.1,0-40.73-33.32-57.28-68.6C107.7,103.56,92.9,72,78,72c-16.4,0-36.31,37.21-46.72,59.4a8,8,0,0,1-14.48-6.8C38.71,77.8,58.16,56,78,56c25.1,0,40.73,33.32,57.28,68.6C148.3,152.44,163.1,184,178,184c16.4,0,36.31-37.21,46.72-59.4a8,8,0,0,1,14.48,6.8Z'/>",
     question: "<path d='M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z'/>",
     check: "<path d='M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z'/>",
+    // ——— Sada ikon kruhu (Samo 24. 11.): linkové, ťah 16, zaoblené konce – rovnaká hrúbka ako Phosphor regular (mesiac, kŕmenie) ———
+    sleepZ: "<path d='M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z'/>" +
+      "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M160,48H200L160,96H200'/>",
+    diaperFront: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M44,72H212V112C212,164 180,196 152,200H104C76,196 44,164 44,112Z'/><path d='M44,100H212'/><path d='M44,82H28V118H44M212,82H228V118H212'/><path d='M104,200C104,170 92,150 72,140M152,200C152,170 164,150 184,140'/></g>",
+    breastPump: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M112,72H168A12,12,0,0,1,180,84V108H100V84A12,12,0,0,1,112,72Z'/><path d='M100,80L56,48C40,64 40,116 56,132L100,100'/><path d='M112,108V208A16,16,0,0,0,128,224H152A16,16,0,0,0,168,208V108'/><path d='M140,148H168M140,180H168'/></g>",
+    tummyTime: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><circle cx='72' cy='92' r='28'/><path d='M96,124C124,128 140,136 164,136C196,136 220,152 216,172C214,184 204,188 192,188H104'/><path d='M92,128L76,188H104'/><path d='M216,172L236,158'/><path d='M20,212H236'/></g>",
+    bellyKick: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M64,28C160,36 204,100 192,160C184,198 136,224 64,228'/><path d='M216,100L234,90M222,140H242M216,180L234,190'/></g>" +
+      "<g fill='currentColor'><path d='M120,188C100,188 92,166 96,144C100,122 112,112 128,114C144,116 150,134 146,154C142,172 140,188 120,188Z'/><circle cx='100' cy='96' r='9'/><circle cx='118' cy='90' r='8'/><circle cx='134' cy='92' r='7'/><circle cx='146' cy='100' r='6'/></g>",
+    glassWater: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M64,40H192L172,208A16,16,0,0,1,156,224H100A16,16,0,0,1,84,208Z'/><path d='M76,104C100,92 116,116 140,104S172,96 180,104'/></g>",
+    capsule: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' transform='rotate(-45 128 128)'><rect x='36' y='88' width='184' height='80' rx='40'/><path d='M128,88V168'/></g>",
+    doctorQ: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M96,32H160V96H224V160H160V224H96V160H32V96H96Z'/><path d='M112,116A16,16,0,1,1,132,132C128,134 128,138 128,142'/></g><circle cx='128' cy='168' r='10' fill='currentColor'/>",
+    bellyWave: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M76,32C164,40 204,104 192,160C184,196 140,222 76,224'/><path d='M60,128C72,108 88,108 100,128S128,148 140,128S164,108 176,128'/></g>",
     clock: "<path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'/>",
     pill: "<path fill-rule='evenodd' d='M93,59a48,48,0,0,1,68,0l36,36a48,48,0,0,1,0,68l-34,34a48,48,0,0,1-68,0L59,161a48,48,0,0,1,0-68ZM70,104a32,32,0,0,0,0,45l13,13,79-79-13-13a32,32,0,0,0-45,0ZM94,173l13,13a32,32,0,0,0,45,0l34-34a32,32,0,0,0,0-45l-13-13Z'/>", // Master: vlastná ikona tabletky (štýl Phosphor)
   };
+  window.__ICON = ICON; // ladenie: náhľad sady ikon
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const ic = n => "<svg viewBox='0 0 256 256' fill='currentColor' aria-hidden='true'>" + ICON[n] + "</svg>";
   const MIN = 60000, now = () => Date.now();
@@ -181,10 +193,10 @@
   const PAL = ["pink", "peach", "blue", "lilac", "mint"];
   let CUR = {}; // farba dielu v aktuálnom kruhu (susedné diely nikdy rovnakej farby) – rovnaká farba aj v hlavičke okna
   const SEG = {
-    feed: { l: "Kŕmenie", c: "pink", i: "breastfeed" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
-    pump: { l: "Odsávanie", c: "lilac", i: "dropHalf", t: "Odsávanie mlieka" }, tummy: { l: "Na brušku", c: "mint", i: "baby" },
-    move: { l: "Pohyby", c: "pink", i: "footprints" }, drink: { l: "Pitie", c: "blue", i: "water" }, vit: { l: "Vitamíny", c: "peach", i: "pill" },
-    question: { l: "Pre lekára", c: "lilac", i: "question" }, contraction: { l: "Kontrakcie", c: "peach", i: "wave" }
+    feed: { l: "Kŕmenie", c: "pink", i: "breastfeed" }, sleep: { l: "Spánok", c: "peach", i: "sleepZ" }, diaper: { l: "Plienky", c: "blue", i: "diaperFront" },
+    pump: { l: "Odsávanie", c: "lilac", i: "breastPump", t: "Odsávanie mlieka" }, tummy: { l: "Na brušku", c: "mint", i: "tummyTime" },
+    move: { l: "Pohyby", c: "pink", i: "bellyKick" }, drink: { l: "Pitie", c: "blue", i: "glassWater" }, vit: { l: "Vitamíny", c: "peach", i: "capsule" },
+    question: { l: "Pre lekára", c: "lilac", i: "doctorQ" }, contraction: { l: "Kontrakcie", c: "peach", i: "bellyWave" }
   };
   const segsNow = () => S.period === "po" ? ["feed", "sleep", "diaper"].concat(S.pump ? ["pump"] : [], S.tummy ? ["tummy"] : [])
     : S.period === "w36" ? ["move", "contraction", "vit", "question"] : ["move", "drink", "vit", "question"];
@@ -263,7 +275,8 @@
     if (small) { G.R = 200; G.r = 88; } else { G.R = 170; G.r = 74; }
     G.bend = 45 * G.R / 156;
     const keys = segsNow(), n = keys.length, sp = 360 / n, id = "r" + (++uid);
-    const IS = (small ? 22 : 26) * kk * u, /* rámik ikony; kresba ~ 21–24 px */ fN = (small ? 11 : 12) * kk * u, fS = (small ? 10 : 11) * kk * u, g1 = 2 * kk * u, g2 = 0 * u;
+    // Samo 24. 11.: v dieli len ikona (sama vysvetlí význam; názov je v aria-label a v hlavičke okna), pod ňou jemný stav, ak sa zmestí.
+    const IS = (small ? 30 : 36) * kk * u, /* rámik ikony; kresba ~ 28–32 px */ fS = (small ? 10 : 10.5) * kk * u, g1 = 3 * kk * u;
     // Vodorovný blok sa najlepšie zmestí do dielov hore/dole/na bokoch, najhoršie do šikmých. Pri 3 dieloch ostáva pôvodné natočenie
     // (rez hore); pri 4 sú diely vpravo · dole · vľavo · hore (dlhé názvy hore/dole), pri 5 sú dlhé Odsávanie a Na brušku v dolných dieloch.
     const d0 = (() => { const c0 = centroid(0, sp); return Math.atan2(c0[1] - 210, c0[0] - 210) * 180 / Math.PI - sp / 2; })(); // posun ťažiska esovitého dielu
@@ -281,13 +294,12 @@
         c.g.map((col, j) => "<stop offset='" + [0, .3, .72, 1][j] + "' stop-color='" + col + "'/>").join("") + "</linearGradient>";
       // 7. kolo (grafická kontrola): jeden kompaktný vodorovný blok v ťažisku dielu, vždy zhora nadol ikona → názov → stav.
       // Žiadny text po oblúku ani zvislý text. Stav sa vynechá, ak by sa nezmestil (ostáva v okne dielu a v Prehľade dňa).
-      const tx = RUN[k] || !withSub ? "" : sub(k), lN = fN * 1.15, lS = fS * 1.15;
-      const H = IS + g1 + lN + (tx ? g2 + lS : 0), top = cen[1] - H / 2, yN = top + IS + g1 + lN / 2, yS = yN + lN / 2 + g2 + lS / 2;
-      cen[0] = blockX(st, sp, yN - .6 * fN - 6, yN + .6 * fN + 6, cen[0]); // os bloku = stred šírky dielu v pásme názvu (najdlhší riadok)
+      const tx = RUN[k] || !withSub ? "" : sub(k), lS = fS * 1.15;
+      const H = IS + (tx ? g1 + lS : 0), top = cen[1] - H / 2, yS = top + IS + g1 + lS / 2;
+      if (tx) cen[0] = blockX(st, sp, yS - .6 * fS - 6, yS + .6 * fS + 6, cen[0]); // os bloku = stred šírky dielu v pásme stavu (najširší riadok)
       body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
         "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")' stroke='url(#" + id + "g" + i + ")'/>" +
-        "<g class='sic' fill='" + c.ink + "' transform='translate(" + f1(cen[0] - IS / 2) + " " + f1(top) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
-        "<text class='nm' x='" + f1(cen[0]) + "' y='" + f1(yN) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fN) + "' fill='" + c.ink + "'>" + s.l + "</text>" +
+        "<g class='sic' fill='currentColor' style='color:" + c.ink + "' transform='translate(" + f1(cen[0] - IS / 2) + " " + f1(top) + ") scale(" + (IS / 256).toFixed(4) + ")'>" + ICON[s.i] + "</g>" +
         (tx ? "<text class='sub' x='" + f1(cen[0]) + "' y='" + f1(yS) + "' dy='.35em' text-anchor='middle' font-size='" + f1(fS) + "' fill='" + c.ink + "'>" + tx + "</text>" : "") + "</g>";
     });
     return "<div class='ring' style='--core-w:" + (200 * G.r / 420 - .4).toFixed(1) + "%' data-k='" + kk + "' data-sub='" + (withSub ? 1 : 0) + "'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
@@ -297,26 +309,17 @@
     const bad = [];
     ring.querySelectorAll(".seg").forEach(g => {
       const path = g.querySelector(".fill"), rects = [];
-      const ic = g.querySelector(".sic"), bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix;
-      rects.push({ w: "ikona", x: bb.x * m.a + m.e, y: bb.y * m.d + m.f, width: bb.width * m.a, height: bb.height * m.d });
+      // getBBox() nezahŕňa ťah – linkové ikony majú ťah 16, preto sa rámik zväčší o polovicu ťahu (8 jednotiek ikony).
+      const ic = g.querySelector(".sic"), bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix, sw = 8;
+      rects.push({ w: "ikona", x: (bb.x - sw) * m.a + m.e, y: (bb.y - sw) * m.d + m.f, width: (bb.width + 2 * sw) * m.a, height: (bb.height + 2 * sw) * m.d });
       const inFill = (pts, w) => { if (pts.some(p => !path.isPointInFill(new DOMPoint(p[0], p[1])))) bad.push(g.dataset.k + ": " + w); };
       rects.forEach(r => {
         const x0 = r.x - M, y0 = r.y - M, x1 = r.x + r.width + M, y1 = r.y + r.height + M, xm = (x0 + x1) / 2, ym = (y0 + y1) / 2;
         inFill([[x0, y0], [x1, y0], [x0, y1], [x1, y1], [xm, y0], [xm, y1], [x0, ym], [x1, ym]], r.w);
       });
-      // Ikona sa nesmie dotknúť žiadneho znaku (odstup aspoň 3 jednotky): body obrysu kresby ikony vs. natočený obdĺžnik znaku (celá výška písma).
-      const pts = [];
-      ic.querySelectorAll("path").forEach(p => { const L = p.getTotalLength(); for (let q = 0; q < 40; q++) { const v = p.getPointAtLength(L * q / 40); pts.push([v.x * m.a + m.e, v.y * m.d + m.f]); } });
-      g.querySelectorAll("text").forEach(t => {
-        const fs = parseFloat(t.getAttribute("font-size"));
-        for (let q = 0; q < t.getNumberOfChars(); q++) {
-          const s = t.getStartPositionOfChar(q), e = t.getEndPositionOfChar(q), th = t.getRotationOfChar(q) * Math.PI / 180, ax = [Math.cos(th), Math.sin(th)], nx = [-Math.sin(th), Math.cos(th)];
-          const len = Math.hypot(e.x - s.x, e.y - s.y);
-          const hit = pts.some(p => { const dx = p[0] - s.x, dy = p[1] - s.y, a = dx * ax[0] + dy * ax[1], n = dx * nx[0] + dy * nx[1]; return a > -3 && a < len + 3 && n > -.95 * fs - 3 && n < .25 * fs + 3; });
-          if (hit) { bad.push(g.dataset.k + ": ikona sa bije s textom"); return; }
-        }
-      });
-      // Text po oblúku: každý znak ako natočený obdĺžnik celej výšky písma (výška nad účiarím .95 em, pod ním .25 em), zväčšený o M.
+      // Stav pod ikonou sa nesmie dotknúť ikony (vrch písma aspoň 2 jednotky pod spodkom kresby vrátane ťahu).
+      g.querySelectorAll("text").forEach(t => { const fs = parseFloat(t.getAttribute("font-size")), s = t.getStartPositionOfChar(0); if (s.y - .95 * fs < rects[0].y + rects[0].height + 2) bad.push(g.dataset.k + ": ikona sa bije so stavom"); });
+      // Text: každý znak ako obdĺžnik celej výšky písma (nad účiarím .95 em, pod ním .25 em), zväčšený o M.
       g.querySelectorAll("text").forEach(t => {
         const fs = parseFloat(t.getAttribute("font-size")), up = .95 * fs + M, dn = .25 * fs + M;
         for (let q = 0; q < t.getNumberOfChars(); q++) {
