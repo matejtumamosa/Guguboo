@@ -45,7 +45,7 @@
   .seg.on path.fill { filter: drop-shadow(0 0 10px rgba(255, 210, 120, .6)); }
   .night .seg path.fill { opacity: .82; }
   .lbl { font: 800 20px Montserrat, system-ui, sans-serif; pointer-events: none; }
-  .lbl.lg { font-size: 17px; }
+  .lbl.lg { font-size: 16px; }
   .bb { position: relative; }
   .tag2 { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font: 700 11px/1 Montserrat, system-ui, sans-serif; font-style: normal; background: var(--brand); color: #fff; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
   .night .tag2 { color: #1f1a2e; }
@@ -166,11 +166,11 @@
   if (Q.get("run") === "1") RUN = S.period === "po" ? { sleep: { t: T0 - 47 * MIN } } : S.period === "w36" ? { contraction: { t: T0 - 40000 } } : {};
 
   const COL = {
-    pink: { g: ["#f9d5df", "#eca5ba", "#df91aa"], ink: "#8a3556", tb: "#fde6ee", ti: "#a8486a" },
-    peach: { g: ["#fde0c4", "#f1ac74", "#e6955a"], ink: "#7a4416", tb: "#fff0e1", ti: "#9a5a22" },
-    blue: { g: ["#d6e0fa", "#93a8e6", "#768fd8"], ink: "#2f4590", tb: "#e8edfd", ti: "#3f57a8" },
-    lilac: { g: ["#ebe2fc", "#bfaaf0", "#9f86e0"], ink: "#4b3592", tb: "#efe8fd", ti: "#5f4fb1" },
-    mint: { g: ["#d9f2e9", "#97d6bf", "#62b99c"], ink: "#1f5f4c", tb: "#e3f5ee", ti: "#24715f" }
+    pink: { g: ["#f9d5df", "#eca5ba", "#df91aa"], ink: "#6a2240", tb: "#fde6ee", ti: "#a8486a" },
+    peach: { g: ["#fde0c4", "#f1ac74", "#e6955a"], ink: "#5a2f0c", tb: "#fff0e1", ti: "#9a5a22" },
+    blue: { g: ["#d6e0fa", "#93a8e6", "#768fd8"], ink: "#1c2a66", tb: "#e8edfd", ti: "#3f57a8" },
+    lilac: { g: ["#ebe2fc", "#bfaaf0", "#9f86e0"], ink: "#352270", tb: "#efe8fd", ti: "#5f4fb1" },
+    mint: { g: ["#d9f2e9", "#97d6bf", "#62b99c"], ink: "#123f33", tb: "#e3f5ee", ti: "#24715f" }
   };
   const SEG = {
     feed: { l: "Kŕmenie", c: "pink", i: "feeding" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
@@ -193,6 +193,7 @@
     if (k === "drink") { const n = today(k).length; return n ? "dnes " + n + "×" : ""; }
     if (k === "vit") return today(k).length ? "dnes ✓" : "";
     if (k === "question") { const n = REC.filter(x => x.k === "question" && !x.done).length; return n ? n + (n === 1 ? " otázka" : n < 5 ? " otázky" : " otázok") : ""; }
+    if (k === "pump") return r && ago(r.t) ? r.ml + " ml · " + hm(r.t) : "";
     return r && ago(r.t) ? ago(r.t) : "";
   }
 
