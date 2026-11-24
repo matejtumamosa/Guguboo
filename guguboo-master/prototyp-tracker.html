@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp – kruh ako tracker</title>
+<link rel="stylesheet" href="fonts/montserrat.css">
+<style>
+  /* Prototyp (Samo 24. 11.): pôvodný kruh (tvar 2.9), obsah podľa obdobia.
+     Po pôrode tracker: Kŕmenie · Spánok · Plienky (+ voliteľne Odsávanie, Na brušku). Pred pôrodom: Pohyby · Pitie · Vitamíny · Otázka (od 36. t. Kontrakcie). */
+  :root {
+    --ink: #29243a; --muted: #5d5768; --brand: #5f4fb1; --line: rgba(117, 96, 181, .14);
+    --page: #f3effa; --phone: #fbf8ff; --card: #ffffff; --ph: #efe9f8; --sheet: #ffffff; --core: #ffffff;
+    --sep: #ffffff; --shadow: 0 10px 30px rgba(80, 60, 140, .10), 0 2px 6px rgba(80, 60, 140, .06);
+  }
+  .night {
+    --ink: #f3effc; --muted: #c9c1dc; --brand: #cbbcff; --line: rgba(200, 185, 255, .14);
+    --phone: #1f1a2e; --card: #2a2340; --ph: #2f2846; --sheet: #2d2644; --core: #332b4c; --sep: #2a2340;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: #29243a; font-family: Montserrat, "Segoe UI", system-ui, sans-serif; }
+  .bar { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, .95); border-bottom: 1px solid rgba(117, 96, 181, .12); }
+  .bar strong { font-weight: 800; margin-right: 6px; }
+  .grp { display: inline-flex; flex-wrap: wrap; background: #efe9f8; border-radius: 18px; padding: 3px; }
+  .grp button { border: 0; background: transparent; font: 700 13px Montserrat, system-ui, sans-serif; color: #5d5768; padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+  .grp button[aria-pressed="true"] { background: #fff; color: #5f4fb1; box-shadow: 0 1px 4px rgba(80, 60, 140, .15); }
+  .grp button:disabled { opacity: .4; cursor: default; }
+  .note { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; color: #5d5768; }
+  #stage { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; padding: 22px 16px 60px; }
+  .cap { text-align: center; font: 700 12px Montserrat, system-ui, sans-serif; color: #8a83a0; margin: 0 0 6px; }
+
+  .phone { position: relative; overflow: hidden; border-radius: 34px; background: var(--phone); box-shadow: 0 20px 50px rgba(60, 40, 120, .18); display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 0; color: var(--ink); }
+  .ph { background: var(--ph); border-radius: 18px; flex: none; display: grid; place-items: center; font: 700 11px Montserrat, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: rgba(130, 115, 170, .55); }
+  .ph-head { height: 56px; } .ph-search { height: 44px; border-radius: 22px; } .ph-hero { height: 76px; } .ph-row { height: 88px; } .ph-dnes { height: 56px; } .ph-nav { height: 72px; margin: 0 -14px; border-radius: 22px 22px 0 0; }
+  .s667 .ph-head { height: 50px; } .s667 .ph-hero { height: 64px; } .s667 .ph-row { height: 76px; } .s667 .ph-dnes { height: 50px; } .s667 .ph-nav { height: 64px; }
+
+  .card { flex: 1 1 0; min-height: 0; background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); container-type: size; position: relative; display: grid; place-items: center; }
+  .ring { position: relative; width: min(94cqh, 92cqw, 310px); aspect-ratio: 1; }
+  .ring svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .seg { cursor: pointer; transition: filter .2s, transform .2s; transform-origin: 210px 210px; outline: none; }
+  .seg:active { transform: scale(.985); }
+  .seg:focus-visible path.fill { stroke: var(--brand); stroke-width: 4; }
+  .seg path.fill { stroke: var(--sep); stroke-width: 5; stroke-linejoin: round; }
+  .seg.on path.fill { filter: drop-shadow(0 0 10px rgba(255, 210, 120, .6)); }
+  .night .seg path.fill { opacity: .82; }
+  .lbl { font: 800 19px Montserrat, system-ui, sans-serif; letter-spacing: .02em; pointer-events: none; }
+  .sub { font: 700 14px Montserrat, system-ui, sans-serif; pointer-events: none; opacity: .9; }
+  .night .lbl, .night .sub { fill: #1f1a2e !important; }
+  .small .sub { display: none; }
+  .core { position: absolute; left: 50%; top: 50%; width: 37%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; border: 0; cursor: pointer; background: radial-gradient(circle at 35% 25%, var(--core), color-mix(in srgb, var(--core) 92%, #b9a8f0)); box-shadow: 0 8px 22px rgba(95, 79, 177, .16), inset 0 0 0 1px var(--line); color: var(--ink); display: grid; place-content: center; justify-items: center; gap: 2px; font-family: inherit; padding: 6px; transition: transform .15s; }
+  .core:active { transform: translate(-50%, -50%) scale(.95); }
+  .core b { font: 800 clamp(13px, 5.2cqh, 16px)/1.1 Montserrat, system-ui, sans-serif; }
+  .core u { font: 700 12px Montserrat, system-ui, sans-serif; color: var(--brand); }
+  .core .cl { font: 600 12px/1 Montserrat, system-ui, sans-serif; color: var(--muted); }
+  .core .tm { font: 800 clamp(18px, 8cqh, 26px)/1.05 Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  .core .st { font: 700 11px Montserrat, system-ui, sans-serif; color: #fff; background: var(--brand); padding: 3px 9px; border-radius: 999px; margin-top: 3px; }
+  .night .core .st { color: #1f1a2e; }
+  .core svg { width: 18px; height: 18px; color: var(--brand); }
+
+  /* malé okno */
+  .scrim { position: absolute; inset: 0; background: rgba(30, 20, 60, .3); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 5; }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+  .sheet { position: absolute; left: 8px; right: 8px; bottom: 8px; max-height: 82%; overflow: auto; z-index: 6; background: var(--sheet); color: var(--ink); border-radius: 26px; padding: 16px 16px 18px; box-shadow: 0 -10px 40px rgba(40, 20, 90, .25); transform: translateY(115%); transition: transform .32s cubic-bezier(.2, .9, .3, 1.05); }
+  .sheet.open { transform: none; }
+  .sh-h { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sh-h .o { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--tb, #efe9f8); color: var(--ti, #5f4fb1); }
+  .sh-h .o svg { width: 22px; height: 22px; }
+  .sh-h h3 { margin: 0; font: 800 18px Montserrat, system-ui, sans-serif; flex: 1; }
+  .x { border: 0; background: var(--ph); color: var(--ink); width: 36px; height: 36px; border-radius: 50%; font: 700 18px Montserrat, system-ui, sans-serif; cursor: pointer; }
+  .last { margin: -4px 0 12px; font: 600 14px Montserrat, system-ui, sans-serif; color: var(--muted); }
+  .seg-tabs { display: flex; background: var(--ph); border-radius: 14px; padding: 3px; margin-bottom: 12px; }
+  .seg-tabs button { flex: 1; border: 0; background: none; padding: 9px; border-radius: 11px; font: 700 14px Montserrat, system-ui, sans-serif; color: var(--muted); cursor: pointer; }
+  .seg-tabs button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 4px rgba(80, 60, 140, .15); }
+  .big2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .big3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+  .bb { border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 18px; padding: 14px 8px; font: 800 16px Montserrat, system-ui, sans-serif; cursor: pointer; display: grid; justify-items: center; gap: 4px; }
+  .bb small { font: 600 12px Montserrat, system-ui, sans-serif; color: var(--muted); }
+  .bb.hint { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
+  .bb:active { transform: scale(.97); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 700 14px Montserrat, system-ui, sans-serif; padding: 10px 13px; border-radius: 999px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: transparent; }
+  .night .chip[aria-pressed="true"], .night .save { color: #1f1a2e; }
+  .lab { font: 700 13px Montserrat, system-ui, sans-serif; color: var(--muted); margin: 4px 0 8px; }
+  .save { width: 100%; border: 0; background: var(--brand); color: #fff; font: 800 16px Montserrat, system-ui, sans-serif; padding: 14px; border-radius: 16px; cursor: pointer; }
+  .link { display: block; width: 100%; border: 0; background: none; color: var(--brand); font: 700 14px Montserrat, system-ui, sans-serif; padding: 12px 0 0; cursor: pointer; }
+  textarea { width: 100%; min-height: 84px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 600 15px Montserrat, system-ui, sans-serif; padding: 12px; margin-bottom: 10px; resize: none; }
+  .count { text-align: center; font: 800 44px/1 Montserrat, system-ui, sans-serif; margin: 4px 0 2px; }
+  .count + p { text-align: center; margin: 0 0 12px; color: var(--muted); font: 600 14px Montserrat, system-ui, sans-serif; }
+  /* Náš deň */
+  .sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .sum div { background: var(--ph); border-radius: 14px; padding: 10px 6px; text-align: center; }
+  .sum b { display: block; font: 800 20px Montserrat, system-ui, sans-serif; }
+  .sum span { font: 600 12px Montserrat, system-ui, sans-serif; color: var(--muted); }
+  .list { list-style: none; margin: 0 0 6px; padding: 0; }
+  .list li { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); font: 600 14px Montserrat, system-ui, sans-serif; }
+  .list time { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .list .ed { border: 0; background: var(--ph); color: var(--ink); border-radius: 999px; padding: 6px 10px; font: 700 12px Montserrat, system-ui, sans-serif; cursor: pointer; }
+  .edrow { display: flex; gap: 8px; justify-content: center; margin: 6px 0 12px; }
+  .edrow button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 9px 12px; font: 700 14px Montserrat, system-ui, sans-serif; cursor: pointer; }
+  .edtime { text-align: center; font: 800 34px Montserrat, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  .del { color: #a24766 !important; }
+  .toast { position: absolute; left: 50%; bottom: 86px; z-index: 7; transform: translate(-50%, 20px); opacity: 0; transition: .25s; background: #29243a; color: #fff; font: 700 14px Montserrat, system-ui, sans-serif; padding: 10px 10px 10px 16px; border-radius: 999px; display: flex; gap: 12px; align-items: center; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .toast button { border: 0; background: rgba(255, 255, 255, .16); color: #fff; font: 700 13px Montserrat, system-ui, sans-serif; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <strong>Kruh ako tracker</strong>
+  <span class="grp"><button data-k="period" data-v="pred">Pred pôrodom</button><button data-k="period" data-v="w36">Od 36. týždňa</button><button data-k="period" data-v="po">Po pôrode</button></span>
+  <span class="grp"><button data-k="pump" data-v="1">+ Odsávanie</button><button data-k="tummy" data-v="1">+ Na brušku</button></span>
+  <span class="grp"><button data-k="night" data-v="0">Deň</button><button data-k="night" data-v="1">Noc</button></span>
+  <span class="grp"><button data-k="size" data-v="390">390 × 844</button><button data-k="size" data-v="375">375 × 667</button><button data-k="size" data-v="obe">obe</button></span>
+  <p class="note">Prototyp – nič sa neukladá natrvalo. Ťukni na diel kruhu alebo na stred. Sivé bloky = zvyšok domova bez zmeny.</p>
+</div>
+<div id="stage"></div>
+<script>
+(() => {
+  "use strict";
+  const ICON = {
+    feeding: "<path d='M104,64V48a24,24,0,0,1,48,0V64H136V48a8,8,0,0,0-16,0V64Z'/><path d='M80,64h96a8,8,0,0,1,8,8V92H72V72A8,8,0,0,1,80,64Z'/><path fill-rule='evenodd' d='M72,92H184V200a32,32,0,0,1-32,32H104a32,32,0,0,1-32-32ZM88,92V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V92Z'/><path d='M80,128h36a8,8,0,0,1,0,16H80ZM80,164h36a8,8,0,0,1,0,16H80Z'/>",
+    breastfeed: "<path d='M76,56a28,28,0,1,0,56,0a28,28,0,1,0,-56,0ZM92,56a12,12,0,1,1,24,0a12,12,0,1,1,-24,0Z'/><path d='M56,224V144A48,48,0,0,1,104,96A8,8,0,0,1,104,112A32,32,0,0,0,72,144V224A8,8,0,0,1,56,224Z'/><path d='M100.04,178A60,60,0,0,0,208.38,168.52A8,8,0,0,0,193.35,163.05A44,44,0,0,1,113.89,170A8,8,0,0,0,100.04,178Z'/><path d='M132,160a24,24,0,1,0,48,0a24,24,0,1,0,-48,0ZM146,160a10,10,0,1,1,20,0a10,10,0,1,1,-20,0Z'/>",
+    moon: "<path d='M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z'/>",
+    sun: "<path d='M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z'/>",
+    diaper: "<path fill-rule='evenodd' d='M40,48H216a8,8,0,0,1,8,8v56c-36,4-56,36-56,84a16,16,0,0,1-16,16H104a16,16,0,0,1-16-16c0-48-20-80-56-84V56A8,8,0,0,1,40,48ZM48,64H208V80H48ZM48,96H208v3c-36,9-56,43-56,93v4H104v-4c0-50-20-84-56-93Z'/>",
+    water: "<path d='M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM128,216a72.08,72.08,0,0,1-72-72c0-57.23,55.47-105,72-118,16.53,13,72,60.75,72,118A72.08,72.08,0,0,1,128,216Zm55.89-62.66a57.6,57.6,0,0,1-46.56,46.55A8.75,8.75,0,0,1,136,200a8,8,0,0,1-1.32-15.89c16.57-2.79,30.63-16.85,33.44-33.45a8,8,0,0,1,15.78,2.68Z'/>",
+    dropHalf: "<path d='M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM200,144a70.57,70.57,0,0,1-.46,8H136V136h63.64Q200,140,200,144ZM183.39,88H136V72h36.89A175.85,175.85,0,0,1,183.39,88ZM136,200h37.19A71.67,71.67,0,0,1,136,215.54Zm0-16V168h59.87a72,72,0,0,1-8,16Zm0-64V104h55.39a116.84,116.84,0,0,1,5.45,16Zm23.89-64H136V32.6A257.22,257.22,0,0,1,159.89,56ZM56,144c0-50,42.26-92.71,64-111.4V215.54A72.08,72.08,0,0,1,56,144Z'/>",
+    baby: "<path d='M92,140a12,12,0,1,1,12-12A12,12,0,0,1,92,140Zm72-24a12,12,0,1,0,12,12A12,12,0,0,0,164,116Zm-12.27,45.23a45,45,0,0,1-47.46,0,8,8,0,0,0-8.54,13.54,61,61,0,0,0,64.54,0,8,8,0,0,0-8.54-13.54ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.11,88.11,0,0,0-84.09-87.91C120.32,56.38,120,71.88,120,72a8,8,0,0,0,16,0,8,8,0,0,1,16,0,24,24,0,0,1-48,0c0-.73.13-14.3,8.46-30.63A88,88,0,1,0,216,128Z'/>",
+    footprints: "<path d='M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8.05,8.05,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.82,6.22,17.29,19.89c11.1,23.41,15.29,58,3.9,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z'/>",
+    wave: "<path d='M239.24,131.4c-22,46.8-41.4,68.6-61.2,68.6-25.1,0-40.73-33.32-57.28-68.6C107.7,103.56,92.9,72,78,72c-16.4,0-36.31,37.21-46.72,59.4a8,8,0,0,1-14.48-6.8C38.71,77.8,58.16,56,78,56c25.1,0,40.73,33.32,57.28,68.6C148.3,152.44,163.1,184,178,184c16.4,0,36.31-37.21,46.72-59.4a8,8,0,0,1,14.48,6.8Z'/>",
+    question: "<path d='M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z'/>",
+    check: "<path d='M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z'/>",
+  };
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ic = n => "<svg viewBox='0 0 256 256' fill='currentColor' aria-hidden='true'>" + ICON[n] + "</svg>";
+  const MIN = 60000, now = () => Date.now();
+  const hm = t => new Date(t).toTimeString().slice(0, 5);
+  const span = ms => { const m = Math.max(0, Math.round(ms / MIN)); return m < 60 ? m + " min" : Math.floor(m / 60) + " h" + (m % 60 && m < 180 ? " " + (m % 60) + " min" : ""); };
+  const ago = t => { const m = (now() - t) / MIN; return m < 1 ? "práve teraz" : m < 60 ? "pred " + Math.floor(m) + " min" : m < 1440 ? "pred " + Math.floor(m / 60) + " h" : ""; };
+  const clock = t => { const s = Math.max(0, Math.floor((now() - t) / 1000)), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+  const isToday = t => new Date(t).toDateString() === new Date().toDateString();
+
+  // ——— Stav ———
+  const Q = new URLSearchParams(location.search);
+  const S = { period: ["pred", "w36", "po"].includes(Q.get("period")) ? Q.get("period") : "po", night: Q.get("night") === "1",
+    size: ["390", "375", "obe"].includes(Q.get("size")) ? Q.get("size") : "390", pump: Q.get("pump") === "1", tummy: Q.get("tummy") === "1" };
+  // Ukážkové záznamy (relatívne k teraz)
+  const T0 = now();
+  let REC = [
+    { k: "feed", t: T0 - 125 * MIN, side: "Pravý", dur: 14 }, { k: "feed", t: T0 - 290 * MIN, side: "Ľavý", dur: 18 }, { k: "feed", t: T0 - 470 * MIN, bottle: "Odsaté", ml: 90 },
+    { k: "sleep", t: T0 - 230 * MIN, end: T0 - 140 * MIN }, { k: "sleep", t: T0 - 420 * MIN, end: T0 - 330 * MIN },
+    { k: "diaper", t: T0 - 62 * MIN, kind: "Cikanie" }, { k: "diaper", t: T0 - 200 * MIN, kind: "Oboje" }, { k: "diaper", t: T0 - 380 * MIN, kind: "Kakanie" },
+    { k: "pump", t: T0 - 300 * MIN, side: "Oba", ml: 120 }, { k: "tummy", t: T0 - 160 * MIN, dur: 4 },
+    { k: "move", t: T0 - 95 * MIN }, { k: "move", t: T0 - 320 * MIN }, { k: "drink", t: T0 - 60 * MIN }, { k: "drink", t: T0 - 180 * MIN }, { k: "drink", t: T0 - 300 * MIN },
+    { k: "vit", t: T0 - 600 * MIN }, { k: "question", t: T0 - 2 * 1440 * MIN, text: "Môžem ešte cestovať autom na dlhšie trasy?" },
+    { k: "contraction", t: T0 - 14 * MIN, dur: 48 }, { k: "contraction", t: T0 - 21 * MIN, dur: 41 }
+  ];
+  let RUN = {}; // k -> { t, side }
+  if (Q.get("run") === "1") RUN = S.period === "po" ? { sleep: { t: T0 - 47 * MIN } } : S.period === "w36" ? { contraction: { t: T0 - 40000 } } : {};
+
+  const COL = {
+    pink: { g: ["#f9d5df", "#eca5ba", "#df91aa"], ink: "#8a3556", tb: "#fde6ee", ti: "#a8486a" },
+    peach: { g: ["#fde0c4", "#f1ac74", "#e6955a"], ink: "#7a4416", tb: "#fff0e1", ti: "#9a5a22" },
+    blue: { g: ["#d6e0fa", "#93a8e6", "#768fd8"], ink: "#2f4590", tb: "#e8edfd", ti: "#3f57a8" },
+    lilac: { g: ["#ebe2fc", "#bfaaf0", "#9f86e0"], ink: "#4b3592", tb: "#efe8fd", ti: "#5f4fb1" },
+    mint: { g: ["#d9f2e9", "#97d6bf", "#62b99c"], ink: "#1f5f4c", tb: "#e3f5ee", ti: "#24715f" }
+  };
+  const SEG = {
+    feed: { l: "Kŕmenie", c: "pink", i: "feeding" }, sleep: { l: "Spánok", c: "peach", i: "moon" }, diaper: { l: "Plienky", c: "blue", i: "diaper" },
+    pump: { l: "Odsávanie", c: "lilac", i: "dropHalf" }, tummy: { l: "Na brušku", c: "mint", i: "baby" },
+    move: { l: "Pohyby", c: "pink", i: "footprints" }, drink: { l: "Pitie", c: "blue", i: "water" }, vit: { l: "Vitamíny", c: "peach", i: "check" },
+    question: { l: "Otázka", c: "lilac", i: "question" }, contraction: { l: "Kontrakcie", c: "peach", i: "wave" }
+  };
+  const segsNow = () => S.period === "po" ? ["feed", "sleep", "diaper"].concat(S.pump ? ["pump"] : [], S.tummy ? ["tummy"] : [])
+    : S.period === "w36" ? ["move", "contraction", "vit", "question"] : ["move", "drink", "vit", "question"];
+  const last = k => REC.filter(r => r.k === k).sort((a, b) => b.t - a.t)[0];
+  const today = k => REC.filter(r => r.k === k && isToday(r.t));
+
+  // Text pod názvom dielu (najviac pár slov)
+  function sub(k) {
+    if (RUN[k]) return k === "sleep" ? "spí" : k === "feed" ? "beží · " + RUN[k].side.toLowerCase() : "beží";
+    const r = last(k);
+    if (k === "sleep") { const e = r && (r.end || r.t); return e && now() - e < 1440 * MIN ? "hore " + span(now() - e) : ""; }
+    if (k === "feed") return r && ago(r.t) ? ago(r.t) + " · " + (r.side ? r.side.toLowerCase() : "fľaša") : "";
+    if (k === "move") { const d = today(k); return d.length ? "dnes " + hm(d.sort((a, b) => b.t - a.t)[0].t) : ""; }
+    if (k === "drink") { const n = today(k).length; return n ? "dnes " + n + "×" : ""; }
+    if (k === "vit") return today(k).length ? "dnes ✓" : "";
+    if (k === "question") { const n = REC.filter(x => x.k === "question" && !x.done).length; return n ? n + (n === 1 ? " otázka" : n < 5 ? " otázky" : " otázok") : ""; }
+    return r && ago(r.t) ? ago(r.t) : "";
+  }
+
+  // ——— Geometria: pôvodný esovitý diel (ako adaptiveOSegmentPath), pre 3–5 dielov ———
+  const G = { R: 192, r: 86 };
+  const P = (a, r) => { const t = a * Math.PI / 180; return [210 + r * Math.cos(t), 210 + r * Math.sin(t)]; };
+  const f1 = v => v.toFixed(1);
+  function cut(a, bend) {
+    const o = P(a, G.R), i = P(a, G.r), t = a * Math.PI / 180, tx = -Math.sin(t), ty = Math.cos(t);
+    return { o, i, c1: [o[0] + tx * bend, o[1] + ty * bend], c2: [i[0] + tx * bend, i[1] + ty * bend] };
+  }
+  function segPath(st, sp) {
+    const bend = 46 * sp / 120, f = cut(st, bend), t = cut(st + sp, bend), large = sp > 180 ? 1 : 0;
+    return ["M", f1(f.o[0]), f1(f.o[1]), "A", G.R, G.R, 0, large, 1, f1(t.o[0]), f1(t.o[1]), "C", f1(t.c1[0]), f1(t.c1[1]), f1(t.c2[0]), f1(t.c2[1]), f1(t.i[0]), f1(t.i[1]),
+      "A", G.r, G.r, 0, large, 0, f1(f.i[0]), f1(f.i[1]), "C", f1(f.c2[0]), f1(f.c2[1]), f1(f.c1[0]), f1(f.c1[1]), f1(f.o[0]), f1(f.o[1]), "Z"].join(" ");
+  }
+  // Oblúk pre text: hore sa číta po obvode, dole obrátene (aby bol text vždy rovno)
+  function textArc(mid, r, sp, id) {
+    const lower = Math.sin(mid * Math.PI / 180) > .2, h = Math.min(56, sp * .45);
+    const a = P(mid + (lower ? h : -h), r), b = P(mid + (lower ? -h : h), r);
+    return { lower, d: "<path id='" + id + "' fill='none' d='M " + f1(a[0]) + " " + f1(a[1]) + " A " + r + " " + r + " 0 0 " + (lower ? 0 : 1) + " " + f1(b[0]) + " " + f1(b[1]) + "'/>" };
+  }
+  let uid = 0;
+  function ringHtml() {
+    const keys = segsNow(), n = keys.length, sp = 360 / n, id = "r" + (++uid);
+    let defs = "", body = "";
+    keys.forEach((k, i) => {
+      const s = SEG[k], c = COL[s.c], st = -90 - sp / 2 + i * sp + (n === 3 ? 0 : 0), mid = st + sp / 2 + 8 * sp / 120;
+      const a = P(st, 140), b = P(st + sp, 140);
+      defs += "<linearGradient id='" + id + "g" + i + "' gradientUnits='userSpaceOnUse' x1='" + f1(a[0]) + "' y1='" + f1(a[1]) + "' x2='" + f1(b[0]) + "' y2='" + f1(b[1]) + "'><stop offset='0' stop-color='" + c.g[0] + "'/><stop offset='.6' stop-color='" + c.g[1] + "'/><stop offset='1' stop-color='" + c.g[2] + "'/></linearGradient>";
+      const tx = sub(k), lower = Math.sin(mid * Math.PI / 180) > .2;
+      const nameR = tx ? (lower ? 128 : 150) : 139, subR = lower ? 156 : 122;
+      const A = textArc(mid, nameR, sp, id + "n" + i), B = textArc(mid, subR, sp, id + "s" + i);
+      body += "<g class='seg" + (RUN[k] ? " on" : "") + "' data-k='" + k + "' role='button' tabindex='0' aria-label='" + s.l + (tx ? ", " + tx : "") + "'>" +
+        "<path class='fill' d='" + segPath(st, sp) + "' fill='url(#" + id + "g" + i + ")'/>" + A.d + (tx ? B.d : "") +
+        "<text class='lbl' dy='7' fill='" + c.ink + "'><textPath href='#" + id + "n" + i + "' startOffset='50%' text-anchor='middle'>" + s.l + "</textPath></text>" +
+        (tx ? "<text class='sub' dy='5' fill='" + c.ink + "'><textPath href='#" + id + "s" + i + "' startOffset='50%' text-anchor='middle'>" + tx + "</textPath></text>" : "") + "</g>";
+    });
+    return "<div class='ring'><svg viewBox='0 0 420 420'><defs>" + defs + "</defs>" + body + "</svg>" + coreHtml() + "</div>";
+  }
+  function running() { const k = Object.keys(RUN).sort((a, b) => RUN[b].t - RUN[a].t)[0]; return k ? { k, ...RUN[k] } : null; }
+  const RUNTXT = { sleep: ["Spí", "Zobudilo sa"], feed: ["Kŕmenie", "Ukončiť"], tummy: ["Na brušku", "Hotovo"], contraction: ["Kontrakcia", "Skončila"] };
+  function coreHtml() {
+    const r = running(), night = S.night;
+    if (r) return "<button type='button' class='core' data-act='stop' data-k='" + r.k + "'>" + ic(SEG[r.k].i) + "<span class='cl'>" + (r.k === "feed" ? r.side + " prsník" : RUNTXT[r.k][0]) + "</span><span class='tm' data-since='" + r.t + "'>" + clock(r.t) + "</span><span class='st'>" + RUNTXT[r.k][1] + "</span></button>";
+    return "<button type='button' class='core' data-act='day'><b>" + (night ? "Naša noc" : "Náš deň") + "</b><u>Prehľad</u></button>";
+  }
+
+  // ——— Telefóny ———
+  const stage = document.getElementById("stage");
+  const phone = (w, h) => "<div><p class='cap'>" + w + " × " + h + "</p><div class='phone s" + h + (S.night ? " night" : "") + "' style='width:" + w + "px;height:" + h + "px'>" +
+    "<div class='ph ph-head'>hlavička</div><div class='ph ph-search'>hľadanie</div><div class='ph ph-hero'>karta týždňa / veku</div><div class='ph ph-row'>3 skratky</div>" +
+    "<section class='card' aria-label='" + (S.period === "po" ? "Rýchle záznamy" : "Každý deň") + "'>" + ringHtml() + "</section>" +
+    "<div class='ph ph-dnes'>dnes stačí jedno</div><div class='ph ph-nav'>lišta</div>" +
+    "<div class='scrim'></div><div class='sheet' role='dialog' aria-modal='true'></div><div class='toast' role='status'></div></div></div>";
+  function render() {
+    const sizes = S.size === "obe" ? [[390, 844], [375, 667]] : S.size === "375" ? [[375, 667]] : [[390, 844]];
+    const open = [...stage.querySelectorAll(".phone")].map(p => p.querySelector(".sheet.open") ? p._sheet : null);
+    stage.innerHTML = sizes.map(s => phone(s[0], s[1])).join("");
+    stage.querySelectorAll(".ring").forEach(r => r.classList.toggle("small", r.getBoundingClientRect().width < 250));
+    stage.querySelectorAll(".phone").forEach((p, i) => { if (open[i]) openSheet(p, open[i].k, open[i].arg, true); });
+  }
+  setInterval(() => stage.querySelectorAll("[data-since]").forEach(el => { el.textContent = clock(+el.dataset.since); }), 1000);
+
+  // ——— Hlásenie s Vrátiť ———
+  function snapshot() { return { rec: REC.map(r => ({ ...r })), run: JSON.parse(JSON.stringify(RUN)) }; }
+  function commit(ph, text, snap) {
+    render();
+    const p2 = stage.querySelector(".phone"), t = p2.querySelector(".toast");
+    t.innerHTML = "<span>" + text + "</span><button type='button'>Vrátiť</button>";
+    t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 5000);
+    t.querySelector("button").onclick = () => { REC = snap.rec; RUN = snap.run; t.classList.remove("show"); render(); };
+  }
+
+  // ——— Malé okná ———
+  const pressed = (sh, g) => sh.querySelector("[data-g='" + g + "'][aria-pressed='true']")?.dataset.v;
+  const chips = (g, list, sel) => "<div class='chips' role='group'>" + list.map(v => "<button type='button' class='chip' data-g='" + g + "' data-v='" + v[0] + "' aria-pressed='" + (v[0] === sel) + "'>" + v[1] + "</button>").join("") + "</div>";
+  function head(k, title) {
+    const c = COL[SEG[k] ? SEG[k].c : "lilac"];
+    return "<div class='sh-h' style='--tb:" + c.tb + ";--ti:" + c.ti + "'><span class='o'>" + ic(SEG[k] ? SEG[k].i : "moon") + "</span><h3>" + title + "</h3><button class='x' data-close aria-label='Zavrieť'>×</button></div>";
+  }
+  function sheetBody(k, arg) {
+    const r = last(k);
+    if (k === "day") return dayBody();
+    if (k === "edit") return editBody(arg);
+    if (k === "feed") {
+      if (RUN.feed) return head(k, "Kŕmenie") + "<p class='last'>" + RUN.feed.side + " prsník · beží " + span(now() - RUN.feed.t) + "</p><div class='big2'><button class='bb' data-do='feed-switch'>Prepnúť<small>na " + (RUN.feed.side === "Ľavý" ? "pravý" : "ľavý") + "</small></button><button class='bb' data-do='feed-stop'>Ukončiť<small>uloží sa</small></button></div>";
+      const lastSide = REC.filter(x => x.k === "feed" && x.side).sort((a, b) => b.t - a.t)[0]?.side, tab = arg || "prs";
+      return head(k, "Kŕmenie") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + (r.side ? r.side.toLowerCase() + " prsník" : "fľaša " + r.ml + " ml") + "</p>" : "") +
+        "<div class='seg-tabs'><button data-tab='prs' aria-pressed='" + (tab === "prs") + "'>Prsník</button><button data-tab='flasa' aria-pressed='" + (tab === "flasa") + "'>Fľaša</button></div>" +
+        (tab === "prs" ? "<div class='big2'>" + ["Ľavý", "Pravý"].map(s => "<button class='bb" + (lastSide && s !== lastSide ? " hint" : "") + "' data-do='feed-start' data-side='" + s + "'>" + s + "<small>" + (lastSide && s !== lastSide ? "na rade" : "spustí čas") + "</small></button>").join("") + "</div><button class='link' data-sheet='feed-back'>Zapísať spätne ›</button>"
+          : chips("milk", [["Umelé", "Umelé mlieko"], ["Odsaté", "Odsaté mlieko"]], "Umelé") + "<p class='lab'>Koľko vypilo</p>" + chips("ml", [30, 60, 90, 120, 150, 180].map(v => [String(v), v + " ml"]), "90") + "<button class='save' data-do='feed-bottle'>Uložiť</button>");
+    }
+    if (k === "feed-back") return head("feed", "Kŕmenie spätne") + "<p class='lab'>Prsník</p>" + chips("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"]], "Ľavý") + "<p class='lab'>Kedy</p>" + chips("ago", [[15, "pred 15 min"], [30, "pred 30 min"], [60, "pred 1 h"], [120, "pred 2 h"]].map(v => [String(v[0]), v[1]]), "30") + "<p class='lab'>Ako dlho</p>" + chips("dur", [5, 10, 15, 20, 30].map(v => [String(v), v + " min"]), "15") + "<button class='save' data-do='feed-backsave'>Uložiť</button>";
+    if (k === "sleep") {
+      if (RUN.sleep) return head(k, "Spánok") + "<p class='last'>Spí od " + hm(RUN.sleep.t) + " · " + span(now() - RUN.sleep.t) + "</p><div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='sleep-stop'>Zobudilo sa<small>uloží sa</small></button></div>";
+      return head(k, "Spánok") + (sub(k) ? "<p class='last'>Je " + sub(k) + "</p>" : "") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='sleep-start' data-ago='0'>Zaspalo teraz<small>spustí čas</small></button></div><p class='lab'>Zaspalo skôr</p>" +
+        "<div class='chips'>" + [10, 20, 30].map(m => "<button class='chip' data-do='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>";
+    }
+    if (k === "diaper") return head(k, "Plienky") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.kind.toLowerCase() + "</p>" : "") + "<div class='big3'>" + ["Cikanie", "Kakanie", "Oboje"].map(v => "<button class='bb' data-do='diaper' data-v='" + v + "'>" + v + "</button>").join("") + "</div>";
+    if (k === "pump") return head(k, "Odsávanie") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.ml + " ml</p>" : "") + chips("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"], ["Oba", "Oba"]], "Oba") + "<p class='lab'>Koľko</p>" + chips("ml", [30, 60, 90, 120, 150, 200].map(v => [String(v), v + " ml"]), "90") + "<button class='save' data-do='pump'>Uložiť</button>";
+    if (k === "tummy") {
+      if (RUN.tummy) return head(k, "Na brušku") + "<p class='last'>Beží " + span(now() - RUN.tummy.t) + "</p><div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='tummy-stop'>Hotovo<small>uloží sa</small></button></div>";
+      return head(k, "Na brušku") + (r ? "<p class='last'>Naposledy " + hm(r.t) + " · " + r.dur + " min</p>" : "") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='tummy-start'>Začať<small>spustí čas</small></button></div>";
+    }
+    if (k === "move") { const d = today(k).sort((a, b) => b.t - a.t); return head(k, "Pohyby") + (d.length ? "<p class='last'>Dnes " + d.map(x => hm(x.t)).join(", ") + "</p>" : "") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='move'>Cítim pohyby<small>zapíše sa čas</small></button></div>"; }
+    if (k === "drink") { const n = today(k).length; return head(k, "Pitie") + "<div class='count'>" + n + "</div><p>" + (n === 1 ? "pohár" : n > 1 && n < 5 ? "poháre" : "pohárov") + " dnes</p><div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='drink'>+1 pohár</button></div>" + (n ? "<button class='link' data-do='drink-minus'>Odobrať jeden</button>" : ""); }
+    if (k === "vit") return head(k, "Vitamíny") + (today(k).length ? "<p class='last'>Dnes už máš ✓ (" + hm(today(k)[0].t) + ")</p><button class='link' data-do='vit-undo'>Zrušiť dnešný záznam</button>" : "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='vit'>Vzala som si ich<small>dnes</small></button></div>");
+    if (k === "question") { const open = REC.filter(x => x.k === "question" && !x.done); return head(k, "Otázka pre lekára") + "<textarea placeholder='Napíš jednu vetu…' aria-label='Otázka pre lekára'></textarea><button class='save' data-do='question'>Uložiť</button>" + (open.length ? "<p class='lab' style='margin-top:14px'>Na kontrolu</p><ul class='list'>" + open.map(x => "<li><time>" + new Date(x.t).toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) + "</time><span>" + x.text + "</span><span></span></li>").join("") + "</ul>" : ""); }
+    if (k === "contraction") {
+      const d = today(k).sort((a, b) => b.t - a.t);
+      const lst = d.length ? "<p class='lab'>Dnes</p><ul class='list'>" + d.slice(0, 4).map((x, i) => "<li><time>" + hm(x.t) + "</time><span>" + x.dur + " s</span><span>" + (d[i + 1] ? "odstup " + span(x.t - d[i + 1].t) : "") + "</span></li>").join("") + "</ul>" : "";
+      if (RUN.contraction) return head(k, "Kontrakcie") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='con-stop'>Skončila<small>uloží sa dĺžka</small></button></div>" + lst;
+      return head(k, "Kontrakcie") + "<div class='big2' style='grid-template-columns:1fr'><button class='bb' data-do='con-start'>Začala teraz<small>spustí čas</small></button></div>" + lst;
+    }
+    return "";
+  }
+  function dayBody() {
+    const po = S.period === "po", d = REC.filter(r => isToday(r.t) && segsNow().includes(r.k)).sort((a, b) => b.t - a.t);
+    const sleepMin = today("sleep").reduce((s, r) => s + ((r.end || now()) - r.t) / MIN, 0);
+    const tiles = po ? [[today("feed").length, "kŕmení"], [span(sleepMin * MIN), "spánku"], [today("diaper").length, "plienok"]]
+      : [[today("move").length, "pohyby"], [S.period === "w36" ? today("contraction").length : today("drink").length, S.period === "w36" ? "kontrakcie" : "poháre"], [today("vit").length ? "✓" : "–", "vitamíny"]];
+    const desc = r => r.k === "feed" ? (r.side ? r.side + " prsník" + (r.dur ? " · " + r.dur + " min" : "") : "Fľaša · " + r.ml + " ml") : r.k === "sleep" ? "Spánok · " + span((r.end || now()) - r.t) : r.k === "diaper" ? r.kind : r.k === "pump" ? "Odsávanie · " + r.ml + " ml" : r.k === "tummy" ? "Na brušku · " + r.dur + " min" : r.k === "contraction" ? "Kontrakcia · " + r.dur + " s" : r.k === "question" ? "Otázka" : SEG[r.k].l;
+    return head(po ? "sleep" : "move", S.night ? "Naša noc" : "Náš deň") + "<div class='sum'>" + tiles.map(t => "<div><b>" + t[0] + "</b><span>" + t[1] + "</span></div>").join("") + "</div>" +
+      (d.length ? "<ul class='list'>" + d.map(r => "<li><time>" + hm(r.t) + "</time><span>" + desc(r) + "</span><button class='ed' data-sheet='edit' data-arg='" + REC.indexOf(r) + "'>Upraviť</button></li>").join("") + "</ul>" : "<p class='last'>Dnes zatiaľ nič.</p>") +
+      (po ? "<button class='link' data-do='share'>Poslať prehľad blízkemu ›</button>" : "");
+  }
+  function editBody(i) {
+    const r = REC[+i]; if (!r) return "";
+    return head(r.k, "Upraviť – " + SEG[r.k].l) + "<div class='edtime' data-edt='" + r.t + "'>" + hm(r.t) + "</div><div class='edrow'><button data-shift='-15'>−15</button><button data-shift='-5'>−5</button><button data-shift='5'>+5</button><button data-shift='15'>+15</button></div>" +
+      "<button class='save' data-do='edit-save' data-arg='" + i + "'>Uložiť čas</button><button class='link del' data-do='edit-del' data-arg='" + i + "'>Zmazať záznam</button>";
+  }
+  function openSheet(ph, k, arg, quiet) {
+    const sh = ph.querySelector(".sheet"), sc = ph.querySelector(".scrim");
+    sh.innerHTML = sheetBody(k, arg); ph._sheet = { k, arg };
+    if (quiet) { sh.style.transition = "none"; requestAnimationFrame(() => { sh.style.transition = ""; }); }
+    sh.classList.add("open"); sc.classList.add("open");
+  }
+  function closeSheet(ph) { ph._sheet = null; ph.querySelector(".sheet").classList.remove("open"); ph.querySelector(".scrim").classList.remove("open"); }
+
+  // ——— Akcie ———
+  function act(ph, d, el) {
+    const sh = ph.querySelector(".sheet"), snap = snapshot(), t = now(), done = msg => { closeSheet(ph); stage.querySelectorAll(".phone").forEach(p => { p._sheet = null; }); commit(ph, msg, snap); };
+    switch (d) {
+      case "feed-start": RUN.feed = { t, side: el.dataset.side }; return done("Kŕmenie beží");
+      case "feed-switch": { const f = RUN.feed; REC.push({ k: "feed", t: f.t, side: f.side, dur: Math.max(1, Math.round((t - f.t) / MIN)) }); RUN.feed = { t, side: f.side === "Ľavý" ? "Pravý" : "Ľavý" }; return done("Prepnuté na " + RUN.feed.side.toLowerCase()); }
+      case "feed-stop": { const f = RUN.feed; REC.push({ k: "feed", t: f.t, side: f.side, dur: Math.max(1, Math.round((t - f.t) / MIN)) }); delete RUN.feed; return done("Uložené"); }
+      case "feed-bottle": REC.push({ k: "feed", t, bottle: pressed(sh, "milk"), ml: +pressed(sh, "ml") }); return done("Uložené");
+      case "feed-backsave": REC.push({ k: "feed", t: t - (+pressed(sh, "ago")) * MIN, side: pressed(sh, "side"), dur: +pressed(sh, "dur") }); return done("Uložené");
+      case "sleep-start": RUN.sleep = { t: t - (+el.dataset.ago) * MIN }; return done("Spánok beží");
+      case "sleep-stop": REC.push({ k: "sleep", t: RUN.sleep.t, end: t }); delete RUN.sleep; return done("Uložené · spalo " + span(t - snap.run.sleep.t));
+      case "diaper": REC.push({ k: "diaper", t, kind: el.dataset.v }); return done("Uložené");
+      case "pump": REC.push({ k: "pump", t, side: pressed(sh, "side"), ml: +pressed(sh, "ml") }); return done("Uložené");
+      case "tummy-start": RUN.tummy = { t }; return done("Na brušku beží");
+      case "tummy-stop": REC.push({ k: "tummy", t: RUN.tummy.t, dur: Math.max(1, Math.round((t - RUN.tummy.t) / MIN)) }); delete RUN.tummy; return done("Uložené");
+      case "move": REC.push({ k: "move", t }); return done("Uložené");
+      case "drink": REC.push({ k: "drink", t }); return done("Uložené · " + today("drink").length + ". pohár");
+      case "drink-minus": { const x = today("drink").sort((a, b) => b.t - a.t)[0]; REC.splice(REC.indexOf(x), 1); return done("Odobraté"); }
+      case "vit": REC.push({ k: "vit", t }); return done("Uložené");
+      case "vit-undo": REC = REC.filter(x => !(x.k === "vit" && isToday(x.t))); return done("Zrušené");
+      case "question": { const v = sh.querySelector("textarea").value.trim(); if (!v) { sh.querySelector("textarea").focus(); return; } REC.push({ k: "question", t, text: v }); return done("Otázka je uložená"); }
+      case "con-start": RUN.contraction = { t }; return done("Kontrakcia beží");
+      case "con-stop": REC.push({ k: "contraction", t: RUN.contraction.t, dur: Math.max(1, Math.round((t - RUN.contraction.t) / 1000)) }); delete RUN.contraction; return done("Uložené");
+      case "edit-save": REC[+el.dataset.arg].t = +sh.querySelector("[data-edt]").dataset.edt; return done("Čas je upravený");
+      case "edit-del": REC.splice(+el.dataset.arg, 1); return done("Zmazané");
+      case "share": return done("[ukážka] Otvorí sa zdieľanie telefónu");
+    }
+  }
+  const STOP = { sleep: "sleep-stop", feed: "feed-stop", tummy: "tummy-stop", contraction: "con-stop" };
+  stage.addEventListener("click", e => {
+    const ph = e.target.closest(".phone"); if (!ph) return;
+    if (e.target.closest(".scrim, [data-close]")) return closeSheet(ph);
+    const ch = e.target.closest(".chip[data-g]");
+    if (ch) { ch.parentNode.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === ch))); return; }
+    const tab = e.target.closest("[data-tab]"); if (tab) return openSheet(ph, "feed", tab.dataset.tab, true);
+    const sf = e.target.closest("[data-shift]");
+    if (sf) { const el = ph.querySelector("[data-edt]"), v = Math.min(now(), +el.dataset.edt + +sf.dataset.shift * MIN); el.dataset.edt = v; el.textContent = hm(v); return; }
+    const sw = e.target.closest("[data-sheet]"); if (sw) return openSheet(ph, sw.dataset.sheet, sw.dataset.arg, true);
+    const d = e.target.closest("[data-do]"); if (d) return act(ph, d.dataset.do, d);
+    const core = e.target.closest(".core");
+    if (core) return core.dataset.act === "stop" ? act(ph, STOP[core.dataset.k], core) : openSheet(ph, "day");
+    const seg = e.target.closest(".seg"); if (seg) return openSheet(ph, seg.dataset.k);
+  });
+  stage.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".seg")) { e.preventDefault(); openSheet(e.target.closest(".phone"), e.target.dataset.k); }
+    if (e.key === "Escape") stage.querySelectorAll(".phone").forEach(closeSheet);
+  });
+
+  function sync() {
+    document.querySelectorAll("#bar button").forEach(b => {
+      const k = b.dataset.k, v = b.dataset.v;
+      if (k === "pump" || k === "tummy") { b.disabled = S.period !== "po"; b.setAttribute("aria-pressed", String(S[k])); return; }
+      b.setAttribute("aria-pressed", String(k === "period" ? S.period === v : k === "night" ? String(+S.night) === v : S.size === v));
+    });
+    const q = new URLSearchParams({ period: S.period }); if (S.night) q.set("night", 1); if (S.size !== "390") q.set("size", S.size); if (S.pump) q.set("pump", 1); if (S.tummy) q.set("tummy", 1);
+    try { history.replaceState(null, "", "?" + q); } catch (err) { /* súbor */ }
+  }
+  document.getElementById("bar").addEventListener("click", e => {
+    const b = e.target.closest("button[data-k]"); if (!b || b.disabled) return;
+    const k = b.dataset.k, v = b.dataset.v;
+    if (k === "period") S.period = v; if (k === "night") S.night = v === "1"; if (k === "size") S.size = v;
+    if (k === "pump" || k === "tummy") S[k] = !S[k];
+    sync(); render();
+  });
+  sync(); render();
+})();
+</script>
+</body>
+</html>
