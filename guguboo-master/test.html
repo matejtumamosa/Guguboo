@@ -796,67 +796,243 @@
             if (appBtn) { appBtn.click(); await sleep(200); assert(V5.currentView() !== "guguChat", "tlačidlo miesta v appke nič neotvorilo"); }
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
+        }
+      }
+    },
+    {
+      // Master 3.4 (Samo 24. 11., prototyp-tracker.html): kruh = tracker, okná dielov = miniappky.
+      name: "Kruh = tracker (Master 3.4)",
+      tests: {
+        "Počet a obsah dielov podľa obdobia a prepínačov „Čo sledujem v kruhu“ (3–5 dielov)": async () => {
+          const cases = [
+            ["pred 28. t.", ringSeed("pred"), ["move", "drink", "vit", "question"]],
+            ["pred 37. t.", ringSeed("pred", { due: 21 }), ["move", "contraction", "vit", "question"]],
+            ["po", ringSeed("po"), ["feed", "sleep", "diaper"]],
+            ["po + Odsávanie", ringSeed("po", { v5: { ringExtras: { pump: true, tummy: false } } }), ["feed", "sleep", "diaper", "pump"]],
+            ["po + Odsávanie + Na brušku", ringSeed("po", { v5: { ringExtras: { pump: true, tummy: true } } }), ["feed", "sleep", "diaper", "pump", "tummy"]],
+            ["od 1 roka", ringSeed("po", { birth: -400 }), ["food", "sleep", "play"]]
+          ];
+          for (const [name, data, want] of cases) {
+            const app = await bootApp(data, { settle: 500 });
+            try {
+              eq(ringKeys(app.doc), want, name);
+              eq(app.errors, [], name + ": chyby v konzole");
+            } finally { app.remove(); }
+          }
         },
-        "Kruh 375 × 667 v noci: ikona + názov, bez „naposledy“, ikona ≥ 16 px, nič sa neprekrýva": async () => {
-          const app = await bootApp(seed("po", { night: true, extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }), { width: 375, height: 667 });
+        "Prepínač „Čo sledujem v kruhu“ (okno Dnes) pridá a uberie diel a uloží sa v stave": async () => {
+          const app = await bootApp(ringSeed("po"));
           try {
-            await sleep(400);
-            const labels = [...app.doc.querySelectorAll("#home.view.active .g2q-card .v2-o-label")];
-            eq(labels.length, 3, "počet dielov");
-            eq(app.doc.querySelectorAll("#home.view.active .g2q-card text.g2q-sub").length, 0, "„naposledy“ na malom kruhu");
-            labels.forEach((g, i) => {
-              const ic = g.querySelector(".g2q-seg-ic"), name = g.querySelector("text:not(.g2q-sub)");
-              assert(ic && name, "diel " + (i + 1) + ": chýba ikona alebo názov");
-              const box = (ic.ownerSVGElement.getBoundingClientRect().width / 420) * Number(/scale\(([\d.]+)\)/.exec(ic.getAttribute("transform"))?.[1] || 0) * 256;
-              assert(box >= 15.9, "diel " + (i + 1) + ": ikona " + box.toFixed(1) + " px");
-              const clash = ringClash(g); assert(!clash, "diel " + (i + 1) + ": " + clash);
-              eq(app.win.getComputedStyle(ic).fill, "rgb(41, 36, 58)", "farba ikony v noci");
-            });
-            const short = app.doc.querySelector("#home.view.active .g2-short");
-            assert(short && isVisible(short.querySelector(".g2-short-ic")), "skratka bez ikony");
-            assert(!isVisible(short.querySelector("small")), "skratka ukazuje stavový riadok");
+            const doc = app.doc;
+            doc.querySelector("#home.view.active .g2q-core").click(); await sleep(200);
+            doc.querySelector("#g2QuickOverlay [data-g2q='seg'][data-seg='extras']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='extra-toggle'][data-x='tummy']").click(); await sleep(300);
+            eq(ringKeys(doc), ["feed", "sleep", "diaper", "tummy"], "po zapnutí Na brušku");
+            assert(JSON.parse(app.storage.getItem("guguboo-m-state")).v5.ringExtras.tummy === true, "prepínač nie je uložený v guguboo-m-state");
+            doc.querySelector("#g2QuickOverlay [data-g2q='extra-toggle'][data-x='tummy']").click(); await sleep(300);
+            eq(ringKeys(doc), ["feed", "sleep", "diaper"], "po vypnutí");
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
         },
-        "Kruh 390 × 844 cez deň: ikona → názov → „naposledy“ bez prekrytia": async () => {
-          const app = await bootApp(seed("po", { extra: { events: [{ id: "e1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 10 min", side: "Ľavý prsník", method: "Dojčenie", created: new Date(Date.now() - 20 * 60000).toISOString() }] } }));
+        "Ikona a stav ležia celé vnútri svojho dielu (390 × 844 a 375 × 667, 3–5 dielov, deň aj noc); jemný tón ikon; stred „Dnes“": async () => {
+          const busy = { events: [ev("Kŕmenie", 25, { method: "Dojčenie", side: "Ľavý prsník", value: "Dojčenie · Ľavý prsník · 12 min" }), ev("Spánok", 70, { value: "40 min · denný" }), ev("Plienka", 12, { value: "Cikalo", diaper: { type: "wet" } }), ev("Odsávanie", 90, { side: "Oba", ml: 120, value: "Oba · 120 ml" }), ev("Na brušku", 40, { value: "4 min" })] };
+          const pred = { babyMoves: [{ id: "m1", time: new Date(Date.now() - 30 * 60000).toISOString() }], water: { date: "", count: 0, goal: 8, glassMl: 250 }, supplements: { items: [{ id: "s1", name: "Test" }, { id: "s2", name: "Test 2" }], log: {} }, doctorQuestions: [{ id: "q1", who: "me", text: "Otázka?", created: new Date().toISOString(), done: false }] };
+          const cases = [
+            ["po 5 dielov 390 × 844", ringSeed("po", { v5: { ringExtras: { pump: true, tummy: true } }, extra: busy }), 390, 844],
+            ["po 5 dielov 375 × 667 noc", ringSeed("po", { night: true, v5: { ringExtras: { pump: true, tummy: true } }, extra: busy }), 375, 667],
+            ["po 3 diely 375 × 667", ringSeed("po", { extra: busy }), 375, 667],
+            ["pred 4 diely 390 × 844", ringSeed("pred", { v5: pred }), 390, 844],
+            ["pred 4 diely 375 × 667 noc", ringSeed("pred", { night: true, v5: pred }), 375, 667]
+          ];
+          for (const [name, data, w, h] of cases) {
+            const app = await bootApp(data, { width: w, height: h });
+            try {
+              await sleep(300);
+              const svg = app.doc.querySelector("#home.view.active .g2q-svg");
+              assert(svg, name + ": kruh chýba");
+              const segs = [...svg.querySelectorAll(".g2q-seg")];
+              segs.forEach(g => assert(g.querySelector(".g2q-sic")?.children.length, name + ": diel " + g.dataset.seg + " bez ikony"));
+              eq(ringInside(app.win, svg), [], name + ": vybieha z dielu");
+              const op = parseFloat(app.win.getComputedStyle(segs[0].querySelector(".g2q-sic")).opacity);
+              eq(op, data[PREFIX + "state"].includes('"night":true') ? .7 : .58, name + ": tón ikony");
+              const core = app.doc.querySelector("#home.view.active .g2q-core");
+              eq(core.getAttribute("aria-label"), "Prehľad dňa – dnešné záznamy", name + ": stred");
+              eq(core.textContent.trim(), "Dnes", name + ": text stredu");
+              const ring = svg.getBoundingClientRect(), card = app.doc.querySelector("#home.view.active .g2q-card").getBoundingClientRect();
+              assert(ring.top >= card.top - 1 && ring.bottom <= card.bottom + 1, name + ": kruh presahuje kartu");
+              eq(app.errors, [], name + ": chyby v konzole");
+            } finally { app.remove(); }
+          }
+        },
+        "Ťuk na diel nič neuloží; uloženie ukáže „Uložené · Vrátiť“ a Vrátiť záznam zruší": async () => {
+          const app = await bootApp(ringSeed("po"));
           try {
-            await sleep(400);
-            const labels = [...app.doc.querySelectorAll("#home.view.active .g2q-card .v2-o-label")];
-            eq(labels.map(g => !!g.querySelector(".g2q-seg-ic")), [true, true, true], "ikony v dieloch");
-            assert(app.doc.querySelector("#home.view.active .g2q-card text.g2q-sub"), "„naposledy“ chýba");
-            labels.forEach((g, i) => {
-              const clash = ringClash(g); assert(!clash, "diel " + (i + 1) + ": " + clash);
-            });
+            const doc = app.doc, n = () => app.state().events.length, before = n();
+            tapSeg(app, "diaper"); await sleep(200);
+            assert(doc.getElementById("g2QuickOverlay")?.classList.contains("open"), "okno Plienky sa neotvorilo");
+            eq(n(), before, "ťuk na diel uložil záznam");
+            doc.querySelector("#g2QuickOverlay [data-g2q='diaper-save']").click(); await sleep(250);
+            eq(n(), before + 1, "plienka sa neuložila");
+            const toast = doc.getElementById("g2qToast");
+            assert(toast?.classList.contains("on") && /Vrátiť/.test(toast.textContent), "chýba „Vrátiť“");
+            toast.querySelector("[data-g2q='undo']").click(); await sleep(250);
+            eq(n(), before, "Vrátiť nezrušilo záznam");
+            // Na brušku: časovač v strede kruhu a uloženie ako záznam
+            app.state().v5.ringExtras = { pump: false, tummy: true }; app.win.GugubooV5.renderHome?.(); await sleep(250);
+            tapSeg(app, "tummy"); await sleep(200);
+            doc.querySelector("#g2QuickOverlay [data-g2q='tummy-start']").click(); await sleep(250);
+            assert(doc.querySelector("#home.view.active .g2q-core.is-running"), "stred neukazuje bežiaci časovač");
+            doc.querySelector("#home.view.active .g2q-core").click(); await sleep(250);
+            eq(app.state().events.slice(-1)[0].type, "Na brušku", "Na brušku sa neuložilo");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Prehľad dňa (stred „Dnes“): posun času o −15 min a zmazanie záznamu": async () => {
+          const app = await bootApp(ringSeed("po", { extra: { events: [ev("Kŕmenie", 60, { method: "Fľaša", value: "Fľaša · Umelé mlieko · 90 ml", ml: 90 }), ev("Plienka", 30, { value: "Cikalo", diaper: { type: "wet" } })] } }));
+          try {
+            const doc = app.doc;
+            doc.querySelector("#home.view.active .g2q-core").click(); await sleep(200);
+            eq(doc.getElementById("g2qTitle").textContent, "Dnes", "nadpis okna");
+            const rows = doc.querySelectorAll("#g2QuickOverlay .g2q-daylist li");
+            eq(rows.length, 2, "počet dnešných záznamov");
+            const orig = new Date(app.state().events[1].created).getTime();
+            rows[0].querySelector("[data-g2q='edit-open']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='edit-shift'][data-min='-15']").click();
+            doc.querySelector("#g2QuickOverlay [data-g2q='edit-save']").click(); await sleep(250);
+            const moved = new Date(app.state().events[1].created).getTime();
+            assert(Math.abs(orig - 15 * 60000 - moved) < 2000, "čas sa neposunul o 15 min (" + (orig - moved) / 60000 + " min)");
+            assert(doc.getElementById("g2QuickOverlay").classList.contains("open") && doc.getElementById("g2qTitle").textContent === "Dnes", "po uložení sa nevrátil Prehľad dňa");
+            doc.querySelector("#g2QuickOverlay .g2q-daylist [data-g2q='edit-open']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='edit-del']").click(); await sleep(250);
+            eq(app.state().events.length, 1, "záznam sa nezmazal");
+            eq(doc.querySelectorAll("#g2QuickOverlay .g2q-daylist li").length, 1, "zoznam po zmazaní");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Pitie = ten istý stav ako Pitný režim v Mame (+1 / −1, 7 stĺpčekov)": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            const doc = app.doc;
+            tapSeg(app, "drink"); await sleep(200);
+            doc.querySelector("#g2QuickOverlay [data-g2q='drink-add']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='drink-add']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='drink-minus']").click(); await sleep(150);
+            doc.querySelector("#g2QuickOverlay [data-g2q='drink-add']").click(); await sleep(250);
+            const v5 = app.state().v5, today = iso(new Date());
+            eq([v5.water.count, v5.waterLog[today]], [2, 2], "state.v5.water / waterLog");
+            eq(doc.querySelectorAll("#g2QuickOverlay .g2q-bars > div").length, 7, "stĺpčeky za 7 dní");
+            assert(/2×/.test(segOf(app, "drink").textContent), "stav v kruhu");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Čo beriem: vlastný zoznam (nič nenavrhuje), odškrtnutie s Vrátiť, 7 bodiek týždňa, stav v kruhu, .ics s denným opakovaním": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            tapSeg(app, "vit"); await sleep(200);
+            eq(doc.getElementById("g2qTitle").textContent, "Čo beriem", "nadpis");
+            eq(ov().querySelectorAll(".g2q-checks li").length, 0, "appka nesmie nič navrhovať");
+            ov().querySelector("#g2qSuppName").value = "Moje tablety";
+            ov().querySelector("[data-g2q='supp-add']").click(); await sleep(200);
+            ov().querySelector("[data-g2q='supp-toggle']").click(); await sleep(250);
+            const s = app.state().v5.supplements, today = iso(new Date());
+            eq(s.items.map(i => i.name), ["Moje tablety"], "položky");
+            assert(s.log[today]?.[s.items[0].id], "odškrtnutie sa neuložilo");
+            assert(/dnes ✓/.test(segOf(app, "vit").textContent), "stav v kruhu");
+            eq(ov().querySelectorAll(".g2q-week span").length, 7, "7 bodiek týždňa");
+            eq(ov().querySelectorAll(".g2q-week span.on").length, 1, "vyplnená bodka dnes");
+            doc.querySelector("#g2qToast [data-g2q='undo']").click(); await sleep(250);
+            assert(!app.state().v5.supplements.log[today]?.[s.items[0].id], "Vrátiť nezrušilo odškrtnutie");
+            const ics = app.win.G2Quick.ics({ id: "x", date: today + "T09:00", title: "Čo beriem", rrule: "FREQ=DAILY" });
+            assert(/RRULE:FREQ=DAILY/.test(ics) && /DTSTART:\d{8}T090000/.test(ics), ".ics bez denného opakovania");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Pohyby „Tvoj rytmus“: Cítim pohyb pridá bodku na os dňa, druh jedným ťukom, mriežka 7 × 24, veta len z g2-safety.js (E3)": async () => {
+          const app = await bootApp(ringSeed("pred", { v5: { babyMoves: [{ id: "m0", time: new Date(Date.now() - 2 * DAY).toISOString() }] } }));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            tapSeg(app, "move"); await sleep(200);
+            ov().querySelector("[data-g2q='move-save']").click(); await sleep(250);
+            assert(ov().classList.contains("open"), "okno sa po zápise zavrelo");
+            eq(ov().querySelectorAll(".g2q-tl-dot").length, 1, "bodka na dnešnej osi");
+            ov().querySelector("[data-g2q='move-kind'][data-kind='hiccup']").click(); await sleep(200);
+            eq(app.state().v5.babyMoves.slice(-1)[0].kind, "hiccup", "druh pohybu");
+            eq(ov().querySelectorAll(".g2q-grid-row:not(.g2q-grid-h)").length, 7, "riadky mriežky");
+            eq(ov().querySelector(".g2q-grid-row:not(.g2q-grid-h)").querySelectorAll("i").length, 24, "hodiny v riadku");
+            assert(ov().textContent.includes(app.win.G2Safety.E.E3.text), "chýba veta E3");
+            // Linkové ikony v okne ostanú ťahom (svg.ph mení výplne na currentColor)
+            const line = ov().querySelector("svg.ph [stroke]");
+            assert(line && app.win.getComputedStyle(line).fill === "none", "linková ikona sa vyplnila");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Pre lekára: zápis otázky (who: me), zoznam na prehliadku, odškrtnutie „zodpovedané“": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            tapSeg(app, "question"); await sleep(200);
+            ov().querySelector("#g2qQText").value = "Môžem cestovať autom?";
+            ov().querySelector("[data-g2q='q-save']").click(); await sleep(250);
+            const q = app.state().v5.doctorQuestions.slice(-1)[0];
+            eq([q.who, q.text, q.done], ["me", "Môžem cestovať autom?", false], "otázka");
+            ov().querySelector("[data-g2q='q-done']").click(); await sleep(250);
+            eq(app.state().v5.doctorQuestions.slice(-1)[0].done, true, "zodpovedané");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "Záloha obsahuje nové údaje kruhu (Čo beriem, prepínače, Na brušku) – všetko v guguboo-m-state": async () => {
+          const app = await bootApp(ringSeed("po", { v5: { ringExtras: { pump: true, tummy: true }, supplements: { items: [{ id: "s1", name: "X" }], log: {} } } }));
+          try {
+            app.win.GugubooV5.persist();
+            const payload = JSON.parse(await app.win.G2Backup.exportPayload());
+            const st = JSON.parse(payload.data[PREFIX + "state"]);
+            eq([st.v5.ringExtras.pump, st.v5.supplements.items.length], [true, 1], "záloha");
+            eq(Object.keys(app.storage).filter(k => !k.startsWith(PREFIX)), [], "kľúč mimo guguboo-m-*");
           } finally { app.remove(); }
         }
       }
     }
   ];
 
-  // ——— Master 3.0: prechod obrazovkami a kontrola ovládania (znaky, negatívne názvy, chýbajúce ikony) ———
-  // Diel kruhu: písmená názvu a „naposledy“ nesmú zasahovať do ikony a názov s „naposledy“ nesmú ležať na sebe
-  // (počítané v jednotkách viewBoxu 420 podľa stredov písmen – text ide po oblúku, obdĺžniky by klamali).
-  function ringClash(g) {
-    const ic = g.querySelector(".g2q-seg-ic");
-    const t = ic && /translate\(([\d.-]+) ([\d.-]+)\) scale\(([\d.]+)\)/.exec(ic.getAttribute("transform"));
-    const iu = t ? 256 * +t[3] : 0, icx = t ? +t[1] + iu / 2 : 0, icy = t ? +t[2] + iu / 2 : 0;
-    const win = g.ownerDocument.defaultView;
-    const rings = [];
-    for (const text of g.querySelectorAll("text")) {
-      const fs = parseFloat(win.getComputedStyle(text).fontSize) || 20, rs = [];
-      for (let i = 0; i < text.getNumberOfChars(); i++) {
-        const e = text.getExtentOfChar(i), cx = e.x + e.width / 2, cy = e.y + e.height / 2;
-        if (t && Math.hypot(cx - icx, cy - icy) < iu / 2 + fs * 0.3) return "písmeno „" + text.textContent[i] + "“ zasahuje do ikony";
-        rs.push(Math.hypot(cx - 210, cy - 210));
-      }
-      rs.sort((a, b) => a - b);
-      rings.push({ fs, r: rs[Math.floor(rs.length / 2)] || 0 });
+  // ——— Master 3.4: pomôcky pre testy kruhu ———
+  function ringSeed(kind, o = {}) {
+    const data = seed(kind, { night: o.night, v5: o.v5, extra: o.extra });
+    if (o.due !== undefined || o.birth !== undefined) {
+      const s = JSON.parse(data[PREFIX + "state"]);
+      if (o.due !== undefined) s.profile.due = iso(addDays(o.due));
+      if (o.birth !== undefined) s.profile.birth = iso(addDays(o.birth));
+      data[PREFIX + "state"] = JSON.stringify(s);
     }
-    for (let a = 0; a < rings.length; a++) for (let b = a + 1; b < rings.length; b++)
-      if (Math.abs(rings[a].r - rings[b].r) < (rings[a].fs + rings[b].fs) * 0.4) return "názov a „naposledy“ sú na sebe";
-    return "";
+    return data;
   }
+  const ev = (type, minAgo, extra = {}) => { const t = new Date(Date.now() - minAgo * 60000).toISOString(); return Object.assign({ id: "e" + Math.random().toString(36).slice(2, 8), type, value: "", note: "", author: "rodina", created: t, start: type === "Spánok" || type === "Na brušku" ? new Date(Date.now() - (minAgo + 30) * 60000).toISOString() : undefined, end: type === "Spánok" || type === "Na brušku" ? t : undefined }, extra); };
+  const ringKeys = doc => [...doc.querySelectorAll("#home.view.active .g2q-seg")].map(g => g.dataset.seg);
+  const segOf = (app, key) => app.doc.querySelector("#home.view.active .g2q-seg[data-seg='" + key + "']");
+  const tapSeg = (app, key) => segOf(app, key).dispatchEvent(new app.win.MouseEvent("click", { bubbles: true }));
+  // Ikona (rámik kresby vrátane polovice ťahu) a každý znak stavu (+6 jednotiek) musia ležať vo výplni svojho dielu (ako ringCheck v prototype).
+  function ringInside(win, svg, M = 6) {
+    const bad = [];
+    svg.querySelectorAll(".g2q-seg").forEach(g => {
+      const path = g.querySelector(".g2q-fill"), ic = g.querySelector(".g2q-sic"), k = g.dataset.seg;
+      const inFill = (pts, w) => { if (pts.some(p => !path.isPointInFill(new win.DOMPoint(p[0], p[1])))) bad.push(k + ": " + w); };
+      const bb = ic.getBBox(), m = ic.transform.baseVal.consolidate().matrix, sw = /stroke-width/.test(ic.innerHTML) ? 8 : 0;
+      const r = { x: (bb.x - sw) * m.a + m.e, y: (bb.y - sw) * m.d + m.f, w: (bb.width + 2 * sw) * m.a, h: (bb.height + 2 * sw) * m.d };
+      const x0 = r.x - M, y0 = r.y - M, x1 = r.x + r.w + M, y1 = r.y + r.h + M;
+      inFill([[x0, y0], [x1, y0], [x0, y1], [x1, y1]], "ikona");
+      g.querySelectorAll("text").forEach(t => {
+        const fs = parseFloat(t.getAttribute("font-size"));
+        if (t.getStartPositionOfChar(0).y - .95 * fs < r.y + r.h + 2) bad.push(k + ": stav sa bije s ikonou");
+        for (let q = 0; q < t.getNumberOfChars(); q++) {
+          const s = t.getStartPositionOfChar(q), e = t.getEndPositionOfChar(q);
+          inFill([[s.x - M, s.y - .95 * fs - M], [e.x + M, e.y - .95 * fs - M], [s.x - M, s.y + .25 * fs + M], [e.x + M, e.y + .25 * fs + M]], "„" + t.textContent[q] + "“");
+        }
+      });
+    });
+    return bad;
+  }
+
+  // ——— Master 3.0: prechod obrazovkami a kontrola ovládania (znaky, negatívne názvy, chýbajúce ikony) ———
   // Emoji a znaky, ktoré nahrádzali ikony (◌ ☾ ✉ ☏ ⇡ ⏱ ≈ ↟ ♡ 💡 🦷 …). ✓ (stav v Zúbkoch) zatiaľ ostáva – na rozhodnutie.
   const CTRL_SYMBOLS = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{2712}\u{2714}-\u{27BF}\u{2B00}-\u{2BFF}◌⇡↟⏱≈️]/u;
   const NEGATIVE = /Bežné ťažkosti|Keď je mi ťažko/;
@@ -886,7 +1062,7 @@
       for (const step of [() => win.G2Ring.overview(), () => win.G2Ring.section("rest"), () => win.G2Ring.section("body"), () => win.G2Ring.section("sup"), () => win.G2Ring.center(), () => { win.G2Ring.forceNight = true; win.G2Ring.center(); }, () => win.G2Ring.act("hard")]) {
         step(); await sleep(400); check("Čas pre teba – " + win.G2Ring.screen()); win.G2Ring.forceNight = undefined; await reset();
       }
-      for (const seg of [...doc.querySelectorAll("#home.view.active .g2q-card path[data-g2q='seg']")]) {
+      for (const seg of [...doc.querySelectorAll("#home.view.active .g2q-card .g2q-seg")]) {
         seg.dispatchEvent(new win.MouseEvent("click", { bubbles: true })); await sleep(150);
         check("kruh – " + (doc.getElementById("g2qTitle")?.textContent || seg.dataset.seg)); await reset();
       }

@@ -3,6 +3,20 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-24 – Samo (Master 3.4: kruh = tracker)
+- **Kruh na domove = tracker** podľa schváleného `guguboo-master/prototyp-tracker.html` (tvar 2.9, esovité diely, 3–5 dielov).
+  V dieli len ikona (názov je v aria-label a hlavičke okna) a pod ňou jemný stav, ak sa zmestí; inak sa stav vynechá len v tom diele.
+  Ikony jemne (priehľadnosť .58, v noci .7). Stred: ikona hodín + slovo „Dnes“ (Prehľad dňa), alebo bežiaci časovač.
+- **Obsah:** po pôrode Kŕmenie · Spánok · Plienky + voliteľne Odsávanie a Na brušku („Čo sledujem v kruhu“); pred pôrodom
+  Pohyby · Pitie · Vitamíny · Pre lekára, od 36. týždňa Kontrakcie namiesto Pitia; od 1 roka Jedlo · Spánok · Aktivita.
+  Bruško a Hlas z kruhu vypadli (ostávajú v Našich momentoch). Prvý pohyb: kým nie je zapísaný, okno Pohybov ukáže pokojné očakávanie.
+- **„Ak to má byť v kruhu, musí to byť funkčná miniaplikácia“:** každé okno dielu má súhrn dňa a malú os dňa / 7 dní, veľké
+  tlačidlá, jednu obrazovku – bez rád, noriem, cieľov a hodnotenia. Pohyby „Tvoj rytmus“ (mriežka 7 × 24, veta len z g2-safety E3),
+  Pitie (ten istý stav ako Pitný režim v Mame), Čo beriem (vlastný zoznam, appka nič nenavrhuje, 7 bodiek týždňa, pripomienka
+  cez .ics), Pre lekára (otázky na prehliadku, najbližší termín Zdravie z Kalendára, „zodpovedané“).
+- **Nová sada ikon** (po slepých testoch): breastfeed, sleepZ, diaperFront, breastPump, tummyTime, bellyKick, glassWater, capsule,
+  doctorQ, bellyWave – v `iconPaths`, linkové (ťah 16).
+
 ## 2026-11-17 – Samo (kruh)
 - **Verzie kruhu** sú uložené ako snímky v `znalosti/kruh-verzie/` (README s poznámkami). Smer: návrat k originálu (Master 2.9) alebo k variantu D (živá scéna), prípadne niečo medzi.
 - **Pravidlo pre návrhy:** pochopí to unavená mama za 2 sekundy bez vysvetlenia – žiadne farebné kódy ani abstraktné grafy; pred ukázaním Samovi návrh posúdi nezávislý agent len zo snímky.
