@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 24. 11. 2026 (Claude – Master 3.4)_
+_Naposledy aktualizované: 25. 11. 2026 (Claude – Master 3.5.1)_
 
 ## Verzia
 
-- **Master 3.4** vo vetve `v2`, priečinok `guguboo-master/`.
+- **Master 3.5.1** vo vetve `v2`, priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -31,6 +31,11 @@ _Naposledy aktualizované: 24. 11. 2026 (Claude – Master 3.4)_
   od 36. t. Kontrakcie namiesto Pitia; od 1 roka bez zmeny. Okná dielov = miniappky (súhrn dňa, os dňa, 7 dní), Prehľad dňa
   s posunom času a zmazaním. Údaje: `state.v5.supplements`, `ringExtras`, `tummyTimer`, udalosti „Odsávanie“ a „Na brušku“
   (všetko v `guguboo-m-state`, záloha ich berie). test.html: 64 zelených.
+- **3.5 (Samo 25. 11.):** album 100 dní spolu bez červeného 💯 (albumy majú linkové ikony, 🔒 → ikona zámku); skratky na domove
+  jemnejšie (600, tlmená farba); v okne Dnes namiesto odkazu „Čo sledujem v kruhu“ ikony dielov + „+“; pred pôrodom vlastný
+  výber dielov (Pohyby vždy, od 36. t. aj Kontrakcie; Pitie, Vitamíny, Pre lekára, Bruško, Hlas; spolu 3–5) – `state.v5.ringPre`.
+- **3.5.1:** oprava textov o príprave umelého mlieka (Rodina → Úlohy v rodine → Delegovať rutinu) – pôvodne 2.6.1, bola len lokálne.
+- Na rozhodnutie po 3.5: pridať do kruhu aj ďalšie denné záznamy (napr. Teplota, Kúpanie, Prechádzka) – zatiaľ len návrh.
 - Otvorené po 3.4: v 36.+ t. je na domove skratka „Otázky pre lekára“ aj diel „Pre lekára“ (duplicita – rozhodne Samo);
   Bruško a Hlas sú už len v Našich momentoch; vety o Pitie/Na brušku bez noriem – overiť v teste s mamami.
 - Fáza 1 ďalej: časová os nárokov (náhľad) · rozmazanie na iPhone 16e (úloha #9) · kontrola na iPhone a Androide · test s mamami. Prototyp kvetu namiesto kruhu (`prototyp-kvet.html`) – rozpracovaný.
@@ -40,7 +45,6 @@ _Naposledy aktualizované: 24. 11. 2026 (Claude – Master 3.4)_
   právnik pred spustením. Potom web + Master nahradia V1 na guguboo.com (cez PR do `main`).
 - Písmo appky: Montserrat sa načítava z Google Fonts – nahradiť vlastným hostovaním (čaká na súhlas Sama).
 - Fotky a nahrávky sú v `localStorage` (~5 MB) – presun médií do IndexedDB.
-- Oprava prípravy umelého mlieka – odložené (pozri rozhodnutie 16. 11.).
 
 ## Pozor
 

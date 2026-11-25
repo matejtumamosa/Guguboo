@@ -3118,13 +3118,13 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "Master 3.4";</script>
+  <script>window.GUGUBOO_V2_VERSION = "Master 3.5.1";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=m1.6c">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
   <link rel="stylesheet" href="v2.css?v=m3.2">
-  <link rel="stylesheet" href="master.css?v=m3.4">
+  <link rel="stylesheet" href="master.css?v=m3.5">
   <link rel="stylesheet" href="g2-icons.css?v=m1.4">
   <link rel="stylesheet" href="g2-type.css?v=m1.9.1a">
   <link rel="stylesheet" href="g2-intro.css?v=m2.8.2">
@@ -5056,7 +5056,7 @@
                 <label>Množstvo
                   <input id="familyMilkAmount" placeholder="napr. 120 ml">
                 </label>
-                <label>Voda / teplota
+                <label>Voda / príprava
                   <input id="familyWaterTemp" placeholder="napr. presne podľa návodu na balení mlieka">
                 </label>
                 <label>Fľaša / cumlík
@@ -9082,7 +9082,7 @@ Otázky:
     const familyTaskDetails = {
       "Prevziať kúpanie": "Pripraviť uterák, čistú plienku, pyžamo a kozmetiku. Skontrolovať teplotu vody, kúpať pokojne a po kúpaní zapísať, či bola pokožka v poriadku.",
       "Ísť na prechádzku": "Zobrať kočík, náhradnú plienku, obrúsky, deku podľa počasia a telefón. Po návrate zapísať, kedy dieťa zaspalo alebo sa zobudilo.",
-      "Pripraviť fľašu": "Použiť presné mlieko, ktoré je uložené v nákupných produktoch. Dávku pripraviť podľa návodu, vodu nechať na bezpečnú teplotu a po kŕmení nechať odgrgnúť.",
+      "Pripraviť fľašu": "Použiť presné mlieko, ktoré je uložené v nákupných produktoch. Vodu aj prášok pripraviť presne podľa návodu na balení, vždy čerstvo na jedno kŕmenie. Mlieko neohrievať v mikrovlnke. Pred podaním skontrolovať teplotu kvapkou na vnútornú stranu zápästia: má byť teplé, nie horúce. Zvyšok po kŕmení vyliať a dieťa nechať odgrgnúť.", // Master 3.5.1 (pôvodne 2.6.1): bez konkrétnej teploty, podľa návodu na balení (NHS 111 Wales, overené 16. 11. 2026)
       "Dať večerné mlieko": "Pripraviť presnú dávku mlieka, podať ho v bežnej večernej rutine, potom nechať odgrgnúť a zapísať, koľko dieťa vypilo.",
       "Prebrať uspávanie": "Prevziať večerný blok: stlmiť svetlo, pripraviť plienku/pyžamo, podľa potreby mlieko, krátky rituál, zvuk alebo nosenie. Zapísať, kedy dieťa zaspalo.",
       "Kúpiť plienky / drogériu": "Otvoriť nákupný zoznam a kúpiť presnú značku, veľkosť, typ alebo alternatívu uvedenú v zozname. Nekupovať inú receptúru mlieka bez dohody.",
@@ -9100,7 +9100,7 @@ Otázky:
       const parts = [
         $("familyMilkProduct").value.trim() ? `Produkt: ${$("familyMilkProduct").value.trim()}` : "",
         $("familyMilkAmount").value.trim() ? `Množstvo: ${$("familyMilkAmount").value.trim()}` : "",
-        $("familyWaterTemp").value.trim() ? `Voda / teplota: ${$("familyWaterTemp").value.trim()}` : "",
+        $("familyWaterTemp").value.trim() ? `Voda / príprava: ${$("familyWaterTemp").value.trim()}` : "",
         $("familyBottle").value.trim() ? `Fľaša / cumlík: ${$("familyBottle").value.trim()}` : "",
         $("familyAfterCare").value.trim() ? `Po úlohe: ${$("familyAfterCare").value.trim()}` : ""
       ].filter(Boolean);
@@ -10028,13 +10028,13 @@ Otázky:
   <script src="journey-engine.js?v=m1.9.2"></script>
   <script src="baby-figure.js?v=m1.6.4"></script>
   <script src="g2-safety.js?v=m2.7"></script>
-  <script src="v5-mobile.js?v=m3.4"></script>
+  <script src="v5-mobile.js?v=m3.5"></script>
   <script src="guguchat.js?v=m3.3"></script>
   <script src="v2-birth.js?v=m3.3"></script>
   <script src="v2-tour.js?v=m3.3"></script>
   <script src="v2-announce.js?v=2.23.0"></script>
-  <script src="v2-moments.js?v=m3.3"></script>
-  <script src="v2-albums.js?v=m3.3"></script>
+  <script src="v2-moments.js?v=m3.5"></script>
+  <script src="v2-albums.js?v=m3.5"></script>
   <script src="v2-voice.js?v=m3.3"></script>
   <script src="v2-birthcard.js?v=m2.9"></script>
   <script src="v2-period.js?v=m3.3"></script>

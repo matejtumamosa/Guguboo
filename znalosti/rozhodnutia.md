@@ -22,6 +22,18 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 - **Pravidlo pre návrhy:** pochopí to unavená mama za 2 sekundy bez vysvetlenia – žiadne farebné kódy ani abstraktné grafy; pred ukázaním Samovi návrh posúdi nezávislý agent len zo snímky.
 - **Ikony ostávajú** (3.0), texty čo najkratšie (3.3); 3.1 (návrat ikon) bol omyl.
 
+## 2026-11-25 – Samo (Master 3.5)
+- **Umelé mlieko (Master 3.5.1, pôvodne 2.6.1):** appka neuvádza žiadnu teplotu vody ani pomer – presný postup je na balení
+  každého mlieka a výrobcovia sa líšia. Úloha „Pripraviť fľašu“ odkazuje na návod na balení + spoločné body NHS: čerstvo na jedno
+  kŕmenie, nie mikrovlnka, test na zápästí, zvyšok vyliať. Pole „Voda / teplota“ → „Voda / príprava“. Zdroj: NHS 111 Wales
+  (overené 16. 11. 2026).
+- **Bez červeného 💯:** albumy majú linkové ikony (Naše čakanie srdce, 100 dní spolu kalendár, Moje prvé iskra, Prvý rok slnko);
+  míľnik 100 dní na časovej osi 🌼. Emoji ostáva len v obrázku albumu na zdieľanie.
+- **Skratky na domove:** názov jemnejším písmom (600) a tlmenou farbou – ikona nesie význam, text len tam, kde treba.
+- **Kruh sa dá prispôsobiť:** v okne Dnes ikony dielov + „+“ (nie skrytý textový odkaz). Po pôrode Kŕmenie, Spánok, Plienky vždy
+  (+ Odsávanie, Na brušku). Pred pôrodom Pohyby vždy, od 36. t. aj Kontrakcie; voliteľne Pitie, Vitamíny, Pre lekára, Bruško, Hlas.
+  V kruhu je 3 až 5 dielov (viac sa nezmestí čitateľne). Tým sa dá vyriešiť aj duplicita „Pre lekára“ v 36.+ t.
+
 ## 2026-11-16 – Samo (plán k 9–10/10, spustenie)
 - **Plán Fáza 1 schválený** (zhoda tímu: hodnotiteľ, stratég, UI, UX, Content & Safety, architekt):
   testovacia stránka · úrady a sumy k 1. 1. 2027 · skryť zvyšky Premium · fotky a hlas do IndexedDB + záloha ·
@@ -58,8 +70,7 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 ## 2026-11-16 – Samo
 - `CLAUDE.md` zosúladený s praxou (úložisko `guguboo-m-*`, `sw.js` CACHE, prototypy, QA, verejné repo).
   Každé nové rozhodnutie o dizajne, textoch alebo postupe sa zapisuje sem, aby ho videl aj Matej.
-- Oprava prípravy umelého mlieka (vetva `oprava-umele-mlieko`, len pre starú V1) je v `guguboo-master` len čiastočne –
-  zatiaľ odložené, rozhodne sa neskôr.
+- Oprava prípravy umelého mlieka – odložené, vyriešené v Master 3.5.1 (25. 11.).
 
 ## 2026-11-15 – Samo (Master 2.0 – 2.6)
 - **Čas pre teba (2.0 – 2.1):** kruh z prototypu `prototyp-kruh.html` – stred = okamžitá pomoc bez otázok, Oddych · Telo · Opora

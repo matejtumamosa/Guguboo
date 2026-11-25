@@ -807,6 +807,9 @@
           const cases = [
             ["pred 28. t.", ringSeed("pred"), ["move", "drink", "vit", "question"]],
             ["pred 37. t.", ringSeed("pred", { due: 21 }), ["move", "contraction", "vit", "question"]],
+            // Master 3.5: vlastný výber dielov pred pôrodom (state.v5.ringPre), najviac 5 dielov.
+            ["pred + vlastný výber", ringSeed("pred", { v5: { ringPre: ["voice", "vit", "bump"] } }), ["move", "vit", "bump", "voice"]],
+            ["pred 37. t. + plný výber", ringSeed("pred", { due: 21, v5: { ringPre: ["drink", "vit", "question", "bump"] } }), ["move", "contraction", "drink", "vit", "question"]],
             ["po", ringSeed("po"), ["feed", "sleep", "diaper"]],
             ["po + Odsávanie", ringSeed("po", { v5: { ringExtras: { pump: true, tummy: false } } }), ["feed", "sleep", "diaper", "pump"]],
             ["po + Odsávanie + Na brušku", ringSeed("po", { v5: { ringExtras: { pump: true, tummy: true } } }), ["feed", "sleep", "diaper", "pump", "tummy"]],

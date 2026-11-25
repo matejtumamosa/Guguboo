@@ -17,11 +17,12 @@
   const todayKey = () => { const n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
   const FIRST_KEYS = /^(first-|sono$|moves$|tooth$|bath$|check$|vaccine$|letter$)/;
 
+  // Master 3.5 (Samo 25. 11.): obal albumu = linková ikona (icon), emoji ostáva len pre obrázok na zdieľanie; 💯 bolo červené.
   const ALBUMS = [
-    { id: "cakanie", title: "Naše čakanie", emoji: "🤍", subtitle: "Cesta od prvých chvíľ po narodenie", pick: item => item.phase === "pre" },
-    { id: "sto", title: "100 dní spolu", emoji: "💯", subtitle: "Prvých sto dní, deň za dňom", unlockDays: 100, pick: (item, birth) => item.phase === "post" && time(item.date) < time(birth) + 100 * DAY },
-    { id: "prve", title: "Moje prvé", emoji: "✨", subtitle: "Všetko, čo bolo prvýkrát", pick: item => FIRST_KEYS.test(item.key) },
-    { id: "rok", title: "Prvý rok", emoji: "🎂", subtitle: "Náš prvý spoločný rok", unlockDays: 365, pick: (item, birth) => item.phase === "post" && time(item.date) < time(birth) + 366 * DAY }
+    { id: "cakanie", title: "Naše čakanie", emoji: "🤍", icon: "memory", subtitle: "Cesta od prvých chvíľ po narodenie", pick: item => item.phase === "pre" },
+    { id: "sto", title: "100 dní spolu", emoji: "💛", icon: "calendarDots", subtitle: "Prvých sto dní, deň za dňom", unlockDays: 100, pick: (item, birth) => item.phase === "post" && time(item.date) < time(birth) + 100 * DAY },
+    { id: "prve", title: "Moje prvé", emoji: "✨", icon: "sparkle", subtitle: "Všetko, čo bolo prvýkrát", pick: item => FIRST_KEYS.test(item.key) },
+    { id: "rok", title: "Prvý rok", emoji: "🎂", icon: "sun", subtitle: "Náš prvý spoločný rok", unlockDays: 365, pick: (item, birth) => item.phase === "post" && time(item.date) < time(birth) + 366 * DAY }
   ];
 
   const hidden = id => { state.v5 ||= {}; const all = state.v5.albumHidden ||= {}; return all[id] ||= {}; };
@@ -53,7 +54,7 @@
       const sub = isLocked
         ? (birth() ? "Otvorí sa o " + left + (left === 1 ? " deň" : left < 5 ? " dni" : " dní") : "Otvorí sa po narodení")
         : count ? count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Spomienky pribudnú samy";
-      return "<button type='button' class='v2-album-row" + (isLocked ? " is-locked" : "") + "' " + (isLocked ? "disabled" : "data-v5-moments-section='album-" + album.id + "'") + "><span class='v2-album-cover' aria-hidden='true'>" + album.emoji + "</span><span><strong>" + esc(album.title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>" + (isLocked ? "🔒" : "›") + "</b></button>";
+      return "<button type='button' class='v2-album-row" + (isLocked ? " is-locked" : "") + "' " + (isLocked ? "disabled" : "data-v5-moments-section='album-" + album.id + "'") + "><span class='v2-album-cover' aria-hidden='true'>" + V5.icon(album.icon) + "</span><span><strong>" + esc(album.title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>" + (isLocked ? V5.icon("lock") : "›") + "</b></button>";
     }).join("");
     return [
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Albumy</h1><p>Skladajú sa samy z vašich spomienok.</p></header>",
@@ -69,7 +70,7 @@
     const h = hidden(album.id);
     const name = state.profile?.name && !/^(bábätko|pipík)$/i.test(state.profile.name) ? state.profile.name : "";
     return [
-      "<section class='v2-album-head'><span aria-hidden='true'>", album.emoji, "</span><h1>", esc(album.title), "</h1><p>", esc(name ? album.subtitle + " · " + name : album.subtitle), "</p></section>",
+      "<section class='v2-album-head'><span aria-hidden='true'>", V5.icon(album.icon), "</span><h1>", esc(album.title), "</h1><p>", esc(name ? album.subtitle + " · " + name : album.subtitle), "</p></section>",
       all.length ? "<ol class='v2-tl v2-album-tl'>" + all.map(item => [
         "<li class='v2-tl-item", h[item.key] ? " is-hidden" : "", "'><span class='v2-tl-dot' aria-hidden='true'>", item.emoji, "</span><div class='v2-tl-card'>",
         "<label class='v2-album-keep'><input type='checkbox' data-v2-album-keep='", esc(album.id), "' data-key='", esc(item.key), "'", h[item.key] ? "" : " checked", "> V albume</label>",

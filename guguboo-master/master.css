@@ -947,3 +947,23 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-side em { bac
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-day { color: #c9c1dc !important; font-weight: 600 !important; }
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-stop { background: #cbbcff !important; color: #1f1a2e !important; }
 @media (prefers-reduced-motion: reduce) { .g2q-seg, .g2q-core, .g2q-toggle em, .g2q-toggle em::after { transition: none !important; } .g2q-seg:active { transform: none; } }
+
+/* Master 3.5 (Samo 25. 11.): skratky na domove – jemnejšie písmo a tlmenejšia farba (nie hrubé čierne); ikona nesie význam. */
+html body.v5-active .g2-shorts .g2-short strong { font: 600 14px/18px var(--g2-font) !important; color: var(--v5-muted) !important; letter-spacing: 0; }
+/* Master 3.5: okno Dnes – ikony dielov kruhu + „+“ namiesto textového odkazu „Čo sledujem v kruhu“. */
+.g2q-ringrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+.g2q-ringrow-ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: rgba(123, 97, 200, .12); color: #6a4fc4; }
+.g2q-ringrow-ic svg { width: 20px; height: 20px; }
+.g2q-plus { display: grid; place-items: center; width: 44px; height: 44px; margin-left: 2px; border: 1.5px dashed rgba(95, 79, 177, .55); border-radius: 50%; background: transparent; color: #5f4fb1; cursor: pointer; }
+.g2q-plus svg { width: 22px; height: 22px; }
+.g2q-plus:focus-visible { outline: 3px solid var(--v5-brand-dark, #5f4fb1); outline-offset: 2px; }
+.g2q-toggle[aria-disabled="true"] { opacity: .5; }
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-ringrow-ic { background: rgba(198, 188, 255, .14) !important; color: #c6bcff !important; }
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-plus { border-color: rgba(198, 188, 255, .6) !important; color: #c6bcff !important; background: transparent !important; }
+/* Master 3.5: albumy – linková ikona namiesto emoji (💯 pri 100 dňoch bola červená). */
+.v2-album-cover { color: #6a4fc4; }
+.v2-album-cover svg { width: 26px; height: 26px; }
+.v2-album-head > span { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: rgba(123, 97, 200, .12); color: #6a4fc4; font-size: 0; }
+.v2-album-head > span svg { width: 34px; height: 34px; }
+.v2-album-row > b svg { width: 18px; height: 18px; color: var(--v5-muted); }
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-album-cover, .v2-album-head > span) { color: #c6bcff !important; }

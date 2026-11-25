@@ -81,7 +81,7 @@
       const facts = [p.weight, p.height].filter(Boolean).join(" · ");
       add({ key: "birth", phase: "post", emoji: "👶", title: (p.name || "Bábätko") + " je na svete", date: birthDate, text: facts, photo: p.photo || "", source: "auto" });
       [[7, "Prvý týždeň spolu"], [100, "100 dní spolu"], [365, "Prvý rok spolu"]].forEach(([days, title]) =>
-        add({ key: "days-" + days, phase: "post", emoji: days === 100 ? "💯" : days === 365 ? "🎂" : "💛", title, date: plusDays(birthKey, days - 1), source: "auto" }));
+        add({ key: "days-" + days, phase: "post", emoji: days === 100 ? "🌼" : days === 365 ? "🎂" : "💛", title, date: plusDays(birthKey, days - 1), source: "auto" }));
       for (let month = 1; month <= 11; month += 1) add({ key: "month-" + month, phase: "post", emoji: "🌙", title: month + (month === 1 ? " mesiac" : month < 5 ? " mesiace" : " mesiacov") + " spolu", date: plusMonths(birthKey, month), source: "auto" });
       const check = firstBy(state.v5?.childChecks, "date");
       if (check) add({ key: "check", phase: "post", emoji: "🩺", title: "Prvá prehliadka u pediatra", date: check.date, source: "Zdravotná knižka" });

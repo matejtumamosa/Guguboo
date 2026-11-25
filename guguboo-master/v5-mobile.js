@@ -1334,6 +1334,13 @@
   // V dieli je len ikona (názov je v aria-label a v hlavičke okna), pod ňou jemný stav, ak sa zmestí do dielu.
   const g2qTummy = () => (state.v5.tummyTimer ||= { active: false, start: "" });
   const g2qExtras = () => (state.v5.ringExtras ||= { pump: false, tummy: false });
+  // Master 3.5: výber dielov pred pôrodom – state.v5.ringPre (pole kľúčov; kým nie je nastavené, platí predvolené podľa týždňa).
+  const G2Q_MAX = 5, G2Q_MIN = 3;
+  const G2Q_PRE_OPT = [["drink", "Pitie", "glassWater"], ["vit", "Vitamíny", "capsule"], ["question", "Pre lekára", "doctorQ"], ["bump", "Bruško", "camera"], ["voice", "Hlas", "voice"]];
+  const g2qPreFixed = () => g2qWeek() >= 36 ? ["move", "contraction"] : ["move"];
+  const g2qPreChosen = () => Array.isArray(state.v5.ringPre)
+    ? G2Q_PRE_OPT.map(o => o[0]).filter(k => state.v5.ringPre.includes(k))
+    : (g2qWeek() >= 36 ? ["vit", "question"] : ["drink", "vit", "question"]);
   // Čo beriem (Samo 24. 11.): vlastný zoznam, appka nič nenavrhuje. log[deň][id položky] = čas vzatia (ISO).
   const g2qSupp = () => { const s = (state.v5.supplements ||= { items: [], log: {} }); s.items ||= []; s.log ||= {}; return s; };
   const g2qSuppDay = (day = todayKey()) => g2qSupp().log[day] || {};
@@ -1353,7 +1360,11 @@
       const question = { key: "question", label: "Pre lekára", sub: open ? g2qCount(open, "otázka", "otázky", "otázok") : "", aria: "Pre lekára – zapísať otázku" };
       const ct = state.v5.contractions.slice(-1)[0];
       const contraction = { key: "contraction", label: "Kontrakcie", sub: ct && g2qIsToday(ct.start) ? formatClock(ct.start) : "", aria: "Kontrakcie – meranie" };
-      return g2qWeek() >= 36 ? [move, contraction, vit, question] : [move, drink, vit, question];
+      // Master 3.5 (Samo 25. 11.): pred pôrodom si diely vyberá používateľ (Pohyby vždy, od 36. t. aj Kontrakcie; spolu 3–5).
+      const bump = { key: "bump", label: "Bruško", sub: g2qBumpThisWeek() ? "tento týždeň ✓" : "", aria: "Bruško – fotka týždňa" };
+      const voice = { key: "voice", label: "Hlas", sub: "", aria: "Hlas pre bábätko" };
+      const all = { drink, vit, question, bump, voice };
+      return g2qPreFixed().map(k => k === "move" ? move : contraction).concat(g2qPreChosen().map(k => all[k])).slice(0, G2Q_MAX);
     }
     const lastSleep = g2qLastSleep();
     const awake = lastSleep ? g2qSince(lastSleep.created) : 0;
@@ -1380,7 +1391,7 @@
     return null;
   }
   // Ikony dielov (nová sada po slepých testoch, Samo 24. 11.) – rovnaká ikona aj v hlavičke okna a v bežiacom strede.
-  const G2Q_SEG_ICON = { feed: "breastfeed", sleep: "sleepZ", diaper: "diaperFront", pump: "breastPump", tummy: "tummyTime", move: "bellyKick", drink: "glassWater", vit: "capsule", question: "doctorQ", contraction: "bellyWave", food: "bowlFood", play: "activity", firstmove: "bellyKick" };
+  const G2Q_SEG_ICON = { feed: "breastfeed", sleep: "sleepZ", diaper: "diaperFront", pump: "breastPump", tummy: "tummyTime", move: "bellyKick", drink: "glassWater", vit: "capsule", question: "doctorQ", contraction: "bellyWave", food: "bowlFood", play: "activity", firstmove: "bellyKick", bump: "camera", voice: "voice" };
   // Optické vyrovnanie veľkosti: široké/plné kresby o kúsok menšie, úzke o kúsok väčšie.
   const G2Q_OPT = { diaperFront: .88, doctorQ: .92, bellyWave: .94, sleepZ: .96, tummyTime: .94, glassWater: .98, capsule: 1.02, bellyKick: 1.02, breastfeed: 1.08, breastPump: 1.06 };
   // Farby dielov (4 zastávky pôvodných prechodov v5OPink / v5OLilac / v5OPurple; lilac a mint v tom istom rytme).
@@ -1392,7 +1403,7 @@
     mint: { g: ["#d9f2e8", "#b7e3d2", "#94d2bb", "#6dbda1"], ink: "#123f33", tb: "#e3f5ee", ti: "#24715f" }
   };
   const G2Q_PAL = ["pink", "peach", "blue", "lilac", "mint"];
-  const G2Q_SEG_COL = { feed: "pink", sleep: "peach", diaper: "blue", pump: "lilac", tummy: "mint", move: "pink", drink: "blue", vit: "peach", question: "lilac", contraction: "peach", food: "pink", play: "blue" };
+  const G2Q_SEG_COL = { feed: "pink", sleep: "peach", diaper: "blue", pump: "lilac", tummy: "mint", move: "pink", drink: "blue", vit: "peach", question: "lilac", contraction: "peach", food: "pink", play: "blue", bump: "mint", voice: "lilac" };
   let g2qColors = {}; // farba dielu v aktuálnom kruhu (susedné diely nikdy rovnakej farby) – rovnaká farba aj v hlavičke okna
 
   // ——— Geometria (prototyp-tracker.html): pôvodný esovitý diel kruhu 2.9 pre 3–5 dielov, viewBox 420 ———
@@ -1781,7 +1792,7 @@
         g2qAct("voice-rec", "voice", "Nahrať nové", "", "", !list.length));
     }
     if (key === "extras") {
-      return g2qOpen("Čo sledujem v kruhu", "<p class='g2r-lead'>Kŕmenie, Spánok a Plienky sú v kruhu vždy. Pridať môžeš:</p>" + g2qExtrasHtml() +
+      return g2qOpen("Čo sledujem v kruhu", "<p class='g2r-lead'>" + g2qFixedLine() + "</p>" + g2qExtrasHtml() +
         "<button class='g2r-link' type='button' data-g2q='day'>Späť</button>");
     }
     if (key === "edit") return g2qEditSheet();
@@ -1789,9 +1800,25 @@
     if (key === "play") return openFeature("activities");
   }
   // Prepínače „Čo sledujem v kruhu“ – aj v Nastaveniach (Profil → Nastavenia).
+  // Master 3.5: pred pôrodom aj výber dielov (Pitie, Vitamíny, Pre lekára, Bruško, Hlas), v kruhu 3–5 dielov.
+  const g2qFixedLine = () => state.profile.status === "expecting"
+    ? (g2qWeek() >= 36 ? "Pohyby a Kontrakcie sú v kruhu vždy." : "Pohyby sú v kruhu vždy.") + " V kruhu môže byť 3 až 5 dielov."
+    : "Kŕmenie, Spánok a Plienky sú v kruhu vždy.";
   function g2qExtrasHtml() {
+    const toggle = (action, key, label, ic, on, off) => "<button type='button' class='g2q-toggle' data-g2q='" + action + "' data-x='" + key + "' aria-pressed='" + String(on) + "'" + (off ? " aria-disabled='true'" : "") + "><i aria-hidden='true'>" + icon(ic) + "</i><span>" + label + "</span><em aria-hidden='true'></em></button>";
+    if (state.profile.status === "expecting") {
+      const chosen = g2qPreChosen(), total = g2qPreFixed().length + chosen.length;
+      return "<div class='g2q-toggles'>" + G2Q_PRE_OPT.map(t => { const on = chosen.includes(t[0]); return toggle("pre-toggle", t[0], t[1], t[2], on, on ? total <= G2Q_MIN : total >= G2Q_MAX); }).join("") + "</div>";
+    }
     const x = g2qExtras();
-    return "<div class='g2q-toggles'>" + [["pump", "Odsávanie", "breastPump"], ["tummy", "Na brušku", "tummyTime"]].map(t => "<button type='button' class='g2q-toggle' data-g2q='extra-toggle' data-x='" + t[0] + "' aria-pressed='" + String(!!x[t[0]]) + "'><i aria-hidden='true'>" + icon(t[2]) + "</i><span>" + t[1] + "</span><em aria-hidden='true'></em></button>").join("") + "</div>";
+    return "<div class='g2q-toggles'>" + [["pump", "Odsávanie", "breastPump"], ["tummy", "Na brušku", "tummyTime"]].map(t => toggle("extra-toggle", t[0], t[1], t[2], !!x[t[0]], false)).join("") + "</div>";
+  }
+  // Master 3.5 (Samo 25. 11.): v okne Dnes namiesto textového odkazu malé ikony dielov kruhu + tlačidlo „+“.
+  function g2qRingRow() {
+    const segs = g2qSegments();
+    return "<div class='g2q-ringrow' role='group' aria-label='V kruhu sledujem: " + escapeHtml(segs.map(s => s.label).join(", ")) + "'>" +
+      segs.map(s => "<span class='g2q-ringrow-ic' aria-hidden='true'>" + icon(G2Q_SEG_ICON[s.key] || "sparkle") + "</span>").join("") +
+      "<button class='g2q-plus' type='button' data-g2q='seg' data-seg='extras' aria-label='Čo sledujem v kruhu – pridať alebo odobrať'>" + icon("plus") + "</button></div>";
   }
   // Čo beriem (Samo 24. 11.): vlastný zoznam, odškrtnutie dňa, 7 bodiek týždňa (Po–Ne), voliteľná pripomienka (.ics). Appka nič nenavrhuje.
   function g2qSuppSheet() {
@@ -1857,8 +1884,8 @@
     g2qOpen("Dnes", g2qSum(tiles) +
       (items.length ? "<ul class='g2q-daylist'>" + items.map(row).join("") + "</ul>" : g2qLastLine("Dnes zatiaľ nič. Ťukni na diel kruhu.")) +
       (born && items.length ? g2qAct("share-preview", "paperPlane", "Poslať prehľad blízkemu", "partnerovi alebo babke") : "") +
-      "<div class='g2q-links'>" + (firstYear ? "<button class='g2r-link' type='button' data-g2q='seg' data-seg='extras'>Čo sledujem v kruhu ›</button>" : "") +
-      (born ? "<button class='g2r-link' type='button' data-v5-open-record data-g2q-nav>Všetky denné záznamy ›</button>" : "") + "</div>");
+      (firstYear || !born ? g2qRingRow() : "") +
+      (born ? "<button class='g2r-link' type='button' data-v5-open-record data-g2q-nav>Všetky denné záznamy ›</button>" : ""));
   }
   // Úprava záznamu: posun času ±5/±15 min (nie do budúcnosti) alebo zmazanie.
   let g2qEdit = null;
@@ -2036,6 +2063,15 @@
       if (byId("g2QuickOverlay")?.classList.contains("open")) g2qSheet("extras");
       if (currentView() === "v5Profiles") renderProfiles();
       return announce(x[el.dataset.x] ? "Pridané do kruhu." : "Odobraté z kruhu.");
+    }
+    if (action === "pre-toggle") {
+      if (el.getAttribute("aria-disabled") === "true") return announce(el.getAttribute("aria-pressed") === "true" ? "V kruhu musia ostať aspoň 3 diely." : "V kruhu je najviac 5 dielov. Najprv jeden odober.");
+      const chosen = g2qPreChosen(), key = el.dataset.x, on = !chosen.includes(key);
+      state.v5.ringPre = on ? chosen.concat(key) : chosen.filter(k => k !== key);
+      persist(); renderHome();
+      if (byId("g2QuickOverlay")?.classList.contains("open")) g2qSheet("extras");
+      if (currentView() === "v5Profiles") renderProfiles();
+      return announce(on ? "Pridané do kruhu." : "Odobraté z kruhu.");
     }
     if (action === "edit-open") { const t = g2qRefTime(el.dataset.ref); g2qEdit = t ? { ref: el.dataset.ref, t: new Date(t).getTime() } : null; return g2qSheet("edit"); }
     if (action === "edit-shift") {
@@ -4604,7 +4640,8 @@
         ["Udalosti", (state.reminders || []).length]
       ];
       // Master 3.4: „Čo sledujem v kruhu“ (po pôrode Odsávanie a Na brušku) – ten istý prepínač ako v okne Dnes.
-      content = (MASTER && state.profile.status !== "expecting" ? "<section class='v5-form-card g2q-settings'><strong>Čo sledujem v kruhu</strong><small>Kŕmenie, Spánok a Plienky sú v kruhu vždy.</small>" + g2qExtrasHtml() + "</section>" : "") +
+      // Master 3.5: aj pred pôrodom (výber dielov); od 1 roka sa kruh nenastavuje.
+      content = (MASTER && (state.profile.status === "expecting" || g2qDays() < 365) ? "<section class='v5-form-card g2q-settings'><strong>Čo sledujem v kruhu</strong><small>" + g2qFixedLine() + "</small>" + g2qExtrasHtml() + "</section>" : "") +
         "<div class='v5-list'>" + summary.map(item => "<div class='v5-row-card'><span class='v5-icon'>" + icon("checklist") + "</span><div><strong>" + item[0] + "</strong><span>" + skCount(item[1], "položka", "položky", "položiek") + "</span></div></div>").join("") + "</div>" +
         "<div class='v5-info-box'><strong>Súkromie</strong><br>Bez reklám. Tvoje údaje nepredávame ani nesledujeme.<br>Údaje sú uložené len v tomto telefóne.</div>" +
         "<div class='v5-actions'><button class='v5-primary' type='button' data-v5-action='export-family-data'>Stiahnuť zálohu údajov</button><button class='v5-secondary' type='button' data-v5-feature='privateSpace'>Otvoriť súkromný denník</button></div>";
