@@ -301,7 +301,7 @@
     profiles: { label: "Profily rodiny", description: "Mama, dieťa a blízke osoby", icon: "profile", tier: "free", view: "v5Profiles" },
     // V2: falošná „AI“ (kľúčové slová) nahradená GuguChatom – odpovede z overeného obsahu + akcie.
     guguChat: { label: "GuguChat", description: "Opýtaj sa", icon: "chat", tier: "free", view: "guguChat" },
-    care: { label: "Starostlivosť o bábätko", description: "Plač, teplota, noc", icon: "health", tier: "free", view: "v5Care" }
+    care: { label: "Starostlivosť", description: "Plač, teplota, noc", icon: "health", tier: "free", view: "v5Care" }
   };
 
   const adaptiveOSections = [
@@ -777,7 +777,7 @@
     v5Voice: ["Môj hlas pre bábätko", "Uspávanka tvojím hlasom"],
     v5Calendar: ["Kalendár", "Všetky termíny a pripomienky"],
     v5Sounds: ["Spánok a zvuky", "Zvuky, uspávanky a nahrávky"],
-    v5Care: ["Starostlivosť o bábätko", "S čím ti pomôžem?"],
+    v5Care: ["Starostlivosť", "S čím ti pomôžem?"],
     v5Utility: ["Rodinné nástroje", "Jednoducho a bez duplicitných obrazoviek"],
     v5AdaptiveO: ["Moje O", ""],
     sounds: ["Spánok a zvuky", "Pokoj a zaspávanie"],
@@ -1689,10 +1689,10 @@
       if (state.sleepTimer?.active) spans.push({ t: state.sleepTimer.start, end: new Date().toISOString() });
       const total = spans.reduce((s, x) => s + Math.max(0, new Date(x.end) - Math.max(new Date(x.t), new Date(todayKey() + "T00:00:00"))), 0);
       const head = g2qSum([[g2qSpan(total), "spánku dnes"], [today.length, today.length === 1 ? "spánok" : today.length > 1 && today.length < 5 ? "spánky" : "spánkov"]]) + g2qDayLine(spans, "Spánok dnes");
-      if (state.sleepTimer?.active) return g2qOpen("Spánok", head + g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "uloží sa", "", true));
+      if (state.sleepTimer?.active) return g2qOpen("Spánok", head + g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "uloží sa", "", true) + "<button class='g2r-link' type='button' data-g2q='sounds'>Šum a uspávanky ›</button>"); // Master 3.5.3 (Samo): šum a uspávanky patria k spánku
       return g2qOpen("Spánok", head +
         g2qAct("sleep-start", "moon", "Zaspalo teraz", "spustí čas", " data-ago='0'", true) +
-        "<p class='g2r-small'>Zaspalo skôr?</p><div class='g2r-chips g2r-rq'>" + [10, 20, 30].map(m => "<button class='g2r-pill' type='button' data-g2q='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>");
+        "<p class='g2r-small'>Zaspalo skôr?</p><div class='g2r-chips g2r-rq'>" + [10, 20, 30].map(m => "<button class='g2r-pill' type='button' data-g2q='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>" + "<button class='g2r-link' type='button' data-g2q='sounds'>Šum a uspávanky ›</button>");
     }
     if (key === "diaper") {
       const today = g2qTodayEvents(e => e.type === "Plienka");
@@ -1985,6 +1985,7 @@
     if (action === "close") return g2qClose();
     if (action === "seg") return g2qSheet(el.dataset.seg);
     if (action === "day") return g2qDaySheet();
+    if (action === "sounds") { g2qClose(); return openFeature("sounds"); }
     if (action === "stop") return g2qStopRunning();
     if (action === "undo") { if (g2qUndo) g2qRestore(g2qUndo); g2qUndo = null; return g2qToast("Vrátené"); }
     if (action === "pick") { el.parentElement.querySelectorAll("[data-g2q='pick']").forEach(b => b.setAttribute("aria-pressed", String(b === el))); return; }
@@ -3878,12 +3879,12 @@
     if (!target) return;
     target.innerHTML = [
       // V2: pokoj a kľud – bez trvalého červeného pásu s tiesňovými číslami (Samuel 28. 9.).
-      "<header class='v5-flow-head'><span class='v5-eyebrow'>Starostlivosť o bábätko</span><h1>S čím ti pomôžem?</h1></header>",
+      "<header class='v5-flow-head'><span class='v5-eyebrow'>Starostlivosť</span><h1>S čím ti pomôžem?</h1></header>",
       "<div class='v5-care-grid'>",
       "<button class='v5-action v5-care-option v5-doctor-visit-entry' type='button' data-v5-doctor-visit><span class='v5-icon'>" + icon("stethoscope") + "</span><span><strong>Návšteva lekára</strong></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-care-question><span class='v5-icon'>" + icon("sparkle") + "</span><span><strong>Plač, teplota a iné</strong><small>Zápis a otázky pre pediatra</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "<button class='v5-action v5-care-option' type='button' data-v5-feature='childBook'><span class='v5-icon'>" + icon("book") + "</span><span><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
-      "<button class='v5-action v5-care-option' type='button' data-v5-care-sleep><span class='v5-icon'>" + icon("sound") + "</span><span><strong>Šum a uspávanky</strong><small>Na zaspávanie</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      // Master 3.5.3 (Samo): Šum a uspávanky sú v okne Spánok (kruh), nie v Starostlivosti
       "<button class='v5-action v5-care-option' type='button' data-v5-urgent><span class='v5-icon'>" + icon("contacts") + "</span><span><strong>Kontakty na pomoc</strong><small>Pediater, pohotovosť a záchranka</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
       "</div><p class='v5-care-disclaimer'>Guguboo informuje, neradí. Pri otázkach o zdraví ti pomôže lekár.</p>"
     ].join("");
@@ -3908,7 +3909,7 @@
   }
 
   function openCareQuestionModal() {
-    showCareModal("Starostlivosť o bábätko", "", [
+    showCareModal("Starostlivosť", "", [
       "<div class='v5-quick-record-grid v5-care-topic-grid'>",
       quickActionButton("care-fever", "temperature", "Teplota") +
       quickActionButton("care-cry", "ear", "Plač a upokojenie") +
