@@ -158,3 +158,86 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-week-strip small {
   font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important;
 }
+
+/* ===== Master 3.6.3: okná kruhu, Prehľad dňa, Čas pre teba, Číslo, Pitný režim, súkromný denník, Aktivity, staré záznamy ===== */
+
+/* 3 Silné – voľby a odkazy v oknách kruhu a Času pre teba */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2r-act, .g2r-act > span, .g2r-link, .g2r-btn, .g2r-pill, .g2r-check, .g2r-info summary, .g2q-toggle span, .g2q-side b, .g2q-daylist li, .g2q-daylist time, .g2w-src summary, .g2w-city label) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-daylist time { font-variant-numeric: tabular-nums; }
+/* 5 Popis */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2r-act small, .g2q-side small, .g2q-big span, .g2q-daylist small, .g2r-small, .g2r-src, .g2w-now span, .g2w-rules small) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2r-act:not(.big) small, .g2q-side small, .g2q-big span, .g2r-small, .g2r-src, .g2w-now span, .g2w-rules small) { color: var(--t-muted) !important; }
+/* 4 Telo – vedené kroky a hlásenia v Čase pre teba */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2r-step, .g2-ring-dim, .g2-ring-toast) {
+  font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 2 Nadpis – nadpis karty v okne (nastavenia kruhu, info v Čase pre teba, pokyn pri dýchaní) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-settings > strong, .g2r-info h3, .g2r-cue) {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 6b Štítok – popisy pod číslom, os dňa (0–24), „na rade“, počet pohárov */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-sum span, .g2q-tl-h span, .g2q-side em, .v2-water-count small) {
+  font: var(--t-label) !important; font-style: normal !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 7 Číslo – počty v Prehľade dňa a oknách, −1 / +1, Pitný režim, počasie; veľké počítadlo 44 px */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-sum b, .g2q-pm-btn, .v2-water-count strong, .g2w-now strong) {
+  font: var(--t-num) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-big b, .g2r-timer) {
+  font: var(--t-num-l) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+
+/* Aktivity (activities.css mal 760, 850 a veľkosti v rem) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.act2-hero h1, .act2-today h2, .act2-soon h3) {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities .act2-eyebrow {
+  font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; color: var(--t-brand) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.act2-hero p, .act2-soon > p, .act2-parent > p, .act2-safety, .act2-row-copy small) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities .act2-safety strong { font-weight: 700 !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.act2-steps li) {
+  font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.activities-shell button, .act2-row-copy strong, .act2-soon-item summary strong, .act2-parent summary, .act2-obs span) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.act2-chips button, .act2-chips button span, .act2-domain) {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+
+/* Staré obrazovky Denné záznamy a Rast a váha (V1 vrstva) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#tracker, #growth) .panel h3 {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#tracker, #growth) :is(.panel .muted, .age-card span) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#tracker, #growth) :is(.form-grid label, .panel > label, .quick strong, .actions button) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#tracker, #growth) .age-card b {
+  font: var(--t-num) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+
+/* Súkromný denník – 750 → 700 */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #privateSpace :is(button, label, strong, b) { font-weight: 700 !important; }
+/* zvyšky z merania 3.6.3: dni pod stĺpcami (7 dní), −/+ v Pitnom režime, čísla v Tehotenskej knižke, „(orientačne)“ */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-bars small {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-water-count button {
+  font: var(--t-num) !important; letter-spacing: 0 !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-book-facts b {
+  font: var(--t-head) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-approx {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; color: var(--t-muted) !important;
+}
