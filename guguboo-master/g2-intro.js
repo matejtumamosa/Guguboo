@@ -507,6 +507,10 @@
       const info = weekInfo(weekFromDue(dueDate()));
       av.innerHTML = artFor(info); av.hidden = false;
     } else av.hidden = true;
+    // Master 3.5.2 (Samo): „Ešte nemáme vybrané“ len pred pôrodom – narodené bábätko meno má.
+    const born = S.stage === "born";
+    $("noName").hidden = born;
+    if (born && S.noName) { S.noName = false; $("noName").setAttribute("aria-checked", "false"); $("babyName").disabled = false; $("babyName").value = S.baby; }
   }
 
   // ——— Vlastné okno: krajina / koniec prototypu ———
