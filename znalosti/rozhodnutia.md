@@ -9,6 +9,8 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
   **Drobné** 500 14 jediná sivá (podnadpisy, štítky bez kapitálok, lišta, stav) · **Odkaz** 700 15 farba značky (len ťukateľné
   textové odkazy a text tlačidiel). Číslo (časovač, počty) len v oknách. Prečo: Samo po 3.6.5 videl na domove stále „asi
   10 veľkostí“ – domov mal 6 podôb textu, teraz 3 úrovne (+ odkaz „Neskôr“ pred pôrodom).
+- 3.7.1: v okne nie je žiadny text väčší ako nadpis okna (čísla súhrnu = Hlavné; 24/44 len bežiaci čas); rovnocenné karty
+  a riadky majú rovnaký názov (napr. v Mame „Čas pre teba“ = „Pitný režim“ = riadky).
 - Aktívna položka lišty/záložky len farbou; fialová len na odkazy; kapitálky už nikde. Rozloženie, farby plôch, ikony a texty bez zmeny.
 - Test (`test.html`): domov ≤ 4 kombinácie veľkosť + hrúbka, Bábätko · Mama · Rodina · Prehľad dňa · Kŕmenie · Všetko · GuguChat ≤ 5.
 

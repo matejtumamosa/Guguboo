@@ -45,6 +45,10 @@ _Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.7, tri úrovne text
   (tokeny `--t-main/-text/-small/-link` v `g2-text.css`, staré názvy sú aliasy). Domov 6 → 4 kombinácie pred pôrodom (3 úrovne + „Neskôr“) a 6 → 3 po pôrode,
   hlavné obrazovky 4–7 → 3–5, všetkých 35 obrazoviek ≤ 5. test.html: nový test hlavných obrazoviek (≤ 5), domov ≤ 4.
   Ďalej ostáva upratanie starých pravidiel (g2-type.css, `!important`) a šípky „›“/„×“ → ikony.
+- **3.7.1:** čísla súhrnu v oknách kruhu (a Pitný režim, počasie) = Hlavné 18/800, nikdy väčšie ako nadpis okna (24/44 len bežiaci
+  čas); v Mame rovnaký názov kariet aj riadkov (Bežné), „pridať pohár · nastaviť“ = Odkaz; drobné texty v oknách kruhu, Aktivitách
+  a súkromnom denníku len v jednej sivej, akcie fialové. test.html: nové kontroly (text v okne ≤ nadpis, Mama jeden názov, domov
+  pozdrav = meno = úloha).
 - Na rozhodnutie po 3.5: pridať do kruhu aj ďalšie denné záznamy (napr. Teplota, Kúpanie, Prechádzka) – zatiaľ len návrh.
 - Otvorené po 3.4: v 36.+ t. je na domove skratka „Otázky pre lekára“ aj diel „Pre lekára“ (duplicita – rozhodne Samo);
   Bruško a Hlas sú už len v Našich momentoch; vety o Pitie/Na brušku bez noriem – overiť v teste s mamami.

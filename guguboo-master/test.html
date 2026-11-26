@@ -1029,9 +1029,29 @@
                 ["GuguChat", () => V5.openFeature("guguChat")]
               ];
               if (kind === "po") screens.push(["Kŕmenie", () => tapSeg(app, "feed"), "#g2QuickOverlay"]);
+              // Master 3.7.1 (K3): pozdrav, meno bábätka / týždeň a úloha dňa majú rovnaké písmo (Hlavné)
+              const mainFonts = ["#v5HeaderTitle", "#home.view.active .g2-hero-text h1", "#home.view.active .g2-today-main strong"].map(s => doc.querySelector(s)).filter(Boolean).map(el => win.getComputedStyle(el).font);
+              eq([mainFonts.length, new Set(mainFonts).size], [3, 1], "domov (" + kind + "): pozdrav, meno/týždeň a úloha dňa");
               for (const [name, open, root] of screens) {
                 await reset(); open(); await sleep(450);
                 typeCheck(app, name + " (" + kind + ")", 5, root ? doc.querySelector(root) : null);
+                // Master 3.7.1 (K1): v okne nie je žiadny text väčší ani hrubší ako nadpis okna (okrem bežiaceho časovača)
+                const head = root && doc.querySelector(root + " h2");
+                if (head) {
+                  const hs = win.getComputedStyle(head), big = [];
+                  doc.querySelector(root).querySelectorAll("*").forEach(el => {
+                    if (el.children.length || !el.textContent.trim() || !isVisible(el) || el.closest(".g2q-time, .g2q-big, .g2r-timer")) return;
+                    const cs = win.getComputedStyle(el);
+                    if (/[\p{L}\p{N}]/u.test(el.textContent) && parseFloat(cs.fontSize) > parseFloat(hs.fontSize)) big.push(el.textContent.trim().slice(0, 20) + " " + cs.fontSize);
+                  });
+                  eq(big, [], name + ": text väčší ako nadpis okna (" + hs.fontSize + ")");
+                }
+                // Master 3.7.1 (K2): v Mame majú rovnocenné karty a riadky rovnaký názov
+                if (name === "Mama") {
+                  const fonts = [...doc.querySelectorAll(".view.active button strong")].filter(isVisible).map(el => win.getComputedStyle(el).font);
+                  assert(fonts.length >= 3, "Mama: málo riadkov (" + fonts.length + ")");
+                  eq([...new Set(fonts)].length, 1, "Mama: názvy kariet a riadkov majú rôzne písmo " + JSON.stringify([...new Set(fonts)]));
+                }
               }
             } finally { app.remove(); }
           }

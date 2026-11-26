@@ -362,3 +362,36 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 }
 :is(html, #g2t#g2t) #g2Intro :is(.btn, .link) { font: var(--t-link) !important; letter-spacing: 0 !important; }
 :is(html, #g2t#g2t) #g2Intro .input input { font: var(--t-input) !important; }
+
+/* ===== Master 3.7.1: dorovnanie po nezávislej kontrole (okná kruhu, Mama) ===== */
+/* K1: čísla súhrnu v oknách (0 · – · 0 ml, −1/+1, Pitný režim, počasie, vek) nikdy väčšie ako nadpis okna → Hlavné 18/800.
+   Výnimka Číslo 24/44 ostáva len pre bežiaci čas (stred kruhu .g2q-time, veľký časovač .g2q-big b / .g2r-timer). */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-sum b, .g2q-pm-btn, .v2-water-count strong, .v2-water-count button, .g2w-now strong, #tracker .age-card b, #growth .age-card b) {
+  font: var(--t-main) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+/* K1/K4: os dňa 0–24, „na rade“, čas a popis v zozname dňa, dni pod stĺpcami = Drobné v jedinej sivej */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-tl-h span, .g2q-side em, .g2q-daylist small, .g2q-bars small, .v2-water-count small, .v2-week-strip small) {
+  font: var(--t-small) !important; font-style: normal !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* K2: Mama – rovnocenné karty a riadky majú rovnaký názov (Bežné): „Čas pre teba“ = „Pitný režim“ = riadky zoznamu */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-me-head strong {
+  font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* K4: súkromný denník – popisky polí Bežné (nie 700); tlačidlá v Aktivitách = Odkaz; čipy Aktivít Bežné, počty a oblasť Drobné sivé */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #privateSpace label { font-weight: 500 !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities .activities-shell :is(.v5-primary, .v5-secondary) {
+  font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2r-info p.g2r-src {
+  font: var(--t-small) !important; letter-spacing: 0 !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities div.act2-chips > button { font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #activities :is(.act2-chips button:not(.active) span, .act2-domain) {
+  font: var(--t-small) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* K4: odkaz vnútri vety (zdroj, telefónne číslo) – veľkosť vety, farba značky */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2r-src, .g2r-small, .v2-chat-disclaimer, .v5-book-note) a { font: inherit !important; color: var(--t-brand) !important; }
+/* K2: „pridať pohár · nastaviť“ je akcia → Odkaz */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) button.v2-mama-water-open > small {
+  font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
+}
