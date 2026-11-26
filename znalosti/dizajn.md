@@ -4,8 +4,21 @@ Zdroj pravdy sú tokeny v CSS (`guguboo-master/g2-text.css` pre písmo, `v5-mobi
 aby nové veci vyzerali rovnako.
 
 ## Písmo
-- **Montserrat** (záložne `Segoe UI`, `system-ui`). Zdroj pravdy: `guguboo-master/g2-text.css` (Master 3.6), tokeny `--t-*`.
-- **7 štýlov** – nové texty len cez ne (triedy `.t-title`, `.t-head`, `.t-strong`, `.t-body`, `.t-caption`, `.t-label`, `.t-kicker`, `.t-num`):
+- **Montserrat** (záložne `Segoe UI`, `system-ui`). Zdroj pravdy: `guguboo-master/g2-text.css` (Master 3.7), tokeny `--t-*`.
+- **3 úrovne textu na obrazovke (Master 3.7, platí prednostne):** na jednej obrazovke najviac tri podoby textu + odkaz:
+
+| Úroveň | Token | Hodnota | Farba | Kde |
+|---|---|---|---|---|
+| Hlavné | `--t-main` | 800 · 18/24 px | `--t-ink` | pozdrav, meno bábätka / týždeň, úloha „Dnes stačí jedno“, hlavička obrazovky a okna, nadpis karty |
+| Bežné | `--t-text` | 500 · 15/22 px | `--t-ink` | skratky, hľadanie, „Dnes“ v kruhu, názvy riadkov, odseky, voľby, záložky |
+| Drobné | `--t-small` | 500 · 14/20 px | `--t-muted` (jediná sivá) | podnadpisy, štítky (bez kapitálok), popisky lišty, stav, poznámky, zdroje |
+| Odkaz | `--t-link` | 700 · 15/20 px | `--t-brand` (tlačidlá farbou tlačidla) | ťukateľné textové odkazy („Neskôr“, „… ›“), text tlačidiel |
+
+  Výnimky: Číslo 800 24/28 (44/48) len v oknách a v strede kruhu pri bežiacom čase; polia formulárov 16 px (iPhone nepribližuje);
+  ikony a znaky bez písmen sa nerátajú. Aktívna položka lišty a záložky = len farba značky, nie hrúbka. Fialová len na odkazy.
+  Test: domov ≤ 4 kombinácie (veľkosť + hrúbka), hlavné obrazovky ≤ 5 (`test.html`, sada Typografia).
+- Pôvodných 7 štýlov (3.6) ostáva ako aliasy tokenov (`--t-title`/`--t-head` = Hlavné, `--t-strong`/`--t-body` = Bežné,
+  `--t-caption`/`--t-label` = Drobné); tabuľka nižšie je história:
 
 | Štýl | Hodnota | Farba | Kde |
 |---|---|---|---|

@@ -3,6 +3,15 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-26 – Samo (Master 3.7: 3 úrovne textu na obrazovke)
+- **Na jednej obrazovke najviac 3 úrovne textu + odkaz** (prísnejšie ako 7 štýlov z 3.6): **Hlavné** 800 18 tmavá (pozdrav, meno
+  bábätka / týždeň, úloha „Dnes stačí jedno“, hlavičky okien) · **Bežné** 500 15 tmavá (skratky, hľadanie, „Dnes“ v kruhu, obsah) ·
+  **Drobné** 500 14 jediná sivá (podnadpisy, štítky bez kapitálok, lišta, stav) · **Odkaz** 700 15 farba značky (len ťukateľné
+  textové odkazy a text tlačidiel). Číslo (časovač, počty) len v oknách. Prečo: Samo po 3.6.5 videl na domove stále „asi
+  10 veľkostí“ – domov mal 6 podôb textu, teraz 3 úrovne (+ odkaz „Neskôr“ pred pôrodom).
+- Aktívna položka lišty/záložky len farbou; fialová len na odkazy; kapitálky už nikde. Rozloženie, farby plôch, ikony a texty bez zmeny.
+- Test (`test.html`): domov ≤ 4 kombinácie veľkosť + hrúbka, Bábätko · Mama · Rodina · Prehľad dňa · Kŕmenie · Všetko · GuguChat ≤ 5.
+
 ## 2026-11-26 – Samo (Master 3.6: jednotná typografia)
 - **7 štýlov písma pre celú appku** (`guguboo-master/g2-text.css`, načítava sa ako posledný CSS, tokeny `--t-*` pre deň aj noc):
   Titulok 800 20/26 · Nadpis 800 17/22 · Silné 700 15/20 · Telo 500 16/24 · Popis 500 14/20 (jediná sivá) ·

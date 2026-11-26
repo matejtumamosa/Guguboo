@@ -997,20 +997,44 @@
       }
     },
     {
-      // Master 3.6: jednotná typografia (g2-text.css, 7 štýlov – Titulok, Nadpis, Silné, Telo, Popis, Štítok, Číslo).
-      name: "Typografia (Master 3.6 – 7 štýlov)",
+      // Master 3.6: jednotná typografia (g2-text.css). Master 3.7: na obrazovke najviac 3 úrovne textu (Hlavné 800 18,
+      // Bežné 500 15, Drobné 500 14) + Odkaz 700 15; Číslo (časovač, počty) len v oknách. Kombinácia = veľkosť + hrúbka,
+      // nepočítajú sa ikony a znaky bez písmen (›, ×, ＋, emoji) ani čísla bežiaceho časovača.
+      name: "Typografia (Master 3.7 – 3 úrovne textu)",
       tests: {
-        "Domov pred pôrodom: ≤ 12 kombinácií písma, nič pod 13 px, hrúbky len 500/700/800": async () => {
+        "Domov pred pôrodom: ≤ 4 kombinácie písma, nič pod 13 px, hrúbky len 500/700/800": async () => {
           const app = await bootApp(ringSeed("pred"));
-          try { typeCheck(app, "domov pred pôrodom"); } finally { app.remove(); }
+          try { typeCheck(app, "domov pred pôrodom", 4); } finally { app.remove(); }
         },
-        "Domov po pôrode (so záznamami v kruhu): ≤ 12 kombinácií písma, nič pod 13 px, hrúbky len 500/700/800": async () => {
+        "Domov po pôrode (so záznamami v kruhu): ≤ 4 kombinácie písma, nič pod 13 px, hrúbky len 500/700/800": async () => {
           const app = await bootApp(ringSeed("po", { extra: { events: [ev("Kŕmenie", 25, { method: "Dojčenie", side: "Ľavý prsník", value: "Dojčenie · Ľavý prsník · 12 min" }), ev("Spánok", 70, { value: "40 min · denný" }), ev("Plienka", 12, { value: "Cikalo", diaper: { type: "wet" } })] } }));
-          try { typeCheck(app, "domov po pôrode"); } finally { app.remove(); }
+          try { typeCheck(app, "domov po pôrode", 4); } finally { app.remove(); }
         },
-        "Domov v noci a na nízkej obrazovke (375 × 667): ≤ 12 kombinácií, nič pod 13 px": async () => {
+        "Domov v noci a na nízkej obrazovke (375 × 667): ≤ 4 kombinácie, nič pod 13 px": async () => {
           const app = await bootApp(ringSeed("po", { night: true }), { width: 375, height: 667 });
-          try { typeCheck(app, "domov v noci 375 × 667"); } finally { app.remove(); }
+          try { typeCheck(app, "domov v noci 375 × 667", 4); } finally { app.remove(); }
+        },
+        "Hlavné obrazovky (Bábätko, Mama, Rodina, Prehľad dňa, Kŕmenie, Všetko, GuguChat): ≤ 5 kombinácií na každej, pred aj po pôrode": async () => {
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(ringSeed(kind));
+            try {
+              const { doc, win } = app, V5 = win.GugubooV5;
+              const reset = async () => { try { V5.closeDrawer?.(); V5.windowCloseAll?.(); doc.querySelector("#g2QuickOverlay.open [data-g2q='close']")?.click(); V5.openHome(); } catch (_) { /* nič */ } await sleep(200); };
+              const screens = [
+                ["Bábätko", () => doc.querySelector("[data-v2-tab='baby']").click()],
+                ["Mama", () => doc.querySelector("[data-v2-tab='mama']").click()],
+                ["Rodina", () => doc.querySelector("[data-v2-tab='family']").click()],
+                ["Prehľad dňa", () => doc.querySelector("#home.view.active .g2q-core").click(), "#g2QuickOverlay"],
+                ["Všetko", () => V5.openDrawer(), "#v5DrawerOverlay"],
+                ["GuguChat", () => V5.openFeature("guguChat")]
+              ];
+              if (kind === "po") screens.push(["Kŕmenie", () => tapSeg(app, "feed"), "#g2QuickOverlay"]);
+              for (const [name, open, root] of screens) {
+                await reset(); open(); await sleep(450);
+                typeCheck(app, name + " (" + kind + ")", 5, root ? doc.querySelector(root) : null);
+              }
+            } finally { app.remove(); }
+          }
         },
         "Jedna čierna a jedna sivá: --v5-ink/--v5-muted = --t-ink/--t-muted (deň aj noc)": async () => {
           for (const night of [false, true]) {
@@ -1029,14 +1053,16 @@
 
   // Master 3.6: viditeľné texty na obrazovke → kombinácie (veľkosť/hrúbka/kapitálky). Text v SVG (kruh) sa meria
   // v skutočnej veľkosti na obrazovke (font-size × zmenšenie SVG). Šípky „›“ a „×“ sa zatiaľ počítajú tiež.
-  function typeStats(app) {
+  // Master 3.7: root = len obsah okna (bez domova pod ním); bez znakov bez písmen/číslic (›, ×, ＋, emoji) a bez čísel časovača.
+  function typeStats(app, root) {
     const { win, doc } = app;
     const combos = new Map(), small = [], ringSmall = [], weights = new Set();
     const inView = el => { const r = el.getBoundingClientRect(); return r.width > 1 && r.height > 1 && r.bottom > 0 && r.top < win.innerHeight && r.right > 0 && r.left < win.innerWidth; };
-    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+    const walker = doc.createTreeWalker(root || doc.body, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
       const node = walker.currentNode, el = node.parentElement, text = node.nodeValue.trim();
       if (!text || !el || /^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|OPTION)$/.test(el.tagName) || !isVisible(el) || !inView(el)) continue;
+      if (!/[\p{L}\p{N}]/u.test(text) || el.closest(".g2q-time, .g2r-timer, .g2q-big b, .v5-timer-pill")) continue;
       const cs = win.getComputedStyle(el);
       let size = parseFloat(cs.fontSize);
       if (el instanceof win.SVGElement && el.getScreenCTM) { const m = el.getScreenCTM(); if (m) size *= Math.hypot(m.a, m.b); }
@@ -1049,10 +1075,10 @@
     }
     return { combos, small, ringSmall, weights: [...weights].sort() };
   }
-  function typeCheck(app, where) {
-    const s = typeStats(app);
+  function typeCheck(app, where, max = 4, root = null) {
+    const s = typeStats(app, root);
     const list = [...s.combos].map(([k, t]) => k + " „" + t + "“").join(" · ");
-    assert(s.combos.size <= 12, where + ": " + s.combos.size + " kombinácií (max. 12): " + list);
+    assert(s.combos.size <= max, where + ": " + s.combos.size + " kombinácií (max. " + max + "): " + list);
     eq(s.small, [], where + ": text pod 13 px");
     eq(s.weights.filter(w => !["500", "700", "800"].includes(w)), [], where + ": hrúbky mimo 500/700/800");
     eq(app.errors, [], "chyby v konzole");

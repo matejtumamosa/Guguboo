@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.6.5, dorovnanie typografie po grafickej kontrole)_
+_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.7, tri úrovne textu na obrazovke)_
 
 ## Verzia
 
-- **Master 3.6.5** vo vetve `v2` (3.6.5 zatiaľ lokálne, nepushnuté), priečinok `guguboo-master/`.
+- **Master 3.7** (commit pripravený, nepushnutý), priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -41,6 +41,10 @@ _Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.6.5, dorovnanie typ
   test.html: sada Typografia (70 riadkov: 67 zelených, 3 známe nálezy). Ďalej: **3.7 upratanie** starých pravidiel písma (g2-type.css,
   `!important` v master.css, viacnásobné hlavičky vo v2.css) a odobratie `!important` z g2-text.css; šípky „›“/„×“ → ikony;
   rozhodnúť stav v dieli kruhu (10,5 px, pri 13 px sa nezmestí). 3.6.5: dorovnanie po grafickej kontrole (domov bez kapitálok, skratky Popis, pozdrav na 2 riadky).
+- **3.7 – 3 úrovne textu na obrazovke (Samo 26. 11.):** Hlavné 800 18 · Bežné 500 15 · Drobné 500 14 sivá · Odkaz 700 15 fialová
+  (tokeny `--t-main/-text/-small/-link` v `g2-text.css`, staré názvy sú aliasy). Domov 6 → 4 kombinácie pred pôrodom (3 úrovne + „Neskôr“) a 6 → 3 po pôrode,
+  hlavné obrazovky 4–7 → 3–5, všetkých 35 obrazoviek ≤ 5. test.html: nový test hlavných obrazoviek (≤ 5), domov ≤ 4.
+  Ďalej ostáva upratanie starých pravidiel (g2-type.css, `!important`) a šípky „›“/„×“ → ikony.
 - Na rozhodnutie po 3.5: pridať do kruhu aj ďalšie denné záznamy (napr. Teplota, Kúpanie, Prechádzka) – zatiaľ len návrh.
 - Otvorené po 3.4: v 36.+ t. je na domove skratka „Otázky pre lekára“ aj diel „Pre lekára“ (duplicita – rozhodne Samo);
   Bruško a Hlas sú už len v Našich momentoch; vety o Pitie/Na brušku bez noriem – overiť v teste s mamami.
