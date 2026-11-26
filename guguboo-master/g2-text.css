@@ -1,0 +1,95 @@
+/* Master 3.6 – jednotná typografia: 7 štýlov (schválil Samo 26. 11. 2026, podklad docs/ux-master/TYPOGRAFIA_SYSTEM.md).
+   Načítava sa AKO POSLEDNÝ CSS. Obsahuje len písmo a farbu textu (žiadne rozloženie).
+   Staré pravidlá (g2-type.css, master.css, v2.css, v5-mobile.css) sa zatiaľ nemažú – tento súbor ich prebije
+   prefixom :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only)
+   (špecifickosť 2,3,1 – :is() berie najvyššiu váhu zo zoznamu, #g2t v appke nie je, zhoduje sa len html) + !important (upratanie = Master 3.7).
+
+   Štýly (len hrúbky 500 / 700 / 800):
+     1 Titulok  800 20/26  – jeden na obrazovku: hlavička domova, záložiek a každého okna
+     2 Nadpis   800 17/22  – nadpis karty alebo sekcie vnútri obrazovky
+     3 Silné    700 15/20  – názov riadku, úloha, popisky polí, všetky tlačidlá a odkazy
+     4 Telo     500 16/24  – odseky, správy, polia formulárov
+     5 Popis    500 14/20  – jediný sivý štýl (podnadpisy, text pod názvom, poznámky, zdroje)
+     6 Štítok   700 13/16  – a) sekcia: KAPITÁLKY + .06em, farba značky; b) navigácia: bez kapitálok, tlmené
+     7 Číslo    800 24/28  – časovač, počty; veľké 44/48
+   Kapitálky len pri Štítku sekcie. Sekundárny text min. 14 px (13 px len Štítok). Šípky „›“ a „×“ zatiaľ ostávajú písmom. */
+
+html body.v5-active:not(.welcome-mode):not(.intro-only) {
+  --t-font: Montserrat, "Segoe UI", system-ui, sans-serif;
+  --t-ink: #29243a; --t-muted: #5d5768; --t-brand: #5f4fb1; --t-on-brand: #fff;
+  /* P1: jedna čierna, jedna sivá (predtým #302b42/#29243a a #777184/#635d70/#5d5768 naraz) */
+  --v5-ink: var(--t-ink) !important; --v5-muted: var(--t-muted) !important; --v5-brand-dark: var(--t-brand) !important;
+  --g2-ink: var(--t-ink) !important; --g2-muted: var(--t-muted) !important; --g2-brand-ink: var(--t-brand) !important;
+  --t-title:   800 20px/26px var(--t-font);
+  --t-head:    800 17px/22px var(--t-font);
+  --t-strong:  700 15px/20px var(--t-font);
+  --t-body:    500 16px/24px var(--t-font);
+  --t-caption: 500 14px/20px var(--t-font);
+  --t-label:   700 13px/16px var(--t-font);
+  --t-num:     800 24px/28px var(--t-font);
+  --t-num-l:   800 44px/48px var(--t-font);
+}
+/* Noc (na #2a2438: ink ≈ 14 : 1, muted ≈ 9 : 1, brand ≈ 8,5 : 1) */
+html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
+  --t-ink: #f5f2fb; --t-muted: #c9c3d8; --t-brand: #c6bcff; --t-on-brand: #1f1a2e;
+}
+
+/* Štýly ako triedy – pre nový kód (HTML šablóny v JS) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-title { font: var(--t-title) !important; letter-spacing: -.01em !important; text-transform: none !important; color: var(--t-ink) !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-head { font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-strong { font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-body { font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-caption { font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-label { font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-kicker { font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; color: var(--t-brand) !important; }
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .t-num { font: var(--t-num) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important; }
+
+/* ===== Master 3.6: Domov, lišta, hlavičky záložiek ===== */
+
+/* 1 Titulok – pozdrav na domove = rovnaké miesto a štýl ako „Bábätko / Mama / Rodina“ (rozhodnutie B) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#v5Header #v5HeaderTitle, .v5-header-title strong, .v5-universal-window-head strong) {
+  font: var(--t-title) !important; letter-spacing: -.01em !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* 5 Popis – podnadpisy hlavičiek a hero */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#v5Header #v5HeaderSubtitle, .g2-hub-sub, .g2-hero-sub) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* 2 Nadpis – meno bábätka / týždeň v hero (rozhodnutie B) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-hero-text h1 {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* 4 Telo – zástupný text poľa „Hľadaj alebo sa opýtaj“ (tlmený) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-ask span {
+  font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* 6b Štítok navigácie – skratky domova (rozhodnutie A: tlmené ako popisky v lište), stred kruhu, lišta, plávajúci časovač */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-short strong, .g2q-core .g2q-day, .g2q-core .g2q-cl) {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-stop,
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar .v5-bottom-action span,
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v5-timer-pill :is(strong, span, button) {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* P7: aktívna položka lišty len farbou (nie hrúbkou) – farbu nesie g2-type.css */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #v5BottomBar .v5-bottom-action:is(.active, [aria-current="page"]) span { font-weight: 700 !important; }
+/* 6a Štítok sekcie – „Dnes stačí jedno“ (P2: predtým hybrid 14/500) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-today-main small, .g2-today > small, .g2-ring-head small) {
+  font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; color: var(--t-brand) !important;
+}
+/* 3 Silné – úloha dňa a „Neskôr“ */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-today-main strong {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-today-later {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
+}
+/* 7 Číslo – bežiaci časovač v strede kruhu */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-time {
+  font: var(--t-num) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+/* 6b Štítok – stav v dieli kruhu („bdie 1 h“) je text v SVG; veľkosť (10,5 px na obrazovke) počíta v5-mobile.js (fS) podľa miesta v dieli.
+   Pri 13 px sa nezmestí do žiadneho dielu a appka by stav vynechala všade → zatiaľ výnimka, čaká na rozhodnutie (test.html: známy nález). Tu len hrúbka. */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) text.g2q-sub {
+  font-family: var(--t-font) !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important;
+}
