@@ -123,3 +123,38 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-me-head strong {
   font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
 }
+
+/* ===== Master 3.6.2: hlavičky a nadpisy okien (P4), Všetko, GuguChat, Plán, mesiac/týždeň, kapitálky len Štítok sekcie ===== */
+
+/* 1 Titulok – hlavička každého okna (jeden systém pre v5-universal, g2-window, ring-sheet, drawer, rýchly záznam) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-window-head h2, .g2-ring-sheet-head h2, #g2qTitle, #v5QuickRecordTitle, #v5DrawerTitle, .v5-drawer-head h2) {
+  font: var(--t-title) !important; letter-spacing: -.01em !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* 2 Nadpis – nadpis vnútri okna (ak má okno hlavičku, vnútorný h1 je Nadpis) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v5-flow-head h1, .v5-flow-head h2, .v2-book-hero h1, .v2-admin-head h2, .v2-journey header h2, .v2-size-hero h2, .v2-size-dev h3, .v5-compact-head h3, .v2-cal-group h3, .private-heading h1, .private-heading h2) {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* sekcie vo Všetko – Nadpis vo farbe oblasti */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-sec h3 {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 4 Telo – odseky, texty v boxoch, správy GuguChatu */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v2-calm-box p, .v2-calm-box li, .v2-mama-card p, .v2-mama-card li, .v2-mama-list li, .v2-size-dev p, .v2-msg p) {
+  font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 5 Popis – úvodné vety okien, upozornenia, podnadpisy */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v5-flow-head p, .v2-admin-head p, .g2-lead, .g2r-lead, .v2-size-hero p, .v2-book-hero p, .v2-size-hero small:not(.v2-size-kicker), .v2-chat-disclaimer, .v2-chat-head small, .g2-hit-text small, .v2-beta-note > span, .private-heading p) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* 3 Silné – názvy výsledkov a dlaždíc, odkazy a tlačidlá v oknách, „Prečo / Kedy“ bez kapitálok */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v2-mama-trouble h4, .g2-hit-text strong, .g2-tile span, .v2-admin-row strong, .v2-journey-actions button, .v2-chat-action, .v2-chat-help-link, .v2-chat-chips button, .g2-chips button, .g2-drawer-foot button, .v2-beta-actions button, .v2-beta-note strong, .g2-month-nav button, .v2-week-strip b) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 6a Štítok sekcie – jediné kapitálky v appke (farba značky) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-month-kicker, .v2-size-kicker, .v2-book-group, .g2-plan-areas-head, .g2-hits-head, .v2-journey header > small) {
+  font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; color: var(--t-brand) !important;
+}
+/* 6b Štítok – „týž. / mes. / teraz“ v páse týždňov a mesiacov (predtým 9 px kapitálky) – bez kapitálok */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-week-strip small {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
