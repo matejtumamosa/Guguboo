@@ -241,3 +241,29 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-approx {
   font: var(--t-caption) !important; letter-spacing: 0 !important; color: var(--t-muted) !important;
 }
+
+/* ===== Master 3.6.4: úvod (#g2Intro, g2-intro.css) – tie isté štýly; farby úvodu (--ink, --muted, --lav-dark) sú už zhodné s --t-* ===== */
+:is(html, #g2t#g2t) #g2Intro {
+  --t-font: Montserrat, "Segoe UI", system-ui, sans-serif;
+  --t-title: 800 20px/26px var(--t-font); --t-head: 800 17px/22px var(--t-font); --t-strong: 700 15px/20px var(--t-font);
+  --t-body: 500 16px/24px var(--t-font); --t-caption: 500 14px/20px var(--t-font); --t-label: 700 13px/16px var(--t-font);
+  --t-num-l: 800 44px/48px var(--t-font);
+}
+/* 1 Titulok – jeden na obrazovku úvodu */
+:is(html, #g2t#g2t) #g2Intro h1 { font: var(--t-title) !important; letter-spacing: -.01em !important; }
+/* 2 Nadpis – náhľad dátumu, okno výberu */
+:is(html, #g2t#g2t) #g2Intro :is(.preview b, .sheet h2) { font: var(--t-head) !important; letter-spacing: 0 !important; }
+/* 3 Silné – tlačidlá, voľby, odkazy, popisky polí, úloha dňa */
+:is(html, #g2t#g2t) #g2Intro :is(.btn, .link, .choice, .check, .chip, .opts button, .field label, .cycle strong, .sub.size, .today strong, .big .age span, .big .wk, .kicker) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important;
+}
+/* 4 Telo – pole mena, položky otočného výberu (vybraná položka len farbou, nie hrúbkou) */
+:is(html, #g2t#g2t) #g2Intro :is(.input input, .opt, .opt.sel) { font: var(--t-body) !important; letter-spacing: 0 !important; }
+/* 5 Popis – podnadpisy, poznámky, zdroje, text pod voľbou */
+:is(html, #g2t#g2t) #g2Intro :is(.sub:not(.size), .note, .tiny, .fact, .fact .src, .choice .txt small, .picker-label, .preview span, .preview .due, .cycle, .country, .country .link, .today p, .today .demo, .sheet p, .opts button span) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important;
+}
+/* 6a Štítok sekcie – „Dnes stačí jedno“ v náhľade na konci úvodu */
+:is(html, #g2t#g2t) #g2Intro .today .lbl { font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; }
+/* 7 Číslo veľké – týždeň / vek na konci úvodu */
+:is(html, #g2t#g2t) #g2Intro .big .age b { font: var(--t-num-l) !important; letter-spacing: 0 !important; }

@@ -3,6 +3,20 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-26 – Samo (Master 3.6: jednotná typografia)
+- **7 štýlov písma pre celú appku** (`guguboo-master/g2-text.css`, načítava sa ako posledný CSS, tokeny `--t-*` pre deň aj noc):
+  Titulok 800 20/26 · Nadpis 800 17/22 · Silné 700 15/20 · Telo 500 16/24 · Popis 500 14/20 (jediná sivá) ·
+  Štítok 700 13/16 · Číslo 800 24/28 (veľké 44/48). Prečo: appka mala 24 veľkostí, 6 hrúbok a 6 druhov kapitálok –
+  pôsobilo to ako „rôzne fonty“.
+- **Pravidlá:** hrúbky len 500/700/800; kapitálky len pri Štítku sekcie („Dnes stačí jedno“, kicker týždňa/mesiaca, skupiny Plánu);
+  jedna čierna `#29243a` a jedna sivá `#5d5768` (noc `#f5f2fb` / `#c9c3d8`); sekundárny text min. 14 px, 13 px len Štítok;
+  stav (aktívne/vybrané) len farbou, nie hrúbkou; jeden Titulok na obrazovku – vnútorný nadpis okna je Nadpis.
+- **Domov:** pozdrav = Titulok (rovnako ako hlavičky Bábätko/Mama/Rodina), meno bábätka / týždeň = Nadpis; skratky na domove
+  = Štítok bez kapitálok, tlmené ako popisky v lište (nahrádza 600 a sivú z 3.5).
+- **Kontrola:** `test.html` – sada Typografia (na domove pred aj po pôrode ≤ 12 kombinácií písma, nič pod 13 px, hrúbky 500/700/800).
+- Zatiaľ ostáva: šípky „›“ a „×“ ako písmo (neskôr ikony), stav v dieli kruhu 10,5 px (pri 13 px sa do dielu nezmestí) –
+  na rozhodnutie. Upratanie starých pravidiel písma (g2-type.css, master.css…) = Master 3.7.
+
 ## 2026-11-24 – Samo (Master 3.4: kruh = tracker)
 - **Kruh na domove = tracker** podľa schváleného `guguboo-master/prototyp-tracker.html` (tvar 2.9, esovité diely, 3–5 dielov).
   V dieli len ikona (názov je v aria-label a hlavičke okna) a pod ňou jemný stav, ak sa zmestí; inak sa stav vynechá len v tom diele.

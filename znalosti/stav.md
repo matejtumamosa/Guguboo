@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 25. 11. 2026 (Claude – Master 3.5.1)_
+_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.6.4, jednotná typografia; čaká na zlúčenie do `v2`)_
 
 ## Verzia
 
-- **Master 3.5.1** vo vetve `v2`, priečinok `guguboo-master/`.
+- **Master 3.6.4** (lokálna vetva `typografia-3.6` z `v2` 3.5.3, nepushnuté), priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -35,6 +35,12 @@ _Naposledy aktualizované: 25. 11. 2026 (Claude – Master 3.5.1)_
   jemnejšie (600, tlmená farba); v okne Dnes namiesto odkazu „Čo sledujem v kruhu“ ikony dielov + „+“; pred pôrodom vlastný
   výber dielov (Pohyby vždy, od 36. t. aj Kontrakcie; Pitie, Vitamíny, Pre lekára, Bruško, Hlas; spolu 3–5) – `state.v5.ringPre`.
 - **3.5.1:** oprava textov o príprave umelého mlieka (Rodina → Úlohy v rodine → Delegovať rutinu) – pôvodne 2.6.1, bola len lokálne.
+- **3.6 – 3.6.4 – jednotná typografia (Samo 26. 11.):** `g2-text.css` (posledný CSS) so 7 štýlmi (Titulok, Nadpis, Silné, Telo,
+  Popis, Štítok, Číslo) – domov, lišta, huby, okná, kruh a jeho okná, Prehľad dňa, Všetko, GuguChat, nastavenia, Aktivity, úvod;
+  deň aj noc. Domov: 12 → 8 kombinácií písma pred pôrodom, 12 → 9 po pôrode; na 35 obrazovkách spolu 68 → 18 po pôrode a 53 → 17 pred pôrodom (veľkú časť zvyšku tvoria šípky „›“ a „×“).
+  test.html: sada Typografia (70 riadkov: 67 zelených, 3 známe nálezy). Ďalej: **3.7 upratanie** starých pravidiel písma (g2-type.css,
+  `!important` v master.css, viacnásobné hlavičky vo v2.css) a odobratie `!important` z g2-text.css; šípky „›“/„×“ → ikony;
+  rozhodnúť stav v dieli kruhu (10,5 px, pri 13 px sa nezmestí).
 - Na rozhodnutie po 3.5: pridať do kruhu aj ďalšie denné záznamy (napr. Teplota, Kúpanie, Prechádzka) – zatiaľ len návrh.
 - Otvorené po 3.4: v 36.+ t. je na domove skratka „Otázky pre lekára“ aj diel „Pre lekára“ (duplicita – rozhodne Samo);
   Bruško a Hlas sú už len v Našich momentoch; vety o Pitie/Na brušku bez noriem – overiť v teste s mamami.
