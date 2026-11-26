@@ -93,3 +93,33 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) text.g2q-sub {
   font-family: var(--t-font) !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important;
 }
+
+/* ===== Master 3.6.1: riadky hubov a zoznamy, tlačidlá, polia, Popis min. 14 px (P5) ===== */
+
+/* 3 Silné – názov riadku a dlaždice (farba ostáva z pôvodného štýlu – tmavá alebo farba tlačidla) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-hub-row strong, .v2-book-tools button strong, .v5-care-option strong, .v2-mama-water-open strong, .v5-quick-tile strong, .v2-journey-text strong, .v2-cal-item strong, .v5-choice strong, .v5-row-card > div > strong, .v5-moments-hub button strong, .g2r-part span, .v5-sleep-type strong, .v5-teeth-age-card strong, .v5-info-box strong) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 3 Silné – všetky tlačidlá a textové odkazy, záložky (stav len farbou – P7), popisky polí */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v5-primary, .v5-secondary, .v5-text-action, .g2-link, .g2-btn, .private-primary, details.g2-more > summary, .g2q-toast button, .v2-hub-record, .v5-profile-tabs button, .v2-cal-tabs button, .v5-check-categories-button) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v5-form-card label, .v5-form-card label > span, .private-pin-label, .v2-water-settings label) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* 4 Telo – polia formulárov (16 px – iPhone pri písaní nepribližuje) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) {
+  font: var(--t-body) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 5 Popis – text pod názvom riadku, poznámky, zdroje, prázdne stavy (jediná sivá, min. 14 px) */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-hub-row small, .v2-book-tools small, .v5-care-option small, .v2-journey-text small, .v2-mama-water-open small, .g2q-me-head small, .v5-choice small, .v2-cal-item small, .v5-row-card > div > span, .g2q-settings > small, .v5-moments-hub button small, .v5-book-note, .v5-care-disclaimer, .g2-size-note, .g2-note, .g2-small, .v2-water-panel p, .private-security-note, .v5-info-box, .v5-empty, .v5-teeth-age-card p) {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* zdroj je odkaz – veľkosť Popisu, farba odkazu ostáva */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-source {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* 2 Nadpis – „Čas pre teba“ v Mame */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-me-head strong {
+  font: var(--t-head) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
