@@ -2892,8 +2892,9 @@
       "<div class='v2-water-settings'><label>Pohár<select data-v5-water-glass>",
       [200, 250, 300, 330, 500].map(n => "<option value='" + n + "'" + (n === water.glassMl ? " selected" : "") + ">" + n + " ml</option>").join(""),
       "</select></label></div>",
-      "<p>NHS uvádza 6 až 8 pohárov tekutín denne; v tehotenstve a pri dojčení môžeš potrebovať viac.</p><details class='g2-more'><summary>Viac</summary><p>Počíta sa voda, mlieko so zníženým obsahom tuku aj nápoje s nízkym obsahom cukru vrátane čaju a kávy.",
-      "</p></details><p class='g2-small'>Počítadlo sa o polnoci vynuluje.</p>",
+      // Master 3.8 (Samo): bez odporúčaného množstva (sprievodca, nie lekár) – len informatívne, čo sa počíta.
+      "<p>Podľa NHS sa do tekutín počíta voda, mlieko aj čaj a káva.</p>",
+      "<p class='g2-small'>Počítadlo sa o polnoci vynuluje.</p>",
       "<a class='v2-source' href='", WATER_SOURCE_URL, "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené 26. 11. 2026 ↗</a>",
       "</section>"
     ].join("");
