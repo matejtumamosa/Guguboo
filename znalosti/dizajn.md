@@ -13,8 +13,8 @@ aby nové veci vyzerali rovnako.
 | Nadpis | 800 · 17/22 px | `--t-ink` | nadpis karty alebo sekcie, meno bábätka / týždeň na domove |
 | Silné | 700 · 15/20 px | ink alebo farba tlačidla | názov riadku, úloha, tlačidlá, odkazy, popisky polí, záložky |
 | Telo | 500 · 16/24 px | `--t-ink` | odseky, správy GuguChatu, polia formulárov |
-| Popis | 500 · 14/20 px | `--t-muted` | jediná sivá: podnadpisy, text pod názvom, poznámky, zdroje |
-| Štítok | 700 · 13/16 px | sekcia: KAPITÁLKY +.06em `--t-brand`; navigácia: bez kapitálok `--t-muted` | „Dnes stačí jedno“, kicker; lišta, skratky domova, os grafu |
+| Popis | 500 · 14/20 px | `--t-muted` | jediná sivá: podnadpisy, text pod názvom, poznámky, zdroje, skratky na domove, súhrn v oknách kruhu |
+| Štítok | 700 · 13/16 px | sekcia: KAPITÁLKY +.06em `--t-brand` (len v oknách – kicker, skupiny Plánu); inak bez kapitálok `--t-muted` | „Dnes stačí jedno“, lišta, os grafu, kicker týždňa/mesiaca |
 | Číslo | 800 · 24/28 px (veľké 44/48) | `--t-ink` | časovač, počty, Pitný režim |
 
 - Hrúbky len 500/700/800. Kapitálky len Štítok sekcie. Min. 14 px (13 px len Štítok). Stav = farba, nie hrúbka.

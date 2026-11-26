@@ -13,6 +13,10 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
   stav (aktívne/vybrané) len farbou, nie hrúbkou; jeden Titulok na obrazovku – vnútorný nadpis okna je Nadpis.
 - **Domov:** pozdrav = Titulok (rovnako ako hlavičky Bábätko/Mama/Rodina), meno bábätka / týždeň = Nadpis; skratky na domove
   = Štítok bez kapitálok, tlmené ako popisky v lište (nahrádza 600 a sivú z 3.5).
+- **3.6.5 (po nezávislej grafickej kontrole):** „Dnes stačí jedno“ je Štítok bez kapitálok v tlmenej farbe – na domove už
+  nie sú kapitálky; odkazy („Neskôr“, „Zapísať spätne ›“) jednotne Silné vo farbe značky; skratky na domove = Popis
+  (500 14/20 – tenšie, väčšie riadkovanie; 600 je mimo systému); stred kruhu „Dnes“ = Silné; súhrn v oknách kruhu
+  („dnes / naposledy“) = Popis; pozdrav sa na úzkom displeji neoreže, smie mať dva riadky.
 - **Kontrola:** `test.html` – sada Typografia (na domove pred aj po pôrode ≤ 12 kombinácií písma, nič pod 13 px, hrúbky 500/700/800).
 - Zatiaľ ostáva: šípky „›“ a „×“ ako písmo (neskôr ikony), stav v dieli kruhu 10,5 px (pri 13 px sa do dielu nezmestí) –
   na rozhodnutie. Upratanie starých pravidiel písma (g2-type.css, master.css…) = Master 3.7.

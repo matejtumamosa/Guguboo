@@ -263,7 +263,37 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) #g2Intro :is(.sub:not(.size), .note, .tiny, .fact, .fact .src, .choice .txt small, .picker-label, .preview span, .preview .due, .cycle, .country, .country .link, .today p, .today .demo, .sheet p, .opts button span) {
   font: var(--t-caption) !important; letter-spacing: 0 !important;
 }
-/* 6a Štítok sekcie – „Dnes stačí jedno“ v náhľade na konci úvodu */
-:is(html, #g2t#g2t) #g2Intro .today .lbl { font: var(--t-label) !important; letter-spacing: .06em !important; text-transform: uppercase !important; }
+/* 6b Štítok – „Dnes stačí jedno“ v náhľade na konci úvodu (Master 3.6.5: ako na domove – bez kapitálok, tlmené) */
+:is(html, #g2t#g2t) #g2Intro .today .lbl { font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--muted) !important; }
 /* 7 Číslo veľké – týždeň / vek na konci úvodu */
 :is(html, #g2t#g2t) #g2Intro .big .age b { font: var(--t-num-l) !important; letter-spacing: 0 !important; }
+
+/* ===== Master 3.6.5: dorovnanie po nezávislej grafickej kontrole (deň aj noc) ===== */
+/* GK1: „Dnes stačí jedno“ – Štítok bez kapitálok v tlmenej farbe (ako ostatné štítky); na domove už nie sú kapitálky */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-today-main small, .g2-today > small, .g2-ring-head small) {
+  font: var(--t-label) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* GK1: odkazy „Neskôr“, „Zapísať spätne ›“, „Príkrm ›“, „Všetky denné záznamy ›“ – jednotne Silné vo farbe značky */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2-today-later, .g2r-link) {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
+}
+/* GK2: súhrn v oknách kruhu („dnes / naposledy / z fľaše“) = Popis (500 14, jediná sivá); os 0–24 ostáva Štítok 13 */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-sum span {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* GK3: skratky na domove tenšie a s väčším riadkovaním pri dvoch riadkoch → Popis (500 14/20, tlmené).
+   Hrúbka 600 by bola mimo systému (len 500/700/800), preto Popis namiesto Štítku. */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2-shorts .g2-short strong {
+  font: var(--t-caption) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* GK3: stred kruhu „Dnes“ čitateľnejší – Silné 15 */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-day {
+  font: var(--t-strong) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+/* GK4: lišta – neaktívne položky aj v noci tlmenou farbou --t-muted (#c9c3d8 na #1b2130 ≈ 9 : 1) */
+:is(html, #g2t#g2t) body.v5-active.night:not(.welcome-mode):not(.intro-only) #v5BottomBar .v5-bottom-action:not(.active):not([aria-current="page"]) :is(span, .v5-nav-icon) { color: var(--t-muted) !important; opacity: 1 !important; }
+/* GK5: pozdrav na úzkom displeji sa neoreže – smie mať dva riadky */
+:is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) #v5Header #v5HeaderTitle {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: break-word;
+  display: block !important; -webkit-line-clamp: unset !important;
+}
