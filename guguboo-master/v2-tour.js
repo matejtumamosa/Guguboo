@@ -100,7 +100,7 @@
       {
         target: () => home?.querySelector(".g2-ring-card"),
         title: "Rýchle záznamy",
-        text: expecting ? "Zapíš pohyb, odfoť bruško alebo nahraj bábätku svoj hlas." : "Ťukni na diel – kŕmenie, spánok, plienky. Bežiaci čas ukončíš v strede."
+        text: expecting ? "Ťukni na diel a zapíš. V strede je Dnes." : "Ťukni na diel – kŕmenie, spánok, plienky. V strede je Dnes alebo bežiaci čas."
       },
       {
         target: () => home?.querySelector(".g2-today-row"),

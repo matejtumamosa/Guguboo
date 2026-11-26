@@ -3,6 +3,22 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-26 – Samo (Master 3.8: sprievodca, nie lekár; jednotné názvy kruhu)
+- **Guguboo je sprievodca, nie lekár:** smú byť len ľahké informatívne tvrdenia so zdrojom a dátumom overenia; nikdy rada,
+  postup, diagnóza, norma ani cieľ (za tie nenesieme zodpovednosť). Existujúce bezpečnostné odkazy na lekára/pôrodnicu
+  (`g2-safety.js`) ostávajú. Preto sa v 3.8 nepridala veta o bezpečnom spánku pri Na brušku (postup) ani o kofeíne (odporúčanie).
+- **Pohyby bez počítania (NHS Your baby's movements, overené 26. 11. 2026: „You do not need to count…“, „every baby is different“):**
+  appka nikde neukazuje počet pohybov – v okne Pohybov aj v okne Dnes len čas posledného zápisu, mriežka 7 dní ukazuje len,
+  v ktorej hodine je zápis (bez sýtosti podľa počtu). Informatívna veta „Pohyby netreba počítať – každé bábätko je iné.“ so zdrojom;
+  pod ňou E3 so zdrojom a dátumom z `g2-safety.js`. Prečo: počítanie pôsobí ako norma a zápisy nie sú skutočné pohyby.
+- **Pitný režim bez cieľa:** len počet pohárov dnes (a 7 dní v okne kruhu); preč „Denný cieľ“, jeho nastavenie, pruh k cieľu
+  a hláška „Denný cieľ pitia je splnený“. Staré pole `goal` v údajoch sa ignoruje.
+- **Jednotné názvy (jedna vec = jeden názov):** Pitný režim (aj diel kruhu), Čo beriem (nie Vitamíny), Otázky pre lekára,
+  Môj hlas pre bábätko, Odsávanie, Prsník; stred kruhu „Dnes“ (aj aria-label a zdieľaná správa „Dnes do …“); kruh = „Rýchle
+  záznamy“ pred aj po pôrode; termín „kontrola“ (nie prehliadka); odkaz „Spánok a zvuky ›“; bežiaci čas „… sa meria“.
+- Odsávanie bez predvoleného množstva pri prvom zápise (Uložiť až po voľbe) – predvolba pôsobila ako „očakávané“ množstvo.
+- Plán pôrodu: veta „Pôrod sa nie vždy dá naplánovať.“ ostáva (NHS, emocionálna ochrana) – skrátenie zamietnuté.
+
 ## 2026-11-26 – Samo (Master 3.7: 3 úrovne textu na obrazovke)
 - **Na jednej obrazovke najviac 3 úrovne textu + odkaz** (prísnejšie ako 7 štýlov z 3.6): **Hlavné** 800 18 tmavá (pozdrav, meno
   bábätka / týždeň, úloha „Dnes stačí jedno“, hlavičky okien) · **Bežné** 500 15 tmavá (skratky, hľadanie, „Dnes“ v kruhu, obsah) ·

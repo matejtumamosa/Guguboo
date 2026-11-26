@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.7, tri úrovne textu na obrazovke)_
+_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.8, sprievodca nie lekár, jednotné názvy kruhu)_
 
 ## Verzia
 
-- **Master 3.7** (commit pripravený, nepushnutý), priečinok `guguboo-master/`.
+- **Master 3.8** (commit pripravený, nepushnutý), priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -49,6 +49,17 @@ _Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.7, tri úrovne text
   čas); v Mame rovnaký názov kariet aj riadkov (Bežné), „pridať pohár · nastaviť“ = Odkaz; drobné texty v oknách kruhu, Aktivitách
   a súkromnom denníku len v jednej sivej, akcie fialové. test.html: nové kontroly (text v okne ≤ nadpis, Mama jeden názov, domov
   pozdrav = meno = úloha).
+- **3.8 (Content & Safety kolo 3 + Texty kolo 3, Samo 26. 11.):** Pohyby sa nepočítajú (v okne aj v Dnes čas posledného zápisu,
+  mriežka 7 dní len „zápis áno/nie“, informatívna veta NHS „Pohyby netreba počítať – každé bábätko je iné.“ so zdrojom; E3 so zdrojom
+  a dátumom z `g2-safety.js`); Pitný režim bez cieľa (preč „Denný cieľ“, výber cieľa, pruh a hláška „splnené“); jednotné názvy:
+  Pitný režim, Čo beriem, Otázky pre lekára, Môj hlas pre bábätko, Odsávanie, stred „Dnes“ (aj aria a zdieľanie), „Rýchle záznamy“
+  aj pred pôrodom, „kontrola“, „Spánok a zvuky ›“, „Prsník“, toasty „… sa meria“; Odsávanie bez predvolených 90 ml; prehliadka
+  (v2-tour) opisuje aktuálny kruh; Hlas #101 so zdrojom a dátumom. Nepridané (Samo: rada/postup): bezpečný spánok pri Na brušku (S2),
+  kofeín (S3). test.html: nové testy Pohyby bez počítania a Pitný režim bez cieľa.
+- Otvorené po 3.8: `web.html` (riadky ~508, 623, 964–968) ešte opisuje kruh 2.x („Náš deň“, Bruško, Pre bábätko, Prvý pohyb) –
+  zosúladiť pri úprave webu; N6 (Kontrakcie v 36. t., odkaz na E7) a vety ⚕ – potvrdí pôrodná asistentka; `knowledge-monitor.mjs`
+  doplniť o URL NHS (movements, week-15, birth plan, foods-to-avoid). Na rozhodnutie podľa nového pravidla (bez noriem
+  a odporúčaných množstiev): veta v Pitnom režime „NHS uvádza 6 až 8 pohárov tekutín denne…“ ostala (zdroj overený 26. 11. 2026).
 - Na rozhodnutie po 3.5: pridať do kruhu aj ďalšie denné záznamy (napr. Teplota, Kúpanie, Prechádzka) – zatiaľ len návrh.
 - Otvorené po 3.4: v 36.+ t. je na domove skratka „Otázky pre lekára“ aj diel „Pre lekára“ (duplicita – rozhodne Samo);
   Bruško a Hlas sú už len v Našich momentoch; vety o Pitie/Na brušku bez noriem – overiť v teste s mamami.

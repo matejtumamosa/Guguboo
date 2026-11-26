@@ -422,7 +422,7 @@
   }
 
   // Pitný režim (pripomienka #12): denné počítadlo pohárov, o polnoci sa vynuluje.
-  // Predvolený cieľ 8 pohárov = horná hranica NHS „6 to 8 cups or glasses of fluid a day“;
+  // Master 3.8 (Samo 26. 11.): bez cieľa – appka ukazuje len počet pohárov (pole goal v starých údajoch sa ignoruje).
   // NHS uvádza, že v tehotenstve a pri dojčení môže byť potrebné viac, konkrétne číslo nedáva.
   const WATER_SOURCE_URL = "https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/water-drinks-nutrition/";
   function waterToday() {
@@ -436,7 +436,7 @@
   function waterProgressText() {
     const water = waterToday();
     if (MASTER) return water.count ? water.count + (water.count === 1 ? " pohár" : water.count < 5 ? " poháre" : " pohárov") + " dnes" : "pridať pohár";
-    return water.count + " / " + water.goal + " pohárov · " + waterLiters(water.count);
+    return water.count + " pohárov dnes · " + waterLiters(water.count);
   }
 
   const adaptiveODefaults = {
@@ -1173,7 +1173,7 @@
 
   function adaptiveOGoalDone(role, sectionId, goal) {
     if (goal.auto) return adaptiveOAutoDone(goal);
-    if (goal.id === "water") return waterToday().count >= waterToday().goal;
+    if (goal.id === "water") return false; // Master 3.8 (Samo): Pitný režim bez cieľa – nikdy „splnené“
     if (goal.id === "exercises") return exAnyToday();
     // „Ako sa dnes cítim“ = zápis v súkromnom denníku dnes (denník ukladá len dátum, nie obsah).
     if (goal.id === "check-in") return state.v5.diaryLastEntry === todayKey();
@@ -1296,7 +1296,7 @@
   }
   window.addEventListener("resize", () => { requestAnimationFrame(g2FitHome); setTimeout(g2FitHome, 60); });
   // ——— Master 2.2 (Samo 15. 11.): kruh na domove = rýchle záznamy, jedno pravidlo pre všetky obdobia ———
-  // Diel = jedna vec (pod názvom „naposledy“). Stred = len bežiaci časovač, inak „Náš deň“ (prehľad dnešných zápisov).
+  // Diel = jedna vec (pod názvom „naposledy“). Stred = len bežiaci časovač, inak „Dnes“ (prehľad dnešných zápisov).
   // Ťuk na diel nikdy hneď neuloží – otvorí malé okno s veľkými tlačidlami; po uložení „Uložené · Vrátiť“.
   // Tehotenstvo = „Ja a bábätko“: Pohyby · Bruško · Hlas (od 36. týždňa Kontrakcie namiesto Hlasu).
   // 0–12 mesiacov: Kŕmenie · Spánok · Plienky. Od 1 roka: Jedlo · Spánok · Aktivita. Čas pre teba je v Mame.
@@ -1329,14 +1329,15 @@
 
   // ——— Master 3.4 (Samo 24. 11., schválený prototyp-tracker.html): kruh = tracker ———
   // Po pôrode (0–12 mes.): Kŕmenie · Spánok · Plienky + voliteľne Odsávanie a Na brušku („Čo sledujem v kruhu“ – state.v5.ringExtras).
-  // Pred pôrodom: Pohyby · Pitie · Vitamíny (zoznam „Čo beriem“) · Pre lekára; od 36. týždňa Kontrakcie namiesto Pitia.
+  // Pred pôrodom: Pohyby · Pitný režim · Čo beriem · Otázky pre lekára; od 36. týždňa Kontrakcie namiesto Pitného režimu (názvy Master 3.8).
   // Bruško (Fotka dňa v Našich momentoch) a Hlas (Môj hlas pre bábätko) ostávajú v Našich momentoch. Od 1 roka: Jedlo · Spánok · Aktivita.
   // V dieli je len ikona (názov je v aria-label a v hlavičke okna), pod ňou jemný stav, ak sa zmestí do dielu.
   const g2qTummy = () => (state.v5.tummyTimer ||= { active: false, start: "" });
   const g2qExtras = () => (state.v5.ringExtras ||= { pump: false, tummy: false });
   // Master 3.5: výber dielov pred pôrodom – state.v5.ringPre (pole kľúčov; kým nie je nastavené, platí predvolené podľa týždňa).
   const G2Q_MAX = 5, G2Q_MIN = 3;
-  const G2Q_PRE_OPT = [["drink", "Pitie", "glassWater"], ["vit", "Vitamíny", "capsule"], ["question", "Pre lekára", "doctorQ"], ["bump", "Bruško", "camera"], ["voice", "Hlas", "voice"]];
+  // Master 3.8 (Texty kolo 3, #1, #4, #26, #27): prepínač = názov okna (jedna vec, jeden názov).
+  const G2Q_PRE_OPT = [["drink", "Pitný režim", "glassWater"], ["vit", "Čo beriem", "capsule"], ["question", "Otázky pre lekára", "doctorQ"], ["bump", "Bruško", "camera"], ["voice", "Môj hlas pre bábätko", "voice"]];
   const g2qPreFixed = () => g2qWeek() >= 36 ? ["move", "contraction"] : ["move"];
   const g2qPreChosen = () => Array.isArray(state.v5.ringPre)
     ? G2Q_PRE_OPT.map(o => o[0]).filter(k => state.v5.ringPre.includes(k))
@@ -1353,16 +1354,16 @@
       const moves = (state.v5.babyMoves || []).filter(m => g2qIsToday(m.time)).sort((a, b) => new Date(a.time) - new Date(b.time));
       const move = { key: "move", label: "Pohyby", sub: moves.length ? formatClock(moves[moves.length - 1].time) : "", aria: "Pohyby – zapísať pohyb" };
       const water = waterToday();
-      const drink = { key: "drink", label: "Pitie", sub: water.count ? water.count + "×" : "", aria: "Pitie – pridať pohár" };
+      const drink = { key: "drink", label: "Pitný režim", sub: water.count ? water.count + "×" : "", aria: "Pitný režim – pridať pohár" };
       const supp = g2qSupp(), taken = supp.items.filter(item => g2qSuppDay()[item.id]).length;
-      const vit = { key: "vit", label: "Vitamíny", sub: !supp.items.length ? "" : taken === supp.items.length ? "dnes ✓" : taken + " z " + supp.items.length, aria: "Vitamíny – čo beriem" };
+      const vit = { key: "vit", label: "Čo beriem", sub: !supp.items.length ? "" : taken === supp.items.length ? "dnes ✓" : taken + " z " + supp.items.length, aria: "Čo beriem" };
       const open = (state.v5.doctorQuestions || []).filter(q => q.who === "me" && !q.done).length;
-      const question = { key: "question", label: "Pre lekára", sub: open ? g2qCount(open, "otázka", "otázky", "otázok") : "", aria: "Pre lekára – zapísať otázku" };
+      const question = { key: "question", label: "Otázky pre lekára", sub: open ? g2qCount(open, "otázka", "otázky", "otázok") : "", aria: "Otázky pre lekára" };
       const ct = state.v5.contractions.slice(-1)[0];
       const contraction = { key: "contraction", label: "Kontrakcie", sub: ct && g2qIsToday(ct.start) ? formatClock(ct.start) : "", aria: "Kontrakcie – meranie" };
       // Master 3.5 (Samo 25. 11.): pred pôrodom si diely vyberá používateľ (Pohyby vždy, od 36. t. aj Kontrakcie; spolu 3–5).
       const bump = { key: "bump", label: "Bruško", sub: g2qBumpThisWeek() ? "tento týždeň ✓" : "", aria: "Bruško – fotka týždňa" };
-      const voice = { key: "voice", label: "Hlas", sub: "", aria: "Hlas pre bábätko" };
+      const voice = { key: "voice", label: "Môj hlas pre bábätko", sub: "", aria: "Môj hlas pre bábätko" };
       const all = { drink, vit, question, bump, voice };
       return g2qPreFixed().map(k => k === "move" ? move : contraction).concat(g2qPreChosen().map(k => all[k])).slice(0, G2Q_MAX);
     }
@@ -1380,7 +1381,7 @@
       { key: "feed", label: "Kŕmenie", sub: g2qRecent(feed?.created), aria: "Kŕmenie" },
       sleep,
       { key: "diaper", label: "Plienky", sub: g2qRecent(g2qLastDiaper()?.created), aria: "Plienky" }
-    ].concat(extras.pump ? [{ key: "pump", label: "Odsávanie", sub: pump && g2qSince(pump.created) < 24 * 36e5 && pump.ml ? pump.ml + " ml" : "", aria: "Odsávanie mlieka" }] : [],
+    ].concat(extras.pump ? [{ key: "pump", label: "Odsávanie", sub: pump && g2qSince(pump.created) < 24 * 36e5 && pump.ml ? pump.ml + " ml" : "", aria: "Odsávanie" }] : [],
       extras.tummy ? [{ key: "tummy", label: "Na brušku", sub: g2qRecent(tummy?.created), aria: "Na brušku" }] : []);
   }
   function g2qRunning() {
@@ -1543,13 +1544,13 @@
       return "<button class='g2q-core is-running' type='button' data-g2q='stop' aria-label='" + escapeHtml(run.what + " – " + run.stop) + "'><span class='g2q-core-ic' aria-hidden='true'>" + icon(G2Q_SEG_ICON[run.key]) + "</span><span class='g2q-cl'>" + escapeHtml(run.what) + "</span><b class='g2q-time' data-g2q-since='" + escapeHtml(run.start) + "'>" + g2qClock(g2qSince(run.start)) + "</b><span class='g2q-stop'>" + escapeHtml(run.stop) + "</span></button>";
     }
     // Samo 24. 11.: v strede len jemná ikona hodín a jedno slovo „Dnes“.
-    return "<button class='g2q-core' type='button' data-g2q='day' aria-label='Prehľad dňa – dnešné záznamy'><span class='g2q-core-ic' aria-hidden='true'>" + icon("clock") + "</span><span class='g2q-day'>Dnes</span></button>";
+    return "<button class='g2q-core' type='button' data-g2q='day' aria-label='Dnes – prehľad záznamov'><span class='g2q-core-ic' aria-hidden='true'>" + icon("clock") + "</span><span class='g2q-day'>Dnes</span></button>";
   }
   function g2QuickRing() {
     const segs = g2qSegments();
     const ring = g2qRingSvg(segs, { px: g2qLastPx });
     g2qFitSoon();
-    return "<section class='v5-o-card g2-ring-card g2q-card' aria-label='" + (state.profile.status === "expecting" ? "Každý deň" : "Rýchle záznamy") + "'>" +
+    return "<section class='v5-o-card g2-ring-card g2q-card' aria-label='Rýchle záznamy'>" +
       "<div class='v5-o-layout'><div class='g2q-ring' style='--g2q-core:" + ring.coreW + "'>" + ring.svg + g2qCenter() + "</div></div></section>";
   }
   // Živý čas v strede kruhu (raz za sekundu, len keď je domov na obrazovke).
@@ -1660,7 +1661,7 @@
       if (t.active) {
         const other = g2qSideShort(t.side) === "ľavý" ? "Pravý prsník" : "Ľavý prsník";
         return g2qOpen("Kŕmenie", g2qLastLine("Beží od " + formatClock(t.start) + " · " + (g2qSideShort(t.side) || "") + " prsník") +
-          g2qAct("feed-end", "check", "Ukončiť kŕmenie", "uloží sa", "", true) + g2qAct("feed-switch", "breastfeed", "Prepnúť na " + other.toLowerCase(), ""));
+          g2qAct("feed-end", "check", "Ukončiť","uloží sa", "", true) + g2qAct("feed-switch", "breastfeed", "Prepnúť na " + other.toLowerCase(), ""));
       }
       const last = g2qLastFeed(), today = g2qTodayEvents(e => e.type === "Kŕmenie" && e.method !== "Príkrm");
       const bottleFirst = last?.method === "Fľaša";
@@ -1689,10 +1690,10 @@
       if (state.sleepTimer?.active) spans.push({ t: state.sleepTimer.start, end: new Date().toISOString() });
       const total = spans.reduce((s, x) => s + Math.max(0, new Date(x.end) - Math.max(new Date(x.t), new Date(todayKey() + "T00:00:00"))), 0);
       const head = g2qSum([[g2qSpan(total), "spánku dnes"], [today.length, today.length === 1 ? "spánok" : today.length > 1 && today.length < 5 ? "spánky" : "spánkov"]]) + g2qDayLine(spans, "Spánok dnes");
-      if (state.sleepTimer?.active) return g2qOpen("Spánok", head + g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "uloží sa", "", true) + "<button class='g2r-link' type='button' data-g2q='sounds'>Šum a uspávanky ›</button>"); // Master 3.5.3 (Samo): šum a uspávanky patria k spánku
+      if (state.sleepTimer?.active) return g2qOpen("Spánok", head + g2qLastLine("Spí od " + formatClock(state.sleepTimer.start) + " · " + g2qSpan(g2qSince(state.sleepTimer.start))) + g2qAct("stop", "sun", "Zobudilo sa teraz", "uloží sa", "", true) + "<button class='g2r-link' type='button' data-g2q='sounds'>Spánok a zvuky ›</button>"); // Master 3.5.3 (Samo): šum a uspávanky patria k spánku
       return g2qOpen("Spánok", head +
         g2qAct("sleep-start", "moon", "Zaspalo teraz", "spustí čas", " data-ago='0'", true) +
-        "<p class='g2r-small'>Zaspalo skôr?</p><div class='g2r-chips g2r-rq'>" + [10, 20, 30].map(m => "<button class='g2r-pill' type='button' data-g2q='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>" + "<button class='g2r-link' type='button' data-g2q='sounds'>Šum a uspávanky ›</button>");
+        "<p class='g2r-small'>Zaspalo skôr?</p><div class='g2r-chips g2r-rq'>" + [10, 20, 30].map(m => "<button class='g2r-pill' type='button' data-g2q='sleep-start' data-ago='" + m + "'>pred " + m + " min</button>").join("") + "</div>" + "<button class='g2r-link' type='button' data-g2q='sounds'>Spánok a zvuky ›</button>");
     }
     if (key === "diaper") {
       const today = g2qTodayEvents(e => e.type === "Plienka");
@@ -1707,11 +1708,13 @@
       const today = g2qTodayEvents(e => e.type === "Odsávanie");
       const ml = side => today.filter(e => !side || e.side === side).reduce((s, e) => s + (Number(e.ml) || 0), 0);
       const pills = (grp, list, sel) => "<div class='g2r-chips g2r-rq' role='group'>" + list.map(v => "<button class='g2r-pill' type='button' data-g2q='pick' data-grp='" + grp + "' data-v='" + v[0] + "' aria-pressed='" + String(String(v[0]) === String(sel)) + "'>" + v[1] + "</button>").join("") + "</div>";
-      const lastMl = Number(g2qLastEvent(e => e.type === "Odsávanie")?.ml) || 90;
-      return g2qOpen("Odsávanie mlieka", g2qSum([[ml() + " ml", "dnes"], [ml("Ľavý") + " ml", "ľavý"], [ml("Pravý") + " ml", "pravý"], [ml("Oba") + " ml", "oba"]]) +
-        "<p class='g2r-small'>Strana</p>" + pills("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"], ["Oba", "Oba"]], "Oba") +
-        "<p class='g2r-small'>Koľko</p>" + pills("ml", [30, 60, 90, 120, 150, 200].map(v => [v, v + " ml"]), [30, 60, 90, 120, 150, 200].includes(lastMl) ? lastMl : 90) +
-        "<button class='g2r-btn' type='button' data-g2q='pump-save'>Uložiť</button>");
+      // Master 3.8 (Content & Safety kolo 3, N4): bez predvoleného množstva pri prvom zápise (nepôsobí ako „očakávané“);
+      // potom posledná hodnota. Uložiť je aktívne až po voľbe.
+      const ML = [30, 60, 90, 120, 150, 200], lastMl = Number(g2qLastEvent(e => e.type === "Odsávanie")?.ml) || 0, sel = ML.includes(lastMl) ? lastMl : "";
+      return g2qOpen("Odsávanie", g2qSum([[ml() + " ml", "dnes"], [ml("Ľavý") + " ml", "ľavý"], [ml("Pravý") + " ml", "pravý"], [ml("Oba") + " ml", "oba"]]) +
+        "<p class='g2r-small'>Prsník</p>" + pills("side", [["Ľavý", "Ľavý"], ["Pravý", "Pravý"], ["Oba", "Oba"]], "Oba") +
+        "<p class='g2r-small'>Koľko</p>" + pills("ml", ML.map(v => [v, v + " ml"]), sel) +
+        "<button class='g2r-btn' type='button' data-g2q='pump-save'" + (sel ? "" : " disabled") + ">Uložiť</button>");
     }
     if (key === "tummy") {
       const today = g2qTodayEvents(e => e.type === "Na brušku");
@@ -1722,23 +1725,28 @@
     }
     if (key === "move") {
       if (!g2qFirstMoveFelt()) return g2qSheet("firstmove");
-      // „Tvoj rytmus“: os dňa s bodkami, druh posledného pohybu jedným ťukom, mriežka posledných 7 dní (deň × hodina) – bez počítania do cieľa.
+      // Master 3.8 (Content & Safety kolo 3, V1 – NHS: pohyby netreba počítať, neexistuje určený počet): okno nepočíta pohyby.
+      // Os dňa s bodkami, druh posledného pohybu jedným ťukom, mriežka 7 dní (deň × hodina) = len „v tejto hodine je zápis“, bez sýtosti podľa počtu.
       const all = state.v5.babyMoves || [], today = all.filter(m => g2qIsToday(m.time)).sort((a, b) => new Date(a.time) - new Date(b.time));
       const last = today[today.length - 1];
       const kinds = [["kick", "kopnutie"], ["roll", "otočenie"], ["hiccup", "štikútanie"]];
       const days = g2qPastDays(7);
       const grid = days.map(d => {
-        const key2 = calendarDayKey(d), cells = Array(24).fill(0);
-        all.forEach(m => { if (calendarDayKey(m.time) === key2) cells[new Date(m.time).getHours()]++; });
-        return "<div class='g2q-grid-row'><small>" + G2Q_WD[d.getDay()] + "</small>" + cells.map(c => "<i" + (c ? " class='on' style='opacity:" + Math.min(1, .35 + c * .22).toFixed(2) + "'" : "") + "></i>").join("") + "</div>";
+        const key2 = calendarDayKey(d), cells = Array(24).fill(false);
+        all.forEach(m => { if (calendarDayKey(m.time) === key2) cells[new Date(m.time).getHours()] = true; });
+        return "<div class='g2q-grid-row'><small>" + G2Q_WD[d.getDay()] + "</small>" + cells.map(c => "<i" + (c ? " class='on'" : "") + "></i>").join("") + "</div>";
       }).join("");
-      return g2qOpen("Pohyby", "<p class='g2q-kicker'>Tvoj rytmus</p>" +
-        g2qAct("move-save", "bellyKick", "Cítim pohyb", today.length ? "dnes " + g2qCount(today.length, "pohyb", "pohyby", "pohybov") : "zapíše sa čas", "", true) +
+      const e3 = window.G2Safety?.E.E3;
+      return g2qOpen("Pohyby",
+        g2qAct("move-save", "bellyKick", "Cítim pohyb", last ? "naposledy " + formatClock(last.time) : "zapíše sa čas", "", true) +
         g2qDayLine(today.map(m => ({ t: m.time })), "Pohyby dnes") +
-        (last ? "<p class='g2r-small'>Posledný o " + escapeHtml(formatClock(last.time)) + " – druh (nepovinné)</p><div class='g2r-chips g2r-rq' role='group' aria-label='Druh pohybu'>" + kinds.map(k => "<button class='g2r-pill' type='button' data-g2q='move-kind' data-kind='" + k[0] + "' aria-pressed='" + String(last.kind === k[0]) + "'>" + k[1] + "</button>").join("") + "</div>" : "") +
-        "<p class='g2r-small'>Posledných 7 dní</p><div class='g2q-grid' role='img' aria-label='Kedy sa bábätko hýbalo za posledných 7 dní'>" + grid + "<div class='g2q-grid-row g2q-grid-h'><small></small><span>0</span><span>6</span><span>12</span><span>18</span><span>24</span></div></div>" +
-        // Content & Safety (NHS Your baby's movements, overené 15. 11. 2026): jedna pokojná veta len z g2-safety.js (E3).
-        "<p class='g2r-small'>" + escapeHtml(window.G2Safety?.E.E3.text || "") + " <a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>NHS ↗</a></p>");
+        (last ? "<p class='g2r-small'>Posledný o " + escapeHtml(formatClock(last.time)) + "</p><div class='g2r-chips g2r-rq' role='group' aria-label='Druh pohybu'>" + kinds.map(k => "<button class='g2r-pill' type='button' data-g2q='move-kind' data-kind='" + k[0] + "' aria-pressed='" + String(last.kind === k[0]) + "'>" + k[1] + "</button>").join("") + "</div>" : "") +
+        "<p class='g2r-small'>Kedy je zapísaný pohyb · 7 dní</p><div class='g2q-grid' role='img' aria-label='Kedy je zapísaný pohyb za posledných 7 dní'>" + grid + "<div class='g2q-grid-row g2q-grid-h'><small></small><span>0</span><span>6</span><span>12</span><span>18</span><span>24</span></div></div>" +
+        // Master 3.8 (C&S kolo 3, V1; Samo: len ľahké informatívne tvrdenie so zdrojom, nie príkaz ani norma).
+        // NHS Your baby's movements (overené 26. 11. 2026): „You do not need to count…“, „every baby is different“.
+        "<p class='g2r-small'>Pohyby netreba počítať – každé bábätko je iné. <a href='" + escapeHtml(e3?.source || "") + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (Spojené kráľovstvo) · overené 26. 11. 2026 ↗</a></p>" +
+        // Jedna pokojná veta len z g2-safety.js (E3), zdroj a dátum overenia tiež odtiaľ (C&S kolo 3, S1).
+        "<p class='g2r-small'>" + escapeHtml(e3?.text || "") + " <a href='" + escapeHtml(e3?.source || "") + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené " + escapeHtml(window.G2Safety?.CHECKED || "") + " ↗</a></p>");
     }
     if (key === "firstmove") {
       // Pokojné očakávanie, nie úloha: bez odpočtu, bez „ešte nie“, žiadne automatické prepnutie (Content & Safety, NHS overené 15. 11. 2026).
@@ -1746,33 +1754,33 @@
         g2qAct("firstmove-save", "butterfly", "Cítila som ho", "do Našich momentov", "", true) +
         // Master 2.7 (audit #26): od 24. t. namiesto vety tlačidlo na otázku (predvyplnené), nič nehodnotíme.
         (g2qWeek() >= 24 && window.G2Safety ? window.G2Safety.askButton("me", "Pohyby bábätka som ešte necítila.", "Zapísať ako otázku pre lekára") : "") +
-        "<p class='g2r-small'><a href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Podľa NHS (Spojené kráľovstvo) ↗</a></p>");
+        "<p class='g2r-small'><a href='" + escapeHtml(window.G2Safety?.E.E3.source || "") + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (Spojené kráľovstvo) · overené " + escapeHtml(window.G2Safety?.CHECKED || "") + " ↗</a></p>");
     }
     if (key === "drink") {
       // Pitie: ten istý stav ako Pitný režim v Mame (state.v5.water + waterLog), bez cieľa v kruhu.
       const water = waterToday();
       const bars = g2qPastDays(7).map(d => { const k = calendarDayKey(d); return [G2Q_WD[d.getDay()], k === todayKey() ? water.count : Number((state.v5.waterLog || {})[k] || 0)]; });
-      return g2qOpen("Pitie", "<div class='g2q-big'><b>" + water.count + "</b><span>" + (water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov") + " dnes</span></div>" +
+      return g2qOpen("Pitný režim", "<div class='g2q-big'><b>" + water.count + "</b><span>" + (water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov") + " dnes</span></div>" +
         "<div class='g2q-pm'><button class='g2q-pm-btn' type='button' data-g2q='drink-minus' aria-label='Odobrať pohár'" + (water.count ? "" : " disabled") + ">−1</button><button class='g2q-pm-btn is-main' type='button' data-g2q='drink-add' aria-label='Pridať pohár'>+1</button></div>" +
         "<p class='g2r-small'>Posledných 7 dní</p>" + g2qBars(bars, "Poháre za posledných 7 dní") +
-        "<button class='g2r-link' type='button' data-v2-mama-section='water' data-g2q-nav>Pitný režim v Mame ›</button>");
+        "<button class='g2r-link' type='button' data-v2-mama-section='water' data-g2q-nav>Viac v Mame ›</button>");
     }
     if (key === "vit") return g2qSuppSheet();
     if (key === "supp-edit") return g2qSuppEdit();
     if (key === "supp-remind") {
       const at = g2qSupp().remindAt || "09:00";
-      return g2qOpen("Pripomenúť každý deň", "<p class='g2r-lead'>Stiahneš si udalosť do kalendára v telefóne, ktorá sa opakuje každý deň. Appka nič neposiela.</p>" +
+      return g2qOpen("Pripomenúť každý deň", "<p class='g2r-lead'>Pridáš si ju do kalendára v telefóne, každý deň v rovnaký čas. Appka nič neposiela.</p>" +
         "<label class='g2q-field'>Čas<input id='g2qRemindAt' type='time' value='" + escapeHtml(at) + "'></label>" +
-        "<button class='g2r-btn' type='button' data-g2q='supp-ics'>Stiahnuť do kalendára</button><button class='g2r-link' type='button' data-g2q='seg' data-seg='vit'>Späť</button>");
+        "<button class='g2r-btn' type='button' data-g2q='supp-ics'>Pridať do kalendára</button><button class='g2r-link' type='button' data-g2q='seg' data-seg='vit'>Späť</button>");
     }
     if (key === "question") {
       const open = doctorQuestions("me").filter(q => !q.done);
       const next = calendarItems().filter(i => i.type === "Zdravie" && calendarDayKey(i.date) >= todayKey()).sort((a, b) => String(a.date).localeCompare(String(b.date)))[0];
       const when = next ? new Date(calendarHasTime(next.date) ? next.date : next.date + "T12:00:00").toLocaleDateString("sk-SK", { weekday: "short", day: "numeric", month: "numeric" }) : "";
-      return g2qOpen("Pre lekára", (next ? "<p class='g2q-next'>" + icon("calendarDots") + "<span>Najbližšie: <b>" + escapeHtml(when) + "</b> · " + escapeHtml(next.title || "") + "</span></p>" : "") +
+      return g2qOpen("Otázky pre lekára", (next ? "<p class='g2q-next'>" + icon("calendarDots") + "<span>Najbližšie: <b>" + escapeHtml(when) + "</b> · " + escapeHtml(next.title || "") + "</span></p>" : "") +
         "<textarea id='g2qQText' class='g2q-text' rows='2' maxlength='300' placeholder='Napíš otázku…' aria-label='Otázka pre lekára'></textarea>" +
-        "<button class='g2r-btn' type='button' data-g2q='q-save'>Uložiť otázku</button>" +
-        (open.length ? "<p class='g2r-small'>Na prehliadku (" + open.length + ")</p><ul class='g2q-checks'>" + open.slice(-6).reverse().map(q => "<li><button type='button' data-g2q='q-done' data-id='" + escapeHtml(q.id) + "' aria-pressed='false' aria-label='Zodpovedané: " + escapeHtml(q.text) + "'><i aria-hidden='true'></i><span>" + escapeHtml(q.text) + "</span></button></li>").join("") + "</ul><p class='g2r-small'>Ťukni na otázku, keď je zodpovedaná.</p>" : "") +
+        "<button class='g2r-btn' type='button' data-g2q='q-save'>Uložiť</button>" +
+        (open.length ? "<p class='g2r-small'>Na kontrolu (" + open.length + ")</p><ul class='g2q-checks'>" + open.slice(-6).reverse().map(q => "<li><button type='button' data-g2q='q-done' data-id='" + escapeHtml(q.id) + "' aria-pressed='false' aria-label='Zodpovedané: " + escapeHtml(q.text) + "'><i aria-hidden='true'></i><span>" + escapeHtml(q.text) + "</span></button></li>").join("") + "</ul><p class='g2r-small'>Ťukni, keď je zodpovedaná.</p>" : "") +
         "<button class='g2r-link' type='button' data-v5-book-section='questions' data-g2q-nav>Všetky otázky ›</button>");
     }
     if (key === "contraction") {
@@ -1787,7 +1795,8 @@
     }
     if (key === "voice") {
       const list = state.lullabies || [];
-      return g2qOpen("Hlas pre bábätko", g2qLastLine(list.length ? "Posledná: " + (list[list.length - 1].title || "Nahrávka") : g2qWeek() >= 16 ? "Bábätko ťa už začína počuť (NHS, 15. týždeň)." : "Nahraj bábätku pár slov alebo pesničku.") +
+      // Master 3.8 (C&S kolo 3, N5; Texty kolo 3, #23): názov funkcie + veta zosúladená s #101 (NHS Week 15, overené 26. 11. 2026).
+      return g2qOpen("Môj hlas pre bábätko", g2qLastLine(list.length ? "Posledná: " + (list[list.length - 1].title || "Nahrávka") : g2qWeek() >= 16 ? "Podľa NHS bábätko okolo 15. týždňa začína počuť." : "Nahraj bábätku pár slov alebo pesničku.") +
         (list.length ? g2qAct("voice-play", "sound", "Pustiť poslednú", "", "", true) : "") +
         g2qAct("voice-rec", "voice", "Nahrať nové", "", "", !list.length));
     }
@@ -1800,9 +1809,9 @@
     if (key === "play") return openFeature("activities");
   }
   // Prepínače „Čo sledujem v kruhu“ – aj v Nastaveniach (Profil → Nastavenia).
-  // Master 3.5: pred pôrodom aj výber dielov (Pitie, Vitamíny, Pre lekára, Bruško, Hlas), v kruhu 3–5 dielov.
+  // Master 3.5: pred pôrodom aj výber dielov (Pitný režim, Čo beriem, Otázky pre lekára, Bruško, Môj hlas pre bábätko), v kruhu 3–5 dielov.
   const g2qFixedLine = () => state.profile.status === "expecting"
-    ? (g2qWeek() >= 36 ? "Pohyby a Kontrakcie sú v kruhu vždy." : "Pohyby sú v kruhu vždy.") + " V kruhu môže byť 3 až 5 dielov."
+    ? (g2qWeek() >= 36 ? "Pohyby a Kontrakcie sú v kruhu vždy." : "Pohyby sú v kruhu vždy.") + " Spolu 3 až 5 dielov."
     : "Kŕmenie, Spánok a Plienky sú v kruhu vždy.";
   function g2qExtrasHtml() {
     const toggle = (action, key, label, ic, on, off) => "<button type='button' class='g2q-toggle' data-g2q='" + action + "' data-x='" + key + "' aria-pressed='" + String(on) + "'" + (off ? " aria-disabled='true'" : "") + "><i aria-hidden='true'>" + icon(ic) + "</i><span>" + label + "</span><em aria-hidden='true'></em></button>";
@@ -1823,25 +1832,25 @@
   // Čo beriem (Samo 24. 11.): vlastný zoznam, odškrtnutie dňa, 7 bodiek týždňa (Po–Ne), voliteľná pripomienka (.ics). Appka nič nenavrhuje.
   function g2qSuppSheet() {
     const s = g2qSupp(), day = g2qSuppDay();
-    if (!s.items.length) return g2qOpen("Čo beriem", "<p class='g2r-lead'>Zapíš si, čo beriem.</p>" + g2qSuppAddHtml());
+    if (!s.items.length) return g2qOpen("Čo beriem", "<p class='g2r-lead'>Zapíš si, čo berieš.</p>" + g2qSuppAddHtml());
     const monday = new Date(todayKey() + "T12:00:00"); monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
     const week = Array.from({ length: 7 }, (_, i) => { const d = new Date(monday); d.setDate(d.getDate() + i); const k = calendarDayKey(d); return "<span class='g2q-wd" + (g2qSuppAll(k) ? " on" : "") + (k === todayKey() ? " today" : "") + "'><i></i>" + ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"][i] + "</span>"; }).join("");
     return g2qOpen("Čo beriem", "<ul class='g2q-checks'>" + s.items.map(item => { const at = day[item.id]; return "<li><button type='button' data-g2q='supp-toggle' data-id='" + escapeHtml(item.id) + "' aria-pressed='" + String(!!at) + "'><i aria-hidden='true'></i><span>" + escapeHtml(item.name) + "</span>" + (at ? "<time>" + escapeHtml(formatClock(at)) + "</time>" : "") + "</button></li>"; }).join("") + "</ul>" +
-      "<p class='g2r-small'>Tento týždeň</p><div class='g2q-week' role='img' aria-label='Dni tohto týždňa, keď bolo vzaté všetko'>" + week + "</div>" +
+      "<p class='g2r-small'>Tento týždeň</p><div class='g2q-week' role='img' aria-label='Dni, keď je odškrtnuté všetko'>" + week + "</div>" +
       "<div class='g2q-links'><button class='g2r-link' type='button' data-g2q='seg' data-seg='supp-edit'>Upraviť zoznam ›</button><button class='g2r-link' type='button' data-g2q='seg' data-seg='supp-remind'>Pripomenúť každý deň ›</button></div>");
   }
-  const g2qSuppAddHtml = () => "<div class='g2q-add'><input id='g2qSuppName' type='text' maxlength='60' placeholder='napr. názov z balenia' aria-label='Názov'><button class='g2r-btn' type='button' data-g2q='supp-add'>Pridať</button></div>";
+  const g2qSuppAddHtml = () => "<div class='g2q-add'><input id='g2qSuppName' type='text' maxlength='60' placeholder='Názov z balenia' aria-label='Názov'><button class='g2r-btn' type='button' data-g2q='supp-add'>Pridať</button></div>";
   function g2qSuppEdit() {
     const s = g2qSupp();
     return g2qOpen("Upraviť zoznam", (s.items.length ? "<ul class='g2q-edit-list'>" + s.items.map(item => "<li><input type='text' maxlength='60' value='" + escapeHtml(item.name) + "' data-g2q-rename='" + escapeHtml(item.id) + "' aria-label='Názov'><button class='g2q-del' type='button' data-g2q='supp-del' data-id='" + escapeHtml(item.id) + "'>Zmazať</button></li>").join("") + "</ul>" : "") +
-      g2qSuppAddHtml() + "<button class='g2r-link' type='button' data-g2q='seg' data-seg='vit'>Hotovo ›</button>");
+      g2qSuppAddHtml() + "<button class='g2r-link' type='button' data-g2q='seg' data-seg='vit'>Hotovo</button>");
   }
   function g2qContractionsHtml() {
     const list = state.v5.contractions.filter(c => g2qSince(c.start) < 12 * 36e5).slice(-8).reverse();
     return list.length ? "<div class='g2r-info'><ul class='g2q-list'>" + list.map((c, i) => {
       const prev = list[i + 1];
       return "<li><time>" + escapeHtml(formatClock(c.start)) + "</time><span>trvala " + escapeHtml(g2qClock(new Date(c.end) - new Date(c.start))) + (prev ? " · odstup " + Math.round((new Date(c.start) - new Date(prev.start)) / 60000) + " min" : "") + "</span></li>";
-    }).join("") + "</ul></div><p class='g2r-small'>Kedy ísť do pôrodnice, ti povie tvoj lekár alebo pôrodnica.</p>" : "<p class='g2r-lead'>Ukončíš ju v strede kruhu.</p>";
+    }).join("") + "</ul></div><p class='g2r-small'>Kedy ísť do pôrodnice, ti povie tvoj lekár alebo pôrodnica.</p>" : "<p class='g2r-lead'>Koniec zapíšeš aj v strede kruhu.</p>";
   }
   // Posledná hodina: každá kontrakcia ako pás (začiatok a dĺžka) – len zobrazenie, bez hodnotenia.
   function g2qContractionChart() {
@@ -1879,11 +1888,12 @@
     const supp = g2qSupp();
     const tiles = born
       ? (firstYear ? [[cnt("feed"), "kŕmení"], [g2qSpan(sleepMs), "spánku"], [cnt("diaper"), "plienok"]] : [[cnt("food"), "jedál"], [g2qSpan(sleepMs), "spánku"]])
-      : [[cnt("move"), "pohyby"], g2qWeek() >= 36 ? [cnt("contraction"), "kontrakcie"] : [waterToday().count, "poháre"], [supp.items.length ? supp.items.filter(i => g2qSuppDay()[i.id]).length + " z " + supp.items.length : "–", "čo beriem"]];
+      // Master 3.8 (C&S kolo 3, V1): pohyby sa nepočítajú – len čas posledného zápisu (items sú zoradené od najnovšieho).
+      : [[cnt("move") ? formatClock(items.find(i => i.k === "move").t) : "–", "posledný pohyb"], g2qWeek() >= 36 ? [cnt("contraction"), "kontrakcie"] : [waterToday().count, "poháre"], [supp.items.length ? supp.items.filter(i => g2qSuppDay()[i.id]).length + " z " + supp.items.length : "–", "čo beriem"]];
     const row = i => "<li><time>" + escapeHtml(formatClock(i.t)) + "</time><span>" + escapeHtml(i.label) + "</span><button type='button' class='g2q-ed' data-g2q='edit-open' data-ref='" + escapeHtml(i.ref) + "' aria-label='Upraviť: " + escapeHtml(formatClock(i.t) + " " + i.label) + "'>Upraviť</button></li>";
     g2qOpen("Dnes", g2qSum(tiles) +
-      (items.length ? "<ul class='g2q-daylist'>" + items.map(row).join("") + "</ul>" : g2qLastLine("Dnes zatiaľ nič. Ťukni na diel kruhu.")) +
-      (born && items.length ? g2qAct("share-preview", "paperPlane", "Poslať prehľad blízkemu", "partnerovi alebo babke") : "") +
+      (items.length ? "<ul class='g2q-daylist'>" + items.map(row).join("") + "</ul>" : g2qLastLine("Zatiaľ nič. Ťukni na diel kruhu.")) +
+      (born && items.length ? g2qAct("share-preview", "paperPlane", "Poslať prehľad blízkym", "") : "") +
       (firstYear || !born ? g2qRingRow() : "") +
       (born ? "<button class='g2r-link' type='button' data-v5-open-record data-g2q-nav>Všetky denné záznamy ›</button>" : ""));
   }
@@ -1926,9 +1936,9 @@
   // Poslať prehľad: len časy a činnosti, bez mena, dátumu narodenia a poznámok; mama vidí presný text pred odoslaním.
   function g2qShareText() {
     const feed = g2qLastFeed(), sleep = g2qLastSleep(), diaper = g2qLastDiaper();
-    const lines = ["Náš deň do " + formatClock(new Date())];
+    const lines = ["Dnes do " + formatClock(new Date())];
     if (feed && g2qIsToday(feed.created)) lines.push("Posledné kŕmenie: " + formatClock(feed.created) + (g2qSideShort(feed.side) ? ", " + g2qSideShort(feed.side) : feed.method === "Fľaša" ? ", fľaša" : ""));
-    if (state.sleepTimer?.active) lines.push("Spánok: spinká od " + formatClock(state.sleepTimer.start));
+    if (state.sleepTimer?.active) lines.push("Spánok: spí od " + formatClock(state.sleepTimer.start));
     else if (sleep && g2qIsToday(sleep.created)) lines.push("Spánok: zobudilo sa o " + formatClock(sleep.created));
     if (diaper && g2qIsToday(diaper.created)) lines.push("Posledná plienka: " + formatClock(diaper.created));
     lines.push("Poslané z Guguboo.");
@@ -1988,7 +1998,11 @@
     if (action === "sounds") { g2qClose(); return openFeature("sounds"); }
     if (action === "stop") return g2qStopRunning();
     if (action === "undo") { if (g2qUndo) g2qRestore(g2qUndo); g2qUndo = null; return g2qToast("Vrátené"); }
-    if (action === "pick") { el.parentElement.querySelectorAll("[data-g2q='pick']").forEach(b => b.setAttribute("aria-pressed", String(b === el))); return; }
+    if (action === "pick") {
+      el.parentElement.querySelectorAll("[data-g2q='pick']").forEach(b => b.setAttribute("aria-pressed", String(b === el)));
+      if (el.dataset.grp === "ml") el.closest("#g2QuickOverlay")?.querySelector("[data-g2q='pump-save']")?.removeAttribute("disabled"); // Master 3.8 (C&S N4)
+      return;
+    }
     const snap = g2qSnap();
     if (action === "share-preview") return g2qOpen("Poslať prehľad", "<p class='g2r-lead'>Takto to odíde.</p><pre class='g2q-preview'>" + escapeHtml(g2qShareText()) + "</pre>" + g2qAct("share-send", "family", "Poslať", "WhatsApp, SMS…", "", true) + "<button class='g2r-link' type='button' data-g2q='day'>Späť</button>");
     if (action === "share-send") {
@@ -2050,7 +2064,7 @@
       const input = byId("g2qQText"), text = String(input?.value || "").trim().slice(0, 300);
       if (!text) { input?.focus(); return announce("Napíš otázku."); }
       doctorQuestions().push({ id: createId(), who: "me", text, created: new Date().toISOString(), done: false });
-      return g2qDone("Otázka je uložená", snap, "question");
+      return g2qDone("Otázka uložená", snap, "question");
     }
     if (action === "q-done") {
       const q = doctorQuestions().find(x => x.id === el.dataset.id);
@@ -2066,7 +2080,7 @@
       return announce(x[el.dataset.x] ? "Pridané do kruhu." : "Odobraté z kruhu.");
     }
     if (action === "pre-toggle") {
-      if (el.getAttribute("aria-disabled") === "true") return announce(el.getAttribute("aria-pressed") === "true" ? "V kruhu musia ostať aspoň 3 diely." : "V kruhu je najviac 5 dielov. Najprv jeden odober.");
+      if (el.getAttribute("aria-disabled") === "true") return announce(el.getAttribute("aria-pressed") === "true" ? "V kruhu ostávajú aspoň 3 diely." : "Viac ako 5 dielov sa nezmestí. Najprv jeden odober.");
       const chosen = g2qPreChosen(), key = el.dataset.x, on = !chosen.includes(key);
       state.v5.ringPre = on ? chosen.concat(key) : chosen.filter(k => k !== key);
       persist(); renderHome();
@@ -2087,10 +2101,10 @@
       if (action === "edit-save" && orig) g2qApplyShift(g2qEdit.ref, g2qEdit.t - new Date(orig).getTime());
       if (action === "edit-del") g2qDeleteRef(g2qEdit.ref);
       g2qEdit = null;
-      return g2qDone(action === "edit-del" ? "Zmazané" : "Čas je upravený", snap, "day");
+      return g2qDone(action === "edit-del" ? "Zmazané" : "Čas upravený", snap, "day");
     }
     if (action === "contraction-start") { state.v5.contractionTimer = { active: true, start: new Date().toISOString() }; return g2qDone("Kontrakcia sa meria", snap); }
-    if (action === "tummy-start") { state.v5.tummyTimer = { active: true, start: new Date().toISOString() }; return g2qDone("Na brušku beží", snap); }
+    if (action === "tummy-start") { state.v5.tummyTimer = { active: true, start: new Date().toISOString() }; return g2qDone("Na brušku sa meria", snap); }
     if (action === "tummy-stop") return g2qStopTummy(snap);
     if (action === "sleep-start") {
       if (state.v5.feedingTimer.active) stopFeeding(true);
@@ -2102,7 +2116,7 @@
     if (action === "feed-start") {
       if (state.sleepTimer?.active) stopSleep(true);
       state.v5.feedingTimer = { active: true, start: new Date().toISOString(), method: "Dojčenie", side: el.dataset.side };
-      return g2qDone("Kŕmenie beží", snap);
+      return g2qDone("Kŕmenie sa meria", snap);
     }
     if (action === "feed-end") return g2qStopRunning();
     if (action === "feed-switch") {
@@ -2118,7 +2132,8 @@
       return g2qDone("Kŕmenie uložené", snap);
     }
     if (action === "pump-save") {
-      const side = g2qPicked("side") || "Oba", ml = Number(g2qPicked("ml") || 90);
+      const side = g2qPicked("side") || "Oba", ml = Number(g2qPicked("ml") || 0);
+      if (!ml) return; // Master 3.8 (C&S N4): bez predvoleného množstva
       state.events.push({ id: createId(), type: "Odsávanie", value: side + " · " + ml + " ml", note: "", author: "rodina", created: new Date().toISOString(), side, ml });
       return g2qDone("Odsávanie uložené · " + ml + " ml", snap);
     }
@@ -2386,7 +2401,7 @@
     const prenatalTiles = () => {
       const daysToDue = state.profile.due ? Math.round((new Date(state.profile.due + "T12:00:00") - new Date(todayKey() + "T12:00:00")) / 86400000) : null;
       const moves = state.v5.babyMoves || [];
-      const movesToday = moves.filter(move => calendarDayKey(move.time) === today).length;
+      // Master 3.8 (Samo): pohyby sa nepočítajú – len čas posledného zápisu.
       const lastMove = moves[moves.length - 1];
       const nextVisit = calendarItems().filter(item => item.source === "prenatal-visit" && !item.completedAt && calendarDayKey(item.date) >= today).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
       const water = waterToday();
@@ -2395,9 +2410,9 @@
         ["Do termínu", daysToDue === null ? "Doplniť" : daysToDue > 0 ? daysToDue + (daysToDue === 1 ? " deň" : daysToDue < 5 ? " dni" : " dní") : daysToDue === 0 ? "Dnes" : "Po termíne", "data-v5-feature='pregnancy'"],
         ["Trimester", !pregnancyWeek ? "—" : (pregnancyWeek < 13 ? "1." : pregnancyWeek < 28 ? "2." : "3.") + " trimester", "data-v5-feature='pregnancy'"],
         // Veľkosť bábätka otvára odznak týždňa vedľa mena – tu namiesto nej Pohyby bábätka (Samuel 10. 11.: nie dve rovnaké funkcie).
-        ["Pohyby", movesToday ? "Dnes " + movesToday + "×" : lastMove ? "Naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "Zapísať", "data-v5-book-section='moves'"],
+        ["Pohyby", lastMove ? "Naposledy " + new Date(lastMove.time).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" }) : "Zapísať", "data-v5-book-section='moves'"],
         ["Kontrola", nextVisit ? new Date(nextVisit.date).toLocaleDateString("sk-SK", { day: "numeric", month: "numeric" }) : "Zapísať", "data-v5-book-section='visits'"],
-        ["Pitný režim", water.count + " / " + water.goal, "data-v2-mama-section='water'"],
+        ["Pitný režim", waterProgressText(), "data-v2-mama-section='water'"],
         ["Otázky", questions ? questions + " pre lekára" : "Žiadne", "data-v5-book-section='questions'"]
       ];
     };
@@ -2472,7 +2487,7 @@
             ])
         : (() => {
             const days = age?.days ?? 0;
-            const sRec = short("clock", "g2-c-baby", "Denné záznamy", "prehľad dňa", "data-v5-open-record");
+            const sRec = short("clock", "g2-c-baby", "Denné záznamy", "všetky záznamy", "data-v5-open-record");
             const sCare = short("health", "g2-c-mama", features.care.label, "plač, teplota, noc", "data-v5-feature='care'");
             const sBook = short("book", "g2-c-brand", "Zdravotná knižka", "prehliadky, očkovanie", "data-v5-feature='childBook'");
             const sAct = short("activity", "g2-c-mama", "Aktivity", "nápad na dnes", "data-v5-feature='activities'");
@@ -2846,7 +2861,6 @@
         return [
           "<button class='v5-quick-tile v5-o-day-row v2-water-tile", done ? " is-done" : "", "' type='button' data-v5-water-add aria-label='Pridať pohár. Dnes ", escapeHtml(waterProgressText()), "'>",
           "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong><small>", escapeHtml(waterProgressText()), "</small>",
-          "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span>",
           "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
         ].join("");
       }
@@ -2872,15 +2886,15 @@
     return [
       "<section class='v2-water-panel' aria-label='Pitný režim'>",
       "<div class='v2-water-count'><button type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">−</button>",
-      "<strong>", water.count, " / ", water.goal, "<small>pohárov · ", escapeHtml(waterLiters(water.count)), " z ", escapeHtml(waterLiters(water.goal)), "</small></strong>",
+      // Master 3.8 (Samo, C&S kolo 3, S3): bez cieľa – len počet pohárov dnes (a 7 dní v okne kruhu).
+      "<strong>", water.count, "<small>", water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov", " dnes · ", escapeHtml(waterLiters(water.count)), "</small></strong>",
       "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
-      "<div class='v2-water-settings'><label>Denný cieľ<select data-v5-water-goal>",
-      [6, 7, 8, 9, 10, 11, 12, 14].map(n => "<option value='" + n + "'" + (n === water.goal ? " selected" : "") + ">" + n + " pohárov</option>").join(""),
-      "</select></label><label>Pohár<select data-v5-water-glass>",
+      "<div class='v2-water-settings'><label>Pohár<select data-v5-water-glass>",
       [200, 250, 300, 330, 500].map(n => "<option value='" + n + "'" + (n === water.glassMl ? " selected" : "") + ">" + n + " ml</option>").join(""),
       "</select></label></div>",
-      "<p>NHS uvádza 6 až 8 pohárov tekutín denne; v tehotenstve a pri dojčení môžeš potrebovať viac.</p><details class='g2-more'><summary>Viac</summary><p>Počíta sa voda, mlieko so zníženým obsahom tuku aj nápoje s nízkym obsahom cukru vrátane čaju a kávy.</p></details><p class='g2-small'>Počítadlo sa o polnoci vynuluje.</p>",
-      "<a class='v2-source' href='", WATER_SOURCE_URL, "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené 11. 10. 2026 ↗</a>",
+      "<p>NHS uvádza 6 až 8 pohárov tekutín denne; v tehotenstve a pri dojčení môžeš potrebovať viac.</p><details class='g2-more'><summary>Viac</summary><p>Počíta sa voda, mlieko so zníženým obsahom tuku aj nápoje s nízkym obsahom cukru vrátane čaju a kávy.",
+      "</p></details><p class='g2-small'>Počítadlo sa o polnoci vynuluje.</p>",
+      "<a class='v2-source' href='", WATER_SOURCE_URL, "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené 26. 11. 2026 ↗</a>",
       "</section>"
     ].join("");
   }
@@ -5335,7 +5349,7 @@
       // Master 2.1 (Samo 15. 11.): Čas pre teba sa presunul z domova sem – navrchu Mamy, tri časti na jedno ťuknutie.
       MASTER ? "<section class='g2q-me' aria-label='Čas pre teba'><button type='button' class='g2q-me-head' data-v5-o-section='care'><span><strong>Čas pre teba</strong><small>Malá chvíľa</small></span><b aria-hidden='true'>›</b></button><div class='g2q-me-parts'><button type='button' class='g2r-part g2r-p1' data-g2-ring-part='rest'>" + icon("feather") + "<span>Oddych</span></button><button type='button' class='g2r-part g2r-p2' data-g2-ring-part='body'>" + icon("personTaiChi") + "<span>Telo</span></button><button type='button' class='g2r-part g2r-p3' data-g2-ring-part='sup'>" + icon("handshake") + "<span>Opora</span></button></div></section>" : "",
       "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) + " · nastaviť", "</small>",
-      "<span class='v2-water-bar' aria-hidden='true'><span style='width:", Math.min(100, Math.round(water.count / water.goal * 100)), "%'></span></span></button>",
+      "</button>",
       "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
       "<div class='v2-book-tools'>",
       // Master 1.7 (S10): rovnaké položky ako zásuvka Všetko – aj „Nálada a podpora“ (Master 3.0, predtým „Keď je mi ťažko“) v tehotenstve (po pôrode je to Nálada a spánok).
@@ -5513,7 +5527,7 @@
       "<button type='button' data-v5-health-overview><span class='v5-icon'>", icon("temperature"), "</span><span><strong>Teplota a merania</strong><small>Aj návštevy lekára</small></span><b aria-hidden='true'>›</b></button>",
       "<button type='button' data-v5-feature='teeth'><span class='v5-icon'>", icon("tooth"), "</span><span><strong>Zúbky</strong></span><b aria-hidden='true'>›</b></button>",
       "</div><h2 class='v2-book-group'>K lekárovi</h2><div class='v2-book-tools'>",
-      row("questions", "book", "Otázky pre lekára", questions.length ? skCount(questions.length, "pripravená", "pripravené", "pripravených") : "Na najbližšiu prehliadku"),
+      row("questions", "book", "Otázky pre lekára", questions.length ? skCount(questions.length, "pripravená", "pripravené", "pripravených") : "Na najbližšiu kontrolu"),
       "<button type='button' data-v5-feature='profiles'><span class='v5-icon'>", icon("profile"), "</span><span><strong>Profil dieťaťa</strong><small>Poisťovňa, pediater, alergie</small></span><b aria-hidden='true'>›</b></button>",
       "</div>",
       "<button class='v5-secondary v2-book-doctor' type='button' data-v2-child-section='doctor'>Prehľad pre pediatra</button>",
@@ -6277,14 +6291,13 @@
     const waterRemove = event.target.closest("[data-v5-water-remove]");
     if (waterAdd || waterRemove) {
       const water = waterToday();
-      const wasDone = water.count >= water.goal;
       water.count = Math.max(0, water.count + (waterAdd ? 1 : -1));
       (state.v5.waterLog ||= {})[todayKey()] = water.count;
       persist();
       renderHome();
       renderAdaptiveOMenu();
       if (currentView() === "v5Mama") renderMama();
-      return announce(!wasDone && water.count >= water.goal ? "Denný cieľ pitia je splnený." : waterProgressText());
+      return announce(waterProgressText()); // Master 3.8 (Samo): bez cieľa a hlášky „splnené“
     }
     if (event.target.closest("[data-v2-ex-open]")) return renderExercisesMenu();
     const exAdd = event.target.closest("[data-v2-ex-add]");
@@ -7033,11 +7046,11 @@
       renderHome();
       return announce("Súhrn bude pripravený o " + summaryTimeSelect.value + ".");
     }
-    const waterSetting = event.target.closest("[data-v5-water-goal], [data-v5-water-glass]");
+    const waterSetting = event.target.closest("[data-v5-water-glass]");
     if (waterSetting) {
       const water = waterToday();
-      if (waterSetting.matches("[data-v5-water-goal]")) water.goal = Number(waterSetting.value) || 8;
-      else water.glassMl = Number(waterSetting.value) || 250;
+      // Master 3.8: nastavenie cieľa zrušené (Samo)
+      water.glassMl = Number(waterSetting.value) || 250;
       persist();
       renderHome();
       renderAdaptiveOMenu();

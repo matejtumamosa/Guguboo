@@ -164,7 +164,7 @@
 
   // ——— Rozpísané údaje ———
   // Len textové polia a výbery vo formulároch. Polia, ktoré sa ukladajú hneď pri písaní, sa nekontrolujú.
-  const AUTOSAVE = "#g2Q, #v2ChatInput, #chatInput, .private-pin, [data-v2-ann-field], [data-v2-ann-crop], [data-v2-bc-field], [data-v5-water-goal], [data-v5-water-glass], [data-v2-summary-time], [data-v2-voice-name], [data-g2-no-guard]";
+  const AUTOSAVE = "#g2Q, #v2ChatInput, #chatInput, .private-pin, [data-v2-ann-field], [data-v2-ann-crop], [data-v2-bc-field], [data-v5-water-glass], [data-v2-summary-time], [data-v2-voice-name], [data-g2-no-guard]";
   function dirtyFields(roots) {
     return roots.filter(Boolean).flatMap(root => Array.from(root.querySelectorAll("input, textarea, select"))).filter(field => {
       if (field.disabled || field.matches(AUTOSAVE) || field.closest("[data-g2-no-guard]")) return false;

@@ -859,7 +859,7 @@
               const op = parseFloat(app.win.getComputedStyle(segs[0].querySelector(".g2q-sic")).opacity);
               eq(op, data[PREFIX + "state"].includes('"night":true') ? .7 : .58, name + ": tón ikony");
               const core = app.doc.querySelector("#home.view.active .g2q-core");
-              eq(core.getAttribute("aria-label"), "Prehľad dňa – dnešné záznamy", name + ": stred");
+              eq(core.getAttribute("aria-label"), "Dnes – prehľad záznamov", name + ": stred");
               eq(core.textContent.trim(), "Dnes", name + ": text stredu");
               const ring = svg.getBoundingClientRect(), card = app.doc.querySelector("#home.view.active .g2q-card").getBoundingClientRect();
               assert(ring.top >= card.top - 1 && ring.bottom <= card.bottom + 1, name + ": kruh presahuje kartu");
@@ -951,7 +951,7 @@
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
         },
-        "Pohyby „Tvoj rytmus“: Cítim pohyb pridá bodku na os dňa, druh jedným ťukom, mriežka 7 × 24, veta len z g2-safety.js (E3)": async () => {
+        "Pohyby: Cítim pohyb pridá bodku na os dňa, druh jedným ťukom, mriežka 7 × 24, veta len z g2-safety.js (E3)": async () => {
           const app = await bootApp(ringSeed("pred", { v5: { babyMoves: [{ id: "m0", time: new Date(Date.now() - 2 * DAY).toISOString() }] } }));
           try {
             const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
@@ -967,6 +967,51 @@
             // Linkové ikony v okne ostanú ťahom (svg.ph mení výplne na currentColor)
             const line = ov().querySelector("svg.ph [stroke]");
             assert(line && app.win.getComputedStyle(line).fill === "none", "linková ikona sa vyplnila");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        // Master 3.8 (Content & Safety kolo 3, V1; Samo): pohyby sa nepočítajú – ani v okne Pohybov, ani v okne Dnes.
+        "Pohyby bez počítania: okno Pohybov ani okno Dnes neukazujú počet pohybov, mriežka bez sýtosti": async () => {
+          const t = m => new Date(Date.now() - m * 60000).toISOString();
+          const app = await bootApp(ringSeed("pred", { v5: { babyMoves: [{ id: "a", time: t(90) }, { id: "b", time: t(60) }, { id: "c", time: t(61) }, { id: "d", time: t(20) }] } }));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            // Medzera je povinná: popisky hodín mriežky („24“) sa v textContent lepia na ďalší text („24Pohyby netreba…“).
+            const countRe = /\d+ (pohyb|pohyby|pohybov)\b|pohyby \d/;
+            tapSeg(app, "move"); await sleep(200);
+            eq(doc.getElementById("g2qTitle").textContent, "Pohyby", "nadpis okna");
+            assert(!countRe.test(ov().textContent), "okno Pohybov ukazuje počet: " + (ov().textContent.match(countRe) || [])[0]);
+            assert(/naposledy \d/.test(ov().querySelector("[data-g2q='move-save']").textContent), "chýba čas posledného zápisu");
+            eq([...ov().querySelectorAll(".g2q-grid i[style]")].length, 0, "mriežka má sýtosť podľa počtu");
+            assert(ov().querySelectorAll(".g2q-grid i.on").length >= 1, "mriežka bez zápisu");
+            ov().querySelector("[data-g2q='move-save']").click(); await sleep(250);
+            assert(!countRe.test(ov().textContent), "po zápise okno ukazuje počet");
+            doc.querySelector("#home.view.active .g2q-core").click(); await sleep(250);
+            eq(doc.getElementById("g2qTitle").textContent, "Dnes", "okno Dnes");
+            const sum = ov().querySelector(".g2q-sum")?.textContent || ov().textContent;
+            assert(/posledný pohyb/.test(sum), "dlaždica „posledný pohyb“ chýba");
+            assert(!/\d\s*pohyby/.test(sum), "okno Dnes ukazuje počet pohybov");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        // Master 3.8 (Samo): Pitný režim bez cieľa – len počet pohárov dnes; žiadne nastavenie cieľa ani „cieľ je splnený“.
+        "Pitný režim nemá cieľ (kruh, Mama, oznámenie po pridaní pohára)": async () => {
+          const app = await bootApp(ringSeed("pred", { v5: { water: { date: iso(new Date()), count: 7, goal: 8, glassMl: 250 } } }));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            tapSeg(app, "drink"); await sleep(200);
+            eq(doc.getElementById("g2qTitle").textContent, "Pitný režim", "nadpis okna kruhu");
+            assert(!/cieľ/i.test(ov().textContent), "okno kruhu spomína cieľ");
+            ov().querySelector("[data-g2q='drink-add']").click(); await sleep(250);
+            ov().querySelector("[data-v2-mama-section='water']").click(); await sleep(400);
+            const panel = doc.querySelector(".v2-water-panel");
+            assert(panel, "Pitný režim v Mame sa neotvoril");
+            assert(!/cieľ/i.test(panel.closest("section, .view, main")?.textContent || panel.textContent), "Pitný režim v Mame spomína cieľ");
+            eq(doc.querySelector("[data-v5-water-goal]"), null, "nastavenie cieľa");
+            assert(!/ \/ \d/.test(panel.textContent), "zobrazenie „x / cieľ“");
+            panel.querySelector("[data-v5-water-add]").click(); await sleep(250);
+            const live = [...doc.querySelectorAll("[aria-live]")].map(n => n.textContent).join(" ");
+            assert(!/cieľ|splnen/i.test(live), "oznámenie hovorí o cieli: " + live);
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
         },

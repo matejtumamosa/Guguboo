@@ -39,10 +39,10 @@
     target.innerHTML = [
       "<p class='v2-ann-intro'>",
       expecting()
-        ? "Podľa NHS bábätko približne od 15. týždňa začína počuť – keď sa mu prihovoríš, pravdepodobne ťa začuje. Nahraj mu uspávanku, rozprávku alebo len pár slov. Po narodení ju nájdeš pri Spánku."
+        ? "Podľa NHS bábätko okolo 15. týždňa začína počuť. Po narodení nahrávku nájdeš pri Spánku." // Master 3.8 (#101, C&S kolo 3)
         : "Uspávanka tvojím hlasom – pustí ju ktokoľvek z rodiny.",
       "</p>",
-      expecting() ? "<a class='v2-source' href='" + HEARING_SOURCE + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS, 15. týždeň ↗</a>" : "",
+      expecting() ? "<a class='v2-source' href='" + HEARING_SOURCE + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS, 15. týždeň · overené 26. 11. 2026 ↗</a>" : "",
       "<section class='v2-voice-card'>",
       "<div class='v2-ann-chips'>", TITLES.map(text => "<button type='button' class='v2-ann-chip" + (title === text ? " is-active" : "") + "' data-v2-voice-title='" + esc(text) + "'>" + esc(text) + "</button>").join(""), "</div>",
       "<label class='v2-voice-name'>Názov<input maxlength='40' value='", esc(title), "' data-v2-voice-name></label>",
