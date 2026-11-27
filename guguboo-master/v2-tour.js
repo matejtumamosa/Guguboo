@@ -189,7 +189,7 @@
     byId("v2TourNote").textContent = step.note || "";
     const tryButton = root.querySelector("[data-v2-tour-try]");
     tryButton.hidden = !step.try;
-    tryButton.textContent = step.try ? "▶  " + step.try.label : "";
+    tryButton.textContent = step.try ? step.try.label : ""; // Master 4.0 (Audit T113): bez znaku ▶ v ovládaní
     if (!visible(target)) { spot.style.display = "none"; card.style.top = "32%"; return; }
     const rect = target.getBoundingClientRect();
     const pad = 8;
@@ -265,7 +265,7 @@
   function resumePill(showIt) {
     let pill = byId("v2TourResume");
     if (!pill && showIt) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='v2TourResume' class='v2-tour-resume'><button type='button' data-v2-tour-resume>▶ Pokračovať v prehliadke</button><button type='button' class='v2-tour-resume-close' data-v2-tour-resume-close aria-label='Ukončiť prehliadku'>" + window.GugubooV5.glyph("close") + "</button></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='v2TourResume' class='v2-tour-resume'><button type='button' data-v2-tour-resume>Pokračovať v prehliadke</button><button type='button' class='v2-tour-resume-close' data-v2-tour-resume-close aria-label='Ukončiť prehliadku'>" + window.GugubooV5.glyph("close") + "</button></div>");
       pill = byId("v2TourResume");
     }
     if (pill) pill.classList.toggle("open", Boolean(showIt));

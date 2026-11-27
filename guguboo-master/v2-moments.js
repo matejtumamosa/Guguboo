@@ -71,7 +71,7 @@
     if (m.name && pre(m.name) === "pre") add({ key: "name", phase: pre(m.name), emoji: "💜", title: "Meno: " + p.name, date: m.name, source: "auto" });
     if (m.firstLetter) add({ key: "letter", phase: pre(m.firstLetter), emoji: "✉️", title: "Prvý list bábätku", text: "Obsah ostáva v tvojom súkromnom denníku.", date: m.firstLetter, source: "Denník" });
     if (m.birthCard) add({ key: "birthCard", phase: "post", emoji: "💌", title: "Oznámili sme narodenie", date: m.birthCard, photo: m.birthCardImg || "", source: "Kartička" });
-    if (m.voice) add({ key: "voice", phase: pre(m.voice), emoji: "🎙️", title: pre(m.voice) === "pre" ? "Nahrala som bábätku svoj hlas" : "Prvá nahraná uspávanka", date: m.voice, source: "Môj hlas" });
+    if (m.voice) add({ key: "voice", phase: pre(m.voice), emoji: "🎙️", title: pre(m.voice) === "pre" ? "Prvá nahrávka hlasu pre bábätko" : "Prvá nahraná uspávanka", date: m.voice, source: "Môj hlas pre bábätko" }); // Master 4.0 (Audit T26, T83)
     if (m.bag) add({ key: "bag", phase: pre(m.bag), emoji: "👜", title: "Taška do pôrodnice je zbalená", date: m.bag, source: "auto" });
     if (m.birthPlan) add({ key: "plan", phase: pre(m.birthPlan), emoji: "📝", title: "Plán pôrodu je napísaný", date: m.birthPlan, source: "auto" });
 
@@ -347,7 +347,7 @@
       row("pen", "Jedna veta", "data-v2-moment-go='text'"),
       row("sparkle", "Prvé razy", "data-v2-moments-open='firsts'"),
       row("sound", "Môj hlas pre bábätko", "data-v5-feature='voice'"),
-      row("memory", "Naše momenty", "data-v2-moments-open='timeline'", count && !V5.MASTER ? String(count) : "")
+      row("memory", "Časová os" /* Master 4.0 (Audit T72): riadok otvára časovú os */, "data-v2-moments-open='timeline'", count && !V5.MASTER ? String(count) : "")
     ];
     return "<section class='v2-moment" + (momentMenuOpen ? " is-open" : "") + "'>" +
       "<button type='button' class='v2-moment-cta' data-v2-moment-toggle aria-expanded='" + momentMenuOpen + "' aria-controls='v2MomentMenu'>" +

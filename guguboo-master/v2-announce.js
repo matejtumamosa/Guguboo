@@ -262,9 +262,9 @@
       chip("data-v2-ann-headline", "__custom", "Vlastný text", customHeadline),
       "</div>",
       customHeadline ? "<label>Vlastný text<input maxlength='48' value='" + esc(s.headline) + "' data-v2-ann-field='headline'></label>" : "",
-      "<label>Mená — nepovinné<input maxlength='40' placeholder='napr. Petra a Martin' value='" + esc(s.parents || "") + "' data-v2-ann-field='parents'></label>",
-      "<label>Pohlavie — nepovinné<input maxlength='30' placeholder='napr. Bude to dievčatko' value='" + esc(s.sex || "") + "' data-v2-ann-field='sex'></label>",
-      "<label>Meno bábätka — nepovinné<input maxlength='30' placeholder='ak ho už chcete prezradiť' value='" + esc(s.babyName || "") + "' data-v2-ann-field='babyName'></label>",
+      "<label>Mená – nepovinné<input maxlength='40' placeholder='napr. Petra a Martin' value='" + esc(s.parents || "") + "' data-v2-ann-field='parents'></label>",
+      "<label>Pohlavie – nepovinné<input maxlength='30' placeholder='napr. Bude to dievčatko' value='" + esc(s.sex || "") + "' data-v2-ann-field='sex'></label>",
+      "<label>Meno bábätka – nepovinné<input maxlength='30' placeholder='ak ho už chceš prezradiť' value='" + esc(s.babyName || "") + "' data-v2-ann-field='babyName'></label>", // Master 4.0 (Audit T38)
       currentWeek() ? "<label class='v2-ann-check'><input type='checkbox' data-v2-ann-week" + (s.showWeek ? " checked" : "") + "> Ukázať týždeň tehotenstva (" + currentWeek() + ".)</label>" : "",
       "<p class='v2-visit-hint'>Termín ukážeme len ako mesiac a rok" + (dueMonth() ? " (" + esc(dueMonth()) + ")" : "") + " – presný dátum si nechaj pre seba.</p>",
       "<h3>Vzhľad</h3><div class='v2-ann-chips'>",

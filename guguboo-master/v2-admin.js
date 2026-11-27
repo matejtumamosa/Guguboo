@@ -73,7 +73,7 @@
     "sk.benefit.materske": "Materské – ako na to",
     "sk.benefit.otcovske": "Otcovské – ako na to",
     "sk.benefit.rodicovsky_prispevok": "Rodičovský príspevok – ako na to",
-    "sk.benefit.pridavok_na_dieta": "Požiadaj o prídavok na dieťa",
+    "sk.benefit.pridavok_na_dieta": "Prídavok na dieťa – ako na to", // Master 4.0 (Audit T117)
     "sk.document.rodne_cislo": "Rodné číslo – kde ho nájdeš",
     "sk.document.dohoda_o_mene": "Dohoda o mene dieťaťa",
     "sk.benefit.prispevok_viac_sucasne_narodenych_deti": "Príspevok na súčasne narodené deti"
@@ -126,7 +126,7 @@
       "</div>",
       // Text 1.5 (Samo 13. 11.): podrobnosti ostávajú celé, len v ďalšej úrovni.
       moreHtml,
-      item.source_url ? "<a class='v2-source' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(item.official_source || "oficiálna stránka") + " · kontrola " + esc(formatDate(item.last_checked)) + " ↗</a>" : "",
+      item.source_url ? "<a class='v2-source' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(item.official_source || "oficiálna stránka") + " · overené " + esc(formatDate(item.last_checked)) + " ↗</a>" /* Master 4.0 (Audit T36) */ : "",
       "<div class='v2-birth-actions'>",
       item.source_url ? "<a class='v5-primary' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Otvoriť oficiálnu stránku</a>" : "",
       "<button class='v5-secondary' type='button' data-v2-admin-remind='", esc(item.id), "'>Pripomeň o týždeň</button>",
@@ -204,7 +204,7 @@
     const automatic = forStage.filter(isAutomatic);
     return [
       "<header class='v2-admin-head'><small>Úrady a doklady · ", esc(module.meta?.country || ""), "</small><h2 id='v2AdminTitle'>Čo sa ťa týka</h2>",
-      "<p>Z oficiálnych stránok úradov · kontrola ", esc(formatDate(module.meta?.last_checked)), ".</p></header>",
+      "<p>Z oficiálnych stránok úradov · overené ", esc(formatDate(module.meta?.last_checked)), "</p></header>", // Master 4.0 (Audit T36)
       group("Na vybavenie", toDo, ""),
       group("Toto sa vybaví samo", automatic, ""),
       group("Neskôr", later, ""),

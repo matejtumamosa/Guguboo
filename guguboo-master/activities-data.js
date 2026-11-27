@@ -42,6 +42,7 @@
 
   const make = (period, title, domain, steps, evidence, safety = "") => ({ period, title, domain, steps, evidence, safety, source, sourceUrl: pages[period], reviewedAt });
 
+  // Master 4.0 (Audit T40): kroky jednotne v tykaní (množné číslo len pri spoločnej činnosti „spolu“); význam CDC sa nemení.
   const list = [
     // 0–2 mesiace (CDC 2 mesiace)
     make("0-2", "Rozhovor na striedačku", "rec", ["Keď bábätko vydá zvuk, usmej sa a odpovedz mu.", "Počkaj, či sa ozve znova – tak sa učí rozhovor."], "Respond positively to your baby. Act excited, smile, and talk to him when he makes sounds."),
@@ -75,15 +76,15 @@
 
     // 4–6 mesiacov (CDC 6 mesiacov)
     make("4-6", "Hra na striedačku", "vztah", ["Keď sa usmeje, usmej sa aj ty; keď vydá zvuk, zopakuj ho."], "Use \"back and forth\" play with your baby. When your baby smiles, you smile; when he makes sounds, you copy them."),
-    make("4-6", "Každý deň obrázky", "rec", ["Pozerajte farebné obrázky v knižke a rozprávaj o nich.", "Keď džavoce, odpovedz: „Áno, to je psík!“"], "\"Read\" to your baby every day by looking at colorful pictures in magazines or books and talk about them."),
+    make("4-6", "Každý deň obrázky", "rec", ["Pozeraj farebné obrázky v knižke a rozprávaj o nich.", "Keď džavoce, odpovedz: „Áno, to je psík!“"], "\"Read\" to your baby every day by looking at colorful pictures in magazines or books and talk about them."),
     make("4-6", "Pomenuj, čo vidíte", "rec", ["Na prechádzke mu ukazuj a pomenúvaj autá, stromy a zvieratá."], "Point out new things to your baby and name them. For example, when on a walk, point out cars, trees, and animals."),
     make("4-6", "Spev a hudba", "rec", ["Spievaj mu a púšťaj hudbu."], "Sing to your baby and play music. This will help his brain develop."),
     make("4-6", "Ukáž a povedz", "rec", ["Keď sa na niečo pozerá, ukáž na to a povedz, čo to je."], "When your baby looks at something, point to it and talk about it."),
     make("4-6", "Hračka kúsok ďalej", "pohyb", ["Polož ho na bruško alebo chrbát a hračku kúsok mimo dosahu.", "Povzbudzuj ho, nech sa k nej pretočí."], "Put your baby on her tummy or back and put toys just out of reach. Encourage her to roll over to reach the toys."),
-    make("4-6", "Čítaj jeho náladu", "vztah", ["Keď je spokojné, pokračuj v tom, čo robíte.", "Keď je rozladené, dajte si pauzu a uteš ho."], "Learn to read your baby's moods. If he's happy, keep doing what you are doing."),
+    make("4-6", "Čítaj jeho náladu", "vztah", ["Keď je spokojné, pokračuj v tom, čo robíte.", "Keď je rozladené, daj si pauzu a uteš ho."], "Learn to read your baby's moods. If he's happy, keep doing what you are doing."),
     make("4-6", "Upokojenie", "vztah", ["Hovor potichu, drž ho, hojdaj, spievaj.", "Pomôcť môže aj obľúbená hračka alebo cumlík."], "Help your baby learn she can calm down. Talk softly, hold, rock, or sing to her"),
     make("4-6", "Sedenie s oporou", "pohyb", ["Pridŕžaj ho v sede, nech sa rozhliada.", "Daj mu hračky – učí sa udržať rovnováhu."], "Hold your baby up while she sits. Let her look around and give her toys to look at while she learns to balance herself."),
-    make("4-6", "Postavenie s oporou", "pohyb", ["Pevne ho drž oboma rukami pod pazuchami a nechaj ho stáť.", "Rozhliadnite sa a pomenuj, čo vidíte."], "Hold your baby with both of your hands securely under her arms and let her stand."),
+    make("4-6", "Postavenie s oporou", "pohyb", ["Pevne ho drž oboma rukami pod pazuchami a nechaj ho stáť.", "Rozhliadni sa a pomenuj, čo vidíš."], "Hold your baby with both of your hands securely under her arms and let her stand."),
     make("4-6", "Rôzne zvuky", "objavovanie", ["Šepkaj, tlieskaj alebo vydávaj zábavné zvuky.", "Sleduj, ktoré ho zaujímajú najviac."], "Introduce your baby to different sounds and voices. For example, whisper, clap, or make funny noises."),
     make("4-6", "Hra na zemi", "pohyb", ["Každý deň sa s ním hraj na zemi alebo na hracej deke."], "Playing on the floor or play mat with your baby every day helps him to move, learn, and explore."),
     make("4-6", "Spadla hračka", "objavovanie", ["Keď hodí hračku na zem, zdvihni ju a vráť mu ju.", "Učí sa, že čin má následok."], "When he drops a toy on the floor, pick it up and give it back. This game helps him learn cause and effect."),
@@ -91,7 +92,7 @@
     // 6–9 mesiacov (CDC 9 mesiacov)
     make("6-9", "Z „bababa“ slovo", "rec", ["Zopakuj jeho slabiky, napríklad „bababa“.", "Potom povedz jednoduché slovo s tým zvukom, napríklad „baba“."], "Repeat your baby's sounds and say simple words using those sounds."),
     make("6-9", "Hračka mimo dosahu", "pohyb", ["Polož hračky na zem kúsok od neho.", "Povzbudzuj ho, nech sa k nim doplazí, posunie alebo pretočí – a osláv, keď sa mu to podarí."], "Place toys on the ground or on a play mat a little out of reach and encourage your baby to crawl, scoot, or roll to get them."),
-    make("6-9", "Pápá a nie", "rec", ["Pri odchode zamávaj a povedz „pápá“.", "Skúste aj jednoduché znaky rukami, kým nevie slová."], "Teach your baby to wave \"bye-bye\" or shake his head \"no.\""),
+    make("6-9", "Pápá a nie", "rec", ["Pri odchode zamávaj a povedz „pápá“.", "Skús aj jednoduché znaky rukami, kým nevie slová."], "Teach your baby to wave \"bye-bye\" or shake his head \"no.\""),
     make("6-9", "Kuk-kuk s handričkou", "vztah", ["Zakry si hlavu handričkou a sleduj, či ti ju stiahne."], "Play games, such as peek-a-boo. You can cover your head with a cloth and see if your baby pulls it off."),
     make("6-9", "Vysypať a pozbierať", "objavovanie", ["Vysypte kocky z nádoby a spolu ich dajte naspäť."], "Play with your baby by dumping blocks from a container and putting them back in together."),
     make("6-9", "Ja a ty", "vztah", ["Podávajte si hračku – raz ty, raz ono."], "Play games with your baby, such as my turn, your turn. Try this by passing a toy back and forth."),
@@ -120,15 +121,15 @@
     make("12-15", "Opakuj a pridaj", "rec", ["Keď povie „lo“, povedz „Lopta, áno, to je lopta.“"], "Help your child learn to speak. A child's early words are not complete. Repeat and add to what he says."),
     make("12-15", "Pomenuj a počkaj", "rec", ["Keď na niečo ukáže, pomenuj to a pár sekúnd počkaj, či sa ozve.", "Ak vydá zvuk, zopakuj slovo: „Áno! Hrnček.“"], "Tell your child the names of objects when he points to them and wait a few seconds to see if he makes any sounds"),
     make("12-15", "Malý pomocník", "vztah", ["Nech ti pomáha – prinesie topánky, dá desiatu do tašky, ponožky do koša."], "Find ways to let your child help with everyday activities."),
-    make("12-15", "Čo sa robí s čiapkou?", "objavovanie", ["Ukáž čiapku: „Čo sa robí s čiapkou? Dáva sa na hlavu.“", "Daj mu ju a sleduj, či ťa napodobní. Skúste aj knižku či hrnček."], "Show your child different things, such as a hat. Ask him, \"What do you do with a hat?"),
-    make("12-15", "Pesnička s pohybmi", "pohyb", ["Spievajte pesničku s pohybmi a sleduj, či skúša pohyby s tebou."], "Sing songs with gestures, such as \"Wheels on the Bus.\" See if your child tries to do some of the actions."),
+    make("12-15", "Čo sa robí s čiapkou?", "objavovanie", ["Ukáž čiapku: „Čo sa robí s čiapkou? Dáva sa na hlavu.“", "Daj mu ju a sleduj, či ťa napodobní. Skús aj knižku či hrnček."], "Show your child different things, such as a hat. Ask him, \"What do you do with a hat?"),
+    make("12-15", "Pesnička s pohybmi", "pohyb", ["Spievaj pesničku s pohybmi a sleduj, či skúša pohyby s tebou."], "Sing songs with gestures, such as \"Wheels on the Bus.\" See if your child tries to do some of the actions."),
     make("12-15", "Pomenuj pocity", "vztah", ["Povedz, čo podľa teba cíti: smútok, hnev, radosť."], "Say what you think your child is feeling (for example, sad, mad, frustrated, happy)."),
     make("12-15", "Postav a zbúraj", "objavovanie", ["Postav vežu z kociek a nech ju zbúra."], "Encourage your child to play with blocks. You can stack the blocks and she can knock them down."),
     make("12-15", "Rodinná knižka", "rec", ["Urob knižku s fotkami ľudí a zvieratiek z jeho života – aj s ním.", "Pri prezeraní ich pomenúvaj."], "Make a \"book\" with pictures of people and pets in your child's life."),
     make("12-15", "Tanec", "pohyb", ["Pusti detské pesničky alebo tie, ktoré máte radi, a zatancujte si."], "Sing or play children's songs and songs your family enjoys. Dance with your child."),
-    make("12-15", "Nová knižka po obľúbenej", "rec", ["Po obľúbenej knižke skúste novú."], "Read a new book after a favorite one to explore and try new books."),
+    make("12-15", "Nová knižka po obľúbenej", "rec", ["Po obľúbenej knižke skús novú."], "Read a new book after a favorite one to explore and try new books."),
     make("12-15", "Schovávačka", "vztah", ["Nech vidí, ako sa schováš za stoličku, a počkaj, kým ťa „nájde“."], "Play simple games, such as hide and seek."),
-    make("12-15", "Pesnička na upratovanie", "vztah", ["Vymyslite krátku pesničku a pri nej dávajte hračky do koša."], "Make up a simple \"cleanup song\" and sing it while you teach your child to help \"clean up.\""),
+    make("12-15", "Pesnička na upratovanie", "vztah", ["Vymysli krátku pesničku a pri nej dávaj hračky do koša."], "Make up a simple \"cleanup song\" and sing it while you teach your child to help \"clean up.\""),
     make("12-15", "Gestá", "rec", ["Nauč ho jednoduché gestá, napríklad ukazovanie a mávanie, nech ti vie ukázať, čo chce."], "You can teach simple gestures and sign language (for example, pointing and waving)"),
     make("12-15", "Rozhovor s plyšákom", "rec", ["„Rozprávaj“ sa s ním cez plyšáka.", "Sleduj, či ti odpovie on alebo iný plyšák."], "\"Pretend talk\" to your child with a stuffed animal."),
     make("12-15", "Bublinky", "objavovanie", ["Fúkaj bublinky a nech ich praská.", "Pritom hovor „puk, puk“."], "Blow bubbles and let your child pop them. Say things as she pops them, such as \"Pop, pop.\""),
@@ -145,7 +146,7 @@
     make("15-18", "Lopta, autíčko, nádoba", "pohyb", ["Kotúľajte si loptu, tlačte autíčka a dávajte kocky do nádoby a von."], "Play with your child by rolling balls back and forth, pushing toy cars, and putting blocks or other items in and out of containers."),
     make("15-18", "Knižka jednoduchými slovami", "rec", ["Čítajte a rozprávajte o obrázkoch jednoduchými slovami."], "Read books and talk about the pictures using simple words."),
     make("15-18", "Bublinky na striedačku", "vztah", ["Ty fúkaš, ono praská – „puk, puk“."], "Play simple games where both of you have a part to play. Blow bubbles and let your child pop them."),
-    make("15-18", "Kútik na upokojenie", "vztah", ["Pripravte doma miesto, kam môže ísť, keď je rozrušené.", "Buď nablízku, nech vie, že je v bezpečí."], "Create a spot in your home for your child to go to when he's upset."),
+    make("15-18", "Kútik na upokojenie", "vztah", ["Priprav doma miesto, kam môže ísť, keď je rozrušené.", "Buď nablízku, nech vie, že je v bezpečí."], "Create a spot in your home for your child to go to when he's upset."),
     make("15-18", "Tlačiť a ťahať", "pohyb", ["Daj mu hračky, ktoré môže bezpečne tlačiť alebo ťahať."], "Give toys that your child can push or pull safely."),
     make("15-18", "Bábika a dečka", "objavovanie", ["Daj mu bábiku a dečku – podporíš hru „na niečo“."], "Give toys and things to your child that encourage \"pretend\" play, such as a doll and a baby blanket."),
 
@@ -158,11 +159,11 @@
     make("18-24", "Prezliekanie", "objavovanie", ["Nechaj ho obliecť si tvoje topánky, klobúky a košele – začína hru „na niečo“."], "Let your child play dress up with grown-up clothes, such as shoes, hats, and shirts."),
     make("18-24", "Šikovný pomocník", "vztah", ["Nech pomáha s jednoduchými prácami – hračky alebo bielizeň do koša.", "Pochváľ ho."], "Use positive words when your child is being a good helper."),
     make("18-24", "Pripraviť, pozor, štart!", "pohyb", ["Na hojdačke povedz „Pripraviť, pozor…“, chvíľu počkaj a pri „štart!“ ho rozhojdaj."], "Play with your child outside, by playing \"ready, set, go.\""),
-    make("18-24", "Maľovanie", "objavovanie", ["Daj mu pastelky alebo prstové farby.", "Hotové dielko zaveste na chladničku."], "Let your child create simple art projects with you."),
+    make("18-24", "Maľovanie", "objavovanie", ["Daj mu pastelky alebo prstové farby.", "Hotové dielko zaves na chladničku."], "Let your child create simple art projects with you."),
     make("18-24", "Piesok a voda", "objavovanie", ["Vo vani alebo pieskovisku mu daj nádobky, lyžice či lievik."], "Let your child play with sand toys or plastic containers, spoons, or a funnel in the tub or in a sandbox."),
     make("18-24", "Puzzle", "objavovanie", ["Skladajte jednoduché puzzle s tvarmi, farbami alebo zvieratkami.", "Pomenuj každý kúsok, keď ho dá na miesto."], "Help your child do simple puzzles with shapes, colors, or animals."),
     make("18-24", "Objavovanie vonku", "objavovanie", ["Choďte do parku, na prechádzku alebo sa povozte autobusom."], "Encourage your child's curiosity and help her learn and explore new things."),
-    make("18-24", "Hlava, ramená, kolená, palce", "rec", ["Spievajte a ukazujte časti tela.", "Po pár kolách sa dotkni časti tela, počkaj a sleduj, či dospieva slovo."], "Sing songs, such as \"Head, Shoulders, Knees, and Toes,\" to teach names of body parts."),
+    make("18-24", "Hlava, ramená, kolená, palce", "rec", ["Spievaj a ukazuj časti tela.", "Po pár kolách sa dotkni časti tela, počkaj a sleduj, či dospieva slovo."], "Sing songs, such as \"Head, Shoulders, Knees, and Toes,\" to teach names of body parts."),
     make("18-24", "Veže na striedačku", "pohyb", ["Striedajte sa pri stavaní veže z kociek a jej zbúraní."], "Encourage your child to play with blocks. Take turns building towers and knocking them down."),
     make("18-24", "Otvor šuplík", "pohyb", ["Nech ti pomôže otvoriť šuplík pri odkladaní oblečenia alebo dvere, keď idete von."], "Ask your child to help you open the drawer when you put away clothes or open the door when you go outside.")
   ];

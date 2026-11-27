@@ -31,7 +31,8 @@
   </style>
 </head>
 <body>
-  <div class="stage"><iframe class="phone" src="app.html?frame=1" title="Guguboo" allow="microphone; camera; clipboard-write; web-share; fullscreen"></iframe></div>
+  <div class="stage"><iframe class="phone" src="app.html?frame=1" title="Guguboo" allow="microphone; camera; clipboard-write; fullscreen"></iframe></div>
+  <!-- Master 4.0 (Audit F46): bez „web-share“ v allow – Chrome ho hlásil ako neznámu funkciu v konzole; náhľad na počítači zdieľanie nepotrebuje. -->
   <script>
     // Hash (#...) z adresy pošli do appky v rámčeku.
     if (window.location.hash) document.querySelector(".phone").src = "app.html?frame=1" + window.location.hash;

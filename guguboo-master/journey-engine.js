@@ -24,7 +24,7 @@
       id: "preg.contacts", stage: "pregnancy", type: "task", priority: 70,
       window: { anchor: "week", from: 1, to: 42 },
       title: "Ulož kontakt na gynekológa",
-      why: "Keď ich budeš potrebovať, nemusíš nič hľadať.",
+      why: "Keď ho budeš potrebovať, nemusíš nič hľadať.", // Master 4.0 (Audit T89)
       // QA N2: splnené až kontaktom na gynekológa alebo pôrodnicu (nie hocijakým kontaktom)
       feature: "contacts", done: s => (s.contacts || []).some(contact => /gynek|pôrod|porod/i.test(String(contact.type || "") + " " + String(contact.name || "")))
     },

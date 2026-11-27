@@ -79,7 +79,7 @@
     <!-- 4 Oslovenie -->
     <section class="screen" data-screen="names" aria-labelledby="g2i-h-names">
       <div class="head">
-        <h1 id="g2i-h-names">Ako vás môžeme oslovovať?</h1>
+        <h1 id="g2i-h-names">Ako ťa môžeme oslovovať?</h1><!-- Master 4.0 (Audit T1): tykanie ako v celom úvode -->
         <p class="sub">Nepovinné, zmeníš kedykoľvek.</p>
       </div>
       <div class="fields">
@@ -96,7 +96,7 @@
           </button>
         </div>
       </div>
-      <div class="country">Úrady a príspevky pre: <strong id="g2i-countryName">Slovensko</strong><button class="link" id="g2i-countryBtn" aria-haspopup="dialog">Zmeniť</button></div>
+      <div class="country">Úrady a doklady pre: <strong id="g2i-countryName">Slovensko</strong><button class="link" id="g2i-countryBtn" aria-haspopup="dialog">Zmeniť</button></div>
     </section>
 
     <!-- 5 Aha -->
@@ -442,14 +442,14 @@
         ? "<button class='step' id='g2i-cycMinus' aria-label='Kratší cyklus'" + (S.cycle <= 21 ? " disabled" : "") + ">−</button>" +
           "<span>Dĺžka cyklu: <strong id='g2i-cycVal'>" + S.cycle + " dní</strong></span>" +
           "<button class='step' id='g2i-cycPlus' aria-label='Dlhší cyklus'" + (S.cycle >= 45 ? " disabled" : "") + ">+</button>"
-        : "<span>Dĺžka cyklu: <strong>" + S.cycle + " dní</strong></span><button class='link' id='g2i-cycEdit' style='font-size:15px;padding:0 8px'>zmeniť</button>";
+        : "<span>Dĺžka cyklu: <strong>" + S.cycle + " dní</strong></span><button class='link' id='g2i-cycEdit' style='font-size:15px;padding:0 8px'>Zmeniť</button>";
     }
     // odkazy
     const links = $("altLinks");
     links.innerHTML = born ? ""
       : S.mode === "due" ? "<button class='link' data-mode='lmp'>Nepoznám termín – vypočítam ho</button>"
-      : S.mode === "lmp" ? "<button class='link muted' data-mode='conception'>Viem dátum počatia</button><button class='link muted' data-mode='due'>Zadám termín</button>"
-      : "<button class='link muted' data-mode='lmp'>Podľa menštruácie</button><button class='link muted' data-mode='due'>Zadám termín</button>";
+      : S.mode === "lmp" ? "<button class='link muted' data-mode='conception'>Podľa počatia</button><button class='link muted' data-mode='due'>Zadať termín</button>"
+      : "<button class='link muted' data-mode='lmp'>Podľa menštruácie</button><button class='link muted' data-mode='due'>Zadať termín</button>";
     lastArt = "";
     updatePreview(true);
   }
@@ -532,7 +532,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("sheet-open")) closeSheet(); });
   $("countryBtn").addEventListener("click", () => {
     const opt = (n, s) => "<button role='radio' data-c='" + n + "' aria-checked='" + (S.country === n) + "'>" + n + "<span>" + s + "</span></button>";
-    openSheet("<h2 id='g2i-sheetTitle'>Úrady a príspevky pre</h2><p>Podľa krajiny ti ukážeme správne úrady a príspevky.</p>" +
+    openSheet("<h2 id='g2i-sheetTitle'>Úrady a doklady pre</h2><p>Podľa krajiny ti ukážeme správne úrady a doklady.</p>" +
       "<div class='opts' role='radiogroup' aria-labelledby='g2i-sheetTitle'>" + opt("Slovensko", "predvolené") + opt("Česko", "") + "</div>" +
       "<button class='link muted' data-close>Zavrieť</button>", "[aria-checked='true']");
   });
@@ -679,6 +679,8 @@
     const patch = profilePatch();
     state.welcomeStatus = patch.status;
     state.user = { ...state.user, name: cap(S.mom) };
+    // Master 4.0 (Audit F22): oslovenie z úvodu platí aj pre pozdrav na domove (berie preferredName z profilu pred user.name).
+    if (state.v5?.motherProfile && cap(S.mom)) state.v5.motherProfile.preferredName = cap(S.mom);
     state.profile = { ...state.profile, ...patch, due: patch.status === "expecting" ? patch.due : (state.profile.due || ""), avatarType: patch.status === "expecting" ? "fruit" : (state.profile.photo ? "photo" : "") };
     try { if (typeof scheduleBirthCardReminders === "function") scheduleBirthCardReminders(); } catch (error) { /* pripomienky kartičky nie sú nutné pre štart */ }
     state.onboarded = true;

@@ -33,7 +33,7 @@
     "<h2 id='g2RingTitle' tabindex='-1'></h2>",
     "<button type='button' class='v5-icon-button' data-g2-ring-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div>",
     "<div id='g2RingBody'></div></section></div>",
-    "<div id='g2RingDim' class='g2-ring-dim' role='button' tabindex='0' aria-label='Ťukni pre zastavenie šumu'><div>Šum hrá<br><span id='g2RingDimT'></span><br><br>Ťukni kamkoľvek a šum sa zastaví</div></div>",
+    "<div id='g2RingDim' class='g2-ring-dim' role='button' tabindex='-1' aria-hidden='true' aria-label='Ťukni a šum sa zastaví'><div>Šum hrá<br><span id='g2RingDimT'></span><br><br>Ťukni kamkoľvek a šum sa zastaví</div></div>",
     "<div id='g2RingToast' class='g2-ring-toast' role='status' aria-live='polite' hidden></div>"
   ].join(""));
   const overlay = byId("g2RingOverlay");
@@ -111,7 +111,7 @@
     gain = a.createGain(); gain.gain.setValueAtTime(0, a.currentTime); gain.gain.linearRampToValueAtTime(.35, a.currentTime + 6);
     noise.connect(gain).connect(a.destination); noise.start();
     stopAt = Date.now() + minutes * 60000;
-    byId("g2RingDim").classList.add("on");
+    byId("g2RingDim").classList.add("on"); byId("g2RingDim").tabIndex = 0; byId("g2RingDim").removeAttribute("aria-hidden"); // Master 4.0 (Audit F31): fokusovateľné len keď šum hrá
     setTimeout(() => byId("g2RingDim")?.focus({ preventScroll: true }), 60);
     clearInterval(tick);
     const show = () => {
@@ -124,7 +124,7 @@
   }
   function stopNoise(fade) {
     clearInterval(tick);
-    byId("g2RingDim")?.classList.remove("on");
+    byId("g2RingDim")?.classList.remove("on"); if (byId("g2RingDim")) { byId("g2RingDim").tabIndex = -1; byId("g2RingDim").setAttribute("aria-hidden", "true"); }
     if (noise && gain && ac) {
       const n = noise;
       gain.gain.cancelScheduledValues(ac.currentTime);
@@ -151,7 +151,8 @@
   // ——— Stavebné prvky ———
   // Master 3.0 (IKONY_NAVRH.md časť 4): ic = názov linkovej ikony z iconPaths (predtým znaky ◌ ☾ ✉ ☏ ⇡ ⏱ ≈ ↟ ♡).
   const act = (data, ic, t, s, big) => "<button class='g2r-act" + (big ? " big" : "") + "' type='button' data-g2r='" + data + "'><i aria-hidden='true'>" + V5.icon(ic) + "</i><span>" + esc(t) + (s ? "<small>" + esc(s) + "</small>" : "") + "</span></button>";
-  const source = (url, reviewed, label) => url ? "<p class='g2r-src'>Zdroj: <a href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>" + esc(label || "NHS") + "</a>" + (reviewed ? " · kontrola " + esc(label || "NHS") + " " + esc(reviewed) : "") + "</p>" : "";
+  // Master 4.0 (Audit T36): jedna podoba odkazu „Zdroj: NHS · overené D. M. RRRR ↗“ (slovo „kontrola“ len pre lekára).
+  const source = (url, reviewed, label) => url ? "<p class='g2r-src'><a href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(label || "NHS") + (reviewed ? " · overené " + esc(reviewed) : "") + " ↗</a></p>" : "";
   const chips = (attr, list, sel, suffix) => "<div class='g2r-chips' role='group'>" + list.map(m => "<button class='g2r-pill' type='button' " + attr + "='" + m + "' aria-pressed='" + (m === sel) + "'>" + m + suffix + "</button>").join("") + "</div>";
   const mmss = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
   const MP = () => C().mamaPregnancy || {}, MPP = () => C().mamaPostpartum || {};
@@ -202,7 +203,7 @@
   // Postup o krokoch (Ďalej) v jednom okne
   function steps(title, list, after) {
     let i = 0;
-    const render = () => "<div class='g2r-info g2r-step'><p class='g2r-small' style='margin:0 0 6px'>" + (i + 1) + " z " + list.length + "</p>" + list[i].html + "</div>" +
+    const render = () => "<div class='g2r-info g2r-step'>" + (list.length > 1 ? "<p class='g2r-small' style='margin:0 0 6px'>" + (i + 1) + " z " + list.length + "</p>" : "") /* Master 4.0 (Audit T87) */ + list[i].html + "</div>" +
       (i < list.length - 1 ? "<button class='g2r-btn' type='button' data-g2r='next'>Ďalej</button>" : (after || "<button class='g2r-btn' type='button' data-g2r='close'>Hotovo</button>"));
     const show = () => { body.innerHTML = render(); list[i].onShow?.(); nextStep = () => { i = Math.min(i + 1, list.length - 1); clearInterval(timer); show(); }; };
     push(title, () => "", { after: () => { i = 0; show(); } });
@@ -249,7 +250,7 @@
       timer = setInterval(step, 1000);
       return;
     }
-    if (a === "nap") return push(phase() === "born" && !isNight() ? "Zdriemni si, kým spí" : "Šum na zaspávanie", () => chips("data-g2r-nap", [20, 45], 20, " minút") +
+    if (a === "nap") return push(phase() === "born" && !isNight() ? "Zdriemni si, kým spí" : "Šum na zaspávanie", () => chips("data-g2r-nap", [20, 45], 20, " min") /* Master 4.0 (Audit T86) */ +
       "<button class='g2r-btn' type='button' data-g2r='nap-go'>Spustiť šum</button><p class='g2r-small'>Šum sa pomaly zosilní a na konci sám stíchne.</p>", { noContent: true });
     if (a === "nap-go") { const m = +(body.querySelector("[data-g2r-nap][aria-pressed='true']")?.dataset.g2rNap || 20); close(); return startNoise(m); }
     if (a === "nap-go20") { close(); return startNoise(20); }
@@ -361,10 +362,10 @@
     if (a) doAct(a.dataset.g2r);
   });
   // Stmavnutá obrazovka so šumom: ťuk (alebo Enter/Esc) zastaví
-  byId("g2RingDim").addEventListener("click", () => { stopNoise(false); toast("Šum som zastavila."); });
+  byId("g2RingDim").addEventListener("click", () => { stopNoise(false); toast("Šum je zastavený."); });
   window.addEventListener("keydown", event => {
     if (!byId("g2RingDim").classList.contains("on")) return;
-    if (["Escape", "Enter", " "].includes(event.key)) { event.preventDefault(); event.stopImmediatePropagation(); stopNoise(false); toast("Šum som zastavila."); }
+    if (["Escape", "Enter", " "].includes(event.key)) { event.preventDefault(); event.stopImmediatePropagation(); stopNoise(false); toast("Šum je zastavený."); }
   }, true);
 
   // ——— Napojenie: kruh na domove (diely, legenda, stred), riadok v Mame, položka v zásuvke ———

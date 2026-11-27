@@ -42,7 +42,7 @@
     el.id = "g2BackupOverlay";
     el.className = "g2-ring-overlay";
     el.setAttribute("aria-hidden", "true");
-    el.innerHTML = "<div class='g2-ring-sheet' role='dialog' aria-modal='true' aria-labelledby='g2bTitle'><div class='g2-ring-sheet-head'><span></span><h2 id='g2bTitle' tabindex='-1'>Údaje a appka v telefóne</h2><button class='v5-icon-button' type='button' data-g2b='close' aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div><div class='g2b-body'></div></div>";
+    el.innerHTML = "<div class='g2-ring-sheet' role='dialog' aria-modal='true' aria-labelledby='g2bTitle'><div class='g2-ring-sheet-head'><span></span><h2 id='g2bTitle' tabindex='-1'>Záloha a appka</h2><button class='v5-icon-button' type='button' data-g2b='close' aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div><div class='g2b-body'></div></div>";
     el.addEventListener("click", event => { if (event.target === el) close(); });
     document.body.appendChild(el);
     return el;
@@ -52,12 +52,12 @@
     overlay().querySelector(".g2b-body").innerHTML = [
       "<p class='g2r-lead'>Všetko, čo zapíšeš, je uložené len v tomto telefóne – nikam sa neposiela a nepotrebuješ účet.</p>",
       "<section class='g2r-info'><h3>Pridať na plochu</h3>",
-      standalone() ? "<p>Appku už máš na ploche. 💜</p>"
+      standalone() ? "<p>Appku už máš na ploche.</p>" /* Master 4.0 (Audit T114) */
         : installPrompt ? act("install", "sparkle", "Pridať Guguboo na plochu", "otvorí sa ako bežná aplikácia")
         : isIos() ? "<p>V Safari ťukni na <strong>Zdieľať</strong> (štvorček so šípkou) a vyber <strong>Pridať na plochu</strong>.</p>"
         : "<p>V prehliadači otvor ponuku <strong>⋮</strong> a vyber <strong>Inštalovať aplikáciu</strong> alebo <strong>Pridať na plochu</strong>.</p>",
       "</section>",
-      "<section class='g2r-info'><h3>Záloha</h3><p class='g2r-small'>Ak vymažeš údaje prehliadača alebo meníš telefón, údaje sa stratia. Záloha je súbor, ktorý si uložíš – sú v ňom aj fotky a nahrávky. Sú v ňom aj osobné údaje – nikomu ho neposielaj.</p>",
+      "<section class='g2r-info'><h3>Záloha</h3><p class='g2r-small'>Záloha je súbor so všetkými údajmi z appky, aj s fotkami a nahrávkami. Hodí sa pri novom telefóne. Ulož si ho na bezpečné miesto a nikomu ho neposielaj.</p>", // Master 4.0 (Audit T57)
       act("save", "lock", "Uložiť zálohu", "zisťujem veľkosť…"),
       "<label class='g2r-act g2q-file'><i>" + icon("lock") + "</i><span>Obnoviť zo zálohy<small>prepíše údaje v tomto telefóne</small></span><input id='g2bRestore' type='file' accept='application/json,.json'></label>",
       "</section>",

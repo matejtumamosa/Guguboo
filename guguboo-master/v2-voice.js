@@ -56,13 +56,13 @@
       message ? "<p class='v2-voice-msg'>" + esc(message) + "</p>" : "",
       "</section>",
       items.length ? "<h3 class='v2-book-group'>Naše nahrávky</h3><div class='v2-pressure-list v2-voice-list'>" + items.map(item => "<div><button type='button' class='v2-voice-play' data-v5-play-lullaby='" + esc(item.id) + "' aria-label='Pustiť " + esc(item.title) + "'>▶</button><span><b>" + esc(item.title) + "</b><br>" + esc(new Date(item.created).toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })) + "</span><button type='button' class='v2-voice-del' data-v2-voice-delete='" + esc(item.id) + "' aria-label='Vymazať nahrávku'>" + window.GugubooV5.glyph("close") + "</button></div>").join("") + "</div>" : "",
-      "<p class='v5-book-note'>Nahrávky ostávajú len v tomto zariadení. V beta verzii najviac ", MAX_ITEMS, " nahrávok po ", MAX_SECONDS / 60, " minúty.</p>"
+      "<p class='v5-book-note'>Nahrávky ostávajú len v tomto telefóne. Najviac ", MAX_ITEMS, " nahrávok po ", MAX_SECONDS / 60, " minúty.</p>" // Master 4.0 (Audit T88)
     ].join("");
   }
 
   async function start() {
     message = "";
-    if ((state.lullabies || []).length >= MAX_ITEMS) { message = "V beta verzii sa zmestí " + MAX_ITEMS + " nahrávok. Ak chceš novú, jednu starú vymaž."; return render(); }
+    if ((state.lullabies || []).length >= MAX_ITEMS) { message = "Zmestí sa " + MAX_ITEMS + " nahrávok. Ak chceš novú, jednu starú vymaž."; return render(); }
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { message = "Tento prehliadač nahrávanie nepodporuje."; return render(); }
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -99,7 +99,7 @@
 
   function save() {
     if (!draft) return;
-    const name = (byId("v5VoiceContent")?.querySelector("[data-v2-voice-name]")?.value || title).trim() || "Môj hlas";
+    const name = (byId("v5VoiceContent")?.querySelector("[data-v2-voice-name]")?.value || title).trim() || "Môj hlas pre bábätko"; // Master 4.0 (Audit T83)
     state.lullabies ||= [];
     const item = { id: "v2-voice-" + Date.now(), title: name, src: draft.src, author: state.parentRole || "mama", created: new Date().toISOString(), phase: expecting() ? "pre" : "post" };
     state.lullabies.push(item);
@@ -107,7 +107,7 @@
     // Pamäť prehliadača má ~5 MB a uloženie zlyhá potichu – preto veľkosť skontrolujeme vopred.
     if (JSON.stringify(state).length > 4500000) {
       state.lullabies = state.lullabies.filter(entry => entry.id !== item.id);
-      message = "Nahrávka sa do pamäte beta verzie nezmestila. Skús kratšiu alebo vymaž staršiu.";
+      message = "Nahrávka sa do pamäte telefónu nezmestila. Skús kratšiu alebo vymaž staršiu.";
       return render();
     }
     window.GugubooMoments?.mark?.("voice");

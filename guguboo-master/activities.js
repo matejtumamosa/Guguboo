@@ -155,9 +155,9 @@
       ${soonHtml(period, age.days)}
       <details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
         <p>Voliteľné poznámky na rozhovor s pediatrom. Nie je to test – každé dieťa má svoje tempo.</p>
-        ${observations.map(item => `<label class="act2-obs"><span>${escapeHtml(item.text)}</span><select data-observation-id="${item.id}" aria-label="Stav: ${escapeHtml(item.text)}">${option(item, "", "—")}${option(item, "noticed", "Všimla som si")}${option(item, "unknown", "Zatiaľ neviem")}${option(item, "ask", "Opýtať sa pediatra")}</select></label>`).join("")}
+        ${observations.map(item => `<label class="act2-obs"><span>${escapeHtml(item.text)}</span><select data-observation-id="${item.id}" aria-label="Stav: ${escapeHtml(item.text)}">${option(item, "", "—")}${option(item, "noticed", "Už to robí") /* Master 4.0 (Audit T25) */}${option(item, "unknown", "Zatiaľ neviem")}${option(item, "ask", "Opýtať sa pediatra")}</select></label>`).join("")}
       </details>
-      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)} (aktualizované ${dateLabel(data.reviewedAt)})${usesNhs ? " a NHS" : ""}, overené ${dateLabel(data.checkedAt)} · zhrnuté vlastnými slovami ↗</a>
+      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)} (stránka z ${dateLabel(data.reviewedAt)})${usesNhs ? " a NHS" : ""} · overené ${dateLabel(data.checkedAt)} ↗</a>
       <div class="sr-only" data-activities-live aria-live="polite"></div>
     </div>`;
   }
@@ -175,7 +175,7 @@
     const currentId = state.activities.currentActivityId;
     if (event.target.closest("[data-activity-tried]") && currentId) {
       if (!isTried(currentId)) state.activities.tried.push({ id: currentId, date: new Date().toISOString() });
-      persist(); render(); return announce("Zapísané – vyskúšali ste to.");
+      persist(); render(); return announce("Zapísané."); // Master 4.0 (Audit T41)
     }
     if (event.target.closest("[data-activity-favorite]") && currentId) {
       state.activities.favorites = state.activities.favorites.includes(currentId) ? state.activities.favorites.filter(id => id !== currentId) : [...state.activities.favorites, currentId];

@@ -147,13 +147,14 @@
         aria-describedby="privateMessage" required>`;
   }
 
+  // Master 4.0 (Audit T51, T75, T88, T100): jeden názov „PIN“ (nie prístupový kód / kód), „v tomto telefóne“.
   function renderSetup() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Nastav si prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Nastav si PIN</p></div></header>
       <form class="private-auth-card" data-private-setup novalidate>
         ${pinInput("privatePinNew", "Zadaj presne štyri číslice", "new-password")}
-        ${pinInput("privatePinConfirm", "Zopakuj prístupový kód", "new-password")}
-        <p class="private-security-note">Zápisy budú na tomto zariadení šifrované a chránené tvojím PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
+        ${pinInput("privatePinConfirm", "Zopakuj PIN", "new-password")}
+        <p class="private-security-note">Zápisy budú v tomto telefóne šifrované a chránené tvojím PIN-om. Štvorciferný PIN však nenahrádza silné heslo, používateľský účet ani ochranu zariadenia.</p>
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
         <button class="private-primary" type="submit">Nastaviť a pokračovať</button>
       </form>
@@ -163,12 +164,12 @@
 
   function renderLocked() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj PIN</p></div></header>
       <form class="private-auth-card" data-private-unlock novalidate>
-        ${pinInput("privatePinUnlock", "Prístupový kód", "current-password")}
+        ${pinInput("privatePinUnlock", "PIN", "current-password")}
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>
         <button class="private-primary" type="submit">Odomknúť</button>
-        <button class="private-link" type="button" data-private-forgot>Zabudol/a som kód</button>
+        <button class="private-link" type="button" data-private-forgot>Nepamätám si PIN</button>
       </form>
     </div>`;
     updateUnlockDelay();
@@ -283,7 +284,7 @@
           <button class="private-letter-button" type="button" data-private-letter>✉ Napísať list pre ${escapeHtml(babyNameAcc())}</button>
         </section>
         <section class="private-card" aria-labelledby="privateEditorTitle"><h2 id="privateEditorTitle">${editorTitle}</h2>
-          <form data-private-entry-form><fieldset><legend>Typ zápisu — nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${escapeHtml(typeLabel(type))}</button>`).join("")}</div></fieldset>
+          <form data-private-entry-form><fieldset><legend>Typ zápisu – nepovinné</legend><div class="private-types">${types.map(type => `<button type="button" data-private-type="${type}" aria-pressed="${selectedType === type}">${escapeHtml(typeLabel(type))}</button>`).join("")}</div></fieldset>
             <label for="privateEntryText">Text zápisu</label><textarea id="privateEntryText" rows="6" required placeholder="${selectedType === LETTER ? "Ahoj " + name + ", …" : "Stačí jedna veta."}"></textarea>
             <p class="private-message" data-private-message role="status" aria-live="polite"></p>
             <div class="private-form-actions"><button class="private-primary" type="submit">${editingId ? "Uložiť úpravy" : "Uložiť zápis"}</button>${editingId || answeringPrompt ? `<button type="button" data-private-cancel-edit>Zrušiť</button>` : ""}</div>
@@ -368,8 +369,8 @@
   async function handleSetup(form) {
     const pin = form.elements.privatePinNew.value;
     const confirmation = form.elements.privatePinConfirm.value;
-    if (!/^\d{4}$/.test(pin)) return setMessage("Prístupový kód musí mať presne štyri číslice.", "error");
-    if (pin !== confirmation) return setMessage("Prístupové kódy sa nezhodujú. Skús ich zadať znova.", "error");
+    if (!/^\d{4}$/.test(pin)) return setMessage("PIN musí mať presne štyri číslice.", "error");
+    if (pin !== confirmation) return setMessage("PIN sa nezhoduje. Skús ho zadať znova.", "error");
     const generation = ++operationGeneration;
     const submit = form.querySelector("button[type='submit']");
     submit.disabled = true;
@@ -399,7 +400,7 @@
     const generation = ++operationGeneration;
     const submit = form.querySelector("button[type='submit']");
     submit.disabled = true;
-    setMessage("Overujem kód…");
+    setMessage("Overujem PIN…");
     try {
       const result = await decryptRecord(privateStore.read(), pin);
       if (generation !== operationGeneration || !isActive()) return;
@@ -412,7 +413,7 @@
       recordFailedAttempt();
       form.elements.privatePinUnlock.value = "";
       submit.disabled = false;
-      setMessage("Prístupový kód nie je správny.", "error");
+      setMessage("PIN nie je správny.", "error");
       updateUnlockDelay();
     }
   }
@@ -558,12 +559,12 @@
       return;
     }
     if (event.target.closest("[data-private-forgot]")) {
-      const confirmed = window.confirm("Reset kódu natrvalo vymaže iba všetky zápisy v súkromnom denníku. Ostatné údaje aplikácie zostanú zachované. Pokračovať?");
+      const confirmed = window.confirm("Nový PIN natrvalo vymaže zápisy v súkromnom denníku. Ostatné údaje ostanú. Pokračovať?");
       if (!confirmed) return;
       privateStore.clear();
       clearAuthState();
       lock();
-      setMessage("Súkromný denník bol vymazaný. Môžeš nastaviť nový kód.");
+      setMessage("Súkromný denník bol vymazaný. Môžeš nastaviť nový PIN.");
     }
   });
 

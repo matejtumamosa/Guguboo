@@ -885,7 +885,10 @@
             tapSeg(app, "tummy"); await sleep(200);
             doc.querySelector("#g2QuickOverlay [data-g2q='tummy-start']").click(); await sleep(250);
             assert(doc.querySelector("#home.view.active .g2q-core.is-running"), "stred neukazuje bežiaci časovač");
+            // Master 4.0 (Audit F8): ťuk na stred otvorí okno merania – ukončí sa až tlačidlom v okne.
             doc.querySelector("#home.view.active .g2q-core").click(); await sleep(250);
+            assert(app.state().v5.tummyTimer.active, "ťuk na stred ukončil meranie");
+            doc.querySelector("#g2QuickOverlay [data-g2q='tummy-stop']").click(); await sleep(250);
             eq(app.state().events.slice(-1)[0].type, "Na brušku", "Na brušku sa neuložilo");
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }
@@ -1333,6 +1336,187 @@
               eq(v("--t-muted"), night ? "#c9c3d8" : "#5d5768", "tlmená farba");
             } finally { app.remove(); }
           }
+        }
+      }
+    },
+    {
+      // Master 4.0 (upratanie po úplnom audite 3.9.2 – AUDIT_3.9.2_FUNKCIE.md a AUDIT_3.9.2_TEXTY.md): funkcie, navigácia, texty.
+      name: "Upratanie po audite (Master 4.0)",
+      tests: {
+        "F3: Spánok a zvuky – dlaždica ukazuje „hrá“, ovládanie (Vypnúť, Hlasitosť, Časovač) je v okne, ďalší ťuk zastaví": async () => {
+          const app = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const doc = app.doc, V5 = app.win.GugubooV5;
+            V5.openFeature("sounds"); await sleep(250);
+            const tile = () => doc.querySelector("#v5Sounds [data-v5-audio-type='white']");
+            assert(tile(), "dlaždica Biely šum chýba");
+            eq(tile().getAttribute("aria-pressed"), "false", "pred spustením");
+            tile().click(); await sleep(250);
+            assert(app.state().v5.audio.active, "zvuk sa nespustil");
+            eq(tile().getAttribute("aria-pressed"), "true", "dlaždica neukazuje „hrá“");
+            assert(/Hrá/.test(tile().textContent), "na dlaždici chýba „Hrá“");
+            for (const sel of ["[data-v5-action='stop-audio']", "[data-v5-audio-volume]", "[data-v5-audio-timer]"]) {
+              const el = doc.querySelector("#v5Sounds " + sel);
+              assert(el && isVisible(el), "v okne chýba ovládanie " + sel);
+              const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+              if (y > 0 && y < app.win.innerHeight) assert(el.contains(doc.elementFromPoint(x, y)) || el === doc.elementFromPoint(x, y), sel + " je prekryté");
+            }
+            tile().click(); await sleep(250);
+            assert(!app.state().v5.audio.active, "druhý ťuk zvuk nezastavil");
+            eq(tile().getAttribute("aria-pressed"), "false", "po zastavení");
+            assert(!doc.querySelector("#v5Sounds [data-v5-action='stop-audio']"), "ovládanie ostalo po zastavení");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "F4: „Zapísať ako otázku“ a spätná väzba sú v systéme okien – Esc a systémové späť zavrú len ich": async () => {
+          const app = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const doc = app.doc, win = app.win, V5 = win.GugubooV5;
+            const esc = () => win.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+            const isOpen = id => !!doc.getElementById(id)?.classList.contains("open");
+            V5.openFeature("calendar"); await sleep(250);
+            const view = V5.currentView();
+            V5.openAskQuestion("me", "Test?"); await sleep(250);
+            assert(isOpen("g2AskQ"), "okno otázky sa neotvorilo");
+            esc(); await sleep(250);
+            assert(!isOpen("g2AskQ"), "Esc nezavrel okno otázky");
+            eq(V5.currentView(), view, "Esc zavrel aj obrazovku pod oknom");
+            V5.openAskQuestion("baby", "Test 2?"); await sleep(250);
+            win.dispatchEvent(new win.PopStateEvent("popstate", { state: null })); await sleep(250);
+            assert(!isOpen("g2AskQ"), "systémové späť nezavrelo okno otázky");
+            eq(V5.currentView(), view, "systémové späť zavrelo aj obrazovku");
+            V5.openHome(); V5.openDrawer(); await sleep(250);
+            doc.body.insertAdjacentHTML("beforeend", "<button type='button' id='t4fb' data-v2-feedback>x</button>");
+            doc.getElementById("t4fb").click(); await sleep(250);
+            assert(isOpen("v2FeedbackOverlay"), "spätná väzba sa neotvorila");
+            esc(); await sleep(250);
+            assert(!isOpen("v2FeedbackOverlay"), "Esc nezavrel spätnú väzbu");
+            assert(isOpen("v5DrawerOverlay"), "Esc zavrel aj Všetko pod spätnou väzbou");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "F5: vek bábätka jedným výpočtom – poradové číslo (95 dní = 4. mesiac) rovnako na domove, v Bábätku aj v Tvojom mesiaci": async () => {
+          const cases = [[20, "3. týždeň"], [95, "4. mesiac"], [400, "14. mesiac"], [730, "3. rok"]];
+          for (const [days, label] of cases) {
+            const app = await bootApp(ringSeed("po", { birth: -days }), { settle: 300 });
+            try {
+              const V5 = app.win.GugubooV5;
+              eq(V5.babyAge().days, days, days + " dní: dni");
+              eq(V5.ageData().label, label, days + " dní: označenie");
+              assert(app.doc.querySelector("#home.view.active .g2-hero-sub")?.textContent.includes(label), days + " dní: domov neukazuje „" + label + "“");
+              if (days === 95) {
+                V5.openFeature("babyHub"); await sleep(200);
+                assert(app.doc.querySelector(".view.active")?.textContent.includes(label), "Bábätko neukazuje „" + label + "“");
+                V5.openMonth(); await sleep(250);
+                assert(/^3[–-]4/.test(app.doc.querySelector("#g2MonthBody .v2-week-strip .is-current b")?.textContent || ""), "Tvoj mesiac nie je obdobie 3–4");
+              }
+              eq(app.errors, [], days + " dní: chyby v konzole");
+            } finally { app.remove(); }
+          }
+        },
+        "F8: stred kruhu pri bežiacom spánku otvorí okno merania; ukončí sa až tlačidlom, Prehľad dňa je dostupný": async () => {
+          const start = new Date(Date.now() - 20 * 60000).toISOString();
+          const app = await bootApp(ringSeed("po", { extra: { sleepTimer: { active: true, start, type: "day" } } }));
+          try {
+            const doc = app.doc, ov = () => doc.getElementById("g2QuickOverlay");
+            const core = doc.querySelector("#home.view.active .g2q-core.is-running");
+            assert(core, "stred neukazuje bežiaci čas");
+            assert(!/Zobudilo/.test(core.textContent + core.getAttribute("aria-label")), "stred sľubuje „Zobudilo sa“ jedným ťukom");
+            const n = app.state().events.length;
+            core.click(); await sleep(250);
+            assert(ov()?.classList.contains("open"), "okno merania sa neotvorilo");
+            eq(doc.getElementById("g2qTitle").textContent, "Spánok", "nadpis okna");
+            assert(app.state().sleepTimer.active && app.state().events.length === n, "ťuk na stred ukončil spánok");
+            ov().querySelector("[data-g2q='day']").click(); await sleep(250);
+            eq(doc.getElementById("g2qTitle").textContent, "Dnes", "Prehľad dňa z okna merania");
+            app.win.dispatchEvent(new app.win.PopStateEvent("popstate", { state: null })); await sleep(250);
+            eq(doc.getElementById("g2qTitle").textContent, "Spánok", "späť z Dnes nevrátilo okno merania");
+            ov().querySelector("[data-g2q='stop']").click(); await sleep(250);
+            assert(!app.state().sleepTimer.active, "tlačidlo „Zobudilo sa teraz“ neukončilo spánok");
+            eq(app.state().events.slice(-1)[0].type, "Spánok", "spánok sa neuložil");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "F9: späť o krok – Dnes → Upraviť → späť = Dnes; Všetko → Kalendár → šípka späť = Všetko": async () => {
+          const app = await bootApp(ringSeed("po", { extra: { events: [ev("Plienka", 30, { value: "Cikalo", diaper: { type: "wet" } })] } }));
+          try {
+            const doc = app.doc, win = app.win, V5 = win.GugubooV5;
+            doc.querySelector("#home.view.active .g2q-core").click(); await sleep(250);
+            doc.querySelector("#g2QuickOverlay [data-g2q='edit-open']").click(); await sleep(200);
+            eq(doc.getElementById("g2qTitle").textContent, "Upraviť", "okno Upraviť");
+            win.dispatchEvent(new win.PopStateEvent("popstate", { state: null })); await sleep(250);
+            assert(doc.getElementById("g2QuickOverlay").classList.contains("open"), "späť zavrelo celé okno");
+            eq(doc.getElementById("g2qTitle").textContent, "Dnes", "späť z Upraviť");
+            win.G2Quick.close(); await sleep(200);
+            V5.openDrawer(); await sleep(250);
+            doc.querySelector("#v5Drawer [data-v5-feature='calendar']").click(); await sleep(400);
+            eq(V5.currentView(), "v5Calendar", "Kalendár sa neotvoril");
+            doc.querySelector("#v5Calendar [data-v5-window-back]").click(); await sleep(400);
+            assert(doc.getElementById("v5DrawerOverlay").classList.contains("open"), "šípka späť nevrátila Všetko");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "F17: Prvý pohyb – „Cítim už dlhšie“ otvorí zápis pohybov bez spomienky s dnešným dátumom": async () => {
+          const app = await bootApp(ringSeed("pred", { due: 84 }));
+          try {
+            const doc = app.doc;
+            tapSeg(app, "move"); await sleep(250);
+            eq(doc.getElementById("g2qTitle").textContent, "Prvý pohyb", "okno Prvý pohyb");
+            doc.querySelector("#g2QuickOverlay [data-g2q='firstmove-earlier']").click(); await sleep(250);
+            eq(doc.getElementById("g2qTitle").textContent, "Pohyby", "po „Cítim už dlhšie“");
+            eq((app.state().v5.firstMoments || []).filter(m => m.key === "firstmove").length, 0, "vznikla spomienka Prvý pohyb");
+            eq((app.state().v5.babyMoves || []).length, 0, "vznikol zápis pohybu");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        "F6, F13, F14: Kontakty na pomoc otvoria kontakty (podľa obdobia); GuguChat neopakuje tú istú otázku": async () => {
+          const po = await bootApp(seed("po"), { settle: 300 });
+          try {
+            const doc = po.doc, V5 = po.win.GugubooV5;
+            V5.openFeature("mama"); await sleep(200);
+            doc.querySelector(".view.active [data-v2-mama-section='mood']")?.click(); await sleep(250);
+            const btn = [...doc.querySelectorAll(".view.active button")].find(b => /Kontakty na pomoc/.test(b.textContent));
+            assert(btn && btn.matches("[data-v5-urgent]"), "„Kontakty na pomoc“ v Nálade a spánku neotvára kontakty");
+            btn.click(); await sleep(250);
+            eq(doc.getElementById("v5OMenuTitle").textContent, "Kontakty na pomoc", "okno kontaktov");
+            assert(/pediatr/.test(doc.getElementById("v5OMenuBody").textContent), "po pôrode chýba pediater");
+            eq(po.errors, [], "po: chyby v konzole");
+          } finally { po.remove(); }
+          const pred = await bootApp(seed("pred"), { settle: 300 });
+          try {
+            const doc = pred.doc, win = pred.win;
+            win.GugubooV5.openUrgentModal(); await sleep(250);
+            const body = doc.getElementById("v5OMenuBody").textContent + doc.getElementById("v5OMenuSubtitle").textContent;
+            assert(!/pediatr|bábätko ťažko dýcha/i.test(body), "v tehotenstve sa spomína pediater alebo dýchanie bábätka");
+            assert(/pôrodnic/.test(body), "v tehotenstve chýba pôrodnica");
+            win.GugubooV5.closeAdaptiveOMenu(); await sleep(150);
+            const users = () => win.eval("state").v2.chat.filter(m => m.role === "user" && m.text === "Potrebujem pomoc a podporu").length;
+            win.GugubooChat.open("Potrebujem pomoc a podporu"); await sleep(300);
+            win.GugubooChat.open("Potrebujem pomoc a podporu"); await sleep(300);
+            eq(users(), 1, "tá istá otázka je v chate viackrát");
+            eq(pred.errors, [], "pred: chyby v konzole");
+          } finally { pred.remove(); }
+        },
+        "T1 a texty: úvod v tykaní, bez rodu pri appke a GuguChate, zvyšky zrušených funkcií preč": async () => {
+          const app = await bootApp(seed("uvod"), { settle: 300 });
+          try {
+            eq(app.doc.getElementById("g2i-h-names")?.textContent.trim(), "Ako ťa môžeme oslovovať?", "nadpis 4. obrazovky úvodu");
+            const intro = app.doc.getElementById("g2Intro")?.textContent || "";
+            assert(intro.length > 100, "úvod (#g2Intro) sa nevykreslil");
+            assert(!/\b(vás|Vás|budete|chcete)\b/.test(intro), "v úvode je vykanie");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+          const bad = [];
+          const rules = [
+            ["g2-intro.js", /Ako vás môžeme/], ["g2-ring.js", /som zastavila/], ["guguchat.js", /ozvem sa sama|som si zapísala|Potrebovala by si/],
+            ["g2-windows.js", /čo si napísala/], ["v5-mobile.js", /segmente kruhu|Späť ku kruhu|Teraz som cítila|Čo si umývala|si namerala|Keď si nie si istá|Prebaľovanie"\)|Profily rodiny"|Zatvoriť hľadanie|Zrušiť a vrátiť sa domov/]
+          ];
+          for (const [f, re] of rules) {
+            const src = await (await fetch(f + "?t=" + Date.now(), { cache: "no-store" })).text();
+            const m = src.match(re);
+            if (m) bad.push(f + ": " + m[0]);
+          }
+          eq(bad, [], "staré texty v kóde");
         }
       }
     }

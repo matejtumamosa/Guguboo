@@ -5660,7 +5660,7 @@
         ? { profile: { status: "born", birth: day(-95), name: "Ema", country: "SK" }, user: { name: "Lucia" }, onboarded: true,
             sleepTimer: { active: true, start: ago(47), type: "day" },
             events: [{ id: "d1", type: "Kŕmenie", value: "Dojčenie · Ľavý prsník · 18 min", side: "Ľavý prsník", method: "Dojčenie", created: ago(130) },
-                     { id: "d2", type: "Plienka", value: "Cikalo", created: ago(60) }],
+                     { id: "d2", type: "Plienka", value: "Cikalo", created: ago(60), diaper: { type: "wet", reason: "Cikalo" } }], // Master 4.0 (Audit F51)
             v5: { tourDone: true } }
         : { profile: { status: "expecting", due: day(280 - 14 * 7 - 2), country: "SK" }, user: { name: "Lucia" }, onboarded: true, v5: { tourDone: true } };
       const mem = new Map([[storeKey, JSON.stringify(demo)]]);

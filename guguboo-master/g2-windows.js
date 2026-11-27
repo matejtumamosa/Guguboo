@@ -25,19 +25,25 @@
     if (back && !back.hidden && back.offsetParent) back.click();
     else V5.closeAdaptiveOMenu();
   };
+  // Master 4.0 (Audit F9): reopen = ako okno znova otvoriť, keď sa späť vracia do neho z okna/obrazovky, ktorú otvorilo
+  // (Všetko → položka → späť = Všetko; Plán → Oznámenie → späť = Plán; Dnes → Spánok a zvuky → späť = Dnes).
   const LAYERS = [
-    { id: "v5DrawerOverlay", kind: "sheet", back: () => V5.closeDrawer(), close: () => V5.closeDrawer() },
-    { id: "v5QuickRecordOverlay", kind: "sheet", back: () => V5.closeQuickRecord(), close: () => V5.closeQuickRecord() },
+    { id: "v5DrawerOverlay", kind: "sheet", back: () => V5.closeDrawer(), close: () => V5.closeDrawer(), reopen: () => V5.openDrawer() },
+    { id: "v5QuickRecordOverlay", kind: "sheet", back: () => V5.closeQuickRecord(), close: () => V5.closeQuickRecord(), reopen: () => V5.openQuickRecord() },
     { id: "v5OOverlay", kind: "sheet", back: oBack, close: () => V5.closeAdaptiveOMenu() },
-    { id: "g2PlanOverlay", kind: "full", back: () => V5.closePlan(), close: () => V5.closePlan() },
-    { id: "g2MonthOverlay", kind: "full", back: () => V5.closeMonth(), close: () => V5.closeMonth() },
+    { id: "g2PlanOverlay", kind: "full", back: () => V5.closePlan(), close: () => V5.closePlan(), reopen: () => V5.openPlan() },
+    { id: "g2MonthOverlay", kind: "full", back: () => V5.closeMonth(), close: () => V5.closeMonth(), reopen: () => V5.openMonth() },
     { id: "v2AdminOverlay", kind: "full", back: () => window.GugubooAdmin?.stepBack?.(), close: () => window.GugubooAdmin?.close?.() },
     // Master 2.0: Čas pre teba (g2-ring.js) – krátka akcia, späť o krok v rámci okna, × / Esc zavrie
     { id: "g2RingOverlay", kind: "sheet", back: () => window.G2Ring?.back?.(), close: () => window.G2Ring?.close?.() },
     // Master 2.1: krátke voľby kruhu na domove (kŕmenie, plienky, jedlo, kontrakcie)
-    { id: "g2QuickOverlay", kind: "sheet", back: () => window.G2Quick?.close?.(), close: () => window.G2Quick?.close?.() },
+    // Master 4.0 (Audit F9): späť aj Esc idú o krok v rámci okna (Dnes → Upraviť → späť = Dnes), × zavrie.
+    { id: "g2QuickOverlay", kind: "sheet", escBack: true, back: () => window.G2Quick?.back?.(), close: () => window.G2Quick?.close?.(), reopen: () => window.G2Quick?.reopen?.() },
     { id: "g2WeatherOverlay", kind: "sheet", back: () => window.G2Weather?.close?.(), close: () => window.G2Weather?.close?.() },
-    { id: "g2BackupOverlay", kind: "sheet", back: () => window.G2Backup?.close?.(), close: () => window.G2Backup?.close?.() }
+    { id: "g2BackupOverlay", kind: "sheet", back: () => window.G2Backup?.close?.(), close: () => window.G2Backup?.close?.() },
+    // Master 4.0 (Audit F4): okno „Zapísať ako otázku…“ a spätná väzba sú v spoločnom systéme okien – Esc a systémové späť zavrú len ich.
+    { id: "g2AskQ", kind: "sheet", back: () => V5.closeAskQuestion?.(), close: () => V5.closeAskQuestion?.() },
+    { id: "v2FeedbackOverlay", kind: "sheet", back: () => window.GugubooChat?.closeFeedback?.(), close: () => window.GugubooChat?.closeFeedback?.() }
   ];
   const layerById = Object.fromEntries(LAYERS.map(layer => [layer.id, layer]));
 
@@ -93,8 +99,9 @@
   const visible = el => Boolean(el && el.isConnected && (el.offsetParent || el.getClientRects().length) && !el.closest("[aria-hidden='true'], [inert]"));
   function signature(el) {
     if (!el || !el.attributes) return "";
-    const attr = Array.from(el.attributes).find(item => item.name.startsWith("data-") && item.name !== "data-g2-go");
-    return attr ? "[" + attr.name + (attr.value ? "='" + CSS.escape(attr.value) + "'" : "") + "]" : el.id ? "#" + CSS.escape(el.id) : "";
+    // Master 4.0 (Audit F52): aj druhý data-atribút (napr. diel kruhu [data-g2q='seg'][data-seg='move']) – fokus sa vráti na ten istý diel.
+    const attrs = Array.from(el.attributes).filter(item => item.name.startsWith("data-") && item.name !== "data-g2-go").slice(0, 2);
+    return attrs.length ? attrs.map(attr => "[" + attr.name + (attr.value ? "='" + CSS.escape(attr.value) + "'" : "") + "]").join("") : el.id ? "#" + CSS.escape(el.id) : "";
   }
   function focusInto(el) {
     if (!el || el.contains(document.activeElement)) return;
@@ -112,9 +119,28 @@
     if (head) { head.setAttribute("tabindex", "-1"); head.focus({ preventScroll: true }); }
   }
 
+  // ——— Master 4.0 (Audit F9): späť o krok aj medzi oknami ———
+  // Keď sa okno zavrie a hneď (v tom istom ťuku) sa otvorí iné okno alebo obrazovka, zapamätáme si, odkiaľ prišlo.
+  // Späť (šípka späť, Esc, systémové späť) potom to pôvodné okno znova otvorí; × a lišta nie.
+  let recentlyClosed = null; // { id, at }
+  let backAt = -1e9;
+  const now = () => performance.now();
+  const markBack = () => { backAt = now(); };
+  const backRecently = () => now() - backAt < 700;
+  function takeReturn(exceptId) {
+    const rc = recentlyClosed;
+    recentlyClosed = null;
+    if (!rc || rc.id === exceptId || now() - rc.at > 400 || backRecently()) return "";
+    return layerById[rc.id]?.reopen ? rc.id : "";
+  }
+  function reopenLayer(id) {
+    if (!id || isOpen(byId(id))) return;
+    setTimeout(() => { if (!stack().length && !confirmOpen()) layerById[id]?.reopen?.(); }, 0);
+  }
+
   function onOpen(layer, el) {
     const opener = lastActivator && !el.contains(lastActivator) ? lastActivator : document.activeElement;
-    opened.set(layer.id, { order: ++order, opener, sig: signature(opener) });
+    opened.set(layer.id, { order: ++order, opener, sig: signature(opener), returnTo: takeReturn(layer.id) });
     layout();
     // Fokus do okna (s opakovaním, kým okno nedobehne animáciou a nie je viditeľné).
     let tries = 0;
@@ -130,6 +156,8 @@
     const entry = opened.get(layer.id);
     opened.delete(layer.id);
     layout();
+    recentlyClosed = { id: layer.id, at: now() };
+    if (entry?.returnTo && backRecently()) { recentlyClosed = null; reopenLayer(entry.returnTo); return; }
     const lost = focusLost() || el.contains(document.activeElement);
     if (lost) setTimeout(() => {
       const top = topLayer();
@@ -191,7 +219,7 @@
     let box = byId("g2Confirm");
     if (!box) {
       document.body.insertAdjacentHTML("beforeend", "<div id='g2Confirm' class='g2-confirm' role='alertdialog' aria-modal='true' aria-labelledby='g2ConfirmTitle' aria-describedby='g2ConfirmText'><div class='g2-confirm-card'>" +
-        "<h2 id='g2ConfirmTitle'>Máš rozpísané údaje</h2><p id='g2ConfirmText'>Ak odídeš, to, čo si napísala, sa neuloží.</p>" +
+        "<h2 id='g2ConfirmTitle'>Máš rozpísané údaje</h2><p id='g2ConfirmText'>Ak odídeš, rozpísaný text sa neuloží.</p>" +
         "<div class='g2-confirm-actions'><button type='button' class='v5-primary' data-g2-confirm-stay>Pokračovať v písaní</button><button type='button' class='v5-secondary' data-g2-confirm-discard>Zahodiť a odísť</button></div></div></div>");
       box = byId("g2Confirm");
     }
@@ -249,6 +277,15 @@
     confirmDiscard(fields, () => trigger.click());
   }, true);
 
+  // Master 4.0 (Audit F9): šípka späť v hlavičke obrazovky alebo okna = krok späť (aj do okna, z ktorého prišla).
+  const BACK_ARROWS = "[data-v5-window-back], [data-g2-plan-close], [data-g2-month-close], [data-v5-o-back], [data-v2-admin-back], [data-v2-admin-step-back]";
+  // Lišta prepína oblasti – nie je to krok späť a nič sa znova neotvára.
+  let barAt = -1e9;
+  document.addEventListener("click", event => {
+    if (event.target.closest(BACK_ARROWS)) markBack();
+    if (event.target.closest("#v5BottomBar")) barAt = now();
+  }, true);
+
   // × v okne (Plán, Tvoj mesiac): zavrie celý zásobník okien, obrazovka pod nimi ostáva.
   document.addEventListener("click", event => {
     if (event.target.closest("[data-g2-win-close]")) closeLayers();
@@ -258,7 +295,8 @@
   });
 
   // ——— Klávesnica: Esc zavrie vrchné okno, Tab ostáva v okne s krátkou akciou ———
-  const foreignModalOpen = () => Boolean(document.querySelector(".v2-birth-overlay.open:not(#v2AdminOverlay), .v2-picker:not([hidden]), .v2-tour.open, .v2-tour[style*='block']"));
+  // Master 4.0 (Audit F4): spätná väzba (#v2FeedbackOverlay) už je okno v systéme (LAYERS), nie cudzie okno.
+  const foreignModalOpen = () => Boolean(document.querySelector(".v2-birth-overlay.open:not(#v2AdminOverlay):not(#v2FeedbackOverlay), .v2-picker:not([hidden]), .v2-tour.open, .v2-tour[style*='block']"));
   window.addEventListener("keydown", event => {
     if (event.key === "Tab") return trapTab(event);
     if (event.key !== "Escape") return;
@@ -268,13 +306,13 @@
     if (top) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      guarded([byId(top.id)], () => top.close());
+      guarded([byId(top.id)], () => { markBack(); return top.escBack ? top.back() : top.close(); });
       return afterInteraction();
     }
     if (!NO_WINDOW_VIEWS.has(V5.currentView())) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      guarded([activeView()], () => V5.universalWindowBack());
+      guarded([activeView()], () => { markBack(); V5.universalWindowBack(); });
       afterInteraction();
     }
   }, true);
@@ -303,8 +341,8 @@
     if (confirmOpen()) { closeConfirm(false); return setTimeout(ensureSentinel, 30); }
     if (foreignModalOpen() || !somethingOpen()) return;
     const top = topLayer();
-    if (top) guarded([byId(top.id)], () => top.back());
-    else guarded([activeView()], () => V5.universalWindowBack());
+    if (top) guarded([byId(top.id)], () => { markBack(); top.back(); });
+    else guarded([activeView()], () => { markBack(); V5.universalWindowBack(); });
     afterInteraction();
     setTimeout(ensureSentinel, 60);
   });
@@ -342,17 +380,24 @@
   setTimeout(observeViews, 1500);
   function onViewChange(from, to) {
     // Nová obrazovka je vždy navrchu – celostránkové okná (Plán, Tvoj mesiac, Úrady) nad starou obrazovkou sa zavrú.
-    stack().filter(layer => layer.kind === "full").reverse().forEach(layer => layer.close());
+    const fullOpen = stack().filter(layer => layer.kind === "full");
+    fullOpen.slice().reverse().forEach(layer => layer.close());
     const returning = viewEntries[from] && viewEntries[from].from === to;
     if (returning) {
       const entry = viewEntries[from];
       delete viewEntries[from];
+      recentlyClosed = null;
+      // Master 4.0 (Audit F9): späť z obrazovky otvorenej z okna (Všetko, Plán, Dnes…) vráti to okno.
+      if (entry.returnLayer && backRecently()) return reopenLayer(entry.returnLayer);
       if (!byId(to)?.contains(document.activeElement)) restoreFocus(entry, byId(to));
       return;
     }
     if (!NO_WINDOW_VIEWS.has(to)) {
       const opener = lastActivator;
-      viewEntries[to] = { from, opener, sig: signature(opener) };
+      const fromBar = now() - barAt < 700;
+      const topFull = fullOpen.length && layerById[fullOpen[fullOpen.length - 1].id].reopen ? fullOpen[fullOpen.length - 1].id : "";
+      const returnLayer = fromBar ? (recentlyClosed = null, "") : topFull ? (recentlyClosed = null, topFull) : takeReturn("");
+      viewEntries[to] = { from, opener, sig: signature(opener), returnLayer };
       const viewEl = byId(to);
       if (viewEl && !viewEl.contains(document.activeElement)) {
         const head = viewEl.querySelector(":scope > .v5-universal-window-head strong");

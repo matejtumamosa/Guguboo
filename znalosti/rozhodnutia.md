@@ -3,6 +3,17 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-27 – Samo (Master 4.0: zmeny funkcie po úplnom audite 3.9.2)
+- **Profil → Rodina bez oprávnení a upozornení** (audit F7): appka nemá účty ani zdieľanie, nikto iný ju nevidí – voľby
+  „Oprávnenie“ a „Upozornenia“ sú vypnuté (kód ostáva, podmienka `MASTER`), kým neprídu účty.
+- **Stred kruhu pri bežiacom spánku / kontrakcii / kŕmení / Na brušku** (F8): ťuk meranie neukončí – otvorí okno merania
+  („Zobudilo sa teraz“, „Skončila teraz“… je tlačidlo v okne) a z neho je odkaz „Dnes ›“ na Prehľad dňa. V strede už nie je pilulka „Zobudilo sa“.
+- **„Denné záznamy“ = história záznamov = Prehľad dňa** (T2): Bábätko, Všetko a GuguChat otvoria okno Dnes; odkaz „Všetky denné
+  záznamy ›“ v okne Dnes zmizol (viedol na „Čo chceš zaznamenať?“). „+ Nový záznam“ (Kúpanie, Teplota, Poznámka) ostáva; Spánok,
+  Kŕmenie a Plienky v ňom otvoria okno dielu kruhu (jedna vec, jeden názov a ikona).
+- **Prvý pohyb: „Cítim už dlhšie“** (F17): vedľa „Cítila som ho“ – rovno k zápisu pohybov, bez dátumu a bez spomienky s dnešným dátumom
+  (`state.v5.firstMoveEarlier`).
+
 ## 2026-11-27 – Samo (Master 3.9.2: skratky ostávajú s textom, tri nové ikony)
 - **Skratky na domove ostávajú s textom.** Slepý test (`guguboo-master/prototyp-skratky.html`) ukázal, že bez textu fungujú
   len Kalendár, Zúbky, Aktivity (kocky) a Starostlivosť (zavinuté bábätko); Tvoje telo, Čo je bežné, obe knižky, Otázky pre lekára

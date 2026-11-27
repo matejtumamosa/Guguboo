@@ -262,14 +262,14 @@
       field("name", "Meno", babyName(), "maxlength='30'"),
       field("birth", "Dátum", p.birth, "type='date'"),
       field("birthTime", "Čas", p.birthTime, "type='time'"),
-      field("weight", "Váha (g)", String(p.weight || "").replace(/[^\d]/g, ""), "inputmode='numeric' maxlength='5' placeholder='3450'"),
+      field("weight", "Hmotnosť (g)", String(p.weight || "").replace(/[^\d]/g, ""), "inputmode='numeric' maxlength='5' placeholder='3450'"), // Master 4.0 (Audit T32): Hmotnosť ako v Zdravotnej knižke
       field("height", "Dĺžka (cm)", String(p.height || "").replace(/[^\d,.]/g, ""), "inputmode='decimal' maxlength='4' placeholder='51'"),
       field("birthPlace", "Miesto", p.birthPlace, "maxlength='40' placeholder='napr. Bratislava'"),
       field("parents", "Rodičia", s.parents, "maxlength='50' placeholder='napr. Petra a Martin'"),
       field("message", "Odkaz", s.message, "maxlength='80' placeholder='napr. Ďakujeme za všetku lásku'"),
       "</div>",
       "<h3>Ukázať</h3><div class='v2-ann-chips'>",
-      toggle("time", "Čas"), toggle("weight", "Váha"), toggle("height", "Dĺžka"), toggle("place", "Miesto"), toggle("parents", "Rodičia"), toggle("message", "Odkaz"), toggle("sign", "Znamenie"),
+      toggle("time", "Čas"), toggle("weight", "Hmotnosť"), toggle("height", "Dĺžka"), toggle("place", "Miesto"), toggle("parents", "Rodičia"), toggle("message", "Odkaz"), toggle("sign", "Znamenie"),
       "</div>",
       "<h3>Formát</h3><div class='v2-ann-chips'>", chip("data-v2-bc-format", "square", "Štvorec", s.format === "square"), chip("data-v2-bc-format", "story", "Na výšku", s.format === "story"), "</div>",
       "</section>"
