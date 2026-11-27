@@ -40,7 +40,7 @@ window.GugubooContent.mamaPostpartum = {
       askPrompt: "Mám otázku k rane po cisárskom reze.",
       source: "https://www.nhs.uk/conditions/caesarean-section/recovery/",
       reviewed: "4. 1. 2023",
-      reviewDue: "4. 1. 2026", // revízia NHS prešla – overiť aktuálne znenie (audit, časť 4)
+      reviewDue: "4. 1. 2026", // Master 4.0 (Audit Z18): stránka znovu prečítaná 27. 11. 2026 – zhoda (several weeks; wound more red, painful and swollen); NHS revíziu zatiaľ nevydala
       evidence: "it usually takes several weeks to recover … a wound that becomes redder, more painful, or swollen"
     },
     {
@@ -118,35 +118,23 @@ window.GugubooContent.mamaPostpartum = {
     source: "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/",
     reviewed: "20. 7. 2026",
     items: [
+      // Master 4.0 (Audit Z3): postup cvikov („Ako na to“), dávka („aspoň 3-krát denne“, „najviac 10-krát“) a denné
+      // počítadlo (perDay) ODSTRÁNENÉ – postup a dávka nie sú pre sprievodcu (pravidlo Sama 26. 11.). Ostáva názov,
+      // na čo cviky sú (informácia NHS), odkaz na stránku NHS a otázka pre lekára. ⚕
       {
-        id: "pelvic", title: "Cviky panvového dna", perDay: 3,
-        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku.",
-        steps: [
-          "Cvičiť môžeš poležiačky, v sede aj v stoji.",
-          "Stiahni konečník, akoby si zadržiavala plyny.",
-          "Stiahni svaly okolo pošvy a močového mechúra, akoby si zastavovala močenie.",
-          "Dlhé stiahnutie: drž, kým vládzeš, najviac 10 sekúnd, potom uvoľni.",
-          "Krátke stiahnutia: rýchlo stiahni a hneď pusť – opakuj, kým sa svaly neunavia.",
-          "Dýchaj normálne a pritom nevťahuj brucho."
-        ],
-        dose: "Postupne do 10 opakovaní každého cviku, aspoň 3-krát denne."
+        id: "pelvic", title: "Cviky panvového dna",
+        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku."
       },
       {
-        id: "tummy", title: "Cvik na brucho", perDay: 1,
-        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch.",
-        steps: [
-          "Ľahni si na bok s mierne pokrčenými kolenami.",
-          "Uvoľni brucho a jemne sa nadýchni.",
-          "S výdychom jemne vtiahni spodnú časť brucha ako korzet.",
-          "Zároveň stiahni panvové dno.",
-          "Drž, kým napočítaš do 10, dýchaj normálne a jemne uvoľni."
-        ],
-        dose: "Opakuj najviac 10-krát."
+        id: "tummy", title: "Cvik na brucho",
+        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch."
       }
       // Master 2.7 (audit #13): „Kontrola brušných svalov“ (samohodnotenie) odstránená.
     ],
+    howNote: "Ako sa cviky robia, popisuje stránka NHS (odkaz nižšie). Opýtať sa môžeš aj pôrodnej asistentky alebo na kontrole po pôrode.",
+    askPrompt: "Ako mám po pôrode cvičiť panvové dno a brucho?",
     avoid: ["sedy-ľahy, plank a skákanie (spočiatku)", "tlačenie na WC a dvíhanie ťažkého"],
-    evidence: "Aim to build up to 10 repeats of each exercise, at least 3 times a day. | Lie on your side with your knees slightly bent … Hold for a count of 10 … Repeat up to 10 times. | Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
+    evidence: "Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
   },
   // Menštruácia po pôrode – NHS „Your body after the birth“ (stránka z 25. 4. 2024) a „Irregular periods“ (26. 6. 2026). Overené 7. 11. 2026.
   period: {

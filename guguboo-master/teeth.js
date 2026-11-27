@@ -6,11 +6,14 @@
   if (!root || !view || typeof state === "undefined") return;
 
   const REVIEWED_AT = "2026-09-09";
+  // Master 4.0 (Audit Z13, Z42): stránka NHS Baby teething symptoms (stránka z 14. 5. 2026) overená 27. 11. 2026 – časová os
+  // a veta „temperature is slightly raised but less than 38C“. ⚕ Pred testom potvrdí pediater.
+  const TEETH_NHS_CHECKED = "27. 11. 2026";
   const SOURCES = [
     ["NHS: prerezávanie zubov", "https://www.nhs.uk/conditions/baby/babys-development/teething/baby-teething-symptoms/"],
     ["EAPD: fluoridová prevencia", "https://www.eapd.eu/uploads/pdf_13092025-111659.pdf"],
     ["ADA: detská zubná starostlivosť", "https://www.ada.org/resources/ada-library/oral-health-topics/toothbrushes"],
-    ["AAPD: prvá návšteva do 1 roka", "https://www.aapd.org/globalassets/media/policy-center/year1visit.pdf"]
+    ["AAPD: zubná starostlivosť v 1. roku", "https://www.aapd.org/globalassets/media/policy-center/year1visit.pdf"]
   ];
   const TOOTH_DEFINITIONS = [
     ["55","Horná pravá druhá stolička"],["54","Horná pravá prvá stolička"],["53","Horný pravý očný zub"],["52","Horný pravý bočný rezák"],["51","Horný pravý predný rezák"],
@@ -66,7 +69,7 @@
     const erupting = state.teeth.teethingLikely || records.some(record => record.status === "erupting");
     if (erupted) return `<span class="teeth-eyebrow">Po prvom zube</span><h2>Prvý zúbok je tu</h2><p>Ako sa starať o prvé zúbky, sa môžeš opýtať pediatra alebo zubára.</p>${window.G2Safety ? window.G2Safety.askButton("baby", "Ako sa starať o prvé zúbky?") : ""}<div class="teeth-actions"><button type="button" data-teeth-scroll-map>Otvoriť mapu</button><button type="button" data-teeth-diary>Pridať „Prvý zúbok“ do denníka</button></div>`;
     if (erupting) return `<span class="teeth-eyebrow">Pri prerezávaní</span><h2>Keď sa prerezáva zúbok</h2><p>Prerezávanie môže byť pre bábätko nepríjemné. Každé bábätko to prežíva inak.</p><p>${escapeHtml(window.G2Safety?.line.ped || "")}</p>${window.G2Safety ? window.G2Safety.askButton("baby", "Prerezáva sa zúbok – čo môže bábätku uľaviť?") : ""}<div class="teeth-actions"><button type="button" data-teeth-visible>Áno, zub je už viditeľný</button><button type="button" data-teeth-scroll-map>Vybrať zub v mape</button><button type="button" data-teeth-cancel-erupting>Bol to omyl</button></div>`;
-    return `<span class="teeth-eyebrow">Pred prvým zubom</span><h2>Prvý zub často príde okolo 6. mesiaca</h2><p>Môže sa objaviť skôr aj neskôr. Bežné môže byť slinenie, hryzenie, citlivé začervenané ďasno alebo väčší nepokoj. Výraznú horúčku, hnačku či vážne ťažkosti nepripisuj automaticky zubom.</p><div class="teeth-actions"><button type="button" data-teeth-likely>Myslím, že sa prerezáva zúbok</button></div>`;
+    return `<span class="teeth-eyebrow">Pred prvým zubom</span><h2>Prvý zub často príde okolo 6. mesiaca</h2><p>Môže sa objaviť skôr aj neskôr. Bežné môže byť slinenie, hryzenie, citlivé začervenané ďasno alebo väčší nepokoj. Podľa NHS môže byť pri prerezávaní teplota mierne zvýšená, ale pod 38 °C.</p><p>${escapeHtml(window.G2Safety?.line.ped || "")}</p><a class="v2-source" href="${SOURCES[0][1]}" target="_blank" rel="noopener noreferrer">Zdroj: NHS (Spojené kráľovstvo) · overené ${TEETH_NHS_CHECKED} ↗</a><!-- Master 4.0 (Audit Z13): informatívna veta NHS namiesto rady „nepripisuj automaticky zubom“ --><div class="teeth-actions"><button type="button" data-teeth-likely>Myslím, že sa prerezáva zúbok</button></div>`;
   }
 
   function editPanel() {
@@ -95,8 +98,8 @@
         <div class="teeth-reminder"><label>Dobrovoľná pripomienka čistenia<input type="datetime-local" data-teeth-reminder-date value="${tomorrowMorning()}"></label><button type="button" data-teeth-reminder>Vytvoriť v Pripomienkach</button></div></section>
       <section class="teeth-card"><h2>Zubár</h2><!-- Master 2.7 (audit #16): zákonný nárok namiesto „je vhodný čas“ (zákon 577/2004 Z. z., § 2, dieta-sk.js) --><p>Dieťa má nárok na 2 preventívne prehliadky u zubného lekára v kalendárnom roku (do 18 rokov), plne ich hradí poisťovňa. Kedy ísť prvýkrát, sa môžeš opýtať pediatra.</p>${window.G2Safety ? window.G2Safety.askButton("baby", "Kedy ísť prvýkrát k zubárovi?") : ""}
         ${dentistRelevant ? `<div class="teeth-reminder"><label>Termín návštevy<input type="datetime-local" data-dentist-date value="${tomorrowMorning()}"></label><button type="button" data-dentist-appointment>Pridať do kalendára</button><button type="button" data-dentist-planned aria-pressed="${state.teeth.dentistPlanned}">${state.teeth.dentistPlanned ? "✓ Návšteva je naplánovaná" : "Návšteva je už naplánovaná"}</button></div>` : ""}</section>
-      <section class="teeth-card teeth-help"><h2>Kedy sa ozvať</h2><!-- Master 2.7 (audit #17) --><p>Ak si nie si istá, ozvi sa pediatrovi alebo zubárovi.</p><p>Pri opuchu tváre alebo ťažkostiach s dýchaním či prehĺtaním volaj 155.</p><button type="button" data-teeth-urgent>Starostlivosť</button></section>
-      <footer class="teeth-sources"><strong>Odborný základ na revíziu</strong>${SOURCES.map(([label,url]) => `<a href="${url}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`).join("")}<small>Obsahová kontrola ${REVIEWED_AT}; nejde o individuálnu diagnózu ani lekárske schválenie.</small></footer>
+      <section class="teeth-card teeth-help"><h2>Kedy sa ozvať</h2><!-- Master 2.7 (audit #17) --><p>Ak si nie si istá, ozvi sa pediatrovi alebo zubárovi.</p>${window.G2Safety ? window.G2Safety.html("E5") : ""}<!-- Master 4.0 (Audit Z21): 155 len cez E5 z g2-safety.js --><button type="button" data-teeth-urgent>Starostlivosť</button></section>
+      <footer class="teeth-sources"><strong>Odborný základ na revíziu</strong>${SOURCES.map(([label,url]) => `<a href="${url}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`).join("")}<small>Časová os zubov podľa NHS, overené ${TEETH_NHS_CHECKED}. Obsahová kontrola ${REVIEWED_AT}; nejde o individuálnu diagnózu ani lekárske schválenie.</small></footer>
       <div class="sr-only" data-teeth-live aria-live="polite"></div>
     </div>`;
   }

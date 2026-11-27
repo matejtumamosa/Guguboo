@@ -1,10 +1,14 @@
 /* GUGUBOO V2 – tehotenstvo týždeň po týždni. Každá veta má doslovný citát zo zdroja (evidence). */
+/* Master 4.0 (Audit Z4, Z5, Z16, Z17): vety „Ty“ s radou alebo normou („oddychuj“, „by si mala“, „by sa malo hýbať“) skrátené na
+ * informatívnu časť (citát v evidence ostáva); čisté rady majú "sk": "" (nezobrazia sa). Vety o pohyboch nahrádza E3 z g2-safety.js
+ * (zobrazuje Tvoj týždeň). Pole tip sa v Mastri nezobrazuje (guguchat.js pregnancyWeek); 42. t. tip „urýchliť“ prázdny. */
 window.GugubooContent = window.GugubooContent || {};
 window.GugubooContent.pregnancyWeeks = {
     "meta":  {
                  "country":  "*",
                  "language":  "sk",
                  "last_checked":  "2026-09-28",
+                 "review_due":  "2027-03-28",
                  "verification_status":  "evidence-verified",
                  "review_required":  true,
                  "note":  "Každé tvrdenie má doslovný citát zo stránky NHS (content/evidence/nhs). Nič navyše.",
@@ -335,14 +339,14 @@ window.GugubooContent.pregnancyWeeks = {
                                                          ]
                                         },
                                         {
-                                            "sk":  "Niektoré ženy opisujú toto obdobie ako emocionálnu horskú dráhu, preto veľa oddychuj a prijmi každú ponúknutú pomoc.",
+                                            "sk":  "Niektoré ženy opisujú toto obdobie ako emocionálnu horskú dráhu.",
                                             "evidence":  [
                                                              "Some women describe this time as being like an",
                                                              "so get lots of rest and accept any offers of help."
                                                          ]
                                         },
                                         {
-                                            "sk":  "Je to náročné obdobie, no týždeň po týždni by si sa mala začať cítiť lepšie.",
+                                            "sk":  "Je to náročné obdobie.",
                                             "evidence":  [
                                                              "This is a tough time, but week by week you should start feeling better."
                                                          ]
@@ -564,7 +568,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Ak si doteraz častejšie potrebovala na toaletu, malo by to prestať, keď sa maternica vzďaľuje od močového mechúra.",
+                                             "sk":  "Keď sa maternica vzďaľuje od močového mechúra, časté chodenie na toaletu môže ustúpiť.",
                                              "evidence":  [
                                                               "If you\u0027ve been feeling the urge to pee more often, that should stop as the womb moves away from your bladder."
                                                           ]
@@ -835,7 +839,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Tlak máš pravdepodobne o niečo nižší, preto z gauča nevyskakuj prudko, mohla by sa ti zatočiť hlava.",
+                                             "sk":  "Tlak máš pravdepodobne o niečo nižší, pri prudkom vstávaní sa ti môže zatočiť hlava.",
                                              "evidence":  [
                                                               "Your blood pressure is probably a bit lower than it was, so do not leap up from the sofa, or it could make you feel dizzy."
                                                           ]
@@ -869,7 +873,7 @@ window.GugubooContent.pregnancyWeeks = {
                                       ],
                              "you":  [
                                          {
-                                             "sk":  "Pre teba aj bábätko je skvelé zostať aktívna, no niektoré cvičenia, napríklad beh, môžu byť nepohodlné.",
+                                             "sk":  "Niektoré cvičenia, napríklad beh, môžu byť teraz nepohodlné.",
                                              "evidence":  [
                                                               "It\u0027s great for you and baby to stay active, but some exercises, such as running, could become uncomfortable."
                                                           ]
@@ -980,7 +984,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Keď môžeš, zdriemni si, aby si dohnala nočný spánok.",
+                                             "sk":  "",
                                              "evidence":  [
                                                               "Have naps when you can to make up for lost sleep at night."
                                                           ]
@@ -1072,7 +1076,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Môžeš byť viac zadýchaná, lebo rastúce bábätko tlačí na pľúca. Najlepšie je vyložiť si nohy a oddychovať.",
+                                             "sk":  "Môžeš byť viac zadýchaná, lebo rastúce bábätko tlačí na pľúca.",
                                              "evidence":  [
                                                               "You could be feeling a bit more breathless than usual as the growing baby puts pressure on your lungs. The best remedy is to put your feet up and relax."
                                                           ]
@@ -1111,14 +1115,14 @@ window.GugubooContent.pregnancyWeeks = {
                                       ],
                              "you":  [
                                          {
-                                             "sk":  "Môžeš mať veľký hlad, no až do 3. trimestra (od 28. týždňa) nemusíš jesť viac.",
+                                             "sk":  "Môžeš mať veľký hlad.",
                                              "evidence":  [
                                                               "You may start to feel really hungry, there is no need to eat any more until the 3rd trimester of your pregnancy",
                                                               "week 28 onwards"
                                                           ]
                                          },
                                          {
-                                             "sk":  "Pravdepodobne priberáš, ale netráp sa, ak bruško takmer nevidno. Každé tehotenstvo je iné.",
+                                             "sk":  "Pravdepodobne priberáš, aj keď bruško môže byť ešte takmer nevidno. Každé tehotenstvo je iné.",
                                              "evidence":  [
                                                               "You\u0027re likely to be putting on weight, but do not worry if you can barely see your bump, as every pregnancy is different."
                                                           ]
@@ -1210,7 +1214,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Je dôležité zostať aktívna, no telo sa neustále mení, tak buď k sebe trpezlivá.",
+                                             "sk":  "Telo sa neustále mení.",
                                              "evidence":  [
                                                               "It\u0027s important to stay active but your body\u0027s changing all the time, so be patient with yourself."
                                                           ]
@@ -1249,7 +1253,7 @@ window.GugubooContent.pregnancyWeeks = {
                                       ],
                              "you":  [
                                          {
-                                             "sk":  "Môžeš byť unavená, tak si zdriemni, keď môžeš.",
+                                             "sk":  "Môžeš byť unavená.",
                                              "evidence":  [
                                                               "You may be feeling tired now, so nap when you can."
                                                           ]
@@ -1370,7 +1374,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Cez deň oddychuj, keď môžeš.",
+                                             "sk":  "",
                                              "evidence":  [
                                                               "Rest when you can in the day."
                                                           ]
@@ -1417,7 +1421,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Pomôže, ak sa o svojich snoch porozprávaš.",
+                                             "sk":  "",
                                              "evidence":  [
                                                               "Talking about your dreams will help you put everything into perspective."
                                                           ]
@@ -1513,7 +1517,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                            ]
                                           },
                                           {
-                                              "sk":  "Pravdepodobne je už hlavičkou dole, pripravené na pôrod. Ak nie, netráp sa, je ešte čas.",
+                                              "sk":  "Pravdepodobne je už hlavičkou dole, pripravené na pôrod. Ak nie, je ešte čas.",
                                               "evidence":  [
                                                                "Your baby is probably head down now, ready for birth",
                                                                "Try not to worry if this is not the case",
@@ -1529,7 +1533,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Môžeš byť unavenejšia ako zvyčajne, tak si počas dňa doprávaj veľa oddychu.",
+                                             "sk":  "Môžeš byť unavenejšia ako zvyčajne.",
                                              "evidence":  [
                                                               "You may be feeling more tired than usual. Try and take plenty of rests throughout the day."
                                                           ]
@@ -1613,7 +1617,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                            ]
                                           },
                                           {
-                                              "sk":  "Miesta nie je veľa, no stále by si mala cítiť, ako sa hýbe, a vidieť, ako bruško mení tvar.",
+                                              "sk":  "Miesta nie je veľa.",
                                               "evidence":  [
                                                                "There\u0027s not a lot of space in there, but you should still feel your baby shifting around and see your bump change shape too."
                                                            ]
@@ -1627,7 +1631,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Uvoľní sa tým miesto v bruchu, takže ak si bola zadýchaná, malo by sa to zlepšiť.",
+                                             "sk":  "Uvoľní sa tým miesto v bruchu a dýchať sa môže ľahšie.",
                                              "evidence":  [
                                                               "It frees up space in your abdomen, and gives your lungs a bit of a break, so if you\u0027ve been feeling breathless, that should ease up."
                                                           ]
@@ -1658,7 +1662,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                            ]
                                           },
                                           {
-                                              "sk":  "V maternici je už dosť tesno, no bábätko by sa malo stále hýbať.",
+                                              "sk":  "V maternici je už dosť tesno.",
                                               "evidence":  [
                                                                "It\u0027s getting rather cramped in your womb now, but your baby should still be moving around"
                                                            ]
@@ -1753,7 +1757,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Môžeš pocítiť náhlu chuť upratovať, to je inštinkt hniezdenia. Nepreháňaj to a snaž sa čo najviac oddychovať.",
+                                             "sk":  "Môžeš pocítiť náhlu chuť upratovať, to je inštinkt hniezdenia.",
                                              "evidence":  [
                                                               "You could also be getting a sudden urge to spring clean. That\u0027s your",
                                                               "instinct kicking in. Just don\u0027t overdo it: you should try to rest as much as possible."
@@ -1802,7 +1806,7 @@ window.GugubooContent.pregnancyWeeks = {
                                       ],
                              "you":  [
                                          {
-                                             "sk":  "Novým príznakom tento týždeň môže byť frustrácia či nuda. Už to naozaj nepotrvá dlho, skús byť trpezlivá!",
+                                             "sk":  "Novým príznakom tento týždeň môže byť frustrácia či nuda. Už to naozaj nepotrvá dlho.",
                                              "evidence":  [
                                                               "One new symptom this week could be frustration or even boredom. It really won\u0027t be long now, try to be patient!"
                                                           ]
@@ -1886,7 +1890,7 @@ window.GugubooContent.pregnancyWeeks = {
                                       },
                              "baby":  [
                                           {
-                                              "sk":  "Bábätko je už dosť stlačené, no stále by sa malo hýbať vo svojom zvyčajnom rytme.",
+                                              "sk":  "Bábätko je už dosť stlačené.",
                                               "evidence":  [
                                                                "Your baby is getting rather squashed up now, but should still be moving around in their usual pattern."
                                                            ]
@@ -1932,7 +1936,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                            ]
                                           },
                                           {
-                                              "sk":  "Bábätko by malo byť dosť bucľaté a zrelé, aby zvládlo život mimo maternice bez pomoci.",
+                                              "sk":  "Bábätko už býva dosť bucľaté a zrelé na život mimo maternice.",
                                               "evidence":  [
                                                                "Your baby should be chubby enough and mature enough to survive outside the uterus (womb) without any assistance."
                                                            ]
@@ -1959,7 +1963,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Môžeš byť veľmi frustrovaná, skús však zostať pokojná, je to najlepšie pre teba aj bábätko.",
+                                             "sk":  "Môžeš byť veľmi frustrovaná.",
                                              "evidence":  [
                                                               "You could be feeling very frustrated, but try to stay calm as that\u0027s best for you and the baby."
                                                           ]
@@ -1996,7 +2000,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Ak chceš veci urýchliť, najprv sa poraď so svojou pôrodnou asistentkou.",
+                                         "sk":  "",
                                          "evidence":  [
                                                           "if you are keen to get things moving, check with your midwife first"
                                                       ]

@@ -126,7 +126,7 @@
       "</div>",
       // Text 1.5 (Samo 13. 11.): podrobnosti ostávajú celé, len v ďalšej úrovni.
       moreHtml,
-      item.source_url ? "<a class='v2-source' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(item.official_source || "oficiálna stránka") + " · kontrola " + esc(formatDate(item.last_checked)) + " ↗</a>" : "",
+      item.source_url ? "<a class='v2-source' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + esc(item.official_source || "oficiálna stránka") + " · kontrola " + esc(formatDate([item.last_checked, item.amount_checked].filter(Boolean).sort().pop())) /* Master 4.0 (Audit Z38): najnovší dátum kontroly položky */ + " ↗</a>" : "",
       "<div class='v2-birth-actions'>",
       item.source_url ? "<a class='v5-primary' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Otvoriť oficiálnu stránku</a>" : "",
       "<button class='v5-secondary' type='button' data-v2-admin-remind='", esc(item.id), "'>Pripomeň o týždeň</button>",

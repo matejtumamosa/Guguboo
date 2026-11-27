@@ -1185,7 +1185,7 @@
   function adaptiveOGoalDone(role, sectionId, goal) {
     if (goal.auto) return adaptiveOAutoDone(goal);
     if (goal.id === "water") return false; // Master 3.8 (Samo): Pitný režim bez cieľa – nikdy „splnené“
-    if (goal.id === "exercises") return exAnyToday();
+    if (goal.id === "exercises") return false; // Master 4.0 (Audit Z2, Z3): Cviky sú len informácia NHS – bez počítadla a „splnené“
     // „Ako sa dnes cítim“ = zápis v súkromnom denníku dnes (denník ukladá len dátum, nie obsah).
     if (goal.id === "check-in") return state.v5.diaryLastEntry === todayKey();
     return Boolean(state.v5.adaptiveO.completed[adaptiveOCompletionKey(role, sectionId, goal)]);
@@ -1815,7 +1815,9 @@
       // Master 3.8 (C&S kolo 3, N5; Texty kolo 3, #23): názov funkcie + veta zosúladená s #101 (NHS Week 15, overené 26. 11. 2026).
       return g2qOpen("Môj hlas pre bábätko", g2qLastLine(list.length ? "Posledná: " + (list[list.length - 1].title || "Nahrávka") : g2qWeek() >= 16 ? "Podľa NHS bábätko okolo 15. týždňa začína počuť." : "Nahraj bábätku pár slov alebo pesničku.") +
         (list.length ? g2qAct("voice-play", "sound", "Pustiť poslednú", "", "", true) : "") +
-        g2qAct("voice-rec", "voice", "Nahrať nové", "", "", !list.length));
+        g2qAct("voice-rec", "voice", "Nahrať nové", "", "", !list.length) +
+        // Master 4.0 (Audit Z22): tvrdenie „Podľa NHS…“ s odkazom na stránku 15. týždňa a dátumom overenia.
+        (!list.length && g2qWeek() >= 16 ? "<p class='g2r-small'><a href='" + escapeHtml(window.GugubooContent?.pregnancyWeeks?.weeks?.[15]?.source_url || "") + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (Spojené kráľovstvo) · overené 26. 11. 2026 ↗</a></p>" : ""));
     }
     if (key === "extras") {
       return g2qOpen("Čo sledujem v kruhu", "<p class='g2r-lead'>" + g2qFixedLine() + "</p>" + g2qExtrasHtml() +
@@ -2968,19 +2970,19 @@
     byId("v5OMenuBack").hidden = false;
     const list = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
     const source = (url, reviewed, checked) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(checked) + " ↗</a>";
-    const card = (id, title, why, steps, dose, counter, addLabel) => [
-      "<section class='v2-ex-card'><details><summary><span class='v5-icon'>", icon("exercise"), "</span><span><strong>", escapeHtml(title), "</strong><small>", escapeHtml(counter), "</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></summary>",
-      why ? "<p>" + escapeHtml(why) + "</p>" : "", steps?.length ? "<h4>Ako na to</h4><ol class='v2-mama-list'>" + steps.map(step => "<li>" + escapeHtml(step) + "</li>").join("") + "</ol>" : "",
-      dose ? "<p class='v2-ex-dose'>" + escapeHtml(dose) + "</p>" : "", "</details>",
-      addLabel ? "<button type='button' class='v5-secondary v2-ex-add' data-v2-ex-add='" + id + "'>" + escapeHtml(addLabel) + "</button>" : "",
+    // Master 4.0 (Audit Z2, Z3): bez cieľa (150 min), bez počítadiel („Tento týždeň X min“, „Dnes X-krát“, „+ 10 minút“,
+    // „+ Hotovo“), bez postupu („Ako na to“) a dávky. Karta = názov + informácia NHS. Staré záznamy exLog ostávajú v údajoch.
+    const card = (id, title, why, examples) => [
+      "<section class='v2-ex-card'><details><summary><span class='v5-icon'>", icon("exercise"), "</span><span><strong>", escapeHtml(title), "</strong></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></summary>",
+      why ? "<p>" + escapeHtml(why) + "</p>" : "", examples ? "<p>" + escapeHtml(examples) + "</p>" : "", "</details>",
       "</section>"
     ].join("");
     if (expecting) {
       const ex = content?.exercise;
       if (!ex) { byId("v5OMenuBody").innerHTML = "<div class='v5-empty'>Obsah sa načítava…</div>"; return; }
       byId("v5OMenuBody").innerHTML = [
-        card("move", "Pohyb", ex.goal, [], ex.moveExamples, "Tento týždeň " + exWeek("move") + " min", "+ 10 minút"),
-        card("strength", "Posilňovanie", "", [], ex.strengthExamples, "Tento týždeň " + exWeek("strength") + "-krát", "+ Hotovo"),
+        card("move", "Pohyb", "", ex.moveExamples),
+        card("strength", "Posilňovanie", "", ex.strengthExamples),
         "<div class='v2-calm-box'><strong>Čo uvádza NHS</strong>", list(ex.tips), "<h4>Čo NHS neodporúča</h4>", list(ex.avoid), "<p>", escapeHtml(ex.note), "</p>", window.G2Safety ? window.G2Safety.askButton("me", ex.askPrompt) : "", "</div>",
         source(ex.source, ex.reviewed, content.checked)
       ].join("");
@@ -2989,9 +2991,8 @@
     const ex = content?.exercises;
     if (!ex) { byId("v5OMenuBody").innerHTML = "<div class='v5-empty'>Obsah sa načítava…</div>"; return; }
     byId("v5OMenuBody").innerHTML = [
-      ex.items.map(item => card(item.id, item.title, item.why, item.steps, item.dose,
-        exToday(item.id) ? "Dnes " + exToday(item.id) + "-krát" : "Dnes zatiaľ nie",
-        "+ Hotovo")).join(""),
+      ex.items.map(item => card(item.id, item.title, item.why, "")).join(""),
+      "<div class='v2-calm-box'><p>", escapeHtml(ex.howNote || ""), "</p>", window.G2Safety && ex.askPrompt ? window.G2Safety.askButton("me", ex.askPrompt) : "", "</div>",
       "<div class='v2-calm-box'><strong>Čo NHS uvádza spočiatku vynechať</strong>", list(ex.avoid), "</div>",
       source(ex.source, ex.reviewed, ex.checked)
     ].join("");
@@ -3661,7 +3662,9 @@
   // ——— Tvoj mesiac (0–36 mesiacov, content/baby-months.js – len overené vety so zdrojom) ———
   let monthPeriodId = "";
   function monthPeriods() {
-    return (window.GugubooContent?.babyMonths?.periods || []).filter(p => p.verified !== false);
+    // Master 4.0 (Audit Z37, rozhodnutie 16. 11.: rozsah appky je 1. rok): obdobia po 12. mesiaci sa nezobrazujú – obsah
+    // ostáva v content/baby-months.js na dopracovanie (má najviac rád, Audit Z7).
+    return (window.GugubooContent?.babyMonths?.periods || []).filter(p => p.verified !== false && Number(String(p.id).split("-")[1]) <= 12);
   }
   function currentMonthPeriod() {
     const days = ageData()?.days ?? 0;
@@ -3687,10 +3690,11 @@
     body.innerHTML = [
       "<div class='v2-week-strip' role='group' aria-label='Vyber obdobie'>", strip, "</div>",
       "<section class='g2-hero'><div class='g2-hero-text'><small class='g2-month-kicker'>", escapeHtml(String(p.id).replace("-", "–")), " mesiacov", p === current ? " · teraz" : "", "</small><h1>", escapeHtml(p.title || ""), "</h1></div></section>",
-      block("Čo sa zvyčajne deje", p.development),
+      block("Čo sa v tomto období môže diať", p.development), // Master 4.0 (Audit Z6): bez „zvyčajne“ (norma)
       block("Pre bežný deň", p.everyday),
       block("Nápad na hru", p.play),
-      block("Kedy sa poradiť s pediatrom", p.talk_to_doctor, "g2-month-doctor"),
+      // Master 4.0 (Audit Z6): bez zoznamu „ak zatiaľ nerobí…“ (samohodnotenie) – len štandardná veta, tempo a otázka pre pediatra.
+      window.G2Safety ? "<section class='v2-size-dev g2-month-doctor'><p>" + escapeHtml(window.G2Safety.line.ped) + " Každé dieťa má vlastné tempo.</p>" + window.G2Safety.askButton("baby", "Mám otázku k vývinu bábätka.") + "</section>" : "",
       "<div class='g2-month-nav'>", idx > 0 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx - 1].id) + "'>" + glyph("chevronLeft") + " Predchádzajúce</button>" : "<span></span>", idx < periods.length - 1 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx + 1].id) + "'>Ďalšie " + glyph("chevronRight") + "</button>" : "<span></span>", "</div>",
       (p.source_urls || []).length ? "<p class='g2-note'>Zdroj: " + (p.source_urls || []).map(u => "<a class='v2-source' href='" + escapeHtml(u) + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) + "</a>").join(", ") + (meta.last_checked ? " · overené " + escapeHtml(meta.last_checked.split("-").reverse().map(Number).join(". ")) : "") + ". Všeobecné informácie, nie zdravotná rada – každé dieťa má vlastné tempo.</p>" : ""
     ].join("");
@@ -4975,7 +4979,7 @@
       ["home-mattress", "Pevný rovný matrac, ktorý presne sedí – bez medzier (nový)"],
       ["home-cover", "Nepremokavý chránič matraca"],
       ["home-sheets", "Aspoň 4 napínacie plachty"],
-      ["home-sleepbags", "2 spacie vaky alebo plachty a deka – bez periny a vankúša (riziko udusenia)"],
+      ["home-sleepbags", "2 spacie vaky alebo plachty a deka – bez periny a vankúša"], // Master 4.0 (Audit Z8): bez „(riziko udusenia)“, bezpečný spánok = odkaz NHS,
       ["#v5-home-changing", "Prebaľovanie a kúpanie"],
       ["home-nappies", "Niekoľko balení plienok pre novorodenca"],
       ["home-wipes", "Vata alebo jemné obrúsky bez parfumu a alkoholu"],
@@ -5169,6 +5173,13 @@
 
   // Master 1.7 (text sweep #12, #14, #15, #25): viditeľná je len prvá krátka veta, zvyšok toho istého textu zo zdroja je pod „Viac“.
   // Text sa nemení – len sa rozdelí. Dlhá prvá veta sa rozdelí pri prvom „ a “ (po 2. slove), slová ostávajú rovnaké.
+  // Master 4.0 (Audit Z23): dátum kontroly týždňov tehotenstva pri zdroji (meta.last_checked „2026-09-28“ → „28. 9. 2026“).
+  function weeksChecked() {
+    const raw = window.GugubooContent?.pregnancyWeeks?.meta?.last_checked || "";
+    const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? Number(m[3]) + ". " + Number(m[2]) + ". " + m[1] : raw;
+  }
+
   function g2FirstSentence(text, cls) {
     const sentences = String(text || "").split(/(?<=[^\d\s][.!?])\s+(?=[A-ZÁÄČĎÉÍĽĹŇÓÔŔŠŤÚÝŽ])/).map(item => item.trim()).filter(Boolean);
     if (!sentences.length) return "";
@@ -5219,9 +5230,10 @@
       "</section>",
       baby.length ? "<section class='v2-size-dev'><h3>Čo sa práve vyvíja</h3><ul class='g2-dots'>" + baby.map(sentence => "<li>" + escapeHtml(sentence) + "</li>").join("") + "</ul></section>" : "",
       MASTER && data.you ? "<section class='v2-size-dev'><h3>Ty a tvoje telo</h3><p>" + escapeHtml(split(data.you)[0] || "") + "</p><button type='button' class='g2-link' data-v2-mama-section='body'>Viac v Mame " + glyph("chevronRight") + "</button></section>" : "",
-      MASTER && data.tip ? "<section class='v2-size-dev g2-size-tip'><h3>Tip na tento týždeň</h3>" + g2FirstSentence(data.tip, "") + "</section>" : "",
+      // Master 4.0 (Audit Z4): „Tip na tento týždeň“ sa nezobrazuje (rady). Audit Z5: vety o pohyboch nahrádza jediná veta E3 z g2-safety.js.
+      MASTER && data.week >= 24 && window.G2Safety ? window.G2Safety.html("E3") : "",
       MASTER ? "<p class='g2-size-note'>Ilustrácia je orientačná. <button type='button' class='g2-link g2-hide-art' data-g2-hide-art>" + (state.v5.hideBabyArt ? "Zobraziť ilustráciu" : "Skryť ilustráciu") + "</button></p>" : "",
-      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) ↗</a>" : ""
+      data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) · overené " + weeksChecked() + " ↗</a>" : ""
     ].join("");
     // Vybraný týždeň do stredu pásu.
     const selected = target.querySelector(".v2-week-strip .is-selected");
@@ -5302,8 +5314,8 @@
       target.innerHTML = [
         flowHead("Mama", "Tvoje telo v " + week + ". týždni", week === currentWeek ? "" : "Pozeráš iný ako aktuálny týždeň.", 0, 1),
         you.length ? "<section class='v2-size-dev v2-size-mom'>" + you.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "<div class='v5-empty'>Pre tento týždeň zatiaľ nemáme overený text.</div>",
-        tip.length ? "<section class='v2-size-dev v2-size-tip'><h3>" + icon("lightbulb") + " Tip na tento týždeň</h3>" + tip.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "",
-        data?.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) ↗</a>" : "",
+        tip.length ? "<section class='v2-size-dev v2-size-tip'><h3>" + icon("lightbulb") + " Tip na tento týždeň</h3>" + tip.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "", // Master 4.0 (Audit Z4): tip je prázdny (guguchat.js)
+        data?.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) · overené " + weeksChecked() + " ↗</a>" : "", // Master 4.0 (Audit Z23)
         back
       ].join("");
       return;
@@ -5335,9 +5347,9 @@
       const { food, vitamins, exercise } = content;
       target.innerHTML = [
         flowHead("Mama", "Jedlo a pohyb", "", 0, 1),
-        "<section class='v2-mama-card'><h3>Čo NHS v tehotenstve uvádza vynechať</h3>", bullets(food.avoid), "<h4>Čo NHS uvádza obmedziť</h4>", bullets(food.limit), "<p>", escapeHtml(food.alcohol), "</p>", "<p class='v2-mama-muted'>Podľa NHS (Spojené kráľovstvo) – informácia, nie príkaz.</p>", source(food.source, food.reviewed), "</section>",
+        "<section class='v2-mama-card'><h3>Čo NHS v tehotenstve uvádza vynechať</h3>", bullets(food.avoid), "<p>", escapeHtml(food.alcohol), "</p>", askBtn(food.askPrompt) /* Master 4.0 (Audit Z1): limity kofeínu a rýb preč, len otázka pre lekára */, "<p class='v2-mama-muted'>Podľa NHS (Spojené kráľovstvo) – informácia, nie príkaz.</p>", source(food.source, food.reviewed), "</section>",
         "<section class='v2-mama-card'><h3>Vitamíny a doplnky</h3><p>", escapeHtml(vitamins.text), "</p>", askBtn(vitamins.askPrompt), "</section>",
-        "<section class='v2-mama-card'><h3>Pohyb</h3><p>", escapeHtml(exercise.goal), "</p><h4>Čo uvádza NHS</h4>", bullets(exercise.tips), "<h4>Čo NHS neodporúča</h4>", bullets(exercise.avoid), "<p class='v2-mama-muted'>", escapeHtml(exercise.note), "</p>", askBtn(exercise.askPrompt), source(exercise.source, exercise.reviewed), "</section>",
+        "<section class='v2-mama-card'><h3>Pohyb</h3><p>", escapeHtml(exercise.moveExamples) /* Master 4.0 (Audit Z2): bez cieľa 150 min */, "</p><h4>Čo uvádza NHS</h4>", bullets(exercise.tips), "<h4>Čo NHS neodporúča</h4>", bullets(exercise.avoid), "<p class='v2-mama-muted'>", escapeHtml(exercise.note), "</p>", askBtn(exercise.askPrompt), source(exercise.source, exercise.reviewed), "</section>",
         back
       ].join("");
       return;
@@ -5691,7 +5703,7 @@
         "<div class='v5-form-card'><label>Poznámka — nepovinné<input id='v2MoveNote' maxlength='80' placeholder='napr. po jedle, večer v posteli'></label></div>",
         "<button class='v5-primary v2-visit-add' type='button' data-v2-move-save>Teraz som cítila pohyby</button>",
         "<p class='v2-visit-hint'>Pohyby zvyčajne začneš cítiť medzi 16. a 24. týždňom.</p>",
-        "<div class='v2-calm-box'><strong>Keď sa niečo zmení</strong><p>Ak sa bábätko hýbe menej ako zvyčajne, pohyby už necítiš alebo sa zmení ich obvyklý vzorec, hneď zavolaj pôrodnú asistentku alebo pôrodnicu. Netreba čakať do rána – zavolať môžeš kedykoľvek, aj v noci.</p><a class='v2-source' href='https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené 15. 11. 2026 ↗</a></div>",
+        window.G2Safety ? window.G2Safety.html("E3") : "", // Master 4.0 (Audit Z20): jediná veta E3 z g2-safety.js, nie vlastné znenie
         moves.length ? "<section class='v2-size-dev'><h3>Moje zápisy</h3><div class='v2-pressure-list'>" + moves.map(move => "<div><span>" + escapeHtml(new Date(move.time).toLocaleString("sk-SK", { weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })) + "</span><b>" + escapeHtml(move.note || "pohyby") + "</b></div>").join("") + "</div></section>" : "",
         back
       ].join("");

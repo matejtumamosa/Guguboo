@@ -46,6 +46,25 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
   na ≤ 359 px 13 px s tesnejším písmom a medzerou kariet 4 px (text sa neskracuje). Okno kruhu po otvorení dáva fokus nadpisu
   (nie prvému tlačidlu – bez rámika po ťuknutí). V Mame pri Pitnom režime už nie je „· nastaviť“ (zvyšok po cieli z 3.8).
 
+## 2026-11-27 – Samo (Master 4.0, časť B: zdravotný obsah podľa pravidla „sprievodca, nie lekár“)
+- Podľa auditu `AUDIT_3.9.2_ZDRAVIE.md` (opravy „podľa pravidla“) sa zo zobrazovaného obsahu **odstránilo**: limity kofeínu
+  a rýb (Mama aj GuguChat – namiesto nich otázka pre lekára), cieľ 150 min pohybu a počítadlá v Cvikoch, postup a dávka cvikov
+  po pôrode (ostáva na čo sú + odkaz NHS + otázka), „Tip na tento týždeň“ (rady), rady a normy vo vetách „Ty“ (skrátené na
+  informatívnu časť), vety „by sa malo hýbať“ (nahrádza E3 v Tvojom týždni od 24. t.), rada o urýchlení pôrodu (42. t.),
+  míľniky „Väčšina … do N mesiacov“ (→ „V tomto období mnohé…“), zoznam „ak zatiaľ nerobí…“ (→ štandardná veta + otázka),
+  rady a limit obrazovky v Tvojom mesiaci, obdobia po 12. mesiaci (skryté, dáta ostávajú), postupy bezpečného spánku
+  (→ jeden odkaz „Bezpečný spánok – NHS“ v `g2-safety.js`, ⚕), vyhodnocovanie menštruácie („> 7 dní“, špinenie) a norma
+  „cyklus okolo 28 dní“, predvyplnená teplota fľaše, rada pri Zúbkoch (→ informatívna veta NHS so zdrojom), rady v Počasí
+  (ostáva počasie + pár viet „NHS/WHO uvádza…“ so zdrojom; bez „Čo zobrať“, bez normy izby 16–20 °C, bez zdrojov cez TASR),
+  pokyny k telu v kruhu („Nohy si polož vyššie“, „Podopri si chrbát“) a nesúvisiace zdroje.
+- **155 / 112 a bezpečnostné vety len v `g2-safety.js`:** GuguChat, Zúbky a kruh preberajú E1/E3/E5/E6/E7 doslovne. E6 a E7
+  majú zdroj a dátum overenia (27. 11. 2026).
+- Prečo: Guguboo je sprievodca, nie lekár – len ľahké informatívne tvrdenia so zdrojom; radšej menej obsahu ako rada či norma.
+- Kontrola: `test.html`, sada „Sprievodca, nie lekár“ (zakázané formulácie: mg, „najviac N“, „mala by si“, „by sa malo“,
+  „aspoň N-krát“, „N minút týždenne“, „Väčšina … do N“, limit obrazovky, „cieľ“ v zdravotných textoch; 155/112 mimo g2-safety.js).
+- Na rozhodnutie Sama ostáva: Z10 (Dýchaj so mnou), Z12 postupy v úlohách Rodiny, Z15 (zoznam „vynechať“, alkohol, tipy pri
+  pohybe), Z32, Z33, Z35. Úradné sumy 2027 (Z28–Z30) bez zmeny – treba overiť po zverejnení.
+
 ## 2026-11-26 – Samo (Master 3.8: sprievodca, nie lekár; jednotné názvy kruhu)
 - **Guguboo je sprievodca, nie lekár:** smú byť len ľahké informatívne tvrdenia so zdrojom a dátumom overenia; nikdy rada,
   postup, diagnóza, norma ani cieľ (za tie nenesieme zodpovednosť). Existujúce bezpečnostné odkazy na lekára/pôrodnicu

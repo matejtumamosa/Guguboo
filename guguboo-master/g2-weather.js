@@ -20,13 +20,22 @@
     A1: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/on-the-go/Pages/Winter-Car-Seat-Safety-Tips.aspx"],
     A2: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Sun-Safety.aspx"],
     A3: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Winter-Safety.aspx"],
-    W1: ["WHO", "https://www.who.int/news-room/q-a-detail/radiation-protecting-against-skin-cancer"],
-    S1: ["ÚVZ SR (cez TASR)", "https://www.teraz.sk/zdravie/uvz-v-lete-treba-vonku-pouzivat-kr/807180-clanok.html"],
-    S2: ["ÚVZ SR (cez TASR)", "https://www.teraz.sk/zdravie/uvz-pocas-horucav-treba-vypit-aspo/726637-clanok.html"]
+    W1: ["WHO", "https://www.who.int/news-room/q-a-detail/radiation-protecting-against-skin-cancer"]
+    // Master 4.0 (Audit Z25): S1, S2 (ÚVZ SR cez TASR – spravodajský článok, nie primárny zdroj) odstránené.
   };
   const CHECKED = "15. 11. 2026";
-  // Pravidlá z POCASIE_OBSAH.md (bez riadkov [OVERIŤ]: C5, T9, T17, T19, NO1). age: b = 0–6, m = 6–12, k = 1+
+  // Master 4.0 (Audit Z14 – pravidlo Sama 26. 11.: sprievodca, nie lekár): okno ukazuje počasie a len pár informatívnych
+  // viet so zdrojom („NHS uvádza…“). Rady (čo obliecť, uber vrstvu, popruhy…), norma izby 16–20 °C a zoznam „Čo zobrať“
+  // sa nezobrazujú. Pôvodné pravidlá ostávajú nižšie v OLD_RULES na prípadný návrat (s odborným potvrdením ⚕).
   const RULES = [
+    { id: "V3", age: "bm", when: "cold", text: "Studené rúčky a nôžky sú u bábätka bežné a samy o sebe neznamenajú, že mu je zima.", src: ["N1"] },
+    { id: "T3", age: "b", when: "sun", mode: "stroller carrier", text: "NHS uvádza, že bábätká do 6 mesiacov majú byť mimo priameho slnka.", src: ["N2"] },
+    { id: "T4", age: "m", when: "sun", mode: "stroller carrier", text: "WHO uvádza, že bábätká do 12 mesiacov majú byť v tieni a že tieň neochráni úplne.", src: ["W1"] },
+    { id: "T13", age: "bmk", when: "warm", mode: "car", text: "NHS uvádza, že bábätko ani dieťa sa nemá nechávať v zaparkovanom aute.", src: ["N2"] },
+    { id: "AU6", age: "bm", when: "always", mode: "car", text: "The Lullaby Trust uvádza, že autosedačka je na cestu, nie na spánok.", src: ["L1"] }
+  ];
+  // eslint-disable-next-line no-unused-vars
+  const OLD_RULES = [
     { id: "V1", age: "bm", when: "always", text: "Obleč bábätko približne o jednu vrstvu viac, než máš na sebe ty.", src: ["N1", "A1"] },
     { id: "V2", age: "bmk", when: "always", text: "Či nie je bábätku príliš teplo, zistíš dotykom hrudníka alebo zátylku.", src: ["L1"] },
     { id: "V3", age: "bm", when: "cold", text: "Studené rúčky a nôžky sú bežné, samy o sebe neznamenajú, že je bábätku zima.", src: ["N1"] },
@@ -112,23 +121,24 @@
       "<button class='g2r-link' type='button' data-g2w='geo'>Použiť moju polohu (približne)</button>";
     const info = state.v5.weatherInfoSeen ? "" : "<p class='g2r-small'>Počasie zistíme zo služby Open-Meteo (Švajčiarsko). Pošleme jej len mesto, ktoré zadáš – alebo približnú polohu (asi na 1 km), ak ju povolíš. Nič o tebe ani o bábätku neposielame a polohu si neukladáme.</p>";
     if (!wx) {
-      body.innerHTML = "<p class='g2r-lead'>Zisti počasie a ukážem ti, ako obliecť bábätko a čo zobrať.</p>" + locate + info +
+      body.innerHTML = "<p class='g2r-lead'>Zisti počasie tam, kde ste.</p>" /* Master 4.0 (Audit Z14): bez sľubu rád */ + locate + info +
         (busy ? "<p class='g2r-small' role='status'>Zisťujem počasie…</p>" : "") + (error ? "<p class='g2r-small' role='status'>" + esc(error) + "</p>" : "");
       return;
     }
     const age = ageKey(), m = mode();
     const cond = { cold: wx.feels < COLD, warm: wx.feels > WARM, rain: wx.rain, uv: wx.uv >= 3 && wx.day, sun: wx.day && (wx.uv >= 3 || wx.feels > WARM) };
     const rules = RULES.filter(r => r.age.includes(age) && (!r.mode || r.mode.split(" ").includes(m)) && (r.when === "always" || cond[r.when]));
-    const pack = packList(age, m, cond);
+    const pack = []; // Master 4.0 (Audit Z14): „Čo zobrať“ sa nezobrazuje (rada); packList() ostáva na prípadný návrat
+    void packList;
     const srcLine = ids => Array.from(new Set(ids.map(id => SRC[id][0]))).join(", ");
     body.innerHTML = [
       "<div class='g2w-now'><strong>" + Math.round(wx.temp) + " °C</strong><span>pocitovo " + Math.round(wx.feels) + " °C · " + esc(wx.place) + "<br>" + esc([wx.rain ? "zrážky" : "bez zrážok", "vietor " + Math.round(wx.wind) + " km/h", wx.day ? "UV " + Math.round(wx.uv) : "noc"].join(" · ")) + "</span></div>",
       "<div class='g2r-chips g2r-rq g2w-modes' role='group' aria-label='Ako idete'>" + MODES.map(([k, t]) => "<button class='g2r-pill' type='button' data-g2w='mode' data-mode='" + k + "' aria-pressed='" + String(k === m) + "'>" + t + "</button>").join("") + "</div>",
-      "<section class='g2r-info'><h3>Ako obliecť</h3><ul class='g2w-rules'>" + rules.map(r => "<li>" + esc(r.text) + "<small>Podľa: " + esc(srcLine(r.src)) + "</small></li>").join("") + "</ul></section>",
+      rules.length ? "<section class='g2r-info'><h3>Dobré vedieť</h3><ul class='g2w-rules'>" + rules.map(r => "<li>" + esc(r.text) + "<small>Podľa: " + esc(srcLine(r.src)) + "</small></li>").join("") + "</ul></section>" : "",
       pack.length ? "<section class='g2r-info'><h3>Čo zobrať</h3><ul class='g2w-pack'>" + pack.map((p, i) => "<li><label><input type='checkbox' data-g2w-pack='" + i + "'> " + esc(p) + "</label></li>").join("") + "</ul></section>" : "",
-      "<p class='g2r-small'>Rady sú z verejných zdrojov (" + esc(Array.from(new Set(rules.flatMap(r => r.src).map(id => SRC[id][0]))).join(", ")) + "), overené " + CHECKED + ". Nie sú od lekára – pri otázkach o zdraví bábätka sa obráť na pediatra. " +
-        "Kedy appka ukáže rady na chladno (pocitovo pod " + COLD + " °C) a na teplo (nad " + WARM + " °C), je len orientačné nastavenie appky, nie odporúčanie zo zdroja.</p>",
-      "<details class='g2w-src'><summary>Zdroje</summary><ul>" + Array.from(new Set(rules.flatMap(r => r.src))).map(id => "<li><a href='" + esc(SRC[id][1]) + "' target='_blank' rel='noopener noreferrer'>" + esc(SRC[id][0]) + " ↗</a></li>").join("") + "</ul></details>",
+      rules.length ? "<p class='g2r-small'>Informácie sú z verejných zdrojov (" + esc(Array.from(new Set(rules.flatMap(r => r.src).map(id => SRC[id][0]))).join(", ")) + "), overené " + CHECKED + ". Nie sú od lekára. " + esc(window.G2Safety?.line.ped || "") + " " +
+        "Kedy appka ukáže informácie na chladno (pocitovo pod " + COLD + " °C) a na teplo (nad " + WARM + " °C), je len orientačné nastavenie appky, nie odporúčanie zo zdroja.</p>" : "",
+      !rules.length ? "" : "<details class='g2w-src'><summary>Zdroje</summary><ul>" + Array.from(new Set(rules.flatMap(r => r.src))).map(id => "<li><a href='" + esc(SRC[id][1]) + "' target='_blank' rel='noopener noreferrer'>" + esc(SRC[id][0]) + " ↗</a></li>").join("") + "</ul></details>",
       "<p class='g2r-small'>Údaje o počasí: <a href='https://open-meteo.com/' target='_blank' rel='noopener noreferrer'>Open-Meteo.com</a></p>",
       "<button class='g2r-link' type='button' data-g2w='reset'>Iné mesto alebo poloha</button>"
     ].join("");
