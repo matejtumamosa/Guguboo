@@ -3,6 +3,13 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-27 – Samo (Master 3.9.2: skratky ostávajú s textom, tri nové ikony)
+- **Skratky na domove ostávajú s textom.** Slepý test (`guguboo-master/prototyp-skratky.html`) ukázal, že bez textu fungujú
+  len Kalendár, Zúbky, Aktivity (kocky) a Starostlivosť (zavinuté bábätko); Tvoje telo, Čo je bežné, obe knižky, Otázky pre lekára
+  a Príprava na pôrod nie – v každom období by bola aspoň jedna nezrozumiteľná. Sprievodca to nezachráni (skratky sa menia podľa obdobia).
+- **Nové ikony všade, kde je funkcia:** Starostlivosť `swaddle` (namiesto ruky so srdcom – pôsobila ako charita),
+  Aktivity `blocks` (namiesto postavy – pôsobila ako cvičenie), Otázky pre lekára `doctorQ` (rovnaká ako diel kruhu).
+
 ## 2026-11-27 – Samo (Master 3.9.1: Hlavné 700, prehliadka podľa systému)
 - **Hlavné = 700 namiesto 800** (token `--t-main` v `g2-text.css`, platí všade: pozdrav, meno bábätka / týždeň, úloha
   „Dnes stačí jedno“, nadpisy okien a kariet, aj úvod). Prečo: Samo – „Dobrý deň, Kristína“ a „Ozvi sa pediatrovi po návrate
