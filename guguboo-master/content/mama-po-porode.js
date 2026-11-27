@@ -118,23 +118,39 @@ window.GugubooContent.mamaPostpartum = {
     source: "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/",
     reviewed: "20. 7. 2026",
     items: [
-      // Master 4.0 (Audit Z3): postup cvikov („Ako na to“), dávka („aspoň 3-krát denne“, „najviac 10-krát“) a denné
-      // počítadlo (perDay) ODSTRÁNENÉ – postup a dávka nie sú pre sprievodcu (pravidlo Sama 26. 11.). Ostáva názov,
-      // na čo cviky sú (informácia NHS), odkaz na stránku NHS a otázka pre lekára. ⚕
+      // Master 4.0 (Audit Z3, spresnené pravidlo Sama 27. 11.): postup ostáva ako opis NHS bez rozkazov („Ako to popisuje NHS“),
+      // množstvo ako „NHS uvádza…“ (nie povinnosť). Denné počítadlo (perDay, „Dnes X-krát“, „+ Hotovo“) ODSTRÁNENÉ. ⚕
       {
         id: "pelvic", title: "Cviky panvového dna",
-        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku."
+        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku.",
+        steps: [
+          "Cvičiť sa dá poležiačky, v sede aj v stoji.",
+          "Stiahnutie konečníka, akoby si zadržiavala plyny.",
+          "Stiahnutie svalov okolo pošvy a močového mechúra, akoby si zastavovala močenie.",
+          "Dlhé stiahnutie: držať, kým vládzeš, najviac 10 sekúnd, potom uvoľniť.",
+          "Krátke stiahnutia: rýchlo stiahnuť a hneď pustiť – opakovať, kým sa svaly neunavia.",
+          "Dýchať normálne a pritom nevťahovať brucho."
+        ],
+        dose: "NHS uvádza postupne až 10 opakovaní každého cviku, 3-krát denne."
       },
       {
         id: "tummy", title: "Cvik na brucho",
-        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch."
+        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch.",
+        steps: [
+          "Ľahnúť si na bok s mierne pokrčenými kolenami.",
+          "Uvoľniť brucho a jemne sa nadýchnuť.",
+          "S výdychom jemne vtiahnuť spodnú časť brucha ako korzet.",
+          "Zároveň stiahnuť panvové dno.",
+          "Držať, kým napočítaš do 10, dýchať normálne a jemne uvoľniť."
+        ],
+        dose: "NHS uvádza najviac 10 opakovaní."
       }
       // Master 2.7 (audit #13): „Kontrola brušných svalov“ (samohodnotenie) odstránená.
     ],
-    howNote: "Ako sa cviky robia, popisuje stránka NHS (odkaz nižšie). Opýtať sa môžeš aj pôrodnej asistentky alebo na kontrole po pôrode.",
+    howNote: "Na cviky sa môžeš opýtať aj pôrodnej asistentky alebo na kontrole po pôrode.",
     askPrompt: "Ako mám po pôrode cvičiť panvové dno a brucho?",
     avoid: ["sedy-ľahy, plank a skákanie (spočiatku)", "tlačenie na WC a dvíhanie ťažkého"],
-    evidence: "Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
+    evidence: "Aim to build up to 10 repeats of each exercise, at least 3 times a day. | Lie on your side with your knees slightly bent … Hold for a count of 10 … Repeat up to 10 times. | Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
   },
   // Menštruácia po pôrode – NHS „Your body after the birth“ (stránka z 25. 4. 2024) a „Irregular periods“ (26. 6. 2026). Overené 7. 11. 2026.
   period: {
@@ -163,7 +179,7 @@ window.GugubooContent.mamaPostpartum = {
     // Master 2.7 (audit #28): appka nič nevyhodnocuje („> 7 dní“ apod.) – len štandardná veta a otázka pre gynekológa.
     doctorLine: "Ak ťa niečo znepokojuje alebo si nie si istá, môžeš sa kedykoľvek ozvať svojmu gynekológovi.",
     askPrompt: "Mám otázku k menštruácii po pôrode.",
-    cycleNote: "Bežný cyklus (od začiatku jednej menštruácie po začiatok ďalšej) má okolo 28 dní, môže byť trochu kratší aj dlhší.",
+    cycleNote: "Podľa NHS má cyklus (od začiatku jednej menštruácie po začiatok ďalšej) zvyčajne okolo 28 dní, môže byť trochu kratší aj dlhší.", // Master 4.0 (Audit Z34): mäkko so zdrojom
     doctorSource: "https://www.nhs.uk/conditions/irregular-periods/",
     doctorReviewed: "26. 6. 2026",
     doctorEvidence: "The average gap between periods starting (the menstrual cycle) is around 28 days. It can sometimes be a bit shorter or longer. | See a GP if: … your periods last longer than 7 days … you have bleeding between periods"

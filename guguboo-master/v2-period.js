@@ -243,7 +243,7 @@
       box("dropHalf", c.padsTitle, bullets(c.padsItems) + src(c.source, c.reviewed)),
       // Master 2.8 (Plán F1-0, nález test.html): obsah 2.7 už nemá doctorIntro/doctor (Menštruačný kalendár padal pri otvorení).
       // Podľa „informujeme, neradíme“: čo je bežné + jedna veta, kedy sa ozvať + Zapísať ako otázku pre lekára.
-      box("stethoscope", "Kedy sa ozvať lekárovi", /* Master 4.0 (Audit Z34): bez normy „bežný cyklus okolo 28 dní“ */ "<div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
+      box("stethoscope", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
       "</div>"
     ].join("");
   }

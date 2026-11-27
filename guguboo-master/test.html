@@ -54,18 +54,17 @@
   const addDays = (days, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + days); return d; };
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   function assert(cond, msg) { if (!cond) throw new Error(msg); }
-  // Master 4.0 (Audit Z1–Z7): zakázané formulácie v zobrazovanom zdravotnom obsahu (pravidlo Sama 26. 11. 2026).
-  // health = zdravotný text (vtedy aj „cieľ“). Výnimky: žiadne – nález = oprava obsahu alebo vedomé rozhodnutie Sama.
+  // Master 4.0 (Audit Z1–Z7, spresnené pravidlo Sama 27. 11. 2026): zakázané sú rozkazy, normy („by sa malo“), ciele,
+  // počítadlá a hodnotenie (samohodnotenie). Zdrojovaná informácia v mäkkej forme („NHS uvádza najviac 200 mg“) je povolená.
+  // health = zdravotný text (vtedy aj „cieľ“). Nález = oprava obsahu alebo vedomé rozhodnutie Sama.
   const FORBIDDEN = [
-    [/\d+\s?mg\b/i, "dávka v mg"],
-    [/najviac \d+\s*(hod|min|pohár|porci|konzerv|steak|-?krát)/i, "limit „najviac N“"],
     [/(mala by si|by si mala|mal by si|by si mal)(?![\p{L}])/iu, "„mala by si“"],
     [/(by sa malo|malo by sa|by malo)(?![\p{L}])/iu, "norma „by sa malo“"],
-    [/aspoň \d+\s*-?\s*krát/i, "dávka „aspoň N-krát“"],
+    [/(^|[^\p{L}])(musíš|nesmieš|oddychuj|zdriemni si|nevyskakuj|obmedz|obleč|uber mu|zlož|utiahni|nenechávaj|sústreď sa|povzbuď|porozmýšľaj|stiahni|ľahni si|opakuj|prestaň|nepripisuj|skontroluj|dávaj na seba|drž)(?![\p{L}])/iu, "rozkaz"],
     [/\d+\s*minút (týždenne|denne)/i, "cieľ minút"],
     [/Väčšina (bábätiek|detí)[^.]{0,40}\bdo \d/i, "norma „Väčšina … do N“"],
     [/nerobí jeden alebo viac/i, "samohodnotenie míľnikov"],
-    [/čas pri obrazovke|obrazovky .{0,20}obmedz/i, "limit obrazovky"]
+    [/Dnes \d+-krát|Tento týždeň \d+ (min|-krát)/i, "počítadlo"]
   ];
   function forbidden(label, text, health) {
     const t = String(text || "");
@@ -364,17 +363,16 @@
           try {
             const C = app.win.GugubooContent, bad = [];
             const pre = C.mamaPregnancy, post = C.mamaPostpartum;
-            assert(!("limit" in pre.food), "Z1: food.limit (kofeín, ryby) sa vrátil");
+            assert((pre.food.limit || []).every(x => /NHS uvádza/.test(x)), "Z1: množstvá len ako „NHS uvádza…“");
             assert(!("goal" in pre.exercise), "Z2: exercise.goal (150 min) sa vrátil");
-            post.exercises.items.forEach(it => assert(!it.steps && !it.dose && !it.perDay, "Z3: postup/dávka/počítadlo pri " + it.id));
+            post.exercises.items.forEach(it => assert(!it.perDay && (!it.dose || /^NHS uvádza/.test(it.dose)), "Z3: počítadlo alebo dávka ako povinnosť pri " + it.id));
             [pre.food.alcohol, ...pre.food.avoid, pre.exercise.moveExamples, pre.exercise.strengthExamples, ...pre.exercise.tips, ...pre.exercise.avoid, pre.exercise.note,
-              ...post.exercises.items.map(it => it.why), post.exercises.howNote, ...pre.troubles.flatMap(t => [...(t.common || []), ...(t.info || [])])]
+              ...post.exercises.items.map(it => it.why), ...post.exercises.items.flatMap(it => [...(it.steps || []), it.dose || ""]), ...(pre.food.limit || []), post.exercises.howNote, ...pre.troubles.flatMap(t => [...(t.common || []), ...(t.info || [])])]
               .forEach((t, i) => bad.push(...forbidden("mama #" + i, t, true)));
             for (let w = 4; w <= 42; w++) {
               const d = app.win.GugubooV2.babySize(w);
               if (!d) continue;
-              assert(!d.tip, "Z4: „Tip na tento týždeň“ sa zobrazuje v " + w + ". t.");
-              bad.push(...forbidden(w + ". t.", [d.baby, d.you, d.milestone].join(" "), true));
+              bad.push(...forbidden(w + ". t.", [d.baby, d.you, d.milestone, d.tip].join(" "), true));
             }
             eq(bad, [], "zakázané formulácie");
           } finally { app.remove(); }
@@ -441,7 +439,10 @@
             const hits = src.split("\n").filter(l => !/^\s*(\/\/|\*)/.test(l) && /(?<!label: ")(volaj|zavolaj|zavolať)\s*(<[^>]+>)?\s*(155|112)/i.test(l)); // tlačidlá „Zavolať 155“ (tel:) sú v poriadku
             if (hits.length) bad.push(file + ": " + hits.length + "×");
           }
-          eq(bad, [], "Z21");
+          // Audit Z14: vety Počasia a oblečenia sú mäkké a zdrojované (bez rozkazov).
+          const wsrc = await (await fetch("g2-weather.js?t=" + Date.now(), { cache: "no-store" })).text();
+          [...wsrc.matchAll(/\{ id: "(\w+)"[^}]*text: "([^"]+)"/g)].forEach(([, id, t]) => bad.push(...forbidden("Počasie " + id, t, false)));
+          eq(bad, [], "Z21 / Z14");
         },
         "Bezpečný spánok: jeden odkaz NHS so zdrojom a dátumom (g2-safety.js) ⚕": () => {
           const S = window.G2Safety;

@@ -1,8 +1,9 @@
 /* GUGUBOO V2 – „Tvoj mesiac“ (0–36 mesiacov). Každá veta má doslovný citát zo zdroja (evidence).
    Všeobecné informácie o bežnom vývine, nie zdravotná rada, diagnostika ani test. */
-/* Master 4.0 (Audit Z6, Z7, Z8, Z37 – pravidlo Sama 26. 11.: sprievodca, nie lekár): „Väčšina bábätiek do X mesiacov…“ → „V tomto
-   období mnohé bábätká…“ (bez normy); rady a limit obrazovky v „Pre bežný deň“ a postupy bezpečného spánku majú sk: "" (nezobrazia
-   sa, citát ostáva). talk_to_doctor sa nezobrazuje (v5-mobile.js: G2Safety.line.ped + otázka). Obdobia po 12. mesiaci appka skrýva. */
+/* Master 4.0 (Audit Z6, Z7, Z8, Z37 – spresnené pravidlo Sama 27. 11.): „Väčšina bábätiek do X mesiacov…“ → „Okolo X mesiacov
+   veľa bábätiek…“ (+ „každé bábätko je iné“ v okne); rozkazy v „Pre bežný deň“ prepísané mäkko („môže pomôcť…“, „CDC uvádza…“).
+   Postup bezpečného spánku (2. mesiac) má sk: "" – bezpečný spánok je na jednom mieste v g2-safety.js. talk_to_doctor („ak zatiaľ
+   nerobí…“ = samohodnotenie) sa nezobrazuje (v5-mobile.js: G2Safety.line.ped + otázka). Obdobia po 12. mesiaci appka skrýva. */
 window.GugubooContent = window.GugubooContent || {};
 window.GugubooContent.babyMonths = {
   meta: {
@@ -49,7 +50,7 @@ window.GugubooContent.babyMonths = {
       ],
       everyday: [
         { sk: "Túlenie a držanie v náručí môže bábätko upokojiť – pomáha mu cítiť sa v bezpečí.", evidence: ["Holding and cuddling your baby may help comfort them.", "Comforting your baby helps them feel safe and supported."], source: "pbb-1m" },
-        { sk: "", /* Master 4.0 (Audit Z8): postup bezpečného spánku preč – odkaz NHS v okne */ evidence: ["Always stay with your baby during tummy time and always place your baby on their back for sleep."], source: "pbb-1m" }
+        { sk: "Pri hre na brušku je dobré byť stále pri ňom. O spánku pozri odkaz „Bezpečný spánok“ nižšie.", /* Master 4.0 (Audit Z8): bezpečný spánok len na jednom mieste (g2-safety.js) */ evidence: ["Always stay with your baby during tummy time and always place your baby on their back for sleep."], source: "pbb-1m" }
       ],
       play: { sk: "Rozprávaj sa s ním, čítaj a spievaj mu – rado počúva tvoj hlas.", evidence: ["Talk, read and sing to your baby. They enjoy hearing your voice."], source: "pbb-1m", activities_period: "0-2" },
       talk_to_doctor: { sk: "Ak sa mu nedarí dobre jesť, nereaguje na hlasné zvuky alebo ťa znepokojuje jeho plač či spánok, pokojne sa porozprávaj s detským lekárom alebo detskou sestrou.", evidence: ["Talk to your doctor or maternal child health nurse if your baby:", "isn’t feeding well", "doesn’t react to loud sounds", "has crying or sleeping patterns that worry you"], source: "pbb-1m" }
@@ -62,7 +63,7 @@ window.GugubooContent.babyMonths = {
       activities_period: "0-2",
       source_urls: ["https://www.cdc.gov/act-early/milestones/2-months.html"],
       development: [
-        { sk: "V tomto období sa mnohé bábätká upokoja, keď sa im prihováraš alebo ich zoberieš na ruky.", evidence: ["Calms down when spoken to or picked up"], source: "cdc-2m" },
+        { sk: "Okolo 2 mesiacov sa veľa bábätiek upokojí, keď sa im prihováraš alebo ich zoberieš na ruky.", evidence: ["Calms down when spoken to or picked up"], source: "cdc-2m" },
         { sk: "Pozerá ti do tváre a usmieva sa, keď sa mu prihováraš alebo sa naň usmievaš.", evidence: ["Looks at your face", "Smiles when you talk to or smile at her"], source: "cdc-2m" },
         { sk: "Vydáva aj iné zvuky ako plač a reaguje na hlasné zvuky.", evidence: ["Makes sounds other than crying", "Reacts to loud sounds"], source: "cdc-2m" },
         { sk: "Na brušku drží hlavičku hore a hýbe oboma rúčkami aj nožičkami.", evidence: ["Holds head up when on tummy", "Moves both arms and both legs"], source: "cdc-2m" }
@@ -72,7 +73,7 @@ window.GugubooContent.babyMonths = {
         { sk: "", /* Master 4.0 (Audit Z8): postup bezpečného spánku preč */ evidence: ["If he seems sleepy, place him on his back in a safe sleep area", "(firm mattress with no blankets, pillows, bumper pads, or toys)."], source: "cdc-2m" },
         { sk: "Rodičovstvo býva náročné a bábätko si ľahšie užiješ, keď sa cítiš dobre.", evidence: ["Take care of yourself. Parenting can be hard work!", "It's easier to enjoy your new baby when you feel good yourself."], source: "cdc-2m" }
       ],
-      play: { sk: "Keď je hore, polož ho na bruško a hračky daj pred neho do výšky očí – precvičuje tak dvíhanie hlavičky; nenechávaj ho pritom samé.", evidence: ["Lay your baby on his tummy when he is awake and put toys at eye level in front of him.", "This will help him practice lifting his head up.", "Do not leave your baby alone."], source: "cdc-2m", activities_period: "0-2" },
+      play: { sk: "Keď je hore, môže sa hrať na brušku s hračkami pred sebou vo výške očí – precvičuje tak dvíhanie hlavičky; pri tom je dobré byť pri ňom.", evidence: ["Lay your baby on his tummy when he is awake and put toys at eye level in front of him.", "This will help him practice lifting his head up.", "Do not leave your baby alone."], source: "cdc-2m", activities_period: "0-2" },
       talk_to_doctor: { sk: "Ak bábätko zatiaľ nerobí jeden alebo viac z týchto krokov, stratilo zručnosť, ktorú už vedelo, alebo máš iné obavy, pokojne sa včas porozprávaj s detským lekárom a opýtaj sa na vývinový skríning.", evidence: ["If your child is not meeting one or more milestones, has lost skills he or she once had", "you have other concerns, act early", "Talk with your child's doctor, share your concerns, and ask about developmental screening."], source: "cdc-2m" }
     },
     {
@@ -104,15 +105,15 @@ window.GugubooContent.babyMonths = {
       activities_period: "2-4",
       source_urls: ["https://www.cdc.gov/act-early/milestones/4-months.html"],
       development: [
-        { sk: "V tomto období sa mnohé bábätká samy usmejú, aby upútali tvoju pozornosť, a zachichocú sa, keď ich rozosmievaš.", evidence: ["Smiles on his own to get your attention", "Chuckles (not yet a full laugh) when you try to make him laugh"], source: "cdc-4m" },
+        { sk: "Okolo 4 mesiacov sa veľa bábätiek samo usmeje, aby upútalo tvoju pozornosť, a zachichoce sa, keď ho rozosmievaš.", evidence: ["Smiles on his own to get your attention", "Chuckles (not yet a full laugh) when you try to make him laugh"], source: "cdc-4m" },
         { sk: "Vrká („óóó“, „ááá“), odpovedá zvukmi, keď sa mu prihováraš, a otáča hlavičku za tvojím hlasom.", evidence: ["Makes sounds like \"oooo\", \"aahh\" (cooing)", "Makes sounds back when you talk to him", "Turns head towards the sound of your voice"], source: "cdc-4m" },
         { sk: "Keď ho držíš, udrží hlavičku pevne aj bez opory a na brušku sa vzoprie na predlaktia.", evidence: ["Holds head steady without support when you are holding him", "Pushes up onto elbows/forearms when on tummy"], source: "cdc-4m" },
         { sk: "So záujmom si prezerá rúčky a dáva si ich do úst.", evidence: ["Looks at her hands with interest", "Brings hands to mouth"], source: "cdc-4m" }
       ],
       everyday: [
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Set steady routines for sleeping and feeding."], source: "cdc-4m" },
+        { sk: "Stály rytmus spánku a kŕmenia môže bábätku pomôcť.", evidence: ["Set steady routines for sleeping and feeding."], source: "cdc-4m" },
         { sk: "Rozprávanie, čítanie a spev mu neskôr pomôžu hovoriť a rozumieť slovám.", evidence: ["Talk, read, and sing to your baby. This will help her learn to speak and understand words later."], source: "cdc-4m" },
-        { sk: "", /* Master 4.0 (Audit Z7): limit obrazovky */ evidence: ["Limit screen time (TV, phones, tablets, etc.) to video calling with loved ones.", "Screen time is not recommended for children younger than 2 years of age."], source: "cdc-4m" }
+        { sk: "CDC uvádza, že deťom do 2 rokov sa čas pri obrazovke (televízor, mobil, tablet) neodporúča – okrem videohovorov s blízkymi.", evidence: ["Limit screen time (TV, phones, tablets, etc.) to video calling with loved ones.", "Screen time is not recommended for children younger than 2 years of age."], source: "cdc-4m" }
       ],
       play: { sk: "Daj mu bezpečnú príležitosť siahať po hračkách, kopať do nich a objavovať, čo je okolo neho.", evidence: ["Provide safe opportunities for your baby to reach for toys, kick at toys and explore what is around her."], source: "cdc-4m", activities_period: "2-4" },
       talk_to_doctor: { sk: "Svoje bábätko poznáš najlepšie – ak zatiaľ nerobí jeden alebo viac z týchto krokov, stratilo zručnosť, ktorú už vedelo, alebo máš iné obavy, pokojne sa včas porozprávaj s detským lekárom a opýtaj sa na vývinový skríning.", evidence: ["You know your child best.", "If your child is not meeting one or more milestones, has lost skills he or she once had, or you have other concerns, act early.", "Talk with your child's doctor, share your concerns, and ask about developmental screening."], source: "cdc-4m" }
@@ -125,14 +126,14 @@ window.GugubooContent.babyMonths = {
       activities_period: "4-6",
       source_urls: ["https://www.cdc.gov/act-early/milestones/6-months.html"],
       development: [
-        { sk: "V tomto období mnohé bábätká poznajú známych ľudí, smejú sa a rady sa pozerajú do zrkadla.", evidence: ["Knows familiar people", "Laughs", "Likes to look at self in a mirror"], source: "cdc-6m" },
+        { sk: "Okolo 6 mesiacov veľa bábätiek pozná známych ľudí, smeje sa a rado sa pozerá do zrkadla.", evidence: ["Knows familiar people", "Laughs", "Likes to look at self in a mirror"], source: "cdc-6m" },
         { sk: "Striedavo s tebou „rozpráva“ zvukmi, piští a robí jazýčkom „prdíky“.", evidence: ["Takes turns making sounds with you", "Makes squealing noises", "Blows “raspberries” (sticks tongue out and blows)"], source: "cdc-6m" },
         { sk: "Siaha po hračke, ktorú chce, a veci skúma ústami.", evidence: ["Reaches to grab a toy she wants", "Puts things in her mouth to explore them"], source: "cdc-6m" },
         { sk: "Pretočí sa z bruška na chrbát a v sede sa opiera o rúčky.", evidence: ["Rolls from tummy to back", "Leans on hands to support herself when sitting"], source: "cdc-6m" }
       ],
       everyday: [
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Help your baby learn she can calm down.", "Talk softly, hold, rock, or sing to her, or let her suck on her fingers or a pacifier."], source: "cdc-6m" },
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Learn to read your baby's moods."], source: "cdc-6m" },
+        { sk: "Pri upokojovaní môže pomôcť tichý hlas, držanie, hojdanie, spev alebo cmúľanie prstíkov či cumlíka.", evidence: ["Help your baby learn she can calm down.", "Talk softly, hold, rock, or sing to her, or let her suck on her fingers or a pacifier."], source: "cdc-6m" },
+        { sk: "Postupne sa dá naučiť rozumieť jeho náladám.", evidence: ["Learn to read your baby's moods."], source: "cdc-6m" },
         { sk: "Každodenná hra na zemi alebo na hracej deke mu pomáha hýbať sa, učiť sa a objavovať.", evidence: ["Playing on the floor or play mat with your baby every day helps him to move, learn, and explore."], source: "cdc-6m" }
       ],
       play: { sk: "Polož ho na bruško alebo na chrbát a hračky daj kúsok mimo jeho dosahu.", evidence: ["Put your baby on her tummy or back and put toys just out of reach."], source: "cdc-6m", activities_period: "4-6" },
@@ -146,15 +147,15 @@ window.GugubooContent.babyMonths = {
       activities_period: "6-9",
       source_urls: ["https://www.cdc.gov/act-early/milestones/9-months.html"],
       development: [
-        { sk: "V tomto období sú mnohé bábätká pri cudzích ľuďoch hanblivé alebo sa držia pri tebe a reagujú, keď odchádzaš.", evidence: ["Is shy, clingy, or fearful around strangers", "Reacts when you leave (looks, reaches for you, or cries)"], source: "cdc-9m" },
+        { sk: "Okolo 9 mesiacov je veľa bábätiek pri cudzích ľuďoch hanblivých alebo sa drží pri tebe a reaguje, keď odchádzaš.", evidence: ["Is shy, clingy, or fearful around strangers", "Reacts when you leave (looks, reaches for you, or cries)"], source: "cdc-9m" },
         { sk: "Pozrie sa, keď ho zavoláš menom, a džavoce rôzne slabiky ako „mamama“ či „bababa“.", evidence: ["Looks when you call her name", "Makes a lot of different sounds like \"mamamama\" and \"bababababa\""], source: "cdc-9m" },
         { sk: "Dvíha rúčky, aby ho niekto zobral na ruky, a hľadá veci, ktoré mu spadli z dohľadu.", evidence: ["Lifts arms up to be picked up", "Looks for objects when dropped out of sight (like his spoon or toy)"], source: "cdc-9m" },
         { sk: "Samo sa dostane do sedu, sedí bez opory a prekladá veci z ruky do ruky.", evidence: ["Gets to a sitting position by herself", "Sits without support", "Moves things from one hand to her other hand"], source: "cdc-9m" }
       ],
       everyday: [
         { sk: "Bábätkám je lepšie, keď vedia, čo ich čaká – pomáha pravidelný rytmus spánku a jedla.", evidence: ["Have routines for sleeping and feeding.", "Babies do better when they know what to expect."], source: "cdc-9m" },
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Say a quick and cheerful goodbye instead of sneaking away so your baby knows you are leaving, even if he cries."], source: "cdc-9m" },
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Stay close by as your baby explores and moves around your home so she knows that you are near."], source: "cdc-9m" }
+        { sk: "Pri odchode zvykne pomôcť krátka a veselá rozlúčka namiesto vytratenia sa potajomky – aj keď možno zaplače, bude vedieť, že odchádzaš.", evidence: ["Say a quick and cheerful goodbye instead of sneaking away so your baby knows you are leaving, even if he cries."], source: "cdc-9m" },
+        { sk: "Keď skúma a pohybuje sa po byte, pomáha mu vedieť, že si nablízku.", evidence: ["Stay close by as your baby explores and moves around your home so she knows that you are near."], source: "cdc-9m" }
       ],
       play: { sk: "Pred jeho očami schovaj hračku pod deku a nechaj ho hľadať ju.", evidence: ["Play a game that teaches your baby to look for things she sees you hide, such as a toy under a blanket."], source: "cdc-9m", activities_period: "6-9" },
       talk_to_doctor: { sk: "Svoje bábätko poznáš najlepšie – ak zatiaľ nerobí jeden alebo viac z týchto krokov, stratilo zručnosť, ktorú už vedelo, alebo máš iné obavy, pokojne sa včas porozprávaj s detským lekárom a opýtaj sa na vývinový skríning.", evidence: ["You know your child best.", "If your child is not meeting one or more milestones, has lost skills he or she once had, or you have other concerns", "act early.", "Talk with your child's doctor, share your concerns, and ask about developmental screening."], source: "cdc-9m" }
@@ -167,15 +168,15 @@ window.GugubooContent.babyMonths = {
       activities_period: "9-12",
       source_urls: ["https://www.cdc.gov/act-early/milestones/1-year.html"],
       development: [
-        { sk: "Okolo prvých narodenín sa mnohé deti s tebou hrajú hry ako „paci-paci“ a zamávajú „pápá“.", evidence: ["Plays games with you, like pat-a-cake", "Waves \"bye-bye\""], source: "cdc-1y" },
+        { sk: "Okolo prvých narodenín sa veľa detí s tebou hrá hry ako „paci-paci“ a zamáva „pápá“.", evidence: ["Plays games with you, like pat-a-cake", "Waves \"bye-bye\""], source: "cdc-1y" },
         { sk: "Volá rodiča „mama“, „tata“ alebo iným zvláštnym menom a rozumie slovu „nie“ – na chvíľu sa zastaví.", evidence: ["Calls a parent \"mama\" or \"dada\" or another special name", "Understands \"no\" (pauses briefly or stops when you say it)"], source: "cdc-1y" },
         { sk: "Vloží vec do nádoby, napríklad kocku do hrnčeka, a hľadá veci, ktoré videlo schovať, napríklad hračku pod dekou.", evidence: ["Puts something in a container, like a block in a cup", "Looks for things he sees you hide, like a toy under a blanket"], source: "cdc-1y" },
         { sk: "Postaví sa s oporou, chodí popri nábytku a drobnosti zdvihne medzi palcom a ukazovákom.", evidence: ["Pulls up to stand", "Walks, holding on to furniture", "Picks things up between thumb and pointer finger, like small bits of food"], source: "cdc-1y" }
       ],
       everyday: [
         { sk: "Pravidelné časy spánku všetko uľahčujú.", evidence: ["Consistent sleep times make it easier!"], source: "cdc-1y" },
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Give your baby safe places to explore."], source: "cdc-1y" },
-        { sk: "", /* Master 4.0 (Audit Z7): rada */ evidence: ["Give your baby time to get to know a new caregiver."], source: "cdc-1y" }
+        { sk: "Bezpečné miesta na objavovanie mu môžu pomôcť.", evidence: ["Give your baby safe places to explore."], source: "cdc-1y" },
+        { sk: "Keď prichádza nová opatrovateľka či opatrovateľ, môže pomôcť dať bábätku čas, aby sa spoznali.", evidence: ["Give your baby time to get to know a new caregiver."], source: "cdc-1y" }
       ],
       play: { sk: "Daj mu hrnce a pokrievky alebo malý bubienok a nechaj ho robiť hluk.", evidence: ["Give your baby pots and pans or a small musical instrument like a drum or cymbals."], source: "cdc-1y", activities_period: "9-12" },
       talk_to_doctor: { sk: "Svoje dieťa poznáš najlepšie – ak zatiaľ nerobí jeden alebo viac z týchto krokov, stratilo zručnosť, ktorú už vedelo, alebo máš iné obavy, pokojne sa včas porozprávaj s detským lekárom a opýtaj sa na vývinový skríning.", evidence: ["You know your child best.", "If your child is not meeting one or more milestones, has lost skills he or she once had,", "or you have other concerns, act early.", "Talk with your child's doctor, share your concerns, and ask about developmental screening."], source: "cdc-1y" }

@@ -133,8 +133,7 @@
     const raw = module.weeks?.[week];
     if (!raw) return null;
     const text = value => Array.isArray(value) ? value.map(item => item?.sk).filter(Boolean).join(" ") : value?.sk || "";
-    // Master 4.0 (Audit Z4): „Tip na tento týždeň“ sú rady – v Mastri sa nezobrazujú (dáta ostávajú v pregnancy-weeks.js).
-    const entry = { week, size: roundOnlySize(text(raw.size)), baby: text(raw.baby), you: text(raw.you), tip: "", milestone: text(raw.milestone), source_urls: raw.source_url ? [raw.source_url] : [] };
+    const entry = { week, size: roundOnlySize(text(raw.size)), baby: text(raw.baby), you: text(raw.you), tip: text(raw.tip), milestone: text(raw.milestone), source_urls: raw.source_url ? [raw.source_url] : [] };
     return entry.baby || entry.you ? entry : null;
   }
 
@@ -159,7 +158,7 @@
       "<header><small>Tento týždeň</small><h2>", entry.week, ". týždeň</h2>", entry.size ? "<span class='v2-week-size'>" + esc(entry.size) + "</span>" : "", "</header>",
       entry.milestone ? "<p class='v2-week-milestone'>✦ " + esc(entry.milestone) + "</p>" : "",
       entry.baby ? "<div class='v2-week-block'><strong>Bábätko</strong><p>" + esc(entry.baby) + "</p></div>" : "",
-      entry.you || entry.tip ? "<details class='v2-week-more'><summary>Ty</summary>" : "",
+      entry.you || entry.tip ? "<details class='v2-week-more'><summary>Ty a tip na tento týždeň</summary>" : "",
       entry.you ? "<div class='v2-week-block'><strong>Ty</strong><p>" + esc(entry.you) + "</p></div>" : "",
       entry.tip ? "<div class='v2-week-block v2-week-tip'><strong>Tip</strong><p>" + esc(entry.tip) + "</p></div>" : "",
       "</details>",
@@ -484,7 +483,7 @@
     if (!sleep) return null;
     return {
       level: "content",
-      text: "Bezpečný spánok – informácie uvádza NHS (odkaz nižšie). Zoznam vecí na spánok nájdeš v Domove pre bábätko (Spánok).\n\n" + SAFE().line.ped + "\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + sleep.reviewed + ", overené " + sleep.checked + ".)",
+      text: "Bezpečný spánok\n\n" + (sleep.text || "") + " Viac uvádza stránka NHS (odkaz nižšie). Zoznam vecí na spánok nájdeš v Domove pre bábätko (Spánok).\n\n" + SAFE().line.ped + "\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + sleep.reviewed + ", overené " + sleep.checked + ".)",
       actions: [{ label: "Domov pre bábätko", kind: "checklist", value: "home" }, askAction("baby", "Mám otázku k bezpečnému spánku."), ...sourceAction(sleep.url)]
     };
   }
@@ -526,7 +525,7 @@
     if (pregnant && pre) {
       if (has(t, ["co nesmiem jest", "co mozem jest", "co nejest", "jedl", "syr", "ryb", "tuniak", "pecen", "kav", "kofein", "alkohol", "vino", "pivo"])) {
         const f = pre.food;
-        return { level: "content", text: "Jedlo v tehotenstve\n\nČo NHS v tehotenstve uvádza vynechať:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + "\n\n" + f.alcohol /* Master 4.0 (Audit Z1): bez limitov kofeínu a rýb – len otázka pre lekára */ + "\n\nViac nájdeš v časti Jedlo a pohyb.\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + f.reviewed + ", overené " + pre.checked + ".)", actions: [askAction("me", f.askPrompt || "Mám otázku k jedlu v tehotenstve."), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
+        return { level: "content", text: "Jedlo v tehotenstve\n\nČo NHS v tehotenstve uvádza vynechať:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + (f.limit ? "\n\n" + (f.limitTitle || "Čo NHS uvádza o množstve") + ":\n" + f.limit.map(x => "• " + x).join("\n") : "") /* Master 4.0 (Audit Z1): množstvá ako „NHS uvádza…“ */ + "\n\n" + f.alcohol + "\n\nViac nájdeš v časti Jedlo a pohyb.\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + f.reviewed + ", overené " + pre.checked + ".)", actions: [askAction("me", f.askPrompt || "Mám otázku k jedlu v tehotenstve."), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
       }
       if (has(t, ["vitamin", "kyselin", "folic", "doplnk", "jod"])) {
         const v = pre.vitamins;

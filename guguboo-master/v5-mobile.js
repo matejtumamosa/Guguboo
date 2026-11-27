@@ -2971,10 +2971,10 @@
     const list = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
     const source = (url, reviewed, checked) => "<a class='v2-source' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + escapeHtml(reviewed) + ", overené " + escapeHtml(checked) + " ↗</a>";
     // Master 4.0 (Audit Z2, Z3): bez cieľa (150 min), bez počítadiel („Tento týždeň X min“, „Dnes X-krát“, „+ 10 minút“,
-    // „+ Hotovo“), bez postupu („Ako na to“) a dávky. Karta = názov + informácia NHS. Staré záznamy exLog ostávajú v údajoch.
-    const card = (id, title, why, examples) => [
+    // „+ Hotovo“). Postup po pôrode ako opis NHS bez rozkazov, množstvo ako „NHS uvádza…“. Staré záznamy exLog ostávajú v údajoch.
+    const card = (id, title, why, examples, steps, dose) => [
       "<section class='v2-ex-card'><details><summary><span class='v5-icon'>", icon("exercise"), "</span><span><strong>", escapeHtml(title), "</strong></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></summary>",
-      why ? "<p>" + escapeHtml(why) + "</p>" : "", examples ? "<p>" + escapeHtml(examples) + "</p>" : "", "</details>",
+      why ? "<p>" + escapeHtml(why) + "</p>" : "", examples ? "<p>" + escapeHtml(examples) + "</p>" : "", steps?.length ? "<h4>Ako to popisuje NHS</h4><ol class='v2-mama-list'>" + steps.map(step => "<li>" + escapeHtml(step) + "</li>").join("") + "</ol>" : "", dose ? "<p class='v2-ex-dose'>" + escapeHtml(dose) + "</p>" : "", "</details>",
       "</section>"
     ].join("");
     if (expecting) {
@@ -2991,7 +2991,7 @@
     const ex = content?.exercises;
     if (!ex) { byId("v5OMenuBody").innerHTML = "<div class='v5-empty'>Obsah sa načítava…</div>"; return; }
     byId("v5OMenuBody").innerHTML = [
-      ex.items.map(item => card(item.id, item.title, item.why, "")).join(""),
+      ex.items.map(item => card(item.id, item.title, item.why, "", item.steps, item.dose)).join(""),
       "<div class='v2-calm-box'><p>", escapeHtml(ex.howNote || ""), "</p>", window.G2Safety && ex.askPrompt ? window.G2Safety.askButton("me", ex.askPrompt) : "", "</div>",
       "<div class='v2-calm-box'><strong>Čo NHS uvádza spočiatku vynechať</strong>", list(ex.avoid), "</div>",
       source(ex.source, ex.reviewed, ex.checked)
@@ -3690,11 +3690,12 @@
     body.innerHTML = [
       "<div class='v2-week-strip' role='group' aria-label='Vyber obdobie'>", strip, "</div>",
       "<section class='g2-hero'><div class='g2-hero-text'><small class='g2-month-kicker'>", escapeHtml(String(p.id).replace("-", "–")), " mesiacov", p === current ? " · teraz" : "", "</small><h1>", escapeHtml(p.title || ""), "</h1></div></section>",
-      block("Čo sa v tomto období môže diať", p.development), // Master 4.0 (Audit Z6): bez „zvyčajne“ (norma)
+      block("Čo sa v tomto období môže diať", (Array.isArray(p.development) && p.development.length ? p.development.concat([{ sk: "Každé bábätko je iné a má vlastné tempo." }]) : p.development)), // Master 4.0 (Audit Z6): bez normy, s vetou o vlastnom tempe
       block("Pre bežný deň", p.everyday),
+      Number(String(p.id).split("-")[1]) <= 3 && window.G2Safety?.sleepLink ? "<p class='g2-note'>" + window.G2Safety.sleepLink() + "</p>" : "", // Master 4.0 (Audit Z8): bezpečný spánok – len odkaz na jedno miesto
       block("Nápad na hru", p.play),
       // Master 4.0 (Audit Z6): bez zoznamu „ak zatiaľ nerobí…“ (samohodnotenie) – len štandardná veta, tempo a otázka pre pediatra.
-      window.G2Safety ? "<section class='v2-size-dev g2-month-doctor'><p>" + escapeHtml(window.G2Safety.line.ped) + " Každé dieťa má vlastné tempo.</p>" + window.G2Safety.askButton("baby", "Mám otázku k vývinu bábätka.") + "</section>" : "",
+      window.G2Safety ? "<section class='v2-size-dev g2-month-doctor'><p>" + escapeHtml(window.G2Safety.line.ped) + "</p>" + window.G2Safety.askButton("baby", "Mám otázku k vývinu bábätka.") + "</section>" : "",
       "<div class='g2-month-nav'>", idx > 0 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx - 1].id) + "'>" + glyph("chevronLeft") + " Predchádzajúce</button>" : "<span></span>", idx < periods.length - 1 ? "<button class='g2-btn' type='button' data-g2-month='" + escapeHtml(periods[idx + 1].id) + "'>Ďalšie " + glyph("chevronRight") + "</button>" : "<span></span>", "</div>",
       (p.source_urls || []).length ? "<p class='g2-note'>Zdroj: " + (p.source_urls || []).map(u => "<a class='v2-source' href='" + escapeHtml(u) + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]) + "</a>").join(", ") + (meta.last_checked ? " · overené " + escapeHtml(meta.last_checked.split("-").reverse().map(Number).join(". ")) : "") + ". Všeobecné informácie, nie zdravotná rada – každé dieťa má vlastné tempo.</p>" : ""
     ].join("");
@@ -5230,7 +5231,8 @@
       "</section>",
       baby.length ? "<section class='v2-size-dev'><h3>Čo sa práve vyvíja</h3><ul class='g2-dots'>" + baby.map(sentence => "<li>" + escapeHtml(sentence) + "</li>").join("") + "</ul></section>" : "",
       MASTER && data.you ? "<section class='v2-size-dev'><h3>Ty a tvoje telo</h3><p>" + escapeHtml(split(data.you)[0] || "") + "</p><button type='button' class='g2-link' data-v2-mama-section='body'>Viac v Mame " + glyph("chevronRight") + "</button></section>" : "",
-      // Master 4.0 (Audit Z4): „Tip na tento týždeň“ sa nezobrazuje (rady). Audit Z5: vety o pohyboch nahrádza jediná veta E3 z g2-safety.js.
+      // Master 4.0 (Audit Z4): tip prepísaný mäkko v pregnancy-weeks.js. Audit Z5: vety o pohyboch nahrádza jediná veta E3 z g2-safety.js.
+      MASTER && data.tip ? "<section class='v2-size-dev g2-size-tip'><h3>Tip na tento týždeň</h3>" + g2FirstSentence(data.tip, "") + "</section>" : "",
       MASTER && data.week >= 24 && window.G2Safety ? window.G2Safety.html("E3") : "",
       MASTER ? "<p class='g2-size-note'>Ilustrácia je orientačná. <button type='button' class='g2-link g2-hide-art' data-g2-hide-art>" + (state.v5.hideBabyArt ? "Zobraziť ilustráciu" : "Skryť ilustráciu") + "</button></p>" : "",
       data.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) · overené " + weeksChecked() + " ↗</a>" : ""
@@ -5314,7 +5316,7 @@
       target.innerHTML = [
         flowHead("Mama", "Tvoje telo v " + week + ". týždni", week === currentWeek ? "" : "Pozeráš iný ako aktuálny týždeň.", 0, 1),
         you.length ? "<section class='v2-size-dev v2-size-mom'>" + you.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "<div class='v5-empty'>Pre tento týždeň zatiaľ nemáme overený text.</div>",
-        tip.length ? "<section class='v2-size-dev v2-size-tip'><h3>" + icon("lightbulb") + " Tip na tento týždeň</h3>" + tip.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "", // Master 4.0 (Audit Z4): tip je prázdny (guguchat.js)
+        tip.length ? "<section class='v2-size-dev v2-size-tip'><h3>" + icon("lightbulb") + " Tip na tento týždeň</h3>" + tip.map(item => "<p>" + escapeHtml(item) + "</p>").join("") + "</section>" : "",
         data?.source ? "<a class='v2-source' href='" + escapeHtml(data.source) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS (zhrnuté) · overené " + weeksChecked() + " ↗</a>" : "", // Master 4.0 (Audit Z23)
         back
       ].join("");
@@ -5347,7 +5349,7 @@
       const { food, vitamins, exercise } = content;
       target.innerHTML = [
         flowHead("Mama", "Jedlo a pohyb", "", 0, 1),
-        "<section class='v2-mama-card'><h3>Čo NHS v tehotenstve uvádza vynechať</h3>", bullets(food.avoid), "<p>", escapeHtml(food.alcohol), "</p>", askBtn(food.askPrompt) /* Master 4.0 (Audit Z1): limity kofeínu a rýb preč, len otázka pre lekára */, "<p class='v2-mama-muted'>Podľa NHS (Spojené kráľovstvo) – informácia, nie príkaz.</p>", source(food.source, food.reviewed), "</section>",
+        "<section class='v2-mama-card'><h3>Čo NHS v tehotenstve uvádza vynechať</h3>", bullets(food.avoid), food.limit ? "<h4>" + escapeHtml(food.limitTitle || "Čo NHS uvádza o množstve") + "</h4>" + bullets(food.limit) : "", "<p>", escapeHtml(food.alcohol), "</p>", askBtn(food.askPrompt) /* Master 4.0 (Audit Z1): množstvá ako „NHS uvádza…“ + otázka pre lekára */, "<p class='v2-mama-muted'>Podľa NHS (Spojené kráľovstvo) – informácia, nie príkaz.</p>", source(food.source, food.reviewed), "</section>",
         "<section class='v2-mama-card'><h3>Vitamíny a doplnky</h3><p>", escapeHtml(vitamins.text), "</p>", askBtn(vitamins.askPrompt), "</section>",
         "<section class='v2-mama-card'><h3>Pohyb</h3><p>", escapeHtml(exercise.moveExamples) /* Master 4.0 (Audit Z2): bez cieľa 150 min */, "</p><h4>Čo uvádza NHS</h4>", bullets(exercise.tips), "<h4>Čo NHS neodporúča</h4>", bullets(exercise.avoid), "<p class='v2-mama-muted'>", escapeHtml(exercise.note), "</p>", askBtn(exercise.askPrompt), source(exercise.source, exercise.reviewed), "</section>",
         back

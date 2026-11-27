@@ -63,11 +63,12 @@
     const text = label || (who === "baby" ? "Zapísať ako otázku pre pediatra" : "Zapísať ako otázku pre lekára");
     return "<button type='button' class='v5-secondary g2-askq' data-g2-askq='" + (who === "baby" ? "baby" : "me") + "' data-g2-askq-text='" + esc(prefill || "") + "'>" + esc(text) + "</button>";
   }
-  // Master 4.0 (Audit Z8): bezpečný spánok = JEDEN odkaz na stránku NHS (bez postupu v appke). Stránka NHS „Sudden infant death
-  // syndrome (SIDS)“ z 25. 11. 2025, overené 27. 11. 2026. ⚕ Pred testom potvrdí pediater, či má byť aj veta (návrh E8).
-  const safeSleep = { title: "Bezpečný spánok", url: "https://www.nhs.uk/baby/caring-for-a-newborn/reduce-the-risk-of-sudden-infant-death-syndrome/", sourceName: NHS, reviewed: "25. 11. 2025", checked: "27. 11. 2026" };
+  // Master 4.0 (Audit Z8): bezpečný spánok na JEDNOM mieste – jedna informatívna veta + odkaz. Stránka NHS „Sudden infant death
+  // syndrome (SIDS)“ z 25. 11. 2025, overené 27. 11. 2026: „always place your baby on their back to sleep in the feet-to-foot
+  // position“. Okno Sprcha, Tvoj mesiac, GuguChat a Aktivity ju len preberajú. ⚕ Pred testom potvrdí pediater.
+  const safeSleep = { title: "Bezpečný spánok", text: "Podľa NHS sa bábätko ukladá spať na chrbát, nožičkami k spodnému okraju postieľky.", url: "https://www.nhs.uk/baby/caring-for-a-newborn/reduce-the-risk-of-sudden-infant-death-syndrome/", sourceName: NHS, reviewed: "25. 11. 2025", checked: "27. 11. 2026" };
   function sleepLink() {
-    return "<a class='v2-source g2-safe-sleep' href='" + esc(safeSleep.url) + "' target='_blank' rel='noopener noreferrer'>" + esc(safeSleep.title) + " – " + esc(safeSleep.sourceName) + " · overené " + esc(safeSleep.checked) + " ↗</a>";
+    return "<span class='g2-safe-sleep-text'>" + esc(safeSleep.text) + "</span> <a class='v2-source g2-safe-sleep' href='" + esc(safeSleep.url) + "' target='_blank' rel='noopener noreferrer'>" + esc(safeSleep.title) + " – " + esc(safeSleep.sourceName) + " · overené " + esc(safeSleep.checked) + " ↗</a>";
   }
   window.G2Safety = {
     line, E, html, askButton, CHECKED, safeSleep, sleepLink,
