@@ -1033,3 +1033,7 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-album-cove
 /* Súkromný denník: zámok v hlavičke = linková ikona (predtým 🔒) */
 .private-lock svg.ph { width: 26px; height: 26px; color: #6a4fc4; }
 body.night .private-lock svg.ph { color: #c6bcff; }
+/* Master 3.9.1 (Samo): prehliadka v noci – „Teraz nie“ / „Preskočiť“ je textový odkaz bez plochy (nočné pravidlo tlačidiel
+   mu dávalo tmavý obdĺžnik); iskra v uvítacom okne vo fialovej ikon (bola takmer biela na svetlom štvorčeku). */
+:is(html, #g2gl#g2gl) body.v5-active.night .v2-tour-card .v2-tour-skip { background: transparent !important; }
+:is(html, #g2gl#g2gl) body.v5-active.night .v2-tour-card .v2-tour-icon { color: #6a4fc4 !important; }

@@ -3,6 +3,23 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-27 – Samo (Master 3.9.1: Hlavné 700, prehliadka podľa systému)
+- **Hlavné = 700 namiesto 800** (token `--t-main` v `g2-text.css`, platí všade: pozdrav, meno bábätka / týždeň, úloha
+  „Dnes stačí jedno“, nadpisy okien a kariet, aj úvod). Prečo: Samo – „Dobrý deň, Kristína“ a „Ozvi sa pediatrovi po návrate
+  domov“ boli „strašne hrubé“. Odkaz ostáva 700 vo farbe značky; 800 už len pri bežiacom čase (Číslo).
+- **Prehliadka (`v2-tour.js`) zladená s 3 úrovňami:** nadpis = Hlavné (predtým 19–22 px), text = Bežné, „Vitaj v Guguboo“ /
+  počítadlo krokov = Drobné bez roztiahnutia písmen (predtým 11 px fialové tučné), „Teraz nie“ / „Preskočiť“ = Odkaz vo farbe
+  značky (predtým 16/800 sivé), popisky lišty v kroku Spodná lišta = Drobné. Texty bez zmeny. Fokus po otvorení na nadpis
+  (bez rámika), ako okná kruhu v 3.9 – rovnako okno Údaje a záloha. V noci „Teraz nie“ bez tmavého obdĺžnika a iskra viditeľná.
+- **Nič v okne nie je väčšie ako jeho nadpis – ani v úvode:** počet pohárov v okne Pitného režimu (bol 44 px), upravovaný čas
+  v okne Upraviť (36 px) a vek bábätka na konci úvodu po pôrode (bol 44–54 px) sú Hlavné. Výnimka ostáva len pre bežiaci čas.
+- Dorovnané podľa nového testu: Plán („Čoskoro“ bez kapitálok, „budúci týždeň“ 12 px → Drobné), okná kruhu (dni a hodiny
+  v mriežke Pohybov a dni v Čo beriem 11–12 px → Drobné, „dnes“ len farbou; položky Čo beriem a otázky = Bežné; „Upraviť“
+  v Prehľade dňa = Odkaz), Oznámenie (voľby 13,5/600 → Bežné, nadpisy kariet = Hlavné), úvod (tlačidlá a odkazy boli 500 –
+  prehrávali kvôli váhe `:is()`, teraz Odkaz; „Späť“ vo farbe značky).
+- **Na rozhodnutie (Samo):** koniec úvodu po pôrode – v kruhu je teraz len „10 / dní“ v Hlavnom (predtým veľké číslo), kruh pôsobí
+  prázdnejšie; možnosti: nechať, alebo doplniť ilustráciu bábätka ako pred pôrodom (ovocie).
+
 ## 2026-11-27 – Product Lead (Master 3.9: grafické dorovnanie)
 - **Stav v dieli kruhu má vždy 14 px (úroveň Drobné, min. 13 px), alebo sa v tom diele vynechá** (pravidlo 3.4) – už žiadna
   výnimka 10,5 px. Ikony ostávajú presne na mieste ako v 3.8 (poloha sa nepočíta s väčším stavom). Dôsledok: na 390 × 844 sa

@@ -1192,7 +1192,7 @@
       }
     },
     {
-      // Master 3.6: jednotná typografia (g2-text.css). Master 3.7: na obrazovke najviac 3 úrovne textu (Hlavné 800 18,
+      // Master 3.6: jednotná typografia (g2-text.css). Master 3.7: na obrazovke najviac 3 úrovne textu (Hlavné 700 18 od 3.9.1,
       // Bežné 500 15, Drobné 500 14) + Odkaz 700 15; Číslo (časovač, počty) len v oknách. Kombinácia = veľkosť + hrúbka,
       // nepočítajú sa ikony a znaky bez písmen (›, ×, ＋, emoji) ani čísla bežiaceho časovača.
       name: "Typografia (Master 3.7 – 3 úrovne textu)",
@@ -1235,7 +1235,7 @@
                 if (head) {
                   const hs = win.getComputedStyle(head), big = [];
                   doc.querySelector(root).querySelectorAll("*").forEach(el => {
-                    if (el.children.length || !el.textContent.trim() || !isVisible(el) || el.closest(".g2q-time, .g2q-big, .g2r-timer")) return;
+                    if (el.children.length || !el.textContent.trim() || !isVisible(el) || el.closest(".g2q-time, .g2r-timer") /* Master 3.9.1: .g2q-big = počet pohárov, nie bežiaci čas */) return;
                     const cs = win.getComputedStyle(el);
                     if (/[\p{L}\p{N}]/u.test(el.textContent) && parseFloat(cs.fontSize) > parseFloat(hs.fontSize)) big.push(el.textContent.trim().slice(0, 20) + " " + cs.fontSize);
                   });
@@ -1248,6 +1248,78 @@
                   eq([...new Set(fonts)].length, 1, "Mama: názvy kariet a riadkov majú rôzne písmo " + JSON.stringify([...new Set(fonts)]));
                 }
               }
+            } finally { app.remove(); }
+          }
+        },
+        // Master 3.9.1 (Samo 27. 11.): Hlavné 700 namiesto 800 – pozdrav a úloha dňa boli príliš hrubé.
+        "Hlavné = 700: pozdrav, meno bábätka / týždeň, úloha dňa a nadpis okna (pred aj po pôrode)": async () => {
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(ringSeed(kind));
+            try {
+              const { doc, win } = app;
+              const els = ["#v5HeaderTitle", "#home.view.active .g2-hero-text h1", "#home.view.active .g2-today-main strong"].map(s => doc.querySelector(s));
+              assert(els.every(Boolean), kind + ": chýba pozdrav, meno/týždeň alebo úloha dňa");
+              doc.querySelector("#home.view.active .g2q-core").click(); await sleep(400);
+              els.push(doc.getElementById("g2qTitle"));
+              eq(els.map(el => win.getComputedStyle(el).fontWeight + "/" + win.getComputedStyle(el).fontSize), ["700/18px", "700/18px", "700/18px", "700/18px"], kind + ": pozdrav, meno/týždeň, úloha, nadpis okna");
+              eq(app.errors, [], "chyby v konzole");
+            } finally { app.remove(); }
+          }
+        },
+        // Master 3.9.1: okná, ktoré predtým test nekontroloval – v každom ≤ 5 kombinácií, nič pod 13 px, hrúbky 500/700/800,
+        // bez kapitálok a roztiahnutých písmen (> 0,02 em) a nič väčšie ako nadpis okna (okrem bežiaceho času).
+        "Ďalšie okná: prehliadka, úvod, zdieľanie, Profily rodiny, záloha, oznámenie, denník, Plán, Kalendár, okná kruhu (pred aj po)": async () => {
+          for (const kind of ["pred", "po"]) {
+            const extra = kind === "po"
+              ? { v5: { ringExtras: { pump: true, tummy: true } }, extra: { events: [ev("Kŕmenie", 25, { method: "Dojčenie", value: "Dojčenie" }), ev("Spánok", 70, { value: "40 min · denný" }), ev("Plienka", 12, { value: "Cikalo", diaper: { type: "wet" } }), ev("Odsávanie", 40, { ml: 120 }), ev("Na brušku", 50)] } }
+              : (() => { const now = new Date().toISOString(), day = iso(new Date()); return { v5: { ringPre: ["drink", "vit", "question", "bump"], babyMoves: [{ id: "m1", time: now }], water: { date: day, count: 3, glassMl: 250 }, supplements: { items: [{ id: "s1", name: "Kyselina listová" }, { id: "s2", name: "Vitamín D" }], log: { [day]: { s1: now } } }, doctorQuestions: [{ id: "q1", who: "me", text: "Otázka na kontrolu?", created: now, done: false }] } }; })();
+            const app = await bootApp(ringSeed(kind, extra));
+            try {
+              const { doc, win } = app, V5 = win.GugubooV5, byId = id => doc.getElementById(id);
+              const reset = async () => { try { if (byId("v2Tour")?.classList.contains("open")) doc.querySelector(".v2-tour-close").click(); win.G2Backup?.close(); V5.closeDrawer?.(); V5.windowCloseAll?.(); doc.querySelector("#g2QuickOverlay.open [data-g2q='close']")?.click(); V5.openHome(); } catch (_) { /* nič */ } await sleep(200); };
+              const quick = () => [byId("g2QuickOverlay"), byId("g2qTitle")];
+              const view = () => { const v = doc.querySelector(".view.active"); return [v, v?.querySelector(":scope > .v5-universal-window-head strong")]; };
+              const tour = () => [doc.querySelector(".v2-tour-card"), byId("v2TourTitle")];
+              const next = async n => { for (let i = 0; i < n; i++) { doc.querySelector("[data-v2-tour-next]").click(); await sleep(250); } };
+              const screens = [
+                ["Prehliadka – uvítanie", async () => { win.GugubooTour.start(); await sleep(400); }, tour],
+                ["Prehliadka – 1. krok", async () => { win.GugubooTour.start(); await sleep(300); await next(1); }, tour],
+                ["Prehliadka – spodná lišta", async () => { win.GugubooTour.start(); await sleep(300); await next(7); }, tour],
+                ["Poslať prehľad (zdieľanie)", async () => { doc.querySelector("#home.view.active .g2q-core").click(); await sleep(300); doc.querySelector("[data-g2q='share-preview']")?.click(); }, quick],
+                ["Profily rodiny (pozvať partnera)", async () => { V5.openFeature("profiles"); }, view],
+                ["Údaje a záloha", async () => { win.G2Backup.open(); }, () => [byId("g2BackupOverlay"), byId("g2bTitle")]],
+                ["Súkromný denník", async () => { V5.openFeature("privateSpace"); }, view],
+                ["Plán", async () => { V5.openPlan(); }, () => [byId("g2PlanOverlay"), byId("g2PlanTitle")]],
+                ["Kalendár", async () => { V5.openFeature("calendar"); }, view],
+                ["Upraviť záznam", async () => { doc.querySelector("#home.view.active .g2q-core").click(); await sleep(300); doc.querySelector("#g2QuickOverlay .g2q-ed")?.click(); }, quick]
+              ];
+              if (kind === "pred") screens.push(["Oznámenie (kartička)", async () => { V5.openFeature("announce"); }, view]);
+              ringKeys(doc).forEach(k => screens.push(["Okno kruhu " + k, async () => tapSeg(app, k), quick]));
+              let checked = 0;
+              for (const [name, open, get] of screens) {
+                await reset(); await open(); await sleep(450);
+                const [root, head] = get();
+                if (name === "Upraviť záznam" && !doc.querySelector("#g2QuickOverlay .g2q-edtime")) continue; // pred pôrodom bez záznamu na úpravu
+                windowTypeCheck(app, name + " (" + kind + ")", root, head);
+                checked++;
+              }
+              assert(checked >= (kind === "pred" ? 15 : 14), kind + ": skontrolovaných okien len " + checked);
+            } finally { app.remove(); }
+          }
+        },
+        "Úvod (všetky obrazovky, čakám bábätko aj bábätko je s nami): ≤ 5 kombinácií, bez kapitálok, nič väčšie ako nadpis": async () => {
+          for (const choice of ["pregnant", "born"]) {
+            const app = await bootApp(seed("uvod"));
+            try {
+              const { doc } = app, R = doc.getElementById("g2Intro");
+              assert(R, "úvod sa nezobrazil");
+              for (let i = 0; i < 5; i++) {
+                if (i === 2) { R.querySelector(".choice[data-choice='" + choice + "']").click(); await sleep(200); }
+                if (i > 0) { doc.getElementById("g2i-next").click(); await sleep(900); }
+                const screen = R.querySelector(".screen.on");
+                windowTypeCheck(app, "úvod " + choice + " – " + screen.dataset.screen, [screen, R.querySelector(".bottom")], screen.querySelector("h1"));
+              }
+              eq(R.querySelector(".screen.on").dataset.screen, "aha", choice + ": úvod nedošiel na koniec");
             } finally { app.remove(); }
           }
         },
@@ -1277,7 +1349,7 @@
     while (walker.nextNode()) {
       const node = walker.currentNode, el = node.parentElement, text = node.nodeValue.trim();
       if (!text || !el || /^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|OPTION)$/.test(el.tagName) || !isVisible(el) || !inView(el)) continue;
-      if (!/[\p{L}\p{N}]/u.test(text) || el.closest(".g2q-time, .g2r-timer, .g2q-big b, .v5-timer-pill")) continue;
+      if (!/[\p{L}\p{N}]/u.test(text) || el.closest(".g2q-time, .g2r-timer, .v5-timer-pill")) continue;
       const cs = win.getComputedStyle(el);
       let size = parseFloat(cs.fontSize);
       if (el instanceof win.SVGElement && el.getScreenCTM) { const m = el.getScreenCTM(); if (m) size *= Math.hypot(m.a, m.b); }
@@ -1297,6 +1369,43 @@
     eq(s.small, [], where + ": text pod 13 px");
     eq(s.weights.filter(w => !["500", "700", "800"].includes(w)), [], where + ": hrúbky mimo 500/700/800");
     eq(app.errors, [], "chyby v konzole");
+  }
+  // Master 3.9.1: kontrola jedného okna – roots = obsah okna (jeden alebo viac prvkov), head = nadpis okna.
+  // ≤ max kombinácií (veľkosť + hrúbka; ikony a znaky bez písmen/číslic sa nerátajú), nič pod 13 px, hrúbky 500/700/800,
+  // žiadne kapitálky ani letter-spacing > 0,02 em a žiadny text väčší ako nadpis okna – okrem bežiaceho času (.g2q-time, .g2r-timer).
+  function windowTypeCheck(app, where, roots, head, max = 5) {
+    const { win, doc } = app;
+    roots = (Array.isArray(roots) ? roots : [roots]).filter(Boolean);
+    assert(roots.length && roots.some(isVisible), where + ": okno sa neotvorilo");
+    assert(head && isVisible(head), where + ": chýba nadpis okna");
+    const headSize = parseFloat(win.getComputedStyle(head).fontSize);
+    const combos = new Map(), small = [], caps = [], big = [], weights = new Set();
+    const inView = el => { const r = el.getBoundingClientRect(); return r.width > 1 && r.height > 1 && r.bottom > 0 && r.top < win.innerHeight && r.right > 0 && r.left < win.innerWidth; };
+    roots.forEach(root => {
+      const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const el = walker.currentNode.parentElement, text = walker.currentNode.nodeValue.trim();
+        if (!text || !el || /^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|OPTION)$/.test(el.tagName) || !isVisible(el) || !inView(el)) continue;
+        if (!/[\p{L}\p{N}]/u.test(text) || el.closest(".g2q-time, .g2r-timer, .v5-timer-pill")) continue;
+        const cs = win.getComputedStyle(el), t = "„" + text.slice(0, 24) + "“";
+        let size = parseFloat(cs.fontSize);
+        if (el instanceof win.SVGElement && el.getScreenCTM) { const m = el.getScreenCTM(); if (m) size *= Math.hypot(m.a, m.b); }
+        size = Math.round(size * 10) / 10;
+        const key = size + "/" + cs.fontWeight;
+        if (!combos.has(key)) combos.set(key, t);
+        weights.add(cs.fontWeight);
+        if (size < 12.95) small.push(size + " px " + t);
+        const ls = cs.letterSpacing === "normal" ? 0 : parseFloat(cs.letterSpacing) / parseFloat(cs.fontSize);
+        if (ls > 0.0201 || cs.textTransform === "uppercase") caps.push(t + " " + cs.letterSpacing + " " + cs.textTransform);
+        if (size > headSize + 0.05) big.push(t + " " + size + " px");
+      }
+    });
+    assert(combos.size <= max, where + ": " + combos.size + " kombinácií (max. " + max + "): " + [...combos].map(([k, t]) => k + " " + t).join(" · "));
+    eq(small, [], where + ": text pod 13 px");
+    eq([...weights].filter(w => !["500", "700", "800"].includes(w)), [], where + ": hrúbky mimo 500/700/800");
+    eq(caps, [], where + ": kapitálky alebo roztiahnuté písmená");
+    eq(big, [], where + ": text väčší ako nadpis okna (" + headSize + " px)");
+    eq(app.errors, [], where + ": chyby v konzole");
   }
 
   // ——— Master 3.4: pomôcky pre testy kruhu ———

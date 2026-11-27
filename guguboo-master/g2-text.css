@@ -15,7 +15,7 @@
    Kapitálky len pri Štítku sekcie. Sekundárny text min. 14 px (13 px len Štítok). Šípky „›“ a „×“ zatiaľ ostávajú písmom.
 
    Master 3.7 (Samo 26. 11. 2026) – NA OBRAZOVKE NAJVIAC 3 ÚROVNE TEXTU + odkaz (prísnejšie ako 7 štýlov vyššie):
-     Hlavné  800 18/24 tmavá (--t-ink)   – pozdrav, meno bábätka / týždeň, úloha „Dnes stačí jedno“, hlavička obrazovky a okna,
+     Hlavné  700 18/24 tmavá (--t-ink)   – pozdrav, meno bábätka / týždeň, úloha „Dnes stačí jedno“, hlavička obrazovky a okna,  [Master 3.9.1: 700, predtým 800]
                                             nadpis karty (bývalý Titulok aj Nadpis = --t-main)
      Bežné   500 15/22 tmavá             – skratky, hľadanie, „Dnes“ v kruhu, názvy riadkov, odseky, voľby (bývalé Silné aj Telo = --t-text)
      Drobné  500 14/20 jediná sivá (--t-muted) – podnadpisy, štítky, popisky lišty (aktívna len farbou značky), stav, zdroje
@@ -33,7 +33,7 @@ html body.v5-active:not(.welcome-mode):not(.intro-only) {
   --v5-ink: var(--t-ink) !important; --v5-muted: var(--t-muted) !important; --v5-brand-dark: var(--t-brand) !important;
   --g2-ink: var(--t-ink) !important; --g2-muted: var(--t-muted) !important; --g2-brand-ink: var(--t-brand) !important;
   /* Master 3.7: 3 úrovne + odkaz (staré názvy = aliasy) */
-  --t-main:    800 18px/24px var(--t-font);
+  --t-main:    700 18px/24px var(--t-font); /* Master 3.9.1 (Samo): Hlavné 700 namiesto 800 – pozdrav a úloha dňa boli príliš hrubé */
   --t-text:    500 15px/22px var(--t-font);
   --t-small:   500 14px/20px var(--t-font);
   --t-link:    700 15px/20px var(--t-font);
@@ -268,7 +268,7 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) #g2Intro {
   --t-font: Montserrat, "Segoe UI", system-ui, sans-serif;
   /* Master 3.7: 3 úrovne + odkaz (ako v appke) */
-  --t-main: 800 18px/24px var(--t-font); --t-text: 500 15px/22px var(--t-font); --t-small: 500 14px/20px var(--t-font);
+  --t-main: 700 18px/24px var(--t-font); --t-text: 500 15px/22px var(--t-font); --t-small: 500 14px/20px var(--t-font);
   --t-link: 700 15px/20px var(--t-font); --t-input: 500 16px/24px var(--t-font);
   --t-title: var(--t-main); --t-head: var(--t-main); --t-strong: var(--t-text);
   --t-body: var(--t-text); --t-caption: var(--t-small); --t-label: 500 14px/16px var(--t-font);
@@ -395,3 +395,68 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) button.v2-mama-water-open > small {
   font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
 }
+
+/* ===== Master 3.9.1 (Samo 27. 11. 2026): Hlavné 700 (token --t-main vyššie), prehliadka a okná podľa 3 úrovní ===== */
+/* Silnejší prefix (3 × id): niektoré staršie pravidlá vyššie majú v :is() zložité selektory (napr. „.big .age span“) a :is()
+   berie váhu najsilnejšieho z nich – rovnako silné pravidlo s jednoduchým zoznamom by prehralo aj napriek poradiu. */
+/* Prehliadka (v2-tour.js): nadpis = Hlavné, text = Bežné, „Vitaj v Guguboo“ / počítadlo krokov a poznámka = Drobné
+   (bez roztiahnutia písmen), „Teraz nie“ / „Preskočiť“ = Odkaz vo farbe značky, tlačidlá = Odkaz, popisky lišty = Drobné. */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-tour-card h2 {
+  font: var(--t-main) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-tour-card :is(#v2TourText, #v2TourText span, #v2TourText b) {
+  font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-tour-card :is(#v2TourCount, .v2-tour-note, #v2TourText .v2-tour-chip b) {
+  font: var(--t-small) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-tour-card .v2-tour-skip {
+  font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v2-tour-card .v2-tour-try, .v2-tour-card .v5-primary, .v2-tour-resume button) {
+  font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* Fokus po otvorení prehliadky a okna Údaje je na nadpise (ako okná kruhu v 3.9 N3) – nadpis bez rámika;
+   tlačidlá majú rámik len pri ovládaní klávesnicou (:focus-visible). */
+#v2TourTitle:focus, #g2BackupOverlay h2:focus { outline: none; }
+
+/* Plán – „Čoskoro“ (bývalé kapitálky 13 px) = Drobné, názov úlohy = Bežné, „budúci týždeň“ (12/800) = Drobné */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.v2-journey-soon h3, .v2-journey-soon em) {
+  font: var(--t-small) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-journey-soon button > span {
+  font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+
+/* Okná kruhu: počet v Pitnom režime a čas pri úprave záznamu nie sú bežiaci čas → Hlavné (nikdy väčšie ako nadpis okna) */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(#g2QuickOverlay .g2q-big b, .g2q-edtime) {
+  font: var(--t-main) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
+}
+/* čísla nad stĺpcami, dni a hodiny v mriežke Pohybov, dni týždňa v Čo beriem (dnes len farbou), čas odškrtnutia = Drobné */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) :is(.g2q-bar-n, .g2q-grid-row small, .g2q-grid-h, .g2q-grid-h span, .g2q-wd, .g2q-checks button time) {
+  font: var(--t-label) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-muted) !important;
+}
+/* názov položky v Čo beriem a otázka v Otázkach pre lekára = Bežné (ako riadky inde) */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-checks button span {
+  font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+/* „Upraviť“ v Prehľade dňa je ťukateľný odkaz → Odkaz */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-ed {
+  font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-brand) !important;
+}
+
+/* Oznámenie (kartička): voľby = Bežné (predtým 13,5/600), nadpisy kariet Fotka / Text / Vzhľad = Hlavné */
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-ann-chip {
+  font: var(--t-text) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(html, #g2t#g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .v2-ann-form h3 {
+  font: var(--t-main) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--t-ink) !important;
+}
+
+/* Úvod: tlačidlá a odkazy = Odkaz vo farbe značky (pravidlo 3.7 prehrávalo s 3.6.4 kvôli váhe :is()); „Slovensko“ bez tučného;
+   vek bábätka na konci úvodu (predtým 44–54 px) = Hlavné – nič nie je väčšie ako nadpis obrazovky; „dní“ = Drobné. */
+:is(html, #g2t#g2t#g2t) #g2Intro :is(.btn, .link) { font: var(--t-link) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2t#g2t#g2t) #g2Intro .link { color: var(--lav-dark) !important; }
+:is(html, #g2t#g2t#g2t) #g2Intro .country strong { font: var(--t-small) !important; letter-spacing: 0 !important; }
+:is(html, #g2t#g2t#g2t) #g2Intro .big .age b { font: var(--t-main) !important; letter-spacing: 0 !important; color: var(--ink) !important; }
+:is(html, #g2t#g2t#g2t) #g2Intro .big .age span { font: var(--t-small) !important; letter-spacing: 0 !important; margin-top: 0; }

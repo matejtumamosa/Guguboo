@@ -9,14 +9,17 @@ aby nové veci vyzerali rovnako.
 
 | Úroveň | Token | Hodnota | Farba | Kde |
 |---|---|---|---|---|
-| Hlavné | `--t-main` | 800 · 18/24 px | `--t-ink` | pozdrav, meno bábätka / týždeň, úloha „Dnes stačí jedno“, hlavička obrazovky a okna, nadpis karty |
+| Hlavné | `--t-main` | 700 · 18/24 px (od 3.9.1, predtým 800) | `--t-ink` | pozdrav, meno bábätka / týždeň, úloha „Dnes stačí jedno“, hlavička obrazovky a okna, nadpis karty |
 | Bežné | `--t-text` | 500 · 15/22 px | `--t-ink` | skratky, hľadanie, „Dnes“ v kruhu, názvy riadkov, odseky, voľby, záložky |
 | Drobné | `--t-small` | 500 · 14/20 px | `--t-muted` (jediná sivá) | podnadpisy, štítky (bez kapitálok), popisky lišty, stav, poznámky, zdroje |
 | Odkaz | `--t-link` | 700 · 15/20 px | `--t-brand` (tlačidlá farbou tlačidla) | ťukateľné textové odkazy („Neskôr“, „… ›“), text tlačidiel |
 
-  Výnimky: Číslo 800 24/28 (44/48) len v oknách a v strede kruhu pri bežiacom čase; polia formulárov 16 px (iPhone nepribližuje);
-  ikony a znaky bez písmen sa nerátajú. Aktívna položka lišty a záložky = len farba značky, nie hrúbka. Fialová len na odkazy.
-  Test: domov ≤ 4 kombinácie (veľkosť + hrúbka), hlavné obrazovky ≤ 5 (`test.html`, sada Typografia).
+  Výnimky: Číslo 800 24/28 (44/48) len pri bežiacom čase (stred kruhu, časovač v okne) – počty, súhrny a upravovaný čas sú Hlavné;
+  polia formulárov 16 px (iPhone nepribližuje); ikony a znaky bez písmen sa nerátajú. Aktívna položka lišty a záložky = len farba
+  značky, nie hrúbka. Fialová len na odkazy. Žiadne kapitálky ani roztiahnuté písmená (letter-spacing > 0,02 em).
+  V okne nič väčšie ako jeho nadpis. Fokus po otvorení okna ide na nadpis (bez rámika); rámik na tlačidlách len pri `:focus-visible`.
+  Test: domov ≤ 4 kombinácie (veľkosť + hrúbka), hlavné obrazovky a ďalšie okná ≤ 5 – prehliadka, úvod, Poslať prehľad,
+  Profily rodiny, záloha, oznámenie, denník, Plán, Kalendár, okná kruhu (`test.html`, sada Typografia).
 - Pôvodných 7 štýlov (3.6) ostáva ako aliasy tokenov (`--t-title`/`--t-head` = Hlavné, `--t-strong`/`--t-body` = Bežné,
   `--t-caption`/`--t-label` = Drobné); tabuľka nižšie je história:
 

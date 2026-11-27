@@ -135,7 +135,7 @@
       document.body.insertAdjacentHTML("beforeend", [
         "<div id='v2Tour' class='v2-tour' role='dialog' aria-modal='true' aria-labelledby='v2TourTitle'>",
         "<div class='v2-tour-spot' aria-hidden='true'></div>",
-        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>" + window.GugubooV5.glyph("close") + "</button><span class='v2-tour-icon' id='v2TourIcon' aria-hidden='true'></span><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p><small class='v2-tour-note' id='v2TourNote'></small>",
+        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>" + window.GugubooV5.glyph("close") + "</button><span class='v2-tour-icon' id='v2TourIcon' aria-hidden='true'></span><small id='v2TourCount'></small><h2 id='v2TourTitle' tabindex='-1'></h2><p id='v2TourText'></p><small class='v2-tour-note' id='v2TourNote'></small>",
         "<button type='button' class='v2-tour-try' data-v2-tour-try hidden></button>",
         "<div class='v2-tour-actions'><button type='button' class='v2-tour-skip' data-v2-tour-skip>Preskočiť</button>",
         "<button type='button' class='v5-primary' data-v2-tour-next>Ďalej</button></div></section></div>"
@@ -227,7 +227,9 @@
     root.classList.add("open");
     document.body.classList.add("v2-tour-open");
     show();
-    window.setTimeout(() => root.querySelector("[data-v2-tour-next]")?.focus(), 60);
+    // Master 3.9.1 (Samo): fokus na nadpis (ako okná kruhu v 3.9 N3), nie na tlačidlo „Ukázať“ – inak mal hneď po otvorení
+    // hrubý fokusový rámik. Klávesnicou sa ide Tabom ďalej na tlačidlá (tie majú rámik len pri :focus-visible).
+    window.setTimeout(() => byId("v2TourTitle")?.focus({ preventScroll: true }), 60);
   }
 
   // „Vyskúšať“: prehliadka sa pozastaví, otvorí sa funkcia a na domove ostane „Pokračovať v prehliadke“.

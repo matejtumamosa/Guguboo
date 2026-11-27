@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9, grafické dorovnanie)_
+_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9.1, Hlavné 700 a prehliadka podľa systému)_
 
 ## Verzia
 
-- **Master 3.9** (commit vo vetve `master39`, nepushnutý – zlúči Product Lead), priečinok `guguboo-master/`.
+- **Master 3.9.1** (commit vo vetve `master391`, nepushnutý – zlúči Product Lead), priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -65,6 +65,12 @@ _Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9, grafické dorovn
   „pred 45 min“), aby sa zmestil aj v dieloch po pôrode. Po vizuálnej kontrole (QA 3.9): stred malého kruhu len „Dnes“,
   320 × 568 tesnejšie medzery, v noci bez tmavého bloku v karte týždňa, nadpis okien kruhu pri okraji, nový zámok, fajka
   v Pláne ako ikona, „×“ v „3×“ hrubšie; test.html: stred kruhu vs. ikony dielov (76 zelených).
+- **3.9.1 (Samo 27. 11.):** Hlavné 700 namiesto 800 (token `--t-main`, pozdrav a úloha dňa boli príliš hrubé); prehliadka
+  zladená s 3 úrovňami (nadpis Hlavné, text Bežné, „Vitaj v Guguboo“ / počítadlo Drobné bez roztiahnutia, „Teraz nie“ Odkaz),
+  fokus po otvorení na nadpis (aj okno Údaje a záloha); nič v okne väčšie ako nadpis (Pitný režim, Upraviť, koniec úvodu po pôrode);
+  dorovnané Plán, okná kruhu, Oznámenie, úvod. test.html: Hlavné = 700, nová kontrola ďalších okien (prehliadka, úvod pred aj po,
+  Poslať prehľad, Profily rodiny, záloha, oznámenie, denník, Plán, Kalendár, Upraviť, všetky okná kruhu pred aj po). Na rozhodnutie:
+  koniec úvodu po pôrode (kruh s „10 dní“ pôsobí prázdnejšie – doplniť ilustráciu?).
 - Otvorené po 3.8: `web.html` (riadky ~508, 623, 964–968) ešte opisuje kruh 2.x („Náš deň“, Bruško, Pre bábätko, Prvý pohyb) –
   zosúladiť pri úprave webu; N6 (Kontrakcie v 36. t., odkaz na E7) a vety ⚕ – potvrdí pôrodná asistentka; `knowledge-monitor.mjs`
   doplniť o URL NHS (movements, week-15, birth plan, foods-to-avoid). Na rozhodnutie podľa nového pravidla (bez noriem

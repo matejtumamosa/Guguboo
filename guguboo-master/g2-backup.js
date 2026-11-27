@@ -65,7 +65,7 @@
     ].join("");
     backupBytes().then(bytes => { const el = byId("g2bSize"); if (el) el.textContent = "súbor bude mať približne " + sizeLabel(bytes); });
   }
-  function open() { const el = overlay(); el.classList.add("open"); el.setAttribute("aria-hidden", "false"); render(); setTimeout(() => el.querySelector(".g2b-body button")?.focus({ preventScroll: true }), 60); }
+  function open() { const el = overlay(); el.classList.add("open"); el.setAttribute("aria-hidden", "false"); render(); setTimeout(() => byId("g2bTitle")?.focus({ preventScroll: true }), 60); } // Master 3.9.1: fokus na nadpis (bez rámika na prvom tlačidle)
   function close() { const el = byId("g2BackupOverlay"); if (!el) return; el.classList.remove("open"); el.setAttribute("aria-hidden", "true"); }
 
   // Master 2.8 (Plán F1-0): formát zálohy v čistých funkciách, aby ho test.html overil tam a späť.
