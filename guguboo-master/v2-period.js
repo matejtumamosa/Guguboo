@@ -148,9 +148,9 @@
     }
     return [
       "<section class='v2-mama-card v2-per-cal'>",
-      "<div class='v2-cal-month-head'><button type='button' data-v2-period-month='", shift(-1), "' aria-label='Predchádzajúci mesiac'>‹</button><strong>",
+      "<div class='v2-cal-month-head'><button type='button' data-v2-period-month='", shift(-1), "' aria-label='Predchádzajúci mesiac'>" + window.GugubooV5.glyph("chevronLeft") + "</button><strong>",
       esc(first.toLocaleDateString("sk-SK", { month: "long", year: "numeric" })),
-      "</strong><button type='button' data-v2-period-month='", shift(1), "' aria-label='Nasledujúci mesiac'>›</button></div>",
+      "</strong><button type='button' data-v2-period-month='", shift(1), "' aria-label='Nasledujúci mesiac'>" + window.GugubooV5.glyph("chevronRight") + "</button></div>",
       "<div class='v2-cal-grid v2-per-grid'>", ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"].map(d => "<b>" + d + "</b>").join(""), cells.join(""), "</div>",
       "<div class='v2-per-legend'><span><i class='is-period'></i>Menštruácia</span><span><i class='is-spot'></i>Špinenie</span><span><i class='is-predicted'></i>Odhad</span></div>",
       "</section>"
@@ -212,7 +212,7 @@
     }).join("");
     return [
       "<div class='v2-per-tiles'>", tiles.map(([label, value, note]) => "<div><small>" + esc(label) + "</small><strong>" + esc(value) + "</strong><em>" + esc(note) + "</em></div>").join(""), "</div>",
-      "<details class='v2-mama-trouble v2-per-history'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon("calendar") + "</span><strong>História menštruácií</strong><b aria-hidden='true'>›</b></summary><ul>", history, "</ul></details>"
+      "<details class='v2-mama-trouble v2-per-history'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon("calendar") + "</span><strong>História menštruácií</strong><b aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</b></summary><ul>", history, "</ul></details>"
     ].join("");
   }
 
@@ -243,7 +243,7 @@
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>";
     const src = (url, reviewed) => "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + esc(reviewed) + ", overené " + esc(c.checked) + " ↗</a>";
     // Master 3.0 (IKONY_NAVRH.md): linkové ikony namiesto emoji 🌙 💞 🩹 🩺 🗓️
-    const box = (ic, title, body) => "<details class='v2-mama-trouble'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon(ic) + "</span><strong>" + esc(title) + "</strong><b aria-hidden='true'>›</b></summary>" + body + "</details>";
+    const box = (ic, title, body) => "<details class='v2-mama-trouble'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon(ic) + "</span><strong>" + esc(title) + "</strong><b aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</b></summary>" + body + "</details>";
     return [
       "<h3 class='v2-per-info-title'>Dobré vedieť</h3><div class='v2-mama-troubles'>",
       box("calendarDots", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed)),

@@ -135,7 +135,7 @@
       document.body.insertAdjacentHTML("beforeend", [
         "<div id='v2Tour' class='v2-tour' role='dialog' aria-modal='true' aria-labelledby='v2TourTitle'>",
         "<div class='v2-tour-spot' aria-hidden='true'></div>",
-        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>×</button><span class='v2-tour-icon' id='v2TourIcon' aria-hidden='true'></span><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p><small class='v2-tour-note' id='v2TourNote'></small>",
+        "<section class='v2-tour-card'><button type='button' class='v2-tour-close' data-v2-tour-skip aria-label='Zavrieť prehliadku'>" + window.GugubooV5.glyph("close") + "</button><span class='v2-tour-icon' id='v2TourIcon' aria-hidden='true'></span><small id='v2TourCount'></small><h2 id='v2TourTitle'></h2><p id='v2TourText'></p><small class='v2-tour-note' id='v2TourNote'></small>",
         "<button type='button' class='v2-tour-try' data-v2-tour-try hidden></button>",
         "<div class='v2-tour-actions'><button type='button' class='v2-tour-skip' data-v2-tour-skip>Preskočiť</button>",
         "<button type='button' class='v5-primary' data-v2-tour-next>Ďalej</button></div></section></div>"
@@ -263,7 +263,7 @@
   function resumePill(showIt) {
     let pill = byId("v2TourResume");
     if (!pill && showIt) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='v2TourResume' class='v2-tour-resume'><button type='button' data-v2-tour-resume>▶ Pokračovať v prehliadke</button><button type='button' class='v2-tour-resume-close' data-v2-tour-resume-close aria-label='Ukončiť prehliadku'>×</button></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='v2TourResume' class='v2-tour-resume'><button type='button' data-v2-tour-resume>▶ Pokračovať v prehliadke</button><button type='button' class='v2-tour-resume-close' data-v2-tour-resume-close aria-label='Ukončiť prehliadku'>" + window.GugubooV5.glyph("close") + "</button></div>");
       pill = byId("v2TourResume");
     }
     if (pill) pill.classList.toggle("open", Boolean(showIt));

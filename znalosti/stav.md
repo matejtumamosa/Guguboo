@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.8, sprievodca nie lekár, jednotné názvy kruhu)_
+_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9, grafické dorovnanie)_
 
 ## Verzia
 
-- **Master 3.8** (commit pripravený, nepushnutý), priečinok `guguboo-master/`.
+- **Master 3.9** (commit vo vetve `master39`, nepushnutý – zlúči Product Lead), priečinok `guguboo-master/`.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
@@ -56,6 +56,13 @@ _Naposledy aktualizované: 26. 11. 2026 (Claude – Master 3.8, sprievodca nie l
   aj pred pôrodom, „kontrola“, „Spánok a zvuky ›“, „Prsník“, toasty „… sa meria“; Odsávanie bez predvolených 90 ml; prehliadka
   (v2-tour) opisuje aktuálny kruh; Hlas #101 so zdrojom a dátumom. Nepridané (Samo: rada/postup): bezpečný spánok pri Na brušku (S2),
   kofeín (S3). test.html: nové testy Pohyby bez počítania a Pitný režim bez cieľa.
+- **3.9 – grafické dorovnanie:** stav v dieli kruhu 14 px (Drobné) alebo v diele vynechaný (už nie 10,5 px; ikony na mieste);
+  šípky „›“ „‹“ a „×“ → linkové ikony `chevronRight` / `chevronLeft` / `close` (`GugubooV5.glyph`, 1em, currentColor) v appke
+  aj v moduloch (GuguChat, Úrady, Momenty, Albumy, Menštruačný kalendár, Aktivity, Zúbky, prehliadka, okná); zámok denníka = ikona;
+  malý telefón len cez CSS podľa výšky (375 × 667 kruh ~165–187 px, 320 × 568 domov bez posúvania). test.html: nová sada
+  „Grafické dorovnanie (Master 3.9)“, výnimka „stav v kruhu pod 13 px“ zrušená. Zostáva: staré V1 časti (`v4-upgrade.js`,
+  skrytá V1 navigácia v `app.html`) majú ešte znaky/emoji – v Master sa neukazujú. Na rozhodnutie: kratší stav („45 min“ namiesto
+  „pred 45 min“), aby sa zmestil aj v dieloch po pôrode.
 - Otvorené po 3.8: `web.html` (riadky ~508, 623, 964–968) ešte opisuje kruh 2.x („Náš deň“, Bruško, Pre bábätko, Prvý pohyb) –
   zosúladiť pri úprave webu; N6 (Kontrakcie v 36. t., odkaz na E7) a vety ⚕ – potvrdí pôrodná asistentka; `knowledge-monitor.mjs`
   doplniť o URL NHS (movements, week-15, birth plan, foods-to-avoid). Na rozhodnutie podľa nového pravidla (bez noriem

@@ -176,7 +176,7 @@
       "<button class='v2-journey-main' type='button' data-v2-journey-open='", esc(item.id), "'>",
       "<span class='v5-icon'>", icon(typeIcon[item.type] || "sparkle"), "</span>",
       "<span class='v2-journey-text'><strong>", esc(item.title), "</strong><small>", esc(item.note || item.why || ""), "</small></span>",
-      "<span class='v5-row-arrow' aria-hidden='true'>›</span></button>",
+      "<span class='v5-row-arrow' aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</span></button>",
       item.type === "task" ? [
         "<div class='v2-journey-actions'>",
         "<button type='button' data-v2-journey-done='", esc(item.id), "'>✓ Vybavené</button>",
@@ -192,7 +192,7 @@
     const ctx = plan.context;
     if (ctx.life_stage === "setup") {
       return "<section class='v2-journey'><header><small>Tvoja cesta</small><h2>Najprv jeden údaj</h2></header>" +
-        "<button class='v5-today-card' type='button' data-v5-feature='profiles'><span class='v5-icon'>" + icon("calendar") + "</span><div><small>Teraz</small><strong>Doplň termín alebo dátum narodenia</strong><span class='v5-today-hint'>Ukážeme ti, čo je teraz dôležité.</span></div><span class='v5-row-arrow'>›</span></button></section>";
+        "<button class='v5-today-card' type='button' data-v5-feature='profiles'><span class='v5-icon'>" + icon("calendar") + "</span><div><small>Teraz</small><strong>Doplň termín alebo dátum narodenia</strong><span class='v5-today-hint'>Ukážeme ti, čo je teraz dôležité.</span></div><span class='v5-row-arrow'>" + window.GugubooV5.glyph("chevronRight") + "</span></button></section>";
     }
     const now = plan.what_is_relevant_now;
     const soon = plan.what_is_coming;
@@ -207,7 +207,7 @@
         soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>o " + item.startsInDays + " " + (item.startsInDays === 1 ? "deň" : item.startsInDays < 5 ? "dni" : "dní") + "</em></button>").join(""),
         "</div>"
       ].join("") : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</span></button>" : "",
       "<footer class='v2-journey-later'><span>", later ? "Ďalších " + later + " vecí počká. Keď príde čas, ozvem sa." : "Zvyšok počká. Keď príde čas, ozvem sa.", "</span>",
       // Bez tlačidla „Opýtať sa GuguChatu“ – GuguChat je v strede spodnej lišty (Samuel 4. 11.).
       "</footer>",
@@ -224,7 +224,7 @@
     const hour = new Date().getHours();
     if ((hour >= 22 || hour < 6) && ctx.life_stage !== "pregnancy") return ""; // v noci po pôrode žiadne úlohy
     const row = (label, title, attrs, later) => "<section class='g2-today g2-today-row' aria-label='" + esc(label) + "'><button class='g2-today-main' type='button' " + attrs + "><small>" + esc(label) + "</small><strong>" + esc(title) + "</strong></button>" +
-      (later ? "<button class='g2-today-later' type='button' data-v2-journey-snooze='" + esc(later) + "'>Neskôr</button>" : "<span class='g2-today-arrow' aria-hidden='true'>›</span>") + "</section>";
+      (later ? "<button class='g2-today-later' type='button' data-v2-journey-snooze='" + esc(later) + "'>Neskôr</button>" : "<span class='g2-today-arrow' aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</span>") + "</section>";
     // Samo 13. 11.: v riadku „Dnes“ je vždy vec, ktorú treba vybaviť, kúpiť alebo pripraviť.
     // „Bábätko je na svete?“ len keď na dnes nič netreba (inak je v Pláne).
     const item = plan.what_is_relevant_now.find(entry => !/na svete/i.test(entry.title || ""));
@@ -243,9 +243,9 @@
       "<section class='v2-journey g2-plan-list' aria-label='Plán'><header><small>", esc(J.stageLabel(ctx)), "</small><h2>Teraz</h2></header>",
       now.length ? now.map(journeyCard).join("") : "<p class='v2-journey-empty'>Na teraz je hotovo.</p>",
       soon.length ? "<div class='v2-journey-soon'><h3>Čoskoro</h3>" + soon.map(item => "<button type='button' data-v2-journey-open='" + esc(item.id) + "'><span>" + esc(item.title) + "</span><em>" + (item.startsInDays <= 7 ? "budúci týždeň" : "o pár týždňov") + "</em></button>").join("") + "</div>" : "",
-      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>›</span></button>" : "",
+      plan.transition ? "<button class='v2-journey-transition' type='button' data-v2-birth-open><span aria-hidden='true'>♡</span><span><strong>Bábätko je na svete?</strong><small>Prepnúť na prvé dni</small></span><span class='v5-row-arrow' aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</span></button>" : "",
       "</section>",
-      "<button class='v5-row-card g2-plan-areas' type='button' data-g2-org><span class='v5-icon'>", icon("checklist"), "</span><div><strong>Príprava podľa oblastí</strong><span>Domov, taška, doklady</span></div><span class='v5-row-arrow'>›</span></button>"
+      "<button class='v5-row-card g2-plan-areas' type='button' data-g2-org><span class='v5-icon'>", icon("checklist"), "</span><div><strong>Príprava podľa oblastí</strong><span>Domov, taška, doklady</span></div><span class='v5-row-arrow'>" + window.GugubooV5.glyph("chevronRight") + "</span></button>"
     ].join("");
   }
   // Pre hero domova: prvá veta o bábätku z overeného obsahu týždňa (NHS).
@@ -298,7 +298,7 @@
   function openFeedback() {
     let overlay = byId("v2FeedbackOverlay");
     if (!overlay) {
-      document.body.insertAdjacentHTML("beforeend", "<div id='v2FeedbackOverlay' class='v2-birth-overlay' aria-hidden='true'><section class='v2-birth-sheet' role='dialog' aria-modal='true' aria-labelledby='v2FeedbackTitle'><button class='v5-icon-button v2-birth-close' type='button' data-v2-feedback-close aria-label='Zavrieť'>×</button><div id='v2FeedbackBody'></div></section></div>");
+      document.body.insertAdjacentHTML("beforeend", "<div id='v2FeedbackOverlay' class='v2-birth-overlay' aria-hidden='true'><section class='v2-birth-sheet' role='dialog' aria-modal='true' aria-labelledby='v2FeedbackTitle'><button class='v5-icon-button v2-birth-close' type='button' data-v2-feedback-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button><div id='v2FeedbackBody'></div></section></div>");
       overlay = byId("v2FeedbackOverlay");
     }
     byId("v2FeedbackBody").innerHTML = feedbackHtml();
@@ -761,7 +761,7 @@
       if (action.kind === "tel") return "<a class='v2-chat-action v2-chat-action-urgent' href='tel:" + esc(action.value) + "'>" + esc(action.label) + "</a>";
       if (action.kind === "link") return "<a class='v2-chat-action' href='" + esc(action.value) + "' target='_blank' rel='noopener noreferrer'>" + esc(action.label) + " ↗</a>";
       // Master 3.0: miesto v appke – rovnaké atribúty ako dlaždica v zásuvke (data-v5-feature, data-v2-admin-open…), len povolené data-* atribúty.
-      if (action.kind === "app") return /^(\s*data-[a-z0-9-]+(='[^'<>]*')?)+\s*$/.test(action.value || "") ? "<button class='v2-chat-action v2-chat-app' type='button' data-g2-go " + action.value + ">" + esc(action.label) + " ›</button>" : "";
+      if (action.kind === "app") return /^(\s*data-[a-z0-9-]+(='[^'<>]*')?)+\s*$/.test(action.value || "") ? "<button class='v2-chat-action v2-chat-app' type='button' data-g2-go " + action.value + ">" + esc(action.label) + " " + window.GugubooV5.glyph("chevronRight") + "</button>" : "";
       return "<button class='v2-chat-action' type='button' data-v2-chat-kind='" + esc(action.kind) + "' data-v2-chat-value='" + esc(action.value || "") + "'>" + esc(action.label) + "</button>";
     }).join("");
     return "<div class='v2-msg v2-msg-bot" + (message.level ? " v2-level-" + esc(message.level) : "") + "'>" + messageTextHtml(message.text) + (actions ? "<div class='v2-chat-actions'>" + actions + "</div>" : "") + "</div>";

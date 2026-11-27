@@ -106,8 +106,8 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) {
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) .g2q-core .g2q-time {
   font: var(--t-num) !important; font-variant-numeric: tabular-nums; letter-spacing: 0 !important;
 }
-/* 6b Štítok – stav v dieli kruhu („bdie 1 h“) je text v SVG; veľkosť (10,5 px na obrazovke) počíta v5-mobile.js (fS) podľa miesta v dieli.
-   Pri 13 px sa nezmestí do žiadneho dielu a appka by stav vynechala všade → zatiaľ výnimka, čaká na rozhodnutie (test.html: známy nález). Tu len hrúbka. */
+/* 6b Stav v dieli kruhu („bdie 1 h“) je text v SVG. Master 3.9: veľkosť je vždy 14 px na obrazovke = Drobné (v5-mobile.js, fS = 14 × u);
+   ak sa do dielu nezmestí, v tom diele sa vynechá (g2qFitRing). Tu len písmo a hrúbka. */
 :is(html, #g2t#g2t) body.v5-active:not(.welcome-mode):not(.intro-only) text.g2q-sub {
   font-family: var(--t-font) !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important;
 }

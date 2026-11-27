@@ -55,7 +55,7 @@
       ].join(""),
       message ? "<p class='v2-voice-msg'>" + esc(message) + "</p>" : "",
       "</section>",
-      items.length ? "<h3 class='v2-book-group'>Naše nahrávky</h3><div class='v2-pressure-list v2-voice-list'>" + items.map(item => "<div><button type='button' class='v2-voice-play' data-v5-play-lullaby='" + esc(item.id) + "' aria-label='Pustiť " + esc(item.title) + "'>▶</button><span><b>" + esc(item.title) + "</b><br>" + esc(new Date(item.created).toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })) + "</span><button type='button' class='v2-voice-del' data-v2-voice-delete='" + esc(item.id) + "' aria-label='Vymazať nahrávku'>×</button></div>").join("") + "</div>" : "",
+      items.length ? "<h3 class='v2-book-group'>Naše nahrávky</h3><div class='v2-pressure-list v2-voice-list'>" + items.map(item => "<div><button type='button' class='v2-voice-play' data-v5-play-lullaby='" + esc(item.id) + "' aria-label='Pustiť " + esc(item.title) + "'>▶</button><span><b>" + esc(item.title) + "</b><br>" + esc(new Date(item.created).toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })) + "</span><button type='button' class='v2-voice-del' data-v2-voice-delete='" + esc(item.id) + "' aria-label='Vymazať nahrávku'>" + window.GugubooV5.glyph("close") + "</button></div>").join("") + "</div>" : "",
       "<p class='v5-book-note'>Nahrávky ostávajú len v tomto zariadení. V beta verzii najviac ", MAX_ITEMS, " nahrávok po ", MAX_SECONDS / 60, " minúty.</p>"
     ].join("");
   }
@@ -139,7 +139,7 @@
   function inviteHtml() {
     const week = Number(window.GugubooPregnancyAvatar?.current?.().week || 0);
     if (!expecting() || week < 16 || state.v5?.voiceInviteDismissed || (state.lullabies || []).length) return "";
-    return "<section class='v2-ask-card'><button type='button' class='v2-ask-never' data-v2-voice-dismiss aria-label='Skryť'>×</button><small>Pre bábätko</small><div class='v2-ask-title'><span aria-hidden='true'>🎙️</span><strong>Nahraj bábätku svoj hlas</strong></div><p>Približne od 15. týždňa začína počuť. Uspávanka alebo pár slov – po narodení ju pustíš pri spánku.</p><div class='v2-ask-actions v2-ask-actions-2'><button type='button' class='v5-primary' data-v5-feature='voice'>Nahrať</button><button type='button' class='v5-text-action' data-v2-voice-dismiss>Neskôr</button></div></section>";
+    return "<section class='v2-ask-card'><button type='button' class='v2-ask-never' data-v2-voice-dismiss aria-label='Skryť'>" + window.GugubooV5.glyph("close") + "</button><small>Pre bábätko</small><div class='v2-ask-title'><span aria-hidden='true'>🎙️</span><strong>Nahraj bábätku svoj hlas</strong></div><p>Približne od 15. týždňa začína počuť. Uspávanka alebo pár slov – po narodení ju pustíš pri spánku.</p><div class='v2-ask-actions v2-ask-actions-2'><button type='button' class='v5-primary' data-v5-feature='voice'>Nahrať</button><button type='button' class='v5-text-action' data-v2-voice-dismiss>Neskôr</button></div></section>";
   }
   document.addEventListener("click", event => {
     if (!event.target.closest("[data-v2-voice-dismiss]")) return;

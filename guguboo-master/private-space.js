@@ -10,11 +10,12 @@
   const AAD = new TextEncoder().encode("guguboo-private-space-v1");
   const root = document.getElementById("privateSpaceApp");
   const view = document.getElementById("privateSpace");
+  // Master 3.9: zámok v hlavičke denníka je linková ikona „lock“ z iconPaths (predtým emoji 🔒 – v ovládaní nie emoji).
 
   if (!root || !view) return;
   if (!window.crypto?.subtle) {
     const secureUrl = "https://guguboo.com" + window.location.pathname + window.location.search + window.location.hash;
-    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvor aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
+    root.innerHTML = `<div class="private-shell"><header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Vyžaduje bezpečné pripojenie</p></div></header><section class="private-auth-card"><p>Na ochranu súkromných zápisov otvor aplikáciu cez zabezpečenú adresu HTTPS.</p><a class="private-primary" href="${secureUrl}">Otvoriť bezpečne</a></section></div>`;
     return;
   }
 
@@ -148,7 +149,7 @@
 
   function renderSetup() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Nastav si prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Nastav si prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-setup novalidate>
         ${pinInput("privatePinNew", "Zadaj presne štyri číslice", "new-password")}
         ${pinInput("privatePinConfirm", "Zopakuj prístupový kód", "new-password")}
@@ -162,7 +163,7 @@
 
   function renderLocked() {
     root.innerHTML = `<div class="private-shell private-auth-shell">
-      <header class="private-heading"><span class="private-lock" aria-hidden="true">🔒</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj prístupový kód</p></div></header>
+      <header class="private-heading"><span class="private-lock" aria-hidden="true">${window.GugubooV5 ? window.GugubooV5.icon("lock") : ""}</span><div><h1>Môj súkromný denník</h1><p>Zadaj svoj prístupový kód</p></div></header>
       <form class="private-auth-card" data-private-unlock novalidate>
         ${pinInput("privatePinUnlock", "Prístupový kód", "current-password")}
         <p class="private-message" id="privateMessage" data-private-message role="status" aria-live="polite"></p>

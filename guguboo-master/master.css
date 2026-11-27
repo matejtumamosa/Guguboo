@@ -967,3 +967,34 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) .g2q-plus { border
 .v2-album-head > span svg { width: 34px; height: 34px; }
 .v2-album-row > b svg { width: 18px; height: 18px; color: var(--v5-muted); }
 html body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-album-cover, .v2-album-head > span) { color: #c6bcff !important; }
+
+/* ——— Master 3.9: kruh na malom telefóne – len veľkosť podľa výšky (tvar, ikony, farby a rozloženie bez zmeny) ——— */
+/* 375 × 667: kruh vyplní celú výšku svojej karty (94 → 100 % výšky) a karta má tenší okraj. */
+@media (max-height: 719px) {
+  body:has(#home.view.active) .g2q-card.g2-ring-card { padding: 4px !important; }
+  .g2q-ring { width: min(100cqh, 92cqw, 340px); }
+}
+/* 320 × 568: domov bez posúvania – karta kruhu sa smie zmenšiť pod 150 px. */
+@media (max-height: 600px) {
+  body:has(#home.view.active) .g2q-card.g2-ring-card { min-height: 104px !important; }
+}
+/* Úzky a nízky telefón (320 px): skratky sú v jednom riadku vedľa ikony a názov sa nezmestil (orezané „Starostlivosť“,
+   3 riadky) – tu len názov skratky, ikona sa skryje (ako na malom telefóne v 2.x). */
+@media (max-height: 659px) and (max-width: 359px) {
+  body:has(#home.view.active) .g2-short .g2-short-ic { display: none !important; }
+}
+/* Malý kruh: stred „Dnes“ sa zmestí do bieleho kruhu (menšia ikona hodín, bez vnútorného okraja). */
+@container (max-width: 150px) {
+  .g2q-core:not(.is-running) { padding: 0; gap: 0; }
+  .g2q-core:not(.is-running) .g2q-core-ic svg.ph { width: 16px !important; height: 16px !important; }
+}
+/* Master 3.9: šípky „›“ „‹“ a zatvorenie „×“ sú linkové ikony (GugubooV5.glyph) – veľkosť 1em podľa písma tlačidla/odkazu,
+   farba currentColor, zarovnané s textom. Silnejší výber, aby ich nezmenili pravidlá pre ikony v tlačidlách (svg.ph). */
+:is(html, #g2gl#g2gl) svg.ph.g2-gl { display: inline-block; width: 1em !important; height: 1em !important; min-width: 0 !important; max-width: none !important; flex: 0 0 auto; margin: 0; vertical-align: -.14em; color: inherit; fill: none; overflow: visible; }
+:is(html, #g2gl#g2gl) svg.ph.g2-gl [stroke] { stroke: currentColor !important; fill: none !important; }
+/* Zatvoriť (×) v kruhových tlačidlách: stred tlačidla */
+:is(html, #g2gl#g2gl) button > svg.ph.g2-gl-close:only-child { display: block; margin: auto; }
+/* Súkromný denník: zámok v hlavičke = linková ikona (predtým 🔒) */
+.private-lock svg.ph { width: 26px; height: 26px; color: #6a4fc4; }
+body.night .private-lock svg.ph { color: #c6bcff; }
+@container (max-width: 119px) { .g2q-core:not(.is-running) .g2q-core-ic { display: none; } } /* najmenší kruh (~95 px): len slovo „Dnes“ */

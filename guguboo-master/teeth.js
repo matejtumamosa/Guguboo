@@ -73,7 +73,7 @@
     if (!selectedId) return "";
     const tooth = TOOTH_DEFINITIONS.find(item => item.id === selectedId);
     const record = state.teeth.records[selectedId] || { status:"none", teethingStart:"", appeared:"", note:"" };
-    return `<form class="teeth-edit" data-tooth-form><div class="teeth-edit-head"><div><span class="teeth-eyebrow">Zub ${tooth.id}</span><h3>${escapeHtml(tooth.name)}</h3></div><button type="button" data-tooth-close aria-label="Zatvoriť úpravu zuba">×</button></div>
+    return `<form class="teeth-edit" data-tooth-form><div class="teeth-edit-head"><div><span class="teeth-eyebrow">Zub ${tooth.id}</span><h3>${escapeHtml(tooth.name)}</h3></div><button type="button" data-tooth-close aria-label="Zatvoriť úpravu zuba">${window.GugubooV5.glyph("close")}</button></div>
       <label>Stav<select name="status"><option value="none" ${record.status === "none" ? "selected":""}>Ešte nie</option><option value="erupting" ${record.status === "erupting" ? "selected":""}>Pravdepodobne sa prerezáva</option><option value="erupted" ${record.status === "erupted" ? "selected":""}>Prerezaný</option></select></label>
       <div class="teeth-date-grid"><label>Začiatok prerezávania<input name="teethingStart" type="date" value="${escapeHtml(record.teethingStart)}"></label><label>Dátum objavenia<input name="appeared" type="date" value="${escapeHtml(record.appeared)}"></label></div>
       <label>Krátka poznámka<textarea name="note" maxlength="500" rows="3" placeholder="Nepovinná poznámka">${escapeHtml(record.note)}</textarea></label>

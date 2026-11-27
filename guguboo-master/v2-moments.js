@@ -313,7 +313,7 @@
   function deckHtml() {
     const cards = deckCards();
     if (!cards.length) return "";
-    return "<section class='v2-deck' aria-label='Pre teba dnes'><div class='v2-deck-head'><strong>Pre teba dnes</strong>" + (cards.length > 1 ? "<span>" + cards.length + " ›</span>" : "") + "</div>" +
+    return "<section class='v2-deck' aria-label='Pre teba dnes'><div class='v2-deck-head'><strong>Pre teba dnes</strong>" + (cards.length > 1 ? "<span>" + cards.length + " " + window.GugubooV5.glyph("chevronRight") + "</span>" : "") + "</div>" +
       "<div class='v2-deck-track'>" + cards.map(html => "<div class='v2-deck-slide'>" + html.replace("class='v2-ask-card'", "class='v2-ask-card v2-deck-card'").replace("class='v2-days-card", "class='v2-days-card v2-deck-card") + "</div>").join("") + "</div>" +
       (cards.length > 1 ? "<div class='v2-deck-dots'>" + cards.map((_, i) => "<button type='button' data-v2-deck-dot='" + i + "' class='" + (i ? "" : "is-active") + "' aria-label='Karta " + (i + 1) + "'></button>").join("") + "</div>" : "") +
       "</section>";

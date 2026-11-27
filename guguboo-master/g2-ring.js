@@ -31,7 +31,7 @@
     "<section id='g2Ring' class='g2-ring-sheet' role='dialog' aria-modal='true' aria-labelledby='g2RingTitle'>",
     "<div class='g2-ring-sheet-head'><button type='button' class='v5-icon-button' data-g2-ring-back aria-label='Späť'>", V5.icon("back"), "</button>",
     "<h2 id='g2RingTitle' tabindex='-1'></h2>",
-    "<button type='button' class='v5-icon-button' data-g2-ring-close aria-label='Zavrieť'>×</button></div>",
+    "<button type='button' class='v5-icon-button' data-g2-ring-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div>",
     "<div id='g2RingBody'></div></section></div>",
     "<div id='g2RingDim' class='g2-ring-dim' role='button' tabindex='0' aria-label='Ťukni pre zastavenie šumu'><div>Šum hrá<br><span id='g2RingDimT'></span><br><br>Ťukni kamkoľvek a šum sa zastaví</div></div>",
     "<div id='g2RingToast' class='g2-ring-toast' role='status' aria-live='polite' hidden></div>"
@@ -193,7 +193,7 @@
       (night || born ? act("nap", born && !night ? "bed" : "sound", born && !night ? "Zdriemni si, kým spí" : "Šum na zaspávanie", "") : "") +
       (night ? "" : act("quiet", "hourglass", "Chvíľa ticha", "5–15 minút")), { noContent: true });
     if (k === "sup") return push("Opora", () => act("ask", "paperPlane", "Poprosiť o pomoc", "hotová prosba") + (night ? "" : act("friend", "envelope", "Napísať blízkemu", "krátka správa")) + act("hard", "alert", "Nálada a podpora", "kontakty na pomoc"), { noContent: true });
-    const mamaLink = "<button class='g2r-link' type='button' data-g2r='mama'>Viac o tele v Mame ›</button>";
+    const mamaLink = "<button class='g2r-link' type='button' data-g2r='mama'>Viac o tele v Mame " + window.GugubooV5.glyph("chevronRight") + "</button>";
     // Master 2.7 (audit #30, PL): „Kŕč v nohe“ odstránený – postup pri príznaku; téma Kŕče ostáva v Mame (čo je bežné + otázka).
     if (!born) return push("Telo", () => (night ? "" : act("legs", "couch", "Nohy hore", "10 alebo 20 minút")) + act("sleep", "bed", "Uložiť sa na spánok", "pohodlne na boku" + (night ? ", potom šum" : "")) + mamaLink, { noContent: true });
     push("Telo", () => act("feed", "breastfeed", "Pohodlne pri kŕmení", "") + (night ? "" : act("shower", "shower", "Sprcha len pre mňa", "15 minút len pre seba") + act("pwalk", "walk", "Pokojná prechádzka", "10 alebo 20 minút")) + mamaLink, { noContent: true });

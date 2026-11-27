@@ -1042,6 +1042,106 @@
       }
     },
     {
+      // Master 3.9: grafické dorovnanie – stav v dieli kruhu min. 13 px (14 px = Drobné) alebo v diele vynechaný,
+      // šípky „›“ „‹“ a zatvorenie „×“ ako linkové ikony (GugubooV5.glyph), zámok denníka bez emoji, domov bez posúvania na malom telefóne.
+      name: "Grafické dorovnanie (Master 3.9)",
+      tests: {
+        "Stav v dieli kruhu má aspoň 13 px alebo sa v diele vynechá; ikona aj stav ležia v diele (pred aj po, 3–5 dielov, 390 / 375 / 320)": async () => {
+          const busy = { events: [ev("Kŕmenie", 25, { method: "Dojčenie", value: "Dojčenie" }), ev("Spánok", 70, { value: "40 min · denný" }), ev("Plienka", 12, { value: "Cikalo", diaper: { type: "wet" } }), ev("Odsávanie", 40, { ml: 120 }), ev("Na brušku", 50)] };
+          const now = new Date().toISOString(), day = iso(new Date());
+          const pred = n => ({ ringPre: ["drink", "vit", "question", "bump"].slice(0, n - 1), babyMoves: [{ id: "m1", time: now }], water: { date: day, count: 3, glassMl: 250 }, supplements: { items: [{ id: "s1", name: "A" }, { id: "s2", name: "B" }], log: { [day]: { s1: now } } }, doctorQuestions: [{ id: "q1", who: "me", text: "Otázka?", created: now, done: false }] });
+          const sizes = [[390, 844], [375, 667], [320, 568]];
+          const cases = [];
+          sizes.forEach(([w, h]) => {
+            cases.push(["po 3 diely " + w + " × " + h, ringSeed("po", { extra: busy }), w, h]);
+            cases.push(["po 5 dielov " + w + " × " + h, ringSeed("po", { v5: { ringExtras: { pump: true, tummy: true } }, extra: busy }), w, h]);
+            cases.push(["pred 3 diely " + w + " × " + h, ringSeed("pred", { v5: pred(3) }), w, h]);
+            cases.push(["pred 5 dielov " + w + " × " + h + " noc", ringSeed("pred", { night: true, v5: pred(5) }), w, h]);
+          });
+          let shown = 0;
+          for (const [name, data, w, h] of cases) {
+            const app = await bootApp(data, { width: w, height: h });
+            try {
+              await sleep(300);
+              const svg = app.doc.querySelector("#home.view.active .g2q-svg");
+              assert(svg, name + ": kruh chýba");
+              const small = [...svg.querySelectorAll("text.g2q-sub")].map(t => {
+                const m = t.getScreenCTM(); shown++;
+                return Math.round(parseFloat(app.win.getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b) * 10) / 10;
+              }).filter(px => px < 12.95);
+              eq(small, [], name + ": stav pod 13 px");
+              eq(ringInside(app.win, svg), [], name + ": vybieha z dielu");
+              eq(app.errors, [], name + ": chyby v konzole");
+            } finally { app.remove(); }
+          }
+          assert(shown > 0, "stav sa nezmestil v žiadnom kruhu");
+        },
+        "Domov bez posúvania na 375 × 667 a 320 × 568 (pred aj po pôrode, aj 38. týždeň)": async () => {
+          const cases = [["pred", ringSeed("pred")], ["po", ringSeed("po")], ["38. týždeň", ringSeed("pred", { due: 14 })]];
+          for (const [w, h] of [[375, 667], [320, 568]]) {
+            for (const [name, data] of cases) {
+              const app = await bootApp(data, { width: w, height: h });
+              try {
+                await sleep(300);
+                const home = app.doc.querySelector("#home.view.active");
+                assert(home.scrollHeight <= home.clientHeight + 1, name + " " + w + " × " + h + ": domov sa posúva (" + home.scrollHeight + " > " + home.clientHeight + ")");
+                const ring = app.doc.querySelector("#home.view.active .g2q-ring").getBoundingClientRect().width;
+                assert(ring >= 90, name + " " + w + " × " + h + ": kruh príliš malý (" + Math.round(ring) + " px)");
+                eq(app.errors, [], "chyby v konzole");
+              } finally { app.remove(); }
+            }
+          }
+        },
+        "Šípky „›“ „‹“ a zatvorenie „×“ sú ikony, nie znaky písma (domov, okno kruhu, Prehľad dňa, Plán, Bábätko, Mama, Rodina, Všetko)": async () => {
+          const glyphs = (doc, win) => {
+            const bad = [], walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) {
+              const node = walker.currentNode, el = node.parentElement, t = node.nodeValue;
+              if (!el || /^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || !/[›‹×]/.test(t) || !isVisible(el)) continue;
+              if (/[›‹]/.test(t) || /×/.test(t.replace(/\d\s?×/g, ""))) bad.push("„" + t.trim().slice(0, 30) + "“");
+            }
+            return bad;
+          };
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(ringSeed(kind));
+            try {
+              const { doc, win } = app, V5 = win.GugubooV5;
+              const reset = async () => { try { V5.closeDrawer?.(); V5.windowCloseAll?.(); doc.querySelector("#g2QuickOverlay.open [data-g2q='close']")?.click(); V5.openHome(); } catch (_) { /* nič */ } await sleep(200); };
+              const screens = [
+                ["Domov", () => {}],
+                ["Okno kruhu", () => tapSeg(app, kind === "po" ? "feed" : "drink")],
+                ["Prehľad dňa", () => doc.querySelector("#home.view.active .g2q-core").click()],
+                ["Plán", () => V5.openPlan()],
+                ["Bábätko", () => doc.querySelector("[data-v2-tab='baby']").click()],
+                ["Mama", () => doc.querySelector("[data-v2-tab='mama']").click()],
+                ["Rodina", () => doc.querySelector("[data-v2-tab='family']").click()],
+                ["Všetko", () => V5.openDrawer()]
+              ];
+              let icons = 0;
+              for (const [name, open] of screens) {
+                await reset(); open(); await sleep(400);
+                eq(glyphs(doc, win), [], name + " (" + kind + "): znak písma namiesto ikony");
+                icons += [...doc.querySelectorAll("svg.g2-gl")].filter(isVisible).length;
+              }
+              assert(icons > 0, kind + ": nikde nie je ikona šípky ani zatvorenia");
+              ["chevronRight", "chevronLeft", "close"].forEach(n => assert(V5.iconNames().includes(n), "chýba ikona " + n));
+              eq(app.errors, [], "chyby v konzole");
+            } finally { app.remove(); }
+          }
+        },
+        "Súkromný denník: zámok v hlavičke je linková ikona, nie emoji 🔒": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            app.win.GugubooV5.openFeature("privateSpace"); await sleep(400);
+            const root = app.doc.getElementById("privateSpaceApp");
+            assert(!/🔒/u.test(root.textContent), "v denníku je emoji 🔒");
+            assert(root.querySelector(".private-lock svg.ph"), "zámok nie je ikona");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        }
+      }
+    },
+    {
       // Master 3.6: jednotná typografia (g2-text.css). Master 3.7: na obrazovke najviac 3 úrovne textu (Hlavné 800 18,
       // Bežné 500 15, Drobné 500 14) + Odkaz 700 15; Číslo (časovač, počty) len v oknách. Kombinácia = veľkosť + hrúbka,
       // nepočítajú sa ikony a znaky bez písmen (›, ×, ＋, emoji) ani čísla bežiaceho časovača.
@@ -1135,8 +1235,8 @@
       const key = size + "/" + cs.fontWeight + "/" + cs.textTransform;
       if (!combos.has(key)) combos.set(key, text.slice(0, 30));
       weights.add(cs.fontWeight);
-      // Výnimka na rozhodnutie: stav v dieli kruhu (SVG text.g2q-sub) – pri 13 px by sa nezmestil do žiadneho dielu.
-      if (size < 12.95) (el.matches("text.g2q-sub") ? ringSmall : small).push(size + " px „" + text.slice(0, 30) + "“");
+      // Master 3.9: výnimka zrušená – aj stav v dieli kruhu (SVG text.g2q-sub) má min. 13 px (inak sa v diele vynechá).
+      if (size < 12.95) small.push(size + " px „" + text.slice(0, 30) + "“");
     }
     return { combos, small, ringSmall, weights: [...weights].sort() };
   }
@@ -1147,7 +1247,6 @@
     eq(s.small, [], where + ": text pod 13 px");
     eq(s.weights.filter(w => !["500", "700", "800"].includes(w)), [], where + ": hrúbky mimo 500/700/800");
     eq(app.errors, [], "chyby v konzole");
-    if (s.ringSmall.length) known("Nález na rozhodnutie: stav v dieli kruhu je menší než 13 px (" + s.ringSmall.join(", ") + ") – pri 13 px sa nezmestí do dielu a appka by ho vynechala. Kombinácií na domove: " + s.combos.size + ".");
   }
 
   // ——— Master 3.4: pomôcky pre testy kruhu ———

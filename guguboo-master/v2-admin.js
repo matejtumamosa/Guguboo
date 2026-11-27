@@ -89,9 +89,9 @@
   document.body.insertAdjacentHTML("beforeend", [
     "<div id='v2AdminOverlay' class='v2-birth-overlay' aria-hidden='true'>",
     "<section class='v2-birth-sheet v2-admin-sheet' role='dialog' aria-modal='true' aria-labelledby='v2AdminTitle'>",
-    "<button class='v5-icon-button v2-birth-close' type='button' data-v2-admin-close aria-label='Zavrieť'>×</button>",
+    "<button class='v5-icon-button v2-birth-close' type='button' data-v2-admin-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button>",
     // Master 1.8 (jeden systém okien): rovnaká hlavička ako ostatné okná – späť o krok, názov, × zavrie okno.
-    V5.MASTER ? "<div class='g2-window-head g2-admin-head'><button class='v5-icon-button' type='button' data-v2-admin-step-back aria-label='Späť'>" + V5.icon("back") + "</button><div><h2 id='g2AdminWinTitle' tabindex='-1'>Úrady a doklady</h2></div><button class='v5-icon-button g2-win-x' type='button' data-v2-admin-close aria-label='Zavrieť'>×</button></div>" : "",
+    V5.MASTER ? "<div class='g2-window-head g2-admin-head'><button class='v5-icon-button' type='button' data-v2-admin-step-back aria-label='Späť'>" + V5.icon("back") + "</button><div><h2 id='g2AdminWinTitle' tabindex='-1'>Úrady a doklady</h2></div><button class='v5-icon-button g2-win-x' type='button' data-v2-admin-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div>" : "",
     "<div id='v2AdminBody'></div></section></div>"
   ].join(""));
 
@@ -156,7 +156,7 @@
     const fromOverview = overlay.classList.contains("open") && body.dataset.mode === "overview";
     body.dataset.mode = "detail";
     body.dataset.from = fromOverview ? "overview" : "";
-    body.innerHTML = (fromOverview && !V5.MASTER ? "<button type='button' class='g2-admin-back' data-v2-admin-back><span aria-hidden='true'>‹</span> Úrady a doklady</button>" : "") + detailHtml(item);
+    body.innerHTML = (fromOverview && !V5.MASTER ? "<button type='button' class='g2-admin-back' data-v2-admin-back><span aria-hidden='true'>" + window.GugubooV5.glyph("chevronLeft") + "</span> Úrady a doklady</button>" : "") + detailHtml(item);
     body.scrollTop = 0;
     overlay.querySelector(".v2-birth-sheet")?.scrollTo?.(0, 0);
     overlay.classList.add("open");

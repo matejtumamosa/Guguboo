@@ -32,7 +32,7 @@ aby nové veci vyzerali rovnako.
 
 - Hrúbky len 500/700/800. Kapitálky len Štítok sekcie. Min. 14 px (13 px len Štítok). Stav = farba, nie hrúbka.
 - Farby textu: `--t-ink` `#29243a`, `--t-muted` `#5d5768`, `--t-brand` `#5f4fb1`; noc `#f5f2fb` / `#c9c3d8` / `#c6bcff`.
-- Výnimky: odznak týždňa (`.v2-week-badge`), stav v dieli kruhu (SVG, 10,5 px – na rozhodnutie), šípky „›“ / „×“ (zatiaľ písmo).
+- Výnimky: odznak týždňa (`.v2-week-badge`). Master 3.9: stav v dieli kruhu = Drobné 14 px (alebo sa v diele vynechá); šípky „›“ „‹“ a „×“ sú ikony `chevronRight` / `chevronLeft` / `close` cez `GugubooV5.glyph(…)` (1em, farba textu).
 
 ## Farby
 | Použitie | Hodnota |

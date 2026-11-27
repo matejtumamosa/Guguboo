@@ -396,7 +396,7 @@
   // Jemné pripomenutie na domove po 12. týždni (dá sa zavrieť, nič povinné).
   function homeCardHtml() {
     if (state.profile?.status !== "expecting" || currentWeek() < 12 || state.v5?.announceDismissed || state.v5?.announceDone) return "";
-    return "<div class='v2-ann-home'><button type='button' class='v2-ann-home-open' data-v5-feature='announce'><span aria-hidden='true'>💌</span><span><strong>Chcete to oznámiť blízkym?</strong><small>Kartička s ultrazvukom alebo bez fotky</small></span></button><button type='button' class='v2-ann-home-close' data-v2-ann-dismiss aria-label='Skryť'>×</button></div>";
+    return "<div class='v2-ann-home'><button type='button' class='v2-ann-home-open' data-v5-feature='announce'><span aria-hidden='true'>💌</span><span><strong>Chcete to oznámiť blízkym?</strong><small>Kartička s ultrazvukom alebo bez fotky</small></span></button><button type='button' class='v2-ann-home-close' data-v2-ann-dismiss aria-label='Skryť'>" + window.GugubooV5.glyph("close") + "</button></div>";
   }
 
   window.GugubooAnnounce = { render, homeCardHtml };

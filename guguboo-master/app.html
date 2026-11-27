@@ -3118,18 +3118,18 @@
     }
   </style>
   <link rel="stylesheet" href="v4-upgrade.css">
-  <script>window.GUGUBOO_V2_VERSION = "Master 3.8";</script>
+  <script>window.GUGUBOO_V2_VERSION = "Master 3.9";</script>
   <link rel="stylesheet" href="v5-mobile.css?v=m1.6c">
   <link rel="stylesheet" href="private-space.css?v=1">
   <link rel="stylesheet" href="teeth.css?v=1">
   <link rel="stylesheet" href="activities.css?v=4">
   <link rel="stylesheet" href="v2.css?v=m3.2">
-  <link rel="stylesheet" href="master.css?v=m3.5">
+  <link rel="stylesheet" href="master.css?v=m3.9">
   <link rel="stylesheet" href="g2-icons.css?v=m1.4">
   <link rel="stylesheet" href="g2-type.css?v=m1.9.1a">
   <link rel="stylesheet" href="g2-intro.css?v=m2.8.2">
   <link rel="stylesheet" href="g2-ring.css?v=m2.4">
-  <link rel="stylesheet" href="g2-text.css?v=m3.7.1"><!-- Master 3.7: 3 úrovne textu (Hlavné · Bežné · Drobné) + Odkaz – musí byť posledný CSS -->
+  <link rel="stylesheet" href="g2-text.css?v=m3.9"><!-- Master 3.7: 3 úrovne textu (Hlavné · Bežné · Drobné) + Odkaz – musí byť posledný CSS -->
 </head>
 <body>
   <div class="app" id="app">
@@ -10029,25 +10029,25 @@ Otázky:
   <script src="journey-engine.js?v=m1.9.2"></script>
   <script src="baby-figure.js?v=m1.6.4"></script>
   <script src="g2-safety.js?v=m2.7"></script>
-  <script src="v5-mobile.js?v=m3.8"></script>
-  <script src="guguchat.js?v=m3.3"></script>
-  <script src="v2-birth.js?v=m3.3"></script>
-  <script src="v2-tour.js?v=m3.8"></script>
-  <script src="v2-announce.js?v=2.23.0"></script>
-  <script src="v2-moments.js?v=m3.5"></script>
-  <script src="v2-albums.js?v=m3.5"></script>
-  <script src="v2-voice.js?v=m3.8"></script>
+  <script src="v5-mobile.js?v=m3.9"></script>
+  <script src="guguchat.js?v=m3.9"></script>
+  <script src="v2-birth.js?v=m3.9"></script>
+  <script src="v2-tour.js?v=m3.9"></script>
+  <script src="v2-announce.js?v=m3.9"></script>
+  <script src="v2-moments.js?v=m3.9"></script>
+  <script src="v2-albums.js?v=m3.9"></script>
+  <script src="v2-voice.js?v=m3.9"></script>
   <script src="v2-birthcard.js?v=m2.9"></script>
-  <script src="v2-period.js?v=m3.3"></script>
-  <script src="private-space.js?v=m2.6"></script>
+  <script src="v2-period.js?v=m3.9"></script>
+  <script src="private-space.js?v=m3.9"></script>
   <script src="activities-data.js?v=m3.0"></script>
-  <script src="teeth.js?v=m3.5.3"></script>
-  <script src="activities.js?v=m2.7"></script>
+  <script src="teeth.js?v=m3.9"></script>
+  <script src="activities.js?v=m3.9"></script>
   <script src="g2-windows.js?v=m3.8"></script>
   <script src="g2-intro.js?v=m3.5.2"></script>
-  <script src="g2-ring.js?v=m3.3"></script>
-  <script src="g2-weather.js?v=m3.0"></script>
-  <script src="g2-backup.js?v=m2.9"></script>
+  <script src="g2-ring.js?v=m3.9"></script>
+  <script src="g2-weather.js?v=m3.9"></script>
+  <script src="g2-backup.js?v=m3.9"></script>
   <script>
     // V2 (Samuel 10. 11. 2026): úvodné kroky sa na telefóne nikdy neposúvajú – keď sa obsah kroku nezmestí,
     // jemne sa zmenší (najviac o 20 %). Posúvať sa dá len v samotnej appke.
@@ -10107,7 +10107,7 @@ Otázky:
         close();
         sheet = document.createElement("div");
         sheet.className = "v2-picker";
-        sheet.innerHTML = "<div class='v2-picker-panel' role='dialog' aria-modal='true'><div class='v2-picker-head'><strong></strong><button type='button' class='v2-picker-close' aria-label='Zavrieť'>×</button></div><div class='v2-picker-list' role='listbox'></div></div>";
+        sheet.innerHTML = "<div class='v2-picker-panel' role='dialog' aria-modal='true'><div class='v2-picker-head'><strong></strong><button type='button' class='v2-picker-close' aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div><div class='v2-picker-list' role='listbox'></div></div>";
         sheet.querySelector("strong").textContent = labelFor(select);
         const list = sheet.querySelector(".v2-picker-list");
         [...select.options].filter(option => option.value && !option.disabled).forEach(option => {

@@ -103,7 +103,7 @@
     const favorite = state.activities.favorites.includes(activity.id);
     return `<button class="act2-row act2-${escapeHtml(activity.domain)}${activity.id === currentId ? " is-current" : ""}" type="button" data-activity-pick="${activity.id}">
       <span class="act2-icon">${icon(domain.icon)}</span><span class="act2-row-copy"><strong>${escapeHtml(activity.title)}</strong><small>${escapeHtml(domain.label)}${favorite ? " · ♥" : ""}</small></span>
-      <b aria-hidden="true">${isTried(activity.id) ? "✓" : "›"}</b></button>`;
+      <b aria-hidden="true">${isTried(activity.id) ? "✓" : window.GugubooV5.glyph("chevronRight")}</b></button>`;
   }
 
   // „Čoskoro“: v posledných 2 týždňoch obdobia ukážka 3 nápadov z ďalšieho obdobia (len na prezretie).
@@ -115,7 +115,7 @@
     const items = data.activities.filter(item => item.period === next.id).slice(0, 3);
     if (!items.length) return "";
     return `<section class="act2-soon"><h3>Čoskoro · ${escapeHtml(next.label)}</h3><p>O ${left + 1} ${left + 1 === 1 ? "deň" : left + 1 < 5 ? "dni" : "dní"} pribudnú nové nápady. Ukážka:</p>
-      ${items.map(item => `<details class="act2-soon-item act2-${escapeHtml(item.domain)}"><summary><span class="act2-icon">${icon(domainOf(item).icon)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">›</b></summary><ol class="act2-steps">${item.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol>${item.safety ? `<p class="act2-safety"><strong>Bezpečne:</strong> ${escapeHtml(item.safety)}</p>` : ""}</details>`).join("")}
+      ${items.map(item => `<details class="act2-soon-item act2-${escapeHtml(item.domain)}"><summary><span class="act2-icon">${icon(domainOf(item).icon)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">${window.GugubooV5.glyph("chevronRight")}</b></summary><ol class="act2-steps">${item.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol>${item.safety ? `<p class="act2-safety"><strong>Bezpečne:</strong> ${escapeHtml(item.safety)}</p>` : ""}</details>`).join("")}
     </section>`;
   }
 

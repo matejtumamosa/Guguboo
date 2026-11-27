@@ -82,7 +82,7 @@
     el.id = "g2WeatherOverlay";
     el.className = "g2-ring-overlay";
     el.setAttribute("aria-hidden", "true");
-    el.innerHTML = "<div class='g2-ring-sheet' role='dialog' aria-modal='true' aria-labelledby='g2wTitle'><div class='g2-ring-sheet-head'><span></span><h2 id='g2wTitle' tabindex='-1'>Počasie a oblečenie</h2><button class='v5-icon-button' type='button' data-g2w='close' aria-label='Zavrieť'>×</button></div><div class='g2w-body'></div></div>";
+    el.innerHTML = "<div class='g2-ring-sheet' role='dialog' aria-modal='true' aria-labelledby='g2wTitle'><div class='g2-ring-sheet-head'><span></span><h2 id='g2wTitle' tabindex='-1'>Počasie a oblečenie</h2><button class='v5-icon-button' type='button' data-g2w='close' aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button></div><div class='g2w-body'></div></div>";
     el.addEventListener("click", event => { if (event.target === el) close(); });
     document.body.appendChild(el);
     return el;

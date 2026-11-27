@@ -21,7 +21,7 @@
   document.body.insertAdjacentHTML("beforeend", [
     "<div id='v2BirthOverlay' class='v2-birth-overlay' aria-hidden='true'>",
     "<section class='v2-birth-sheet' role='dialog' aria-modal='true' aria-labelledby='v2BirthTitle'>",
-    "<button class='v5-icon-button v2-birth-close' type='button' data-v2-birth-close aria-label='Zavrieť'>×</button>",
+    "<button class='v5-icon-button v2-birth-close' type='button' data-v2-birth-close aria-label='Zavrieť'>" + window.GugubooV5.glyph("close") + "</button>",
     "<div id='v2BirthBody'></div>",
     "</section></div>"
   ].join(""));

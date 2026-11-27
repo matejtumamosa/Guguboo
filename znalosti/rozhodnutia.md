@@ -3,6 +3,18 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-27 – Product Lead (Master 3.9: grafické dorovnanie)
+- **Stav v dieli kruhu má vždy 14 px (úroveň Drobné, min. 13 px), alebo sa v tom diele vynechá** (pravidlo 3.4) – už žiadna
+  výnimka 10,5 px. Ikony ostávajú presne na mieste ako v 3.8 (poloha sa nepočíta s väčším stavom). Dôsledok: na 390 × 844 sa
+  zmestia krátke stavy (čas, „3×“, „1 z 2“, „2 otázky“, „120 ml“, „bdie 2 h“); „pred 45 min“ sa do pásu nezmestí nikde a na
+  375 × 667 / 320 × 568 ostáva v kruhu väčšinou len ikona. Stav je vždy aj v aria-label dielu a v okne dielu.
+- **Šípky „›“ „‹“ a zatvorenie „×“ sú linkové ikony** (`chevronRight`, `chevronLeft`, `close` v `iconPaths`, ťah 16), v texte cez
+  `GugubooV5.glyph(…)` – veľkosť 1em, farba textu. Texty a aria-labely bez zmeny. „×“ ako „krát“ pri počtoch („3×“) ostáva písmom.
+- **Zámok v súkromnom denníku = ikona `lock`** (nie emoji 🔒) – v ovládaní nie emoji.
+- **Malý telefón (len CSS podľa výšky):** pod 720 px kruh vyplní celú výšku karty a karta má tenší okraj (375 × 667: kruh ~165–187 px);
+  pod 600 px sa karta kruhu smie zmenšiť pod 150 px, aby sa domov neposúval (320 × 568: kruh ~95–140 px); na úzkom a nízkom
+  telefóne (šírka < 360, výška < 660) majú skratky len názov bez ikony (názov sa inak orezával).
+
 ## 2026-11-26 – Samo (Master 3.8: sprievodca, nie lekár; jednotné názvy kruhu)
 - **Guguboo je sprievodca, nie lekár:** smú byť len ľahké informatívne tvrdenia so zdrojom a dátumom overenia; nikdy rada,
   postup, diagnóza, norma ani cieľ (za tie nenesieme zodpovednosť). Existujúce bezpečnostné odkazy na lekára/pôrodnicu

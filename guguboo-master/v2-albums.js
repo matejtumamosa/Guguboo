@@ -54,7 +54,7 @@
       const sub = isLocked
         ? (birth() ? "Otvorí sa o " + left + (left === 1 ? " deň" : left < 5 ? " dni" : " dní") : "Otvorí sa po narodení")
         : count ? count + (count === 1 ? " spomienka" : count < 5 ? " spomienky" : " spomienok") : "Spomienky pribudnú samy";
-      return "<button type='button' class='v2-album-row" + (isLocked ? " is-locked" : "") + "' " + (isLocked ? "disabled" : "data-v5-moments-section='album-" + album.id + "'") + "><span class='v2-album-cover' aria-hidden='true'>" + V5.icon(album.icon) + "</span><span><strong>" + esc(album.title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>" + (isLocked ? V5.icon("lock") : "›") + "</b></button>";
+      return "<button type='button' class='v2-album-row" + (isLocked ? " is-locked" : "") + "' " + (isLocked ? "disabled" : "data-v5-moments-section='album-" + album.id + "'") + "><span class='v2-album-cover' aria-hidden='true'>" + V5.icon(album.icon) + "</span><span><strong>" + esc(album.title) + "</strong><small>" + esc(sub) + "</small></span><b aria-hidden='true'>" + (isLocked ? V5.icon("lock") : window.GugubooV5.glyph("chevronRight")) + "</b></button>";
     }).join("");
     return [
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Albumy</h1><p>Skladajú sa samy z vašich spomienok.</p></header>",
