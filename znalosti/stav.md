@@ -2,11 +2,11 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9.1, Hlavné 700 a prehliadka podľa systému)_
+_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9.2, nové ikony skratiek)_
 
 ## Verzia
 
-- **Master 3.9.1** (commit vo vetve `master391`, nepushnutý – zlúči Product Lead), priečinok `guguboo-master/`.
+- **Master 3.9.2** (vo vetve `v2`), priečinok `guguboo-master/`. 3.9.2: skratky s textom, nové ikony Starostlivosť (swaddle), Aktivity (blocks), Otázky pre lekára (doctorQ). Otvorené z kontroly 3.9.1: Prehľad dňa (bodka bez textu, výrazné „Upraviť“), koniec úvodu po pôrode (prázdny kruh, vykanie „Ako vás…“), hlavička Oznámenia.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html
 
