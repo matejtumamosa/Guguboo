@@ -1535,7 +1535,7 @@
     const { doc, win } = app, V5 = win.GugubooV5;
     const click = sel => doc.querySelector(".view.active " + sel)?.click();
     const sub = (feature, sel) => async () => { V5.openFeature(feature); await sleep(300); click(sel); };
-    const common = [["Môj hlas pre bábätko", () => V5.openFeature("voice")], ["Naša časová os", sub("memories", "[data-v2-moments-open='timeline']")], ["Úrady a doklady", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); }]];
+    const common = [["Kontakty na pomoc (155, 112)", () => V5.openFeature("urgent")], ["Môj hlas pre bábätko", () => V5.openFeature("voice")], ["Naša časová os", sub("memories", "[data-v2-moments-open='timeline']")], ["Úrady a doklady", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); }]];
     return kind === "pred" ? [
       ["Pohyby bábätka (E3)", sub("pregnancy", "[data-v5-book-section='moves']")], ["Čo je bežné", sub("mama", "[data-v2-mama-section='troubles']")],
       ["Jedlo a pohyb", sub("mama", "[data-v2-mama-section='food']")], ["Tvoj týždeň", () => V5.openFeature("babySize")],

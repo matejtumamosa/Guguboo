@@ -1052,7 +1052,7 @@ body.night .private-lock svg.ph { color: #c6bcff; }
 :is(html, #g2n#g2n) body.v5-active.night :is(.v2-per-status, .v2-album-head, #activities .act2-soon) {
   background: var(--v5-surface-soft) !important; background-image: none !important; border-color: var(--v5-line) !important;
 }
-:is(html, #g2n#g2n) body.v5-active.night :is(.v2-per-chips button:not(.active), .v2-cal-month-head button, .v5-sleep-type .v5-icon, .v2-album-cover, .v2-voice-record, #activities .act2-domain, #activities .act2-icon) {
+:is(html, #g2n#g2n) body.v5-active.night :is(.v2-per-chips button:not(.active), .v2-cal-month-head button, .v2-voice-record, #activities .act2-domain) {
   background: var(--v5-brand-soft) !important; background-image: none !important; border-color: var(--v5-line) !important;
 }
 :is(html, #g2n#g2n) body.v5-active.night .v2-per-chips button.active:not([class*="flow-"]) { background: #3d3566 !important; border-color: #c6bcff !important; color: var(--t-ink) !important; }
@@ -1073,6 +1073,8 @@ body.night .private-lock svg.ph { color: #c6bcff; }
 :is(html, #g2n#g2n) body.v5-active.night .view :is(button, a).primary { background: #c6bcff !important; background-image: none !important; color: #1f1a2e !important; }
 :is(html, #g2n#g2n) body.v5-active .view :is(.contact-actions a, .age-card b, .panel .pill) { color: var(--t-brand) !important; } /* staré --brand #7b6bc8 = 4,39 : 1 */
 :is(html, #g2n#g2n) body.v5-active.night .view :is(.contact-actions a, .age-card) { background: var(--v5-surface) !important; border-color: var(--v5-line) !important; }
+/* tiesňové „Volať 155 / 112“ ostávajú biele na červenej (5,3 : 1) – deň aj noc */
+:is(html, #g2n#g2n) body.v5-active .view .urgent-first-action .contact-actions a { color: #fff !important; background: #b63f55 !important; border-color: #b63f55 !important; }
 /* „Zapísané 0 z 9“ v Prehliadkach u pediatra: fialová ikon #6a4fc4 aj v noci (2,4 : 1) → farba značky z tokenu */
 :is(html, #g2n#g2n) body.v5-active .v2-check-progress { color: var(--t-brand) !important; }
 :is(html, #g2n#g2n) body.v5-active.night .v2-check-progress { background: var(--v5-brand-soft) !important; }
