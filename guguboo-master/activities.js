@@ -89,7 +89,7 @@
     const favorite = state.activities.favorites.includes(activity.id);
     return `<article class="act2-today act2-${escapeHtml(activity.domain)}">
       <div class="act2-today-head"><span class="act2-icon">${icon(domain.icon)}</span><span class="act2-domain">${escapeHtml(domain.label)}</span>
-        <button class="act2-fav" type="button" data-activity-favorite aria-pressed="${favorite}" aria-label="${favorite ? "Odobrať z obľúbených" : "Pridať medzi obľúbené"}">${favorite ? "♥" : "♡"}</button></div>
+        <button class="act2-fav" type="button" data-activity-favorite aria-pressed="${favorite}" aria-label="${favorite ? "Odobrať z obľúbených" : "Pridať medzi obľúbené"}">${V5()?.icon?.("memory", favorite ? "duo" : undefined) || ""}</button></div>
       <span class="act2-eyebrow">Skúsme dnes</span>
       <h2>${escapeHtml(activity.title)}</h2>
       <ol class="act2-steps">${activity.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol>

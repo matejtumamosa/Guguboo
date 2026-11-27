@@ -138,6 +138,7 @@
     white-space: nowrap;
   }
   #g2Intro .chip i { font-style: normal; color: var(--lav-dark); margin-right: 5px; }
+  #g2Intro .chip i svg.ph { vertical-align: -.15em; } /* Master 4.0 (Audit V13): ikona namiesto znaku */
   #g2Intro .chip.c1 { top: 10px; left: -14px; }
   #g2Intro .chip.c2 { top: 92px; right: -30px; }
   #g2Intro .chip.c3 { bottom: 6px; left: 6px; }

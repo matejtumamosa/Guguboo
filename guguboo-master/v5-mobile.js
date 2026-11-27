@@ -130,6 +130,13 @@
     usersThree: "<path d='M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1-7.37-4.89,8,8,0,0,1,0-6.22A8,8,0,0,1,192,112a24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.84,8,57,57,0,0,0-98.16,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z'/>",
     calendarDots: "<path d='M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-68-76a12,12,0,1,1-12-12A12,12,0,0,1,140,132Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,132ZM96,172a12,12,0,1,1-12-12A12,12,0,0,1,96,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,140,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,172Z'/>",
     download: "<path d='M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z'/>",
+    // Master 4.0 (Audit V13): mínus k plus (Pitný režim „− ＋“ ako ikony)
+    minus: "<path d='M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z'/>",
+    // Master 4.0 (Audit V13): prehrať / zastaviť (Môj hlas, prehliadka) namiesto znakov ▶ ■
+    play: "<path d='M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z'/>",
+    stop: "<path d='M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,160H56V56H200V200Z'/>",
+    // Master 4.0 (Audit V9): Obnoviť zo zálohy (predtým zámok – zámok je len Súkromný denník)
+    upload: "<path d='M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z'/>",
     lightbulb: "<path d='M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Zm-16.11-9.34a57.6,57.6,0,0,0-46.56-46.55,8,8,0,0,0-2.66,15.78c16.57,2.79,30.63,16.85,33.44,33.45A8,8,0,0,0,176,104a9,9,0,0,0,1.35-.11A8,8,0,0,0,183.89,94.66Z'/>",
     coffee: "<path d='M80,56V24a8,8,0,0,1,16,0V56a8,8,0,0,1-16,0Zm40,8a8,8,0,0,0,8-8V24a8,8,0,0,0-16,0V56A8,8,0,0,0,120,64Zm32,0a8,8,0,0,0,8-8V24a8,8,0,0,0-16,0V56A8,8,0,0,0,152,64Zm96,56v8a40,40,0,0,1-37.51,39.91,96.59,96.59,0,0,1-27,40.09H208a8,8,0,0,1,0,16H32a8,8,0,0,1,0-16H56.54A96.3,96.3,0,0,1,24,136V88a8,8,0,0,1,8-8H208A40,40,0,0,1,248,120ZM200,96H40v40a80.27,80.27,0,0,0,45.12,72h69.76A80.27,80.27,0,0,0,200,136Zm32,24a24,24,0,0,0-16-22.62V136a95.78,95.78,0,0,1-1.2,15A24,24,0,0,0,232,128Z'/>",
     leaf: "<path d='M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.09,87.09,0,0,0-12.76,49c.57,15.92,5.21,32,13.79,47.85l-19.51,19.5a8,8,0,0,0,11.32,11.32l19.5-19.51C81,210.73,97.09,215.37,113,215.94q1.67.06,3.33.06A86.93,86.93,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07ZM153.75,189.5c-22.75,13.78-49.68,14-76.71.77l88.63-88.62a8,8,0,0,0-11.32-11.32L65.73,179c-13.19-27-13-54,.77-76.71,22.09-36.47,74.6-56.44,141.31-54.06C210.2,114.89,190.22,167.41,153.75,189.5Z'/>",
@@ -304,7 +311,7 @@
     period: { label: "Menštruačný kalendár", description: "Zápis a odhad", icon: "calendarDots", tier: "free", view: "v5Period" },
     childBook: { label: "Zdravotná knižka", description: "Prehliadky, rast, očkovanie", icon: "book", tier: "free", view: "v5ChildBook" },
     announce: { label: "Oznámiť tehotenstvo", description: "Kartička pre blízkych", icon: "cards", tier: "free", view: "v5Announce" },
-    voice: { label: "Môj hlas pre bábätko", description: "Uspávanka tvojím hlasom", icon: "sound", tier: "free", view: "v5Voice" },
+    voice: { label: "Môj hlas pre bábätko", description: "Uspávanka tvojím hlasom", icon: "voice", tier: "free", view: "v5Voice" },
     beforeBirth: { label: "Príprava na pôrod", description: "Taška a pôrodnica", icon: "checklist", tier: "free", view: "v5Prenatal" },
     administration: { label: "Úrady a doklady", description: "Dávky, doklady, termíny", icon: "administration", tier: "free", view: "v5Utility" },
     products: { label: "Výbava a produkty", description: "Čo máme a čo dokúpiť", icon: "products", tier: "premium", view: "v5Utility" },
@@ -1563,6 +1570,35 @@
     put(best ? best.k : .7, best ? best.drop : new Set(segs.map(s => s.key)));
     wrap.classList.toggle("is-small", px < 260);
     wrap.dataset.fit = best ? "ok" : "zmensene";
+    g2qFitCore();
+  }
+  // Master 4.0 (Audit V4/F18): bežiaci čas v strede kruhu nesmie pretekať cez diely (375 × 667, 320 × 568, aj 390 × 844).
+  // Od zlúčenia s F8 (C) v strede nie je pilulka ukončenia – ťuk otvorí okno merania. Postupne: 1) bez ikony nad časom,
+  // 2) bez slova („Spí“), 3) menší čas (najmenej 15 px), 4) len čas. Meria sa každý roh prvku voči kruhu stredu.
+  // (Pravidlá .g2q-stop / .is-tight v master.css ostali z časti A bez použitia.)
+  const G2Q_TIGHT = ["is-tighter", "is-tightest"];
+  function g2qFitCore() {
+    const core = document.querySelector("#home.view.active .g2q-core.is-running");
+    if (!core) return;
+    const time = core.querySelector(".g2q-time");
+    core.classList.remove(...G2Q_TIGHT, "is-bare");
+    if (time) time.style.removeProperty("font-size");
+    const fits = () => {
+      const c = core.getBoundingClientRect(), R = c.width / 2 - 3, cx = c.left + c.width / 2, cy = c.top + c.height / 2;
+      if (R <= 0) return true;
+      return [...core.children].every(k => {
+        const r = k.getBoundingClientRect();
+        if (!r.width || getComputedStyle(k).display === "none") return true;
+        const br = Math.min(parseFloat(getComputedStyle(k).borderTopLeftRadius) || 0, r.height / 2, r.width / 2) * .3;
+        return [[r.left + br, r.top + br], [r.right - br, r.top + br], [r.left + br, r.bottom - br], [r.right - br, r.bottom - br]]
+          .every(([x, y]) => Math.hypot(x - cx, y - cy) <= R);
+      });
+    };
+    for (const level of G2Q_TIGHT) { if (fits()) return; core.classList.add(level); }
+    const shrink = () => { for (let size = 23; time && size >= 15 && !fits(); size--) time.style.setProperty("font-size", size + "px", "important"); };
+    shrink();
+    // 4) najmenší stred (320 × 568, čas „1:47:05“): len čas – celý stred otvorí okno merania (aria-label „Spí – otvoriť meranie“)
+    if (!fits()) { core.classList.add("is-bare"); if (time) time.style.removeProperty("font-size"); shrink(); }
   }
   const g2qFitSoon = () => { requestAnimationFrame(g2qFitRing); setTimeout(g2qFitRing, 80); };
   window.addEventListener("resize", () => setTimeout(g2qFitRing, 120));
@@ -1586,7 +1622,11 @@
   }
   // Živý čas v strede kruhu (raz za sekundu, len keď je domov na obrazovke).
   setInterval(() => {
-    document.querySelectorAll("#home.view.active [data-g2q-since]").forEach(el => { el.textContent = g2qClock(g2qSince(el.dataset.g2qSince)); });
+    document.querySelectorAll("#home.view.active [data-g2q-since]").forEach(el => {
+      const text = g2qClock(g2qSince(el.dataset.g2qSince)), longer = text.length !== el.textContent.length;
+      el.textContent = text;
+      if (longer) g2qFitCore(); // Master 4.0 (Audit V4): „59:59“ → „1:00:00“ – čas sa znova prispôsobí stredu
+    });
   }, 1000);
 
   // ——— Krátke okno s voľbami (spoločný systém okien: späť / × / Esc) ———
@@ -1807,7 +1847,7 @@
     if (key === "firstmove") {
       // Pokojné očakávanie, nie úloha: bez odpočtu, bez „ešte nie“, žiadne automatické prepnutie (Content & Safety, NHS overené 15. 11. 2026).
       return g2qOpen("Prvý pohyb", "<p class='g2r-lead'>" + escapeHtml(G2_FIRST_MOVES) + " Každé tehotenstvo je iné.</p>" + /* Master 4.0 (Audit T14): jedno znenie */
-        g2qAct("firstmove-save", "butterfly", "Cítila som ho", "do Našich momentov", "", true) + g2qAct("firstmove-earlier", "bellyKick", "Cítim už dlhšie", "rovno k zápisu pohybov") /* Master 4.0 (Audit F17) */ +
+        g2qAct("firstmove-save", "bellyKick" /* Master 4.0 (Audit V9) */, "Cítila som ho", "do Našich momentov", "", true) + g2qAct("firstmove-earlier", "bellyKick", "Cítim už dlhšie", "rovno k zápisu pohybov") /* Master 4.0 (Audit F17) */ +
         // Master 2.7 (audit #26): od 24. t. namiesto vety tlačidlo na otázku (predvyplnené), nič nehodnotíme.
         (g2qWeek() >= 24 && window.G2Safety ? window.G2Safety.askButton("me", "Pohyby bábätka som ešte necítila.", "Zapísať ako otázku pre lekára") : "") +
         "<p class='g2r-small'><a href='" + escapeHtml(window.G2Safety?.E.E3.source || "") + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené " + escapeHtml(window.G2Safety?.E.E3.checked || window.G2Safety?.CHECKED || "") + " ↗</a></p>"); // Master 4.0 (Audit T36, T10)
@@ -2296,8 +2336,8 @@
     const expecting = state.profile.status === "expecting";
     const centerButton = wellbeing
       ? expecting
-        ? "<button class='v5-o-record' type='button' data-v5-o-section='care' aria-label='Otvoriť dnešný krok pohody'><span aria-hidden='true'>＋</span><strong>Môj krok</strong></button>"
-        : "<button class='v5-o-record' type='button' data-v5-open-record aria-label='Otvoriť rýchly záznam'><span aria-hidden='true'>＋</span><strong>Zaznamenať</strong></button>"
+        ? "<button class='v5-o-record' type='button' data-v5-o-section='care' aria-label='Otvoriť dnešný krok pohody'>" + glyph("plus") + "<strong>Môj krok</strong></button>"
+        : "<button class='v5-o-record' type='button' data-v5-open-record aria-label='Otvoriť rýchly záznam'>" + glyph("plus") + "<strong>Zaznamenať</strong></button>"
       : "<button class='v5-o-record v5-o-next-task' type='button' data-v5-org-section='" + firstOpenSection.id + "' aria-label='Otvoriť ďalšiu organizačnú úlohu'><span aria-hidden='true'>→</span><strong>Ďalšia úloha</strong></button>";
     if (master) {
       const anyDone = sections.some(section => progress[section.id].done > 0);
@@ -2686,7 +2726,7 @@
     const baby = expecting ? [
       g2Feature("pregnancy", "Bábätko", "tehotenska knizka kontrola kontroly gynekolog gynekologicka vysledky ultrazvuk usg sono krv moc odbery prehliadka"),
       g2Feature("babySize", "Bábätko", "tyzden tyzdne velkost velky velke vyvoj ovocie ako velke rastie"),
-      g2Item("moves", "Pohyby bábätka", "Moje zápisy", "bellyKick" /* Master 4.0 (Audit F16): ikona ako v kruhu */, "Bábätko", "data-v5-book-section='moves'", "pohyby pohyb hybe kope kopanie kopance necitim nehybe"),
+      g2Item("moves", "Pohyby bábätka", "Moje zápisy", "bellyKick" /* Master 4.0 (Audit F16, V9): ikona ako v kruhu */, "Bábätko", "data-v5-book-section='moves'", "pohyby pohyb hybe kope kopanie kopance necitim nehybe"),
       g2Item("questions", "Otázky pre lekára", "Na najbližšiu kontrolu", "doctorQ", "Bábätko", "data-v5-book-section='questions'", "otazky otazka lekar gynekolog opytat zabudnem"),
       g2Feature("beforeBirth", "Bábätko", "priprava porod porodnica taska taska do porodnice balit doklady prve dni domov vybava porodny plan kontrakcie"),
       g2Feature("voice", "Bábätko", "hlas uspavanka nahravka nahrat spievat pesnicka"),
@@ -2713,7 +2753,7 @@
         expecting ? "tazkosti nevolnost nevolno vracanie zgaga palenie zahy krce opuchy opuch chrbat bolest zapcha unava" : "telo po porode krvacanie ocistky stehy cisarsky rez prsia bradavky zapal panvove dno inkontinencia"),
       expecting ? g2Item("food", "Jedlo a pohyb", "Jedlo, vitamíny, pohyb", "meal", "Mama", "data-v2-mama-section='food'", "jedlo strava jest vitaminy kyselina listova jod pohyb cvicenie sport kava alkohol syr") : null,
       expecting ? null : g2Item("check", "Kontrola po pôrode", "6 týždňov po pôrode", "calendar", "Mama", "data-v2-mama-section='check'", "kontrola po porode sestonedelie gynekolog 6 tyzdnov"),
-      g2Item("water", "Pitný režim", "Pohár po pohári", "water", "Mama", "data-v2-mama-section='water'", "pitie pit voda pitny rezim smad"),
+      g2Item("water", "Pitný režim", "Pohár po pohári", "glassWater", "Mama", "data-v2-mama-section='water'", "pitie pit voda pitny rezim smad"),
       expecting ? null : g2Feature("period", "Mama", "menstruacia mesiacky menzes cyklus perioda dostala som"),
       g2Feature("privateSpace", "Mama", "dennik denik zapisky sukromne pin myslienky")
     ].filter(Boolean);
@@ -2886,7 +2926,7 @@
       const g = G2_GROUP[area];
       target.innerHTML = [
         subtitle ? "<p class='g2-hub-sub'>" + escapeHtml(subtitle) + "</p>" : "",
-        baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>+ Nový záznam</button>" : "",
+        baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>" + glyph("plus") + " Nový záznam</button>" : "",
         "<div class='v2-book-tools g2-hub-list'>",
         items.map(item => "<button type='button' class='g2-hub-row g2-" + g + "' " + item.attrs + "><span class='v5-icon'>" + icon(item.ic) + "</span><span><strong>" + escapeHtml(item.label) + "</strong><small>" + escapeHtml(item.sub) + "</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>").join(""),
         "</div>"
@@ -2895,7 +2935,7 @@
     }
     target.innerHTML = [
       "<section class='v2-book-hero v2-mama-hero'><h1>", escapeHtml(baby ? state.profile.name || "Bábätko" : [parentDisplayName(), state.profile.name].filter(Boolean).join(" a ") || "Rodina"), "</h1>", subtitle ? "<p>" + escapeHtml(subtitle) + "</p>" : "", "</section>",
-      baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>＋ Nový záznam</button>" : "",
+      baby && !expecting ? "<button class='v5-primary v2-hub-record' type='button' data-v5-open-record>" + glyph("plus") + " Nový záznam</button>" : "",
       "<div class='v2-book-tools'>", MASTER && baby && !expecting ? "<button type='button' data-g2-month-open><span class='v5-icon'>" + icon("growth") + "</span><span><strong>Tvoj mesiac</strong><small>Vývoj v tomto veku</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>" : "", MASTER && !baby ? "<button type='button' data-g2-plan><span class='v5-icon'>" + icon("checklist") + "</span><span><strong>Plán</strong><small>Čo ťa čaká</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>" : "", keys.map(appRow).join(""), "</div>"
     ].join("");
   }
@@ -2940,7 +2980,7 @@
         return [
           "<button class='v5-quick-tile v5-o-day-row v2-water-tile", done ? " is-done" : "", "' type='button' data-v5-water-add aria-label='Pridať pohár. Dnes ", escapeHtml(waterProgressText()), "'>",
           "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong><small>", escapeHtml(waterProgressText()), "</small>",
-          "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+          "<b aria-hidden='true'>", glyph(done ? "check" : "plus"), "</b></button>"
         ].join("");
       }
       // Cviky: ťuknutie otvorí zoznam odporúčaných cvikov (NHS), na dlaždici je dnešný / týždenný stav.
@@ -2955,7 +2995,7 @@
       const hint = ""; // Master 2.7 (audit #12): appka neukazuje, aké vitamíny brať.
       return [
         "<button class='v5-quick-tile v5-o-day-row", done ? " is-done" : "", "' type='button' data-v5-o-complete='", goal.id, "' aria-pressed='", String(done), "'>",
-        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "check-in" ? "<small>Zapísať do denníka</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : hint, "<b aria-hidden='true'>", done ? "✓" : "＋", "</b></button>"
+        "<span class='v5-icon'>", icon(goal.icon), "</span><strong>", escapeHtml(goal.title), "</strong>", done ? "<small>Dnes hotovo</small>" : goal.id === "check-in" ? "<small>Zapísať do denníka</small>" : goal.id === "ask-help" ? "<small>Vybrať pomoc</small>" : hint, "<b aria-hidden='true'>", glyph(done ? "check" : "plus"), "</b></button>"
       ].join("");
     }).join("") + "</div>" + (goals.some(goal => goal.id === "water") ? waterSettingsHtml() : "");
   }
@@ -2964,10 +3004,11 @@
     const water = waterToday();
     return [
       "<section class='v2-water-panel' aria-label='Pitný režim'>",
-      "<div class='v2-water-count'><button type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">−</button>",
+      // Master 4.0 (Audit V13): „− ＋“ ako linkové ikony (predtým znaky 18/700 v modrej)
+      "<div class='v2-water-count'><button type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">", glyph("minus"), "</button>",
       // Master 3.8 (Samo, C&S kolo 3, S3): bez cieľa – len počet pohárov dnes (a 7 dní v okne kruhu).
       "<strong>", water.count, "<small>", water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov", " dnes · ", escapeHtml(waterLiters(water.count)), "</small></strong>",
-      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
+      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>" + glyph("plus") + "</button></div>",
       "<div class='v2-water-settings'><label>Pohár<select data-v5-water-glass>",
       [200, 250, 300, 330, 500].map(n => "<option value='" + n + "'" + (n === water.glassMl ? " selected" : "") + ">" + n + " ml</option>").join(""),
       "</select></label></div>",
@@ -3445,7 +3486,7 @@
       "<div class='v2-circle-tabs v2-cal-tabs' role='tablist' aria-label='Zobrazenie kalendára'>",
       "<button type='button' role='tab' data-v2-cal-mode='list' aria-selected='", String(mode === "list"), "' class='", mode === "list" ? "active" : "", "'>Zoznam</button>",
       "<button type='button' role='tab' data-v2-cal-mode='month' aria-selected='", String(mode === "month"), "' class='", mode === "month" ? "active" : "", "'>Mesiac</button></div>",
-      "<button class='v5-primary v2-cal-add' type='button' data-v2-cal-add>＋ Pridať udalosť</button>"
+      "<button class='v5-primary v2-cal-add' type='button' data-v2-cal-add>" + glyph("plus") + " Pridať udalosť</button>"
     ].join("");
     if (mode === "month") {
       const month = state.v5.calendarMonth || today.slice(0, 7);
@@ -4119,7 +4160,7 @@
     return [
       "<div class='v5-book-question-add g2-q-add'><input id='g2QuestionInput' maxlength='300' placeholder='Čo sa chcem opýtať?'>",
       "<select id='g2QuestionWho' aria-label='Pre koho'><option value='me'" + (born ? "" : " selected") + ">Pre mňa</option><option value='baby'" + (born ? " selected" : "") + ">Pre bábätko</option></select>",
-      "<button type='button' data-g2-q-add aria-label='Pridať otázku'>＋</button></div>",
+      "<button type='button' data-g2-q-add aria-label='Pridať otázku'>" + glyph("plus") + "</button></div>",
       total ? "" : "<div class='v5-empty'>Keď ťa niečo napadne, zapíš si to sem.</div>",
       part("me", "Pre mňa"),
       born || doctorQuestions("baby").length ? part("baby", "Pre bábätko") : "",
@@ -5146,14 +5187,15 @@
     const selected = visibleCategories.find(category => category[0] === state.v5.checklistCategory);
     if (state.v5.checklistCategory && !selected) state.v5.checklistCategory = "";
     if (!selected) {
-      target.innerHTML = "<section class='v5-checklist-shell'><header class='v5-checklist-intro'><span>" + (expecting ? "Príprava na pôrod" : "Praktické zoznamy") + "</span><h1>Vyber oblasť</h1></header>" +
-        "<div class='v5-checklist-grid'>" + visibleCategories.map(category => {
+      // Master 4.0 (Audit V5, V11): oblasti ako bežné riadky zoznamu (ikona · názov Bežné · „0 z 4“ Drobné · ›) – predtým dlaždice
+      // s orezanými kapitálkami 8–9 px („ZDRAVI“, „STAROS/VOSŤ“) a druhý nadpis „Vyber oblasť“ 25 px pod hlavičkou okna.
+      target.innerHTML = "<section class='v5-checklist-shell'><p class='g2-hub-sub v5-checklist-sub'>Vyber oblasť</p>" +
+        "<div class='v2-book-tools v5-checklist-rows'>" + visibleCategories.map(category => {
           const custom = state.v5.checklistCustom.filter(item => item.category === category[0]);
           const all = category[3].filter(item => !item[0].startsWith("#")).concat(custom.map(item => [item.id, item.label]));
           const done = all.filter(item => state.checks[item[0]]).length;
-          const percentage = all.length ? Math.round(done / all.length * 100) : 0;
           const visual = checklistVisuals[category[0]] || ["checklist", "Zoznam"];
-          return "<button class='v5-check-category-card is-" + category[0] + (done === all.length && all.length ? " is-done" : "") + "' type='button' data-v5-check-category='" + category[0] + "'><span class='v5-icon'>" + icon(visual[0]) + "</span><span class='v5-check-card-copy'><small>" + escapeHtml(visual[1]) + "</small><strong>" + escapeHtml(category[1]) + "</strong></span><span class='v5-check-count'>" + done + "/" + all.length + "</span><span class='v5-check-progress' aria-hidden='true'><i style='--progress:" + percentage + "%'></i></span></button>";
+          return "<button class='" + (done === all.length && all.length ? "is-done" : "") + "' type='button' data-v5-check-category='" + category[0] + "'><span class='v5-icon'>" + icon(visual[0]) + "</span><span><strong>" + escapeHtml(category[1]) + "</strong><small>" + done + " z " + all.length + "</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>";
         }).join("") + "</div></section>";
       return;
     }
@@ -5175,11 +5217,11 @@
           return "<h3 class='v2-check-group'>" + escapeHtml(item[1]) + "<small>" + groupDone + "/" + group.length + "</small></h3>";
         }
         const checked = Boolean(state.checks[item[0]]);
-        return "<label class='v5-check-item-card" + (checked ? " is-done" : "") + "'><input type='checkbox' data-v5-check-item='" + item[0] + "'" + (checked ? " checked" : "") + "><span class='v5-check-toggle' aria-hidden='true'>" + (checked ? "✓" : "") + "</span><strong>" + escapeHtml(item[1]) + "</strong></label>";
+        return "<label class='v5-check-item-card" + (checked ? " is-done" : "") + "'><input type='checkbox' data-v5-check-item='" + item[0] + "'" + (checked ? " checked" : "") + "><span class='v5-check-toggle' aria-hidden='true'>" + (checked ? icon("check") : "") + "</span><strong>" + escapeHtml(item[1]) + "</strong></label>";
       }).join(""),
       "</div>",
       (selected[4] || []).map(source => "<a class='v2-source' href='" + escapeHtml(source[1]) + "' target='_blank' rel='noopener noreferrer'>Zdroj: " + escapeHtml(source[0]) + " ↗</a>").join(""),
-      "<div class='v5-check-add'><input id='v5ChecklistCustom' maxlength='80' placeholder='Vlastná položka'><button type='button' data-v5-action='add-checklist-custom' aria-label='Pridať vlastnú položku'>＋</button></div>",
+      "<div class='v5-check-add'><input id='v5ChecklistCustom' maxlength='80' placeholder='Vlastná položka'><button type='button' data-v5-action='add-checklist-custom' aria-label='Pridať vlastnú položku'>" + icon("plus") + "</button></div>",
       "<button class='v5-check-categories-button' type='button' data-v5-check-home>", icon("back"), expecting ? " Príprava na pôrod" : " Všetky zoznamy", "</button>",
       "</section>"
     ].join("");
@@ -5448,9 +5490,9 @@
         : "<section class='v2-book-hero v2-mama-hero'><h1>" + escapeHtml(parentDisplayName() || "Mama") + "</h1><p>" + (expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth)) + "</p></section>",
       // Master 2.1 (Samo 15. 11.): Čas pre teba sa presunul z domova sem – navrchu Mamy, tri časti na jedno ťuknutie.
       MASTER ? "<section class='g2q-me' aria-label='Čas pre teba'><button type='button' class='g2q-me-head' data-v5-o-section='care'><span><strong>Čas pre teba</strong><small>Malá chvíľa</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button><div class='g2q-me-parts'><button type='button' class='g2r-part g2r-p1' data-g2-ring-part='rest'>" + icon("feather") + "<span>Oddych</span></button><button type='button' class='g2r-part g2r-p2' data-g2-ring-part='body'>" + icon("personTaiChi") + "<span>Telo</span></button><button type='button' class='g2r-part g2r-p3' data-g2-ring-part='sup'>" + icon("handshake") + "<span>Opora</span></button></div></section>" : "",
-      "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) /* Master 3.9 (QA N4): bez „· nastaviť“ – zvyšok po zrušenom cieli (3.8); ťuk otvorí Pitný režim */, "</small>",
+      "<div class='v2-mama-water'><span class='v5-icon'>", icon("glassWater"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) /* Master 3.9 (QA N4): bez „· nastaviť“ – zvyšok po zrušenom cieli (3.8); ťuk otvorí Pitný režim */, "</small>",
       "</button>",
-      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
+      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>" + glyph("plus") + "</button></div>",
       "<div class='v2-book-tools'>",
       // Master 1.7 (S10): rovnaké položky ako zásuvka Všetko – aj „Nálada a podpora“ (Master 3.0, predtým „Keď je mi ťažko“) v tehotenstve (po pôrode je to Nálada a spánok).
       MASTER && expecting ? "<button type='button' data-g2-chat='Potrebujem pomoc a podporu'><span class='v5-icon'>" + icon("alert") + "</span><span><strong>Nálada a podpora</strong><small>Pocity, únava, opora</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>" : "",
@@ -5474,8 +5516,8 @@
   function renderPeriod() {
     const target = byId("v5PeriodContent");
     if (!target) return;
+    // Master 4.0 (Audit V11): bez druhého nadpisu „Menštruačný kalendár“ – ten istý názov je v hlavičke okna.
     target.innerHTML = [
-      flowHead("Mama", "Menštruačný kalendár", "", 0, 1),
       window.GugubooPeriod?.html?.() || "<div class='v5-empty'>Kalendár sa načítava…</div>"
     ].join("");
   }
@@ -5530,7 +5572,7 @@
         flowHead("Zdravotná knižka", "Prehliadky u pediatra", "", 0, 1),
         law ? "<section class='v2-mama-card'><h3>Podľa zákona</h3>" + law.checks.map(item => "<p><b>" + escapeHtml(item.title) + "</b> – " + escapeHtml(item.text) + (item.id === "year1" ? " <span class='v2-check-progress'>Zapísané " + firstYear.length + " z 9</span>" : "") + "</p>").join("") + "<p class='v2-mama-muted'>" + escapeHtml(law.covered) + " " + escapeHtml(law.dentist.text) + "</p>" + lawSource + "</section>" : "",
         "<p class='v2-visit-hint'>Termíny určí pediater. Prehliadky v 18 mesiacoch a v 3 rokoch sú v Kalendári.</p>",
-        "<button class='v5-primary v2-visit-add' type='button' data-v2-child-section='check-new'>＋ Zapísať prehliadku</button>",
+        "<button class='v5-primary v2-visit-add' type='button' data-v2-child-section='check-new'>" + glyph("plus") + " Zapísať prehliadku</button>",
         sortedChecks.length ? "<div class='v2-visit-list'>" + sortedChecks.map(item => [
           "<article class='v2-visit-card'><header><strong>", escapeHtml(dateLabel(item.date)), "</strong><span>", escapeHtml(ageAt(item.date)), "</span>",
           "<button type='button' data-v2-child-check-delete='", escapeHtml(item.id), "' aria-label='Vymazať zápis'>" + glyph("close") + "</button></header>",
@@ -5569,7 +5611,7 @@
         weights.length < 2 && heights.length < 2 ? "<div class='v5-empty'>Graf sa ukáže po dvoch meraniach.</div>" : "",
         growthRows.length ? "<section class='v2-size-dev'><h3>Všetky merania</h3><div class='v2-pressure-list'>" + growthRows.slice().reverse().map(item => "<div><span>" + escapeHtml(dateLabel(item.date)) + " · " + escapeHtml(ageAt(item.date)) + "</span><b>" + escapeHtml([item.weight ? item.weight + " kg" : "", item.height ? item.height + " cm" : "", item.head ? "hlava " + item.head + " cm" : ""].filter(Boolean).join(" · ")) + "</b></div>").join("") + "</div></section>" : "",
         "<p class='v5-book-note'>Rast posudzuje pediater podľa rastových kriviek. Appka hodnoty len prehľadne ukazuje.</p>",
-        "<button class='v5-secondary v2-visit-add' type='button' data-v5-growth-open='weight'>＋ Pridať meranie</button>",
+        "<button class='v5-secondary v2-visit-add' type='button' data-v5-growth-open='weight'>" + glyph("plus") + " Pridať meranie</button>",
         back
       ].join("");
       return;
@@ -5728,7 +5770,7 @@
       const results = state.v5.prenatalResults.slice().sort((a, b) => b.date.localeCompare(a.date));
       target.innerHTML = [
         flowHead("Tehotenská knižka", "Výsledky vyšetrení", "", 0, 1),
-        "<button class='v5-primary v2-visit-add' type='button' data-v5-book-section='result-new'>＋ Pridať výsledok</button>",
+        "<button class='v5-primary v2-visit-add' type='button' data-v5-book-section='result-new'>" + glyph("plus") + " Pridať výsledok</button>",
         results.length ? "<div class='v2-visit-list'>" + results.map(result => [
           "<article class='v2-visit-card'><header><strong>", escapeHtml(result.type), "</strong><span>", escapeHtml(dateLabel(result.date)), "</span>",
           "<button type='button' data-v2-result-delete='", escapeHtml(result.id), "' aria-label='Vymazať výsledok'>" + glyph("close") + "</button></header>",
@@ -5761,7 +5803,7 @@
           : "<div class='v5-empty'>Graf sa ukáže po dvoch zápisoch s hmotnosťou.</div>",
         rows.some(visit => visit.pressure) ? "<section class='v2-size-dev'><h3>Tlak</h3><div class='v2-pressure-list'>" + rows.filter(visit => visit.pressure).reverse().map(visit => "<div><span>" + escapeHtml(dateLabel(visit.date)) + (visit.week ? " · " + visit.week + ". týždeň" : "") + "</span><b>" + escapeHtml(visit.pressure) + "</b></div>").join("") + "</div></section>" : "",
         "<p class='v5-book-note'>Hodnoty posudzuje lekár. Appka ich len prehľadne ukazuje.</p>",
-        "<button class='v5-secondary v2-visit-add' type='button' data-v5-book-section='visit-new'>＋ Nový zápis z kontroly</button>",
+        "<button class='v5-secondary v2-visit-add' type='button' data-v5-book-section='visit-new'>" + glyph("plus") + " Nový zápis z kontroly</button>",
         back
       ].join("");
       return;
@@ -5816,7 +5858,7 @@
     const sorted = visits.slice().sort((a, b) => b.date.localeCompare(a.date));
     target.innerHTML = [
       flowHead("Tehotenská knižka", "Zápisy z kontrol", "", 0, 1),
-      "<button class='v5-primary v2-visit-add' type='button' data-v5-book-section='visit-new'>＋ Nový zápis z kontroly</button>",
+      "<button class='v5-primary v2-visit-add' type='button' data-v5-book-section='visit-new'>" + glyph("plus") + " Nový zápis z kontroly</button>",
       sorted.length ? "<div class='v2-visit-list'>" + sorted.map(visit => [
         "<article class='v2-visit-card'><header><strong>", escapeHtml(dateLabel(visit.date)), "</strong><span>", visit.week ? visit.week + ". týždeň" : "", visit.place ? " · " + escapeHtml(visit.place) : "", "</span>",
         "<button type='button' data-v2-visit-delete='", escapeHtml(visit.id), "' aria-label='Vymazať zápis'>" + glyph("close") + "</button></header>",

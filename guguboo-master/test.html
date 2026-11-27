@@ -1636,8 +1636,228 @@
           eq(bad, [], "staré texty v kóde");
         }
       }
+    },
+    {
+      // Master 4.0 (úplný audit 3.9.2 – vizuál): kontrast k skutočnému pozadiu v noci aj cez deň, štítky na fialovej,
+      // bežiaci čas v strede kruhu, typografia opravených okien, jedna ikona pre jednu vec a jedna podoba ×.
+      name: "Kontrast a dorovnanie (Master 4.0 – audit 3.9.2)",
+      tests: {
+        // Master 4.0 (Audit V1, V2, F1): staré karty mali v noci svetlé pozadie a svetlý text (1,0–1,7 : 1) – aj bezpečnostná veta E3.
+        "Kontrast textu v noci ≥ 4,5 : 1 (veľký text 3 : 1) na kľúčových oknách, pred aj po pôrode": async () => {
+          const bad = [];
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(contrastSeed(kind, true));
+            try { for (const [name, open] of contrastWindows(app, kind)) bad.push(...await contrastWindow(app, kind + " · " + name, open)); eq(app.errors, [], "chyby v konzole"); }
+            finally { app.remove(); }
+          }
+          eq(bad, [], "nízky kontrast v noci");
+        },
+        "Kontrast textu cez deň ≥ 4,5 : 1 (veľký text 3 : 1) na tých istých oknách": async () => {
+          const bad = [];
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(contrastSeed(kind, false));
+            try { for (const [name, open] of contrastWindows(app, kind)) bad.push(...await contrastWindow(app, kind + " · " + name, open)); }
+            finally { app.remove(); }
+          }
+          eq(bad, [], "nízky kontrast cez deň");
+        },
+        // Master 4.0 (Audit V3/F2): „na rade“ a „teraz“ na fialovej boli sivé (1,07 : 1 a 1,3 : 1).
+        "Štítky na fialovej („na rade“ v Kŕmení, vybraný týždeň / mesiac) ≥ 4,5 : 1 cez deň aj v noci": async () => {
+          for (const night of [false, true]) {
+            for (const kind of ["pred", "po"]) {
+              const app = await bootApp(contrastSeed(kind, night));
+              try {
+                const { doc, win } = app, out = [];
+                if (kind === "po") {
+                  tapSeg(app, "feed"); await sleep(400);
+                  const em = doc.querySelector("#g2QuickOverlay .g2q-side em");
+                  assert(em && isVisible(em), "Kŕmenie: chýba štítok „na rade“");
+                  out.push(...contrastIssues(app, em.parentElement));
+                  doc.querySelector("#g2QuickOverlay [data-g2q='close']")?.click(); await sleep(200);
+                  win.GugubooV5.openMonth?.(); await sleep(400);
+                } else { win.GugubooV5.openFeature("babySize"); await sleep(400); }
+                const sel = doc.querySelector(".v2-week-strip .is-selected");
+                assert(sel && isVisible(sel), kind + ": chýba vybraný týždeň / mesiac");
+                out.push(...contrastIssues(app, sel));
+                eq(out, [], (night ? "noc" : "deň") + " · " + kind);
+              } finally { app.remove(); }
+            }
+          }
+        },
+        // Master 4.0 (Audit V4/F18): „Spí“, čas a „Zobudilo sa“ ležali cez farebné diely (375 × 667, 320 × 568, aj 390 × 844). Od F8 bez pilulky.
+        "Bežiaci čas v strede kruhu sa zmestí do bieleho stredu (390 × 844, 375 × 667, 320 × 568), čas ≥ 15 px": async () => {
+          for (const [w, h] of [[390, 844], [375, 667], [320, 568]]) {
+            const start = new Date(Date.now() - (60 + 47) * 60000).toISOString(); // 1:47:xx – najdlhší bežný tvar času
+            const app = await bootApp(ringSeed("po", { extra: { sleepTimer: { active: true, start } } }), { width: w, height: h });
+            try {
+              const { doc, win } = app;
+              await sleep(300);
+              const core = doc.querySelector("#home.view.active .g2q-core.is-running");
+              assert(core, w + "×" + h + ": stred kruhu nebeží");
+              const c = core.getBoundingClientRect(), R = c.width / 2, cx = c.left + R, cy = c.top + c.height / 2, out = [];
+              [...core.children].forEach(k => {
+                if (win.getComputedStyle(k).display === "none") return;
+                const r = k.getBoundingClientRect(); if (!r.width) return;
+                const br = Math.min(parseFloat(win.getComputedStyle(k).borderTopLeftRadius) || 0, r.height / 2) * .3;
+                const worst = Math.max(...[[r.left + br, r.top + br], [r.right - br, r.top + br], [r.left + br, r.bottom - br], [r.right - br, r.bottom - br]].map(([x, y]) => Math.hypot(x - cx, y - cy) - R));
+                if (worst > 0.5) out.push(k.className + " vybieha o " + Math.round(worst) + " px");
+              });
+              eq(out, [], w + "×" + h + " (stred " + Math.round(c.width) + " px)");
+              assert(parseFloat(win.getComputedStyle(core.querySelector(".g2q-time")).fontSize) >= 15, w + "×" + h + ": čas menší ako 15 px");
+              assert(/otvoriť meranie/.test(core.getAttribute("aria-label") || ""), "názov ostáva v aria-label (od F8 ťuk otvorí okno merania, nie ukončí)");
+              eq(app.errors, [], "chyby v konzole");
+            } finally { app.remove(); }
+          }
+        },
+        // Master 4.0 (Audit V5, V7, V8, F29): okná mimo 3 úrovní textu (kapitálky 8–12 px, orezané slová, 11 kombinácií).
+        "Typografia opravených okien: Praktické zoznamy, Taška do pôrodnice, Úrady a doklady (zoznam aj detail) – ≤ 5 kombinácií, bez kapitálok, nič pod 13 px": async () => {
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(seed(kind), { width: 375, height: 667 });
+            try {
+              const { doc, win } = app, V5 = win.GugubooV5;
+              const view = () => { const v = doc.querySelector(".view.active"); return [v, v?.querySelector(":scope > .v5-universal-window-head strong")]; };
+              const admin = () => [doc.getElementById("v2AdminOverlay"), doc.getElementById("g2AdminWinTitle")];
+              const screens = kind === "po"
+                ? [["Praktické zoznamy", () => V5.openFeature("checklists"), view], ["Kontrolný zoznam (Zdravie)", () => V5.openChecklistCategory("health"), view]]
+                : [["Taška do pôrodnice", () => V5.openChecklistCategory("hospital"), view]];
+              screens.push(["Úrady a doklady", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); }, admin]);
+              screens.push(["Úrady – detail", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); await sleep(300); doc.querySelector("#v2AdminOverlay .v2-admin-list-item").click(); }, admin]);
+              for (const [name, open, get] of screens) {
+                try { doc.querySelector("#v2AdminOverlay.open [data-v2-admin-close]")?.click(); V5.windowCloseAll?.(); V5.openHome(); } catch (_) { /* nič */ }
+                await sleep(200); await open(); await sleep(450);
+                const [root, head] = get();
+                windowTypeCheck(app, name + " (" + kind + ")", root, head);
+              }
+              // V5: žiadne slovo sa v dlaždici neoreže ani nerozdelí (riadky zoznamu majú celé názvy)
+              if (kind === "po") {
+                V5.openFeature("checklists"); await sleep(300);
+                const cut = [...doc.querySelectorAll(".view.active .v5-checklist-rows strong")].filter(el => el.scrollWidth > el.clientWidth + 1).map(el => el.textContent);
+                eq(cut, [], "Praktické zoznamy: orezané názvy");
+              }
+            } finally { app.remove(); }
+          }
+        },
+        // Master 4.0 (Audit V9): rovnaká vec = rovnaká ikona (kruh je vzor); zámok len pri Súkromnom denníku.
+        "Rovnaká vec = rovnaká ikona: Pohyby (bellyKick), Pitný režim (glassWater), Môj hlas (voice); záloha bez zámku": async () => {
+          const app = await bootApp(seed("pred"));
+          try {
+            const { doc, win } = app, V5 = win.GugubooV5;
+            // kresba bez dvojtónovej výplne (Všetko kreslí ikony s jemnou výplňou – variant „duo“; tvar je ten istý)
+            const shape = svg => svg ? [...svg.children].filter(n => !n.hasAttribute("opacity")).map(n => n.outerHTML).join("") : null;
+            const body = name => { const t = doc.createElement("div"); t.innerHTML = V5.icon(name); return shape(t.querySelector("svg")); };
+            const iconOf = el => shape(el?.querySelector("svg"));
+            V5.openDrawer(); await sleep(300);
+            const tile = label => [...doc.querySelectorAll("#v5DrawerOverlay .g2-tile")].find(b => b.textContent.trim() === label);
+            eq([iconOf(tile("Pohyby bábätka")) === body("bellyKick"), iconOf(tile("Pitný režim")) === body("glassWater"), iconOf(tile("Môj hlas pre bábätko")) === body("voice")], [true, true, true], "Všetko: Pohyby, Pitný režim, Môj hlas");
+            V5.closeDrawer(); V5.openFeature("pregnancy"); await sleep(300);
+            eq(iconOf(doc.querySelector(".view.active [data-v5-book-section='moves'] .v5-icon")) === body("bellyKick"), true, "Tehotenská knižka: Pohyby");
+            V5.openFeature("mama"); await sleep(300);
+            eq(iconOf(doc.querySelector(".view.active .v2-mama-water > .v5-icon")) === body("glassWater"), true, "Mama: Pitný režim");
+            win.G2Backup.open(); await sleep(300);
+            const lock = body("lock");
+            eq([...doc.querySelectorAll("#g2BackupOverlay .g2r-act")].filter(el => iconOf(el) === lock).map(el => el.textContent.trim().slice(0, 30)), [], "Záloha: zámok");
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        },
+        // Master 4.0 (Audit V10, V16): × v každom okne jednej podoby a s plochou aspoň 44 × 44 px.
+        "× v oknách: 44 × 44 px a jedna farba (okno záložky, Plán, kruh, Čas pre teba, Záloha, Úrady, prehliadka)": async () => {
+          const app = await bootApp(seed("pred"));
+          try {
+            const { doc, win } = app, V5 = win.GugubooV5, seen = [];
+            const steps = [
+              ["okno záložky", () => V5.openFeature("calendar")], ["Plán", () => V5.openPlan()], ["Dnes", () => doc.querySelector("#home.view.active .g2q-core").click()],
+              ["Čas pre teba", () => win.G2Ring.overview()], ["Záloha", () => win.G2Backup.open()], ["prehliadka", () => win.GugubooTour.start()],
+              ["Úrady", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); }]
+            ];
+            for (const [name, open] of steps) {
+              try { win.G2Backup.close(); win.G2Ring.close?.(); doc.querySelector(".v2-tour-close")?.click(); doc.querySelector("#v2AdminOverlay.open [data-v2-admin-close]")?.click(); V5.windowCloseAll?.(); V5.openHome(); } catch (_) { /* nič */ }
+              await sleep(200); await open(); await sleep(450);
+              const x = [...doc.querySelectorAll("button")].filter(b => isVisible(b) && /^(Zavrieť|Zavrieť prehliadku|Zrušiť a vrátiť sa domov)$/.test(b.getAttribute("aria-label") || "")).pop();
+              assert(x, name + ": chýba ×");
+              const r = x.getBoundingClientRect(), cs = win.getComputedStyle(x);
+              assert(r.width >= 44 && r.height >= 44, name + ": × má len " + Math.round(r.width) + " × " + Math.round(r.height) + " px");
+              seen.push(cs.color + " / " + cs.backgroundColor);
+            }
+            eq([...new Set(seen)].length, 1, "× má rôzne farby: " + JSON.stringify([...new Set(seen)]));
+            eq(app.errors, [], "chyby v konzole");
+          } finally { app.remove(); }
+        }
+      }
     }
   ];
+
+  // ——— Master 4.0 (Audit V1, V2, V3, F1): kontrast textu k skutočnému pozadiu ———
+  // Pozadie = vrstvy predkov (farba aj zastávky prechodu) až po prvú nepriehľadnú; text so svojou priehľadnosťou a priehľadnosťou
+  // predkov. Najhorší pomer zo všetkých zastávok prechodu. Neaktívne ovládanie (disabled) a text len pre čítačky sa nemerajú (WCAG).
+  const rgbaOf = c => { const m = String(c).match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+  const lumOf = c => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b); };
+  const over = (top, bot) => ({ r: top.r * top.a + bot.r * (1 - top.a), g: top.g * top.a + bot.g * (1 - top.a), b: top.b * top.a + bot.b * (1 - top.a), a: 1 });
+  function backgroundsOf(win, el) {
+    const layers = [];
+    for (let e = el; e; e = e.parentElement) {
+      const cs = win.getComputedStyle(e), grads = (cs.backgroundImage.match(/rgba?\([^)]+\)/g) || []).map(rgbaOf).filter(Boolean), col = rgbaOf(cs.backgroundColor);
+      if (grads.length && grads.some(g => g.a > .5)) { layers.push({ grads, col }); if (grads.every(g => g.a >= .99)) break; }
+      else if (col && col.a > 0) { layers.push({ col }); if (col.a >= .99) break; }
+    }
+    let bases = [win.document.body.classList.contains("night") ? { r: 16, g: 20, b: 33, a: 1 } : { r: 251, g: 248, b: 247, a: 1 }];
+    for (let i = layers.length - 1; i >= 0; i--) {
+      const L = layers[i], next = [];
+      bases.forEach(b => { const bb = L.col && L.col.a > 0 && L.grads ? over(L.col, b) : b; if (L.grads) L.grads.forEach(g => next.push(over(g, bb))); else next.push(over(L.col, b)); });
+      bases = next;
+    }
+    return bases;
+  }
+  function contrastIssues(app, root) {
+    const { win, doc } = app, out = [], seen = new Set();
+    const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const el = walker.currentNode.parentElement, text = walker.currentNode.nodeValue.trim();
+      if (!text || !el || seen.has(el) || /^(SCRIPT|STYLE|OPTION|TEMPLATE)$/.test(el.tagName) || !/[\p{L}\p{N}]/u.test(text) || el instanceof win.SVGElement) continue;
+      seen.add(el);
+      if (!isVisible(el) || el.closest("[disabled], [aria-disabled='true'], .v5-sr-only, .sr-only")) continue;
+      const cs = win.getComputedStyle(el), fg0 = rgbaOf(cs.color);
+      if (!fg0) continue;
+      let alpha = fg0.a; for (let e = el; e; e = e.parentElement) alpha *= +win.getComputedStyle(e).opacity;
+      const fg = { ...fg0, a: alpha };
+      const ratio = Math.min(...backgroundsOf(win, el).map(b => { const x = lumOf(over(fg, b)), y = lumOf(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }));
+      const size = parseFloat(cs.fontSize), large = size >= 24 || (size >= 18.66 && +cs.fontWeight >= 700);
+      if (ratio < (large ? 3 : 4.5)) out.push(ratio.toFixed(2) + " „" + text.slice(0, 32) + "“");
+    }
+    return out;
+  }
+  // Okná na kontrolu kontrastu (rovnaké pre deň aj noc) – staré karty a rámčeky z auditu.
+  function contrastSeed(kind, night) {
+    const now = new Date().toISOString();
+    return kind === "po"
+      ? ringSeed("po", { night, extra: { events: [ev("Kŕmenie", 25, { method: "Dojčenie", side: "Ľavý prsník", value: "Dojčenie · Ľavý prsník · 12 min" })] } })
+      : ringSeed("pred", { night, v5: { babyMoves: [{ id: "m1", time: now }] } });
+  }
+  function contrastWindows(app, kind) {
+    const { doc, win } = app, V5 = win.GugubooV5;
+    const click = sel => doc.querySelector(".view.active " + sel)?.click();
+    const sub = (feature, sel) => async () => { V5.openFeature(feature); await sleep(300); click(sel); };
+    const common = [["Kontakty na pomoc (155, 112)", () => V5.openFeature("urgent")], ["Môj hlas pre bábätko", () => V5.openFeature("voice")], ["Naša časová os", sub("memories", "[data-v2-moments-open='timeline']")], ["Úrady a doklady", async () => { V5.openFeature("familyHub"); await sleep(300); [...doc.querySelectorAll(".view.active .g2-hub-row")].find(b => /Úrady/.test(b.textContent)).click(); }]];
+    return kind === "pred" ? [
+      ["Pohyby bábätka (E3)", sub("pregnancy", "[data-v5-book-section='moves']")], ["Čo je bežné", sub("mama", "[data-v2-mama-section='troubles']")],
+      ["Jedlo a pohyb", sub("mama", "[data-v2-mama-section='food']")], ["Tvoj týždeň", () => V5.openFeature("babySize")],
+      ["Taška do pôrodnice", () => V5.openChecklistCategory("hospital")], ...common
+    ] : [
+      ["Telo po pôrode", sub("mama", "[data-v2-mama-section='troubles']")], ["Kontrola po pôrode", sub("mama", "[data-v2-mama-section='check']")],
+      ["Nálada a spánok", sub("mama", "[data-v2-mama-section='mood']")], ["Menštruačný kalendár", () => V5.openFeature("period")],
+      ["Prehliadky u pediatra", sub("childBook", "[data-v2-child-section='checks']")], ["Očkovanie", sub("childBook", "[data-v2-child-section='vaccines']")],
+      ["Aktivity", () => V5.openFeature("activities")], ["Praktické zoznamy", () => V5.openFeature("checklists")],
+      ["Kŕmenie", () => tapSeg(app, "feed")], ["Tvoj mesiac", () => V5.openMonth?.()], ...common
+    ];
+  }
+  async function contrastWindow(app, name, open) {
+    const { doc, win } = app;
+    try { doc.querySelector("#g2QuickOverlay.open [data-g2q='close']")?.click(); doc.querySelector("#v2AdminOverlay.open [data-v2-admin-close]")?.click(); win.GugubooV5.closeMonth?.(); win.GugubooV5.windowCloseAll?.(); win.GugubooV5.openHome(); } catch (_) { /* nič */ }
+    await sleep(200); await open(); await sleep(450);
+    const root = ["#g2QuickOverlay.open", "#v2AdminOverlay.open", "#g2MonthOverlay.open"].map(s => doc.querySelector(s)).find(Boolean) || doc.querySelector(".view.active");
+    if (!root || !isVisible(root)) return [name + ": okno sa neotvorilo"];
+    root.querySelectorAll("details:not([open])").forEach(d => { d.open = true; });
+    return contrastIssues(app, root).map(t => name + ": " + t);
+  }
 
   // Master 3.6: viditeľné texty na obrazovke → kombinácie (veľkosť/hrúbka/kapitálky). Text v SVG (kruh) sa meria
   // v skutočnej veľkosti na obrazovke (font-size × zmenšenie SVG). Šípky „›“ a „×“ sa zatiaľ počítajú tiež.

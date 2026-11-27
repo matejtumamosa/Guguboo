@@ -1037,3 +1037,115 @@ body.night .private-lock svg.ph { color: #c6bcff; }
    mu dávalo tmavý obdĺžnik); iskra v uvítacom okne vo fialovej ikon (bola takmer biela na svetlom štvorčeku). */
 :is(html, #g2gl#g2gl) body.v5-active.night .v2-tour-card .v2-tour-skip { background: transparent !important; }
 :is(html, #g2gl#g2gl) body.v5-active.night .v2-tour-card .v2-tour-icon { color: #6a4fc4 !important; }
+
+/* ===== Master 4.0 (Audit V1, V2, F1): noc – staré karty a rámčeky (v2-*, v5-check, časová os, menštruácia, Aktivity…)
+   mali denné svetlé pozadie, g2-text.css im však v noci dáva svetlý text (kontrast 1,0–1,7 : 1). Jeden blok nočných pozadí
+   cez tokeny (--v5-surface #1b2130, --v5-surface-soft #252a3d, --v5-brand-soft #302d4b, --v5-line) – farby textu sa nemenia.
+   Kontrolu robí test.html (sada „Kontrast v noci“: ≥ 4,5 : 1 k skutočnému pozadiu). ===== */
+:is(html, #g2n#g2n) body.v5-active.night :is(.v2-mama-trouble, .v2-mama-card, .v2-voice-card, .v2-tl-card, .v2-tl-dot, .v2-album-row, .v2-per-tiles div, .v2-cal-grid button, .v5-check-item-card, .v5-checklist-detail-head, .v5-sleep-type, #activities .act2-parent, #activities .act2-soon-item, #activities .act2-row, .v2-pressure-list > div, .v2-ask-card, .v2-days-card, .v2-org-row, .v2-ex-card, .v2-visit-card, .v2-doctor-block, .v2-cal-item, .v2-size-tip, .v2-size-mom) {
+  background: var(--v5-surface) !important; background-image: none !important; border-color: var(--v5-line) !important;
+}
+/* vnorené rámčeky v karte (bezpečnostná veta E3 „Keď sa niečo zmení“, stav cyklu, Album, „Čoskoro“) – o stupeň svetlejšie */
+:is(html, #g2n#g2n) body.v5-active.night :is(.v2-calm-box, #activities .act2-safety, .v5-warning-box) {
+  background: var(--v5-surface-soft) !important; background-image: none !important; border-color: rgba(169, 186, 240, .32) !important;
+}
+:is(html, #g2n#g2n) body.v5-active.night :is(.v2-per-status, .v2-album-head, #activities .act2-soon) {
+  background: var(--v5-surface-soft) !important; background-image: none !important; border-color: var(--v5-line) !important;
+}
+:is(html, #g2n#g2n) body.v5-active.night :is(.v2-per-chips button:not(.active), .v2-cal-month-head button, .v2-voice-record, #activities .act2-domain) {
+  background: var(--v5-brand-soft) !important; background-image: none !important; border-color: var(--v5-line) !important;
+}
+:is(html, #g2n#g2n) body.v5-active.night .v2-per-chips button.active:not([class*="flow-"]) { background: #3d3566 !important; border-color: #c6bcff !important; color: var(--t-ink) !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-per-grid button.is-predicted { background: var(--v5-surface) !important; }
+/* vybraný deň v kalendári: biela na #5f4fb1 (6,3 : 1; predtým #7866cb = 4,3 a v noci #a99af0 = 2,3); silná menštruácia tmavým textom */
+:is(html, #g2n#g2n) body.v5-active .v2-cal-grid button.is-selected { background: #5f4fb1 !important; border-color: #5f4fb1 !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-cal-grid button.is-selected { background: #6a5ac0 !important; border-color: #c6bcff !important; }
+:is(html, #g2n#g2n) body.v5-active .v2-per-grid button.is-period.is-heavy:not(.is-selected) { color: #4a1428 !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-tl::before { background: linear-gradient(#3d3566, #4a3341); }
+:is(html, #g2n#g2n) body.v5-active.night .v2-voice-record { color: #f3a6bd !important; box-shadow: 0 10px 26px rgba(0, 0, 0, .3), inset 0 0 0 6px rgba(255, 255, 255, .06) !important; }
+:is(html, #g2n#g2n) body.v5-active.night #activities .act2-today .act2-domain { color: var(--t-muted) !important; }
+/* GuguChat v noci: správa používateľa na svetlej fialovej = tmavý text (biela na #a99af0 mala 2,4 : 1) */
+:is(html, #g2n#g2n) body.v5-active.night .v2-msg-user { background: #c6bcff !important; color: #1f1a2e !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-msg-user :is(p, li, strong) { color: #1f1a2e !important; }
+/* Staré obrazovky V1 (Denné záznamy, Kontakty na pomoc, Rast, Zdravie): hlavné tlačidlo ako v5-primary – deň biela na #5f4fb1,
+   noc tmavý text na #c6bcff; odkazy na volanie čitateľné aj v noci. */
+:is(html, #g2n#g2n) body.v5-active:not(.night) .view :is(button, a).primary { background: #5f4fb1 !important; background-image: none !important; color: #fff !important; }
+:is(html, #g2n#g2n) body.v5-active.night .view :is(button, a).primary { background: #c6bcff !important; background-image: none !important; color: #1f1a2e !important; }
+:is(html, #g2n#g2n) body.v5-active .view :is(.contact-actions a, .age-card b, .panel .pill) { color: var(--t-brand) !important; } /* staré --brand #7b6bc8 = 4,39 : 1 */
+:is(html, #g2n#g2n) body.v5-active.night .view :is(.contact-actions a, .age-card) { background: var(--v5-surface) !important; border-color: var(--v5-line) !important; }
+/* tiesňové „Volať 155 / 112“ ostávajú biele na červenej (5,3 : 1) – deň aj noc */
+:is(html, #g2n#g2n) body.v5-active .view .urgent-first-action .contact-actions a { color: #fff !important; background: #b63f55 !important; border-color: #b63f55 !important; }
+/* „Zapísané 0 z 9“ v Prehliadkach u pediatra: fialová ikon #6a4fc4 aj v noci (2,4 : 1) → farba značky z tokenu */
+:is(html, #g2n#g2n) body.v5-active .v2-check-progress { color: var(--t-brand) !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-check-progress { background: var(--v5-brand-soft) !important; }
+/* Albumy: zamknutý album má tlmenú len obálku – text „Otvorí sa …“ bol cez priehľadnosť .62 nečitateľný (2,9 : 1) */
+.v2-album-row.is-locked { opacity: 1; }
+.v2-album-row.is-locked .v2-album-cover, .v2-album-row.is-locked > b { opacity: .62; }
+/* Aktivity: počet vo vybranom filtri (biela .8 na farbe = 3,9 : 1) */
+:is(html, #g2n#g2n#g2n) body.v5-active #activities .act2-chips button.active span { color: inherit !important; }
+
+/* ===== Master 4.0 (Audit V4/F18): bežiaci čas v strede kruhu sa zmestí do bieleho stredu (g2qFitCore vo v5-mobile.js) ===== */
+.g2q-core .g2q-stop { display: inline-grid; grid-auto-flow: column; align-items: center; justify-content: center; }
+.g2q-core .g2q-stop-ic { display: none; }
+.g2q-core .g2q-stop-ic svg.ph { width: 16px !important; height: 16px !important; }
+.g2q-core.is-tight .g2q-stop { width: 30px; height: 30px; padding: 0 !important; border-radius: 50%; }
+.g2q-core.is-tight .g2q-stop-ic { display: grid; }
+.g2q-core.is-tight .g2q-stop-t { display: none; }
+.g2q-core.is-tighter .g2q-core-ic, .g2q-core.is-tightest .g2q-cl, .g2q-core.is-bare .g2q-stop { display: none !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active .g2q-core.is-tight .g2q-time { line-height: 1.1 !important; }
+
+/* ===== Master 4.0 (Audit V5, V8, V13): Praktické zoznamy = riadky ako v koreni záložky; kontrolný zoznam s ikonami namiesto „＋ ✓“ ===== */
+.v5-checklist-sub { margin: 0 4px; }
+.v5-checklist-rows { margin-top: 0; }
+.v5-check-toggle svg.ph { width: 18px !important; height: 18px !important; color: currentColor; }
+.v5-check-add button { display: grid; place-items: center; }
+.v5-check-add button svg.ph { width: 22px !important; height: 22px !important; color: currentColor; }
+body.v5-active.night .v5-check-add button { background: #c6bcff; color: #1f1a2e; }
+
+/* ===== Master 4.0 (Audit V10, V16): × v každom okne jednej podoby – biely kruh 44 × 44, ikona 22 px vo farbe značky
+   (ako v oknách záložiek); predtým tmavé v oknách kruhu, menšie v starých oknách a 36 × 36 bez kruhu v prehliadke.
+   Rovnakou farbou aj šípka späť a lupa v hlavičkách okien kruhu, Plánu a Úradov. ===== */
+:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) {
+  place-items: center; width: 44px !important; height: 44px !important; /* display sa nemení – záložky × skrývajú (Master 2.3) */ min-width: 44px !important; min-height: 44px !important;
+  padding: 0 !important; border-radius: 50% !important; color: var(--t-brand, #5f4fb1) !important;
+  background: var(--v5-surface) !important; border: 1px solid var(--v5-line) !important; box-shadow: 0 4px 12px rgba(58, 44, 83, .08) !important;
+}
+:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) svg {
+  width: 22px !important; height: 22px !important;
+}
+:is(html, #g2n#g2n) body.v5-active :is(.g2-window-head, .g2-ring-sheet-head) .v5-icon-button { color: var(--t-brand, #5f4fb1) !important; }
+:is(html, #g2n#g2n) body.v5-active .v2-tour-close { display: grid; top: 6px; right: 6px; }
+/* Audit F11: neaktívne „Uložiť“ (Odsávanie pred výberom množstva) nesmie vyzerať aktívne – tlmené ako ostatné neaktívne tlačidlá */
+:is(html, #g2n#g2n#g2n) body.v5-active .g2r-btn:disabled { opacity: .45 !important; cursor: default; box-shadow: none !important; }
+/* Audit F19: Starostlivosť – názvy tém sa neorežú („Plač a upo…“), zalomia sa medzi slovami na dva riadky */
+:is(html, #g2n#g2n) body.v5-active .v5-care-topic-grid .v5-quick-tile strong { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; text-align: center; overflow-wrap: normal; hyphens: manual; }
+.v5-care-topic-grid .v5-quick-tile { padding-left: 6px !important; padding-right: 6px !important; }
+/* Audit V30: Môj hlas – čipy zľava ako vo zvyšku appky (predtým stĺpec na stred) */
+.v2-voice-card .v2-ann-chips { justify-content: flex-start; }
+/* Audit V16: dotykové plochy aspoň 44 px – čipy Menštruačného kalendára (38 px), Menu na domove (42 px) */
+:is(html, #g2n#g2n) body.v5-active .v2-per-chips button { min-height: 44px !important; }
+:is(html, #g2n#g2n) body.v5-active .v2-menu-button { min-width: 44px !important; width: 44px; }
+/* Audit F29: „Ako to vybaviť“ v Úradoch bez textového trojuholníka (ako „Viac“ v ostatných oknách) */
+.v2-admin-more > summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; list-style: none; }
+.v2-admin-more > summary::-webkit-details-marker { display: none; }
+
+/* ===== Master 4.0 (Audit V15, F18): úzky displej 320 px – skratky domova 14 px (nie 13), slová sa nedelia; stĺpce podľa
+   dĺžky názvu („Starostlivosť“ je dlhšie ako „Aktivity“), aby sa najdlhšie slovo zmestilo bez dotyku okraja.
+   Zásuvka Všetko: zalamuje sa len medzi slovami („Starostlív-osť“ → celé slovo). ===== */
+:is(html, #g2gl#g2gl#g2gl) body.v5-active:has(#home.view.active) .g2-shorts .g2-short strong,
+:is(html, #g2gl#g2gl#g2gl) body.v5-active #v5DrawerOverlay :is(strong, span, small) { hyphens: manual !important; -webkit-hyphens: manual !important; overflow-wrap: normal !important; word-break: normal !important; }
+@media (max-width: 359px) {
+  :is(html, #g2gl#g2gl#g2gl#g2gl) body.v5-active:has(#home.view.active) .g2-shorts { grid-template-columns: repeat(3, auto); gap: 4px; }
+  :is(html, #g2gl#g2gl#g2gl#g2gl) body.v5-active:has(#home.view.active) .g2-shorts .g2-short { padding-left: 8px !important; padding-right: 8px !important; }
+  :is(html, #g2gl#g2gl#g2gl#g2gl) body.v5-active:has(#home.view.active) .g2-shorts .g2-short strong { font-size: 14px !important; line-height: 20px !important; letter-spacing: 0 !important; }
+  /* Všetko: pri 320 px sa „Starostlivosť“ do polovice šírky nezmestí ani celé – dlaždice v jednom stĺpci (Audit V15) */
+  .g2-tiles { grid-template-columns: minmax(0, 1fr); }
+}
+.g2-tile > span:last-child { overflow-wrap: normal; }
+
+/* ===== Master 4.0 (Audit V13): znaky v ovládaní → linkové ikony (veľkosti ikon v tlačidlách) ===== */
+.v2-voice-record svg.ph { width: 30px !important; height: 30px !important; }
+.v2-voice-record.is-recording svg.ph { width: 24px !important; height: 24px !important; }
+.act2 .act2-fav svg.ph { width: 22px !important; height: 22px !important; }
+.act2 .act2-fav[aria-pressed="true"] svg.ph [opacity] { opacity: .85; }
+:is(html, #g2n#g2n) body.v5-active :is(.v2-water-count button, .v2-mama-water > [data-v5-water-add]) { color: var(--t-brand) !important; display: inline-grid; place-items: center; }

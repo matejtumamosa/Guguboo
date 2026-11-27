@@ -2,10 +2,20 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9.2, nové ikony skratiek)_
+_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 4.0, upratanie po úplnom audite 3.9.2)_
 
 ## Verzia
 
+- **Master 4.0 – upratanie po úplnom audite 3.9.2** (audity `AUDIT_3.9.2_*` v `guguboo-v2/docs/ux-master/`, lokálne), zlúčené
+  z troch častí: **A** noc a vizuál (kontrast v noci aj cez deň, štítky na fialovej, bežiaci čas sa zmestí do stredu kruhu
+  aj na 320 px, jedna ikona pre jednu vec, ikony namiesto znakov ▶ ■ − ＋ ✓, × 44 px); **B** zdravotný obsah podľa spresneného
+  pravidla „sprievodca, nie lekár“ (mäkké vety so zdrojom, Cviky bez cieľa a počítadiel, bezpečnostné vety a 155/112 len cez
+  `g2-safety.js`); **C** funkcie, navigácia a texty (stred kruhu pri bežiacom meraní otvorí okno merania, jeden výpočet veku
+  `babyAge()`, systém okien, tykanie a bez rodu, jednotná podoba „Zdroj: NHS · overené …“). Pri zlúčení doplnené T3, T10, T14,
+  T21, T115. test.html celý zelený.
+- **Ostáva:** systémové okienka (alert/confirm) nahradiť oknami appky; sumy 2027 (rodičovský, daňový bonus) overiť po zverejnení;
+  vety ⚕ na potvrdenie pediatrom / pôrodnou asistentkou; návrhy na rozhodnutie Sama (Z10 Dýchaj so mnou, Z12 postupy v úlohách
+  Rodiny, Z15 zoznam „vynechať“ a alkohol, Z32, Z33, Z35, V32 ikony Aktivít v noci, krízová veta T21 na potvrdenie C&S).
 - **Master 3.9.2** (vo vetve `v2`), priečinok `guguboo-master/`. 3.9.2: skratky s textom, nové ikony Starostlivosť (swaddle), Aktivity (blocks), Otázky pre lekára (doctorQ). Otvorené z kontroly 3.9.1: Prehľad dňa (bodka bez textu, výrazné „Upraviť“), koniec úvodu po pôrode (prázdny kruh, vykanie „Ako vás…“), hlavička Oznámenia.
 - Náhľad: https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/app.html
 - Web (náhľad): https://v2--tranquil-lamington-f829d9.netlify.app/guguboo-master/web.html

@@ -50,12 +50,12 @@
         "<div class='v2-voice-preview'><audio controls src='", draft.src, "'></audio><small>", fmt(draft.seconds), "</small></div>",
         "<div class='v2-ann-share'><button type='button' class='v5-primary' data-v2-voice-save>Uložiť nahrávku</button><button type='button' class='v5-secondary' data-v2-voice-again>Nahrať znova</button></div>"
       ].join("") : [
-        "<button type='button' class='v2-voice-record", recording ? " is-recording" : "", "' data-v2-voice-toggle aria-label='", recording ? "Zastaviť nahrávanie" : "Začať nahrávať", "'><span aria-hidden='true'>", recording ? "■" : "●", "</span></button>",
+        "<button type='button' class='v2-voice-record", recording ? " is-recording" : "", "' data-v2-voice-toggle aria-label='", recording ? "Zastaviť nahrávanie" : "Začať nahrávať", "'>", window.GugubooV5.glyph(recording ? "stop" : "voice"), "</button>", // Master 4.0 (Audit V13): ● ■ → ikony
         "<p class='v2-voice-time' id='v2VoiceTime'>", recording ? fmt(elapsed) + " / " + fmt(MAX_SECONDS) : "Ťukni a nahrávaj (najviac " + fmt(MAX_SECONDS) + ")", "</p>"
       ].join(""),
       message ? "<p class='v2-voice-msg'>" + esc(message) + "</p>" : "",
       "</section>",
-      items.length ? "<h3 class='v2-book-group'>Naše nahrávky</h3><div class='v2-pressure-list v2-voice-list'>" + items.map(item => "<div><button type='button' class='v2-voice-play' data-v5-play-lullaby='" + esc(item.id) + "' aria-label='Pustiť " + esc(item.title) + "'>▶</button><span><b>" + esc(item.title) + "</b><br>" + esc(new Date(item.created).toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })) + "</span><button type='button' class='v2-voice-del' data-v2-voice-delete='" + esc(item.id) + "' aria-label='Vymazať nahrávku'>" + window.GugubooV5.glyph("close") + "</button></div>").join("") + "</div>" : "",
+      items.length ? "<h3 class='v2-book-group'>Naše nahrávky</h3><div class='v2-pressure-list v2-voice-list'>" + items.map(item => "<div><button type='button' class='v2-voice-play' data-v5-play-lullaby='" + esc(item.id) + "' aria-label='Pustiť " + esc(item.title) + "'>" + window.GugubooV5.glyph("play") + "</button><span><b>" + esc(item.title) + "</b><br>" + esc(new Date(item.created).toLocaleDateString("sk-SK", { day: "numeric", month: "long", year: "numeric" })) + "</span><button type='button' class='v2-voice-del' data-v2-voice-delete='" + esc(item.id) + "' aria-label='Vymazať nahrávku'>" + window.GugubooV5.glyph("close") + "</button></div>").join("") + "</div>" : "",
       "<p class='v5-book-note'>Nahrávky ostávajú len v tomto telefóne. Najviac ", MAX_ITEMS, " nahrávok po ", MAX_SECONDS / 60, " minúty.</p>" // Master 4.0 (Audit T88)
     ].join("");
   }

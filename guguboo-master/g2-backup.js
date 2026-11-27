@@ -58,8 +58,8 @@
         : "<p>V prehliadači otvor ponuku <strong>⋮</strong> a vyber <strong>Inštalovať aplikáciu</strong> alebo <strong>Pridať na plochu</strong>.</p>",
       "</section>",
       "<section class='g2r-info'><h3>Záloha</h3><p class='g2r-small'>Záloha je súbor so všetkými údajmi z appky, aj s fotkami a nahrávkami. Hodí sa pri novom telefóne. Ulož si ho na bezpečné miesto a nikomu ho neposielaj.</p>", // Master 4.0 (Audit T57)
-      act("save", "lock", "Uložiť zálohu", "zisťujem veľkosť…"),
-      "<label class='g2r-act g2q-file'><i>" + icon("lock") + "</i><span>Obnoviť zo zálohy<small>prepíše údaje v tomto telefóne</small></span><input id='g2bRestore' type='file' accept='application/json,.json'></label>",
+      act("save", "download", "Uložiť zálohu", "zisťujem veľkosť…"), // Master 4.0 (Audit V9): zámok len pri Súkromnom denníku
+      "<label class='g2r-act g2q-file'><i>" + icon("upload") + "</i><span>Obnoviť zo zálohy<small>prepíše údaje v tomto telefóne</small></span><input id='g2bRestore' type='file' accept='application/json,.json'></label>",
       "</section>",
       "<button class='g2r-link' type='button' data-g2b='wipe'>Vymazať všetky údaje z tohto telefónu</button>"
     ].join("");
