@@ -18,6 +18,9 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
   medzery domova (kruh v 38. t. 95 → 127 px); v noci text karty týždňa/bábätka bez vlastného pozadia; okná bez tlačidla späť majú
   nadpis pri okraji; zámok s užším a vyšším oblúkom (ikona `lock` všade); „✓ Vybavené“ v Pláne a Úradoch = ikona `check`;
   „×“ v stave „3×“ hrubšie ako písmo okolo.
+- **Retest QA 3.9:** názov skratky na domove je vždy celý v karte s okrajom aspoň 8 px – na šírke ≤ 380 px Drobné 14 px,
+  na ≤ 359 px 13 px s tesnejším písmom a medzerou kariet 4 px (text sa neskracuje). Okno kruhu po otvorení dáva fokus nadpisu
+  (nie prvému tlačidlu – bez rámika po ťuknutí). V Mame pri Pitnom režime už nie je „· nastaviť“ (zvyšok po cieli z 3.8).
 
 ## 2026-11-26 – Samo (Master 3.8: sprievodca, nie lekár; jednotné názvy kruhu)
 - **Guguboo je sprievodca, nie lekár:** smú byť len ľahké informatívne tvrdenia so zdrojom a dátumom overenia; nikdy rada,

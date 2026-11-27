@@ -1121,6 +1121,27 @@
             }
           }
         },
+        // Master 3.9 (QA N1, N2): „Starostlivosť“ vybiehalo na 320 px cez okraj karty, na 375 px malo okraj ~4 px.
+        "Názov každej skratky na domove je celý vnútri jej karty s okrajom aspoň 8 px a písmom aspoň 13 px (pred, 38. t., po; 390 / 375 / 320)": async () => {
+          const cases = [["pred", ringSeed("pred")], ["38. t.", ringSeed("pred", { due: 14 })], ["po", ringSeed("po")]];
+          for (const [w, h] of [[390, 844], [375, 667], [320, 568]]) {
+            for (const [name, data] of cases) {
+              const app = await bootApp(data, { width: w, height: h });
+              try {
+                await sleep(300);
+                const shorts = [...app.doc.querySelectorAll("#home.view.active .g2-short")].filter(isVisible);
+                assert(shorts.length === 3, name + " " + w + ": počet skratiek " + shorts.length);
+                shorts.forEach(b => {
+                  const s = b.querySelector("strong"), r = app.doc.createRange(); r.selectNodeContents(s);
+                  const t = r.getBoundingClientRect(), c = b.getBoundingClientRect(), label = name + " " + w + " × " + h + ": „" + s.textContent.trim() + "“";
+                  assert(t.left >= c.left + 7.5 && t.right <= c.right - 7.5 && t.top >= c.top && t.bottom <= c.bottom, label + " vybieha z karty (text " + Math.round(t.left) + "–" + Math.round(t.right) + ", karta " + Math.round(c.left) + "–" + Math.round(c.right) + ")");
+                  assert(parseFloat(app.win.getComputedStyle(s).fontSize) >= 13, label + ": písmo pod 13 px");
+                });
+                eq(app.errors, [], "chyby v konzole");
+              } finally { app.remove(); }
+            }
+          }
+        },
         "Šípky „›“ „‹“ a zatvorenie „×“ sú ikony, nie znaky písma (domov, okno kruhu, Prehľad dňa, Plán, Bábätko, Mama, Rodina, Všetko)": async () => {
           const glyphs = (doc, win) => {
             const bad = [], walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);

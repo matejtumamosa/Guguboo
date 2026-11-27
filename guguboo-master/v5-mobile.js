@@ -1589,7 +1589,9 @@
     el.querySelector(".g2q-body").innerHTML = html;
     el.classList.add("open");
     el.setAttribute("aria-hidden", "false");
-    setTimeout(() => el.querySelector(".g2q-body .g2r-act, .g2q-body button, .g2q-body input")?.focus({ preventScroll: true }), 60);
+    // Master 3.9 (QA N3): fokus po otvorení na nadpis okna (ako spoločný systém okien), nie na prvé tlačidlo – inak mal „−1“ / „Ľavý“
+    // hrubý fokusový rámik hneď po ťuknutí. Klávesnicou sa ide Tabom ďalej na tlačidlá.
+    setTimeout(() => byId("g2qTitle")?.focus({ preventScroll: true }), 60);
   }
   function g2qClose() {
     const el = byId("g2QuickOverlay");
@@ -5361,7 +5363,7 @@
         : "<section class='v2-book-hero v2-mama-hero'><h1>" + escapeHtml(parentDisplayName() || "Mama") + "</h1><p>" + (expecting ? (currentWeek ? currentWeek + ". týždeň tehotenstva" : "Tehotenstvo") : escapeHtml(afterBirth)) + "</p></section>",
       // Master 2.1 (Samo 15. 11.): Čas pre teba sa presunul z domova sem – navrchu Mamy, tri časti na jedno ťuknutie.
       MASTER ? "<section class='g2q-me' aria-label='Čas pre teba'><button type='button' class='g2q-me-head' data-v5-o-section='care'><span><strong>Čas pre teba</strong><small>Malá chvíľa</small></span><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button><div class='g2q-me-parts'><button type='button' class='g2r-part g2r-p1' data-g2-ring-part='rest'>" + icon("feather") + "<span>Oddych</span></button><button type='button' class='g2r-part g2r-p2' data-g2-ring-part='body'>" + icon("personTaiChi") + "<span>Telo</span></button><button type='button' class='g2r-part g2r-p3' data-g2-ring-part='sup'>" + icon("handshake") + "<span>Opora</span></button></div></section>" : "",
-      "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) + " · nastaviť", "</small>",
+      "<div class='v2-mama-water'><span class='v5-icon'>", icon("water"), "</span><button type='button' class='v2-mama-water-open' data-v2-mama-section='water'><strong>Pitný režim</strong><small>", escapeHtml(waterProgressText()) /* Master 3.9 (QA N4): bez „· nastaviť“ – zvyšok po zrušenom cieli (3.8); ťuk otvorí Pitný režim */, "</small>",
       "</button>",
       "<button type='button' data-v5-water-add aria-label='Pridať pohár'>＋</button></div>",
       "<div class='v2-book-tools'>",
