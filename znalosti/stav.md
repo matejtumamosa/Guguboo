@@ -62,7 +62,9 @@ _Naposledy aktualizované: 27. 11. 2026 (Claude – Master 3.9, grafické dorovn
   malý telefón len cez CSS podľa výšky (375 × 667 kruh ~165–187 px, 320 × 568 domov bez posúvania). test.html: nová sada
   „Grafické dorovnanie (Master 3.9)“, výnimka „stav v kruhu pod 13 px“ zrušená. Zostáva: staré V1 časti (`v4-upgrade.js`,
   skrytá V1 navigácia v `app.html`) majú ešte znaky/emoji – v Master sa neukazujú. Na rozhodnutie: kratší stav („45 min“ namiesto
-  „pred 45 min“), aby sa zmestil aj v dieloch po pôrode.
+  „pred 45 min“), aby sa zmestil aj v dieloch po pôrode. Po vizuálnej kontrole (QA 3.9): stred malého kruhu len „Dnes“,
+  320 × 568 tesnejšie medzery, v noci bez tmavého bloku v karte týždňa, nadpis okien kruhu pri okraji, nový zámok, fajka
+  v Pláne ako ikona, „×“ v „3×“ hrubšie; test.html: stred kruhu vs. ikony dielov (76 zelených).
 - Otvorené po 3.8: `web.html` (riadky ~508, 623, 964–968) ešte opisuje kruh 2.x („Náš deň“, Bruško, Pre bábätko, Prvý pohyb) –
   zosúladiť pri úprave webu; N6 (Kontrakcie v 36. t., odkaz na E7) a vety ⚕ – potvrdí pôrodná asistentka; `knowledge-monitor.mjs`
   doplniť o URL NHS (movements, week-15, birth plan, foods-to-avoid). Na rozhodnutie podľa nového pravidla (bez noriem

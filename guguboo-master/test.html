@@ -1092,6 +1092,35 @@
             }
           }
         },
+        // Master 3.9 (QA V1): v 38. t. na 320 × 568 „Dnes“ vypĺňalo celý biely stred a takmer sa dotýkalo ikon dielov.
+        "Stred kruhu: „Dnes“ (a hodiny) celé v bielom strede, ikony dielov do stredu nezasahujú (pred, 38. t., po; 390 / 375 / 320)": async () => {
+          const cases = [["pred", ringSeed("pred")], ["38. t.", ringSeed("pred", { due: 14 })], ["po", ringSeed("po")]];
+          for (const [w, h] of [[390, 844], [375, 667], [320, 568]]) {
+            for (const [name, data] of cases) {
+              const app = await bootApp(data, { width: w, height: h });
+              try {
+                await sleep(300);
+                const where = name + " " + w + " × " + h;
+                const core = app.doc.querySelector("#home.view.active .g2q-core").getBoundingClientRect();
+                const cx = core.left + core.width / 2, cy = core.top + core.height / 2, R = core.width / 2;
+                const corners = b => [[b.left, b.top], [b.right, b.top], [b.left, b.bottom], [b.right, b.bottom]];
+                const dist = ([x, y]) => Math.hypot(x - cx, y - cy);
+                // obsah stredu (slovo a ikona hodín, ak je viditeľná) leží celý v bielom kruhu, s odstupom 2 px od okraja
+                [...app.doc.querySelectorAll("#home.view.active .g2q-core > *")].filter(isVisible).forEach(el => {
+                  const b = el.firstChild?.nodeType === 3 ? (() => { const r = app.doc.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); })() : el.getBoundingClientRect();
+                  const out = corners(b).map(dist).filter(d => d > R - 2);
+                  eq(out.length, 0, where + ": „" + el.textContent.trim() + "“ siaha k okraju stredu (" + Math.round(Math.max(...corners(b).map(dist))) + " / " + Math.round(R) + " px)");
+                });
+                // ikony dielov nezasahujú do stredu (rámik ikony ďalej než polomer stredu + 2 px)
+                app.doc.querySelectorAll("#home.view.active .g2q-sic").forEach(ic => {
+                  const b = ic.getBoundingClientRect(), nx = Math.max(b.left, Math.min(cx, b.right)), ny = Math.max(b.top, Math.min(cy, b.bottom));
+                  assert(Math.hypot(nx - cx, ny - cy) > R + 2, where + ": ikona " + ic.closest(".g2q-seg").dataset.seg + " zasahuje do stredu");
+                });
+                eq(app.errors, [], "chyby v konzole");
+              } finally { app.remove(); }
+            }
+          }
+        },
         "Šípky „›“ „‹“ a zatvorenie „×“ sú ikony, nie znaky písma (domov, okno kruhu, Prehľad dňa, Plán, Bábätko, Mama, Rodina, Všetko)": async () => {
           const glyphs = (doc, win) => {
             const bad = [], walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);

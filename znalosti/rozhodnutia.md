@@ -14,6 +14,10 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 - **Malý telefón (len CSS podľa výšky):** pod 720 px kruh vyplní celú výšku karty a karta má tenší okraj (375 × 667: kruh ~165–187 px);
   pod 600 px sa karta kruhu smie zmenšiť pod 150 px, aby sa domov neposúval (320 × 568: kruh ~95–140 px); na úzkom a nízkom
   telefóne (šírka < 360, výška < 660) majú skratky len názov bez ikony (názov sa inak orezával).
+- **Po vizuálnej kontrole (QA 3.9):** malý kruh (≤ 150 px) má v strede len slovo „Dnes“ bez hodín; na 320 × 568 tesnejšie
+  medzery domova (kruh v 38. t. 95 → 127 px); v noci text karty týždňa/bábätka bez vlastného pozadia; okná bez tlačidla späť majú
+  nadpis pri okraji; zámok s užším a vyšším oblúkom (ikona `lock` všade); „✓ Vybavené“ v Pláne a Úradoch = ikona `check`;
+  „×“ v stave „3×“ hrubšie ako písmo okolo.
 
 ## 2026-11-26 – Samo (Master 3.8: sprievodca, nie lekár; jednotné názvy kruhu)
 - **Guguboo je sprievodca, nie lekár:** smú byť len ľahké informatívne tvrdenia so zdrojom a dátumom overenia; nikdy rada,

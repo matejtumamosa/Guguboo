@@ -130,7 +130,7 @@
       "<div class='v2-birth-actions'>",
       item.source_url ? "<a class='v5-primary' href='" + esc(item.source_url) + "' target='_blank' rel='noopener noreferrer'>Otvoriť oficiálnu stránku</a>" : "",
       "<button class='v5-secondary' type='button' data-v2-admin-remind='", esc(item.id), "'>Pripomeň o týždeň</button>",
-      "<button class='v5-secondary' type='button' data-v2-admin-done='", esc(item.id), "'>✓ Vybavené</button>",
+      "<button class='v5-secondary' type='button' data-v2-admin-done='", esc(item.id), "'>" + window.GugubooV5.glyph("check") + " Vybavené</button>", // Master 3.9 (QA D2)
       "</div>",
       "<p class='v2-birth-note'>Guguboo nenahrádza právne poradenstvo. O nároku vždy rozhoduje príslušný úrad.</p>"
     ].join("");

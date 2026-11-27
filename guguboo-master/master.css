@@ -983,18 +983,38 @@ html body.v5-active.night:not(.welcome-mode):not(.intro-only) :is(.v2-album-cove
 @media (max-height: 659px) and (max-width: 359px) {
   body:has(#home.view.active) .g2-short .g2-short-ic { display: none !important; }
 }
-/* Malý kruh: stred „Dnes“ sa zmestí do bieleho kruhu (menšia ikona hodín, bez vnútorného okraja). */
+/* Master 3.9 (QA V1): 320 × 568 v 36.+ t. (karta týždňa a úloha na 2 riadky) – kruh mal len ~95 px a „Dnes“ vypĺňalo celý stred.
+   Na úzkom a nízkom telefóne tesnejšie medzery a okraje kariet domova, aby mal kruh viac miesta (rozloženie bez zmeny). */
+@media (max-height: 600px) and (max-width: 359px) {
+  #v5Home { --g2-gap: 4px !important; }
+  body:has(#home.view.active) .g2-hero { padding: 6px 12px !important; }
+  body:has(#home.view.active) .g2q-card.g2-ring-card { padding: 2px !important; }
+  body:has(#home.view.active) .g2-today-row { min-height: 0 !important; padding-top: 3px !important; padding-bottom: 3px !important; }
+  body:has(#home.view.active) .g2-today-main { min-height: 44px; gap: 1px; }
+  body:has(#home.view.active) .g2-short { padding-top: 4px !important; padding-bottom: 4px !important; min-height: 44px !important; }
+}
+/* Malý kruh (≤ 150 px): stred „Dnes“ sa zmestí do bieleho kruhu – Master 3.9 (QA V1): len slovo „Dnes“, bez ikony hodín a vnútorného okraja. */
 @container (max-width: 150px) {
   .g2q-core:not(.is-running) { padding: 0; gap: 0; }
-  .g2q-core:not(.is-running) .g2q-core-ic svg.ph { width: 16px !important; height: 16px !important; }
+  .g2q-core:not(.is-running) .g2q-core-ic { display: none; }
 }
 /* Master 3.9: šípky „›“ „‹“ a zatvorenie „×“ sú linkové ikony (GugubooV5.glyph) – veľkosť 1em podľa písma tlačidla/odkazu,
    farba currentColor, zarovnané s textom. Silnejší výber, aby ich nezmenili pravidlá pre ikony v tlačidlách (svg.ph). */
-:is(html, #g2gl#g2gl) svg.ph.g2-gl { display: inline-block; width: 1em !important; height: 1em !important; min-width: 0 !important; max-width: none !important; flex: 0 0 auto; margin: 0; vertical-align: -.14em; color: inherit; fill: none; overflow: visible; }
+:is(html, #g2gl#g2gl) svg.ph.g2-gl { display: inline-block; width: 1em !important; height: 1em !important; min-width: 0 !important; max-width: none !important; flex: 0 0 auto; margin: 0; vertical-align: -.14em; color: inherit; fill: currentColor; overflow: visible; }
 :is(html, #g2gl#g2gl) svg.ph.g2-gl [stroke] { stroke: currentColor !important; fill: none !important; }
 /* Zatvoriť (×) v kruhových tlačidlách: stred tlačidla */
 :is(html, #g2gl#g2gl) button > svg.ph.g2-gl-close:only-child { display: block; margin: auto; }
+/* Master 3.9 (QA S2): v noci mal text karty týždňa / bábätka vlastné tmavé pozadie s ostrými rohmi (nočné pravidlo pre tlačidlá
+   z v5-mobile.css) – text je súčasť karty, pozadie priehľadné. */
+:is(html, #g2gl#g2gl) body.v5-active.night .g2-hero-text { background: transparent !important; box-shadow: none !important; }
+/* Master 3.9 (QA S3): okná kruhu (Kŕmenie, Dnes…), Počasie, Záloha a „Zapísať ako otázku“ nemajú tlačidlo späť – prázdne miesto
+   vľavo odsúvalo nadpis; nadpis začína pri okraji ako v ostatných oknách bez späť. */
+.g2-ring-sheet-head:has(> span:first-child:empty) { grid-template-columns: minmax(0, 1fr) 44px; }
+.g2-ring-sheet-head > span:first-child:empty { display: none; }
+/* Master 3.9 (QA D6): „×“ v stave kruhu („3×“) rovnako výrazné ako číslica (farba je tá istá – fill textu). */
+:is(html, #g2gl#g2gl) text.g2q-sub tspan.g2q-x { font-weight: 800 !important; }
+/* Master 3.9 (QA D2): fajka v „Vybavené“ / „Hotovo“ (Plán) – ikona check vedľa textu */
+:is(html, #g2gl#g2gl) svg.ph.g2-gl-check { vertical-align: -.12em; }
 /* Súkromný denník: zámok v hlavičke = linková ikona (predtým 🔒) */
 .private-lock svg.ph { width: 26px; height: 26px; color: #6a4fc4; }
 body.night .private-lock svg.ph { color: #c6bcff; }
-@container (max-width: 119px) { .g2q-core:not(.is-running) .g2q-core-ic { display: none; } } /* najmenší kruh (~95 px): len slovo „Dnes“ */

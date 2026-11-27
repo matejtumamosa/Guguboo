@@ -179,7 +179,7 @@
       "<span class='v5-row-arrow' aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</span></button>",
       item.type === "task" ? [
         "<div class='v2-journey-actions'>",
-        "<button type='button' data-v2-journey-done='", esc(item.id), "'>✓ Vybavené</button>",
+        "<button type='button' data-v2-journey-done='", esc(item.id), "'>" + window.GugubooV5.glyph("check") + " Vybavené</button>", // Master 3.9 (QA D2): fajka ako ikona
         "<button type='button' data-v2-journey-snooze='", esc(item.id), "'>Pripomeň o týždeň</button>",
         "</div>"
       ].join("") : "",
