@@ -157,10 +157,8 @@
   const mmss = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
   const MP = () => C().mamaPregnancy || {}, MPP = () => C().mamaPostpartum || {};
   const tr = (src, id) => (src.troubles || []).find(t => t.id === id) || { tips: [] };
-  const safeSleep = () => {
-    for (const p of (C().babyMonths?.periods || [])) for (const sec of Object.values(p)) if (Array.isArray(sec)) for (const it of sec) if (it?.sk && /^Keď je ospalé, polož ho na chrbát/.test(it.sk)) return it.sk;
-    return "";
-  };
+  // Master 4.0 (Audit Z8): postup bezpečného spánku z Tvojho mesiaca (safeSleep) odstránený – len odkaz NHS z g2-safety.js.
+  const safeSleepLink = () => window.G2Safety?.sleepLink ? "<p class='g2r-src'>" + window.G2Safety.sleepLink() + "</p>" : "";
   const breathText = () => text(C().pregnancyWeeks?.weeks?.[40]?.tip) || "";
 
   // ——— Prosby (UX Architekt) ———
@@ -284,7 +282,7 @@
         const mood = MPP().mood;
         return "<div class='g2r-info'><p style='margin:0'>Porozprávať sa môžeš kedykoľvek. Linka dôvery Nezábudka je nonstop a bezplatná.</p><p style='margin:10px 0 0'><a class='g2r-btn g2r-call' href='tel:0800800566'>Zavolať 0800 800 566</a></p></div>" +
           (phase() === "born" && mood ? "<div class='g2r-info'><h3>Po pôrode</h3><p style='margin:0'>" + esc(mood.blues) + "</p><p class='g2r-small' style='margin-top:8px'>" + esc(mood.help) + "</p>" + source(mood.source, mood.reviewed) + "</div>" : "") +
-          "<p class='g2r-small'>Ak hrozí nebezpečenstvo, volaj <a href='tel:112'>112</a>.</p>";
+          (window.G2Safety?.html("E6") || ""); // Master 4.0 (Audit Z21): 112 len cez E6 z g2-safety.js
       }, { noContent: phase() !== "born" });
     }
     if (a === "mama") { close(); return V5.openFeature("mama"); }
@@ -293,30 +291,32 @@
     // Master 2.7 (audit #31, #33): Nohy hore = len časovač oddychu + výnimka E2; Spánok = len informácia NHS (bez rady pri príznaku).
     const SAFE = id => window.G2Safety?.html(id) || "";
     if (a === "legs") {
-      return push("Nohy hore", () => "<p class='g2r-lead'>Nohy si polož vyššie. Čas postrážim ja.</p>" + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" + SAFE("E2"));
+      return push("Nohy hore", () => "<p class='g2r-lead'>Časovač na chvíľu oddychu.</p>" /* Master 4.0 (Audit Z24): opis funkcie, nie pokyn k telu */ + chips("data-g2r-q", [10, 20], 10, " min") + "<div class='g2r-timer' id='g2rTm'>10:00</div><button class='g2r-btn' type='button' data-g2r='timer-go'>Začať</button>" + SAFE("E2"));
     }
     if (a === "sleep") {
       const ti = tr(MP(), "tiredness");
-      return steps("Uložiť sa na spánok", [{ html: esc((ti.info || [])[0] || "Uľahni si pohodlne.") }],
+      return steps("Uložiť sa na spánok", [{ html: esc((ti.info || [])[0] || "") /* Master 4.0 (Audit Z24): bez náhradného pokynu „Uľahni si pohodlne.“ */ }],
         (isNight() ? "<button class='g2r-btn' type='button' data-g2r='nap-go20'>Spustiť šum na zaspávanie</button><button class='g2r-btn ghost' type='button' data-g2r='close'>Bez šumu</button>" : "<button class='g2r-btn' type='button' data-g2r='close'>Hotovo</button>") +
         source(ti.source, ti.reviewed));
     }
     // —— Telo: po pôrode ——
     if (a === "feed") {
       return push("Pohodlne pri kŕmení", () => {
-        const items = ["Podopri si spodnú časť chrbta.", "Pohár vody na dosah.", "Telefón a nabíjačka na dosah."];
-        const pelvic = MPP().troubles?.find(t => t.id === "pelvic");
-        return "<p class='g2r-lead'>Kým začneš, usaď sa:</p>" + items.map((x, i) => "<button class='g2r-check' type='button' data-g2r-check='" + i + "' aria-pressed='false'><span class='box' aria-hidden='true'></span><span>" + esc(x) + "</span></button>").join("") +
-          act("breath", "wind", "Dýchaj so mnou", "1 minúta") + "<p class='g2r-small'>Len pre teba, nikam sa neukladá.</p>" + source(pelvic?.source, pelvic?.reviewed);
-      });
+        // Master 4.0 (Audit Z9): vlastný kontrolný zoznam bez zdravotného tvrdenia – preč „Podopri si spodnú časť chrbta.“
+        // a nesúvisiaci zdroj NHS (panvové dno), ktorý tieto vety neobsahoval.
+        const items = ["Pohár vody", "Telefón a nabíjačka"];
+        return "<p class='g2r-lead'>Mám po ruke:</p>" + items.map((x, i) => "<button class='g2r-check' type='button' data-g2r-check='" + i + "' aria-pressed='false'><span class='box' aria-hidden='true'></span><span>" + esc(x) + "</span></button>").join("") +
+          act("breath", "wind", "Dýchaj so mnou", "1 minúta") + "<p class='g2r-small'>Len pre teba, nikam sa neukladá.</p>";
+      }, { noContent: true });
     }
     if (a === "shower") {
       return push("Sprcha len pre mňa", () => {
-        const stt = tr(MPP(), "stitches"), safe = safeSleep();
+        // Master 4.0 (Audit Z8, Z9): bez postupu „polož ho na chrbát…“ a bez nesúvisiaceho zdroja (stehy) – len odkaz
+        // „Bezpečný spánok – NHS“ so zdrojom a dátumom z g2-safety.js. ⚕
         return "" + // Master 2.7 (audit): bez rady o stehoch
-          act("shower-ask", "paperPlane", "Poprosiť o 15 minút", "hotová prosba") + (safe ? "<p class='g2r-small' style='margin:8px 2px'>Ak bábätko nikto nestráži: " + esc(safe) + "</p>" : "") +
-          act("shower-go", "hourglass", "Spustiť 15 minút", "") + source(stt.source, stt.reviewed) + (safe ? "<p class='g2r-src'>Bezpečný spánok: CDC (Learn the Signs)</p>" : "");
-      });
+          act("shower-ask", "paperPlane", "Poprosiť o 15 minút", "hotová prosba") +
+          act("shower-go", "hourglass", "Spustiť 15 minút", "") + safeSleepLink();
+      }, { noContent: true });
     }
     if (a === "shower-ask") {
       return push("Poprosiť o 15 minút", () => "<textarea id='g2rText' data-g2-no-guard aria-label='Text správy'>" + esc("Postrážiš mi bábätko 15 minút? Idem sa osprchovať.") + "</textarea><button class='g2r-btn' type='button' data-g2r='send'>Poslať cez telefón</button><button class='g2r-btn ghost' type='button' data-g2r='copy'>Skopírovať text</button><p class='g2r-small'>Appka nič neposiela sama.</p>", { noContent: true });

@@ -6784,7 +6784,7 @@
         feeding: {
           title: last === "routine" ? "Uložme presný rodinný postup" : "Najprv zachyť jednu konkrétnu zmenu",
           text: last === "routine"
-            ? "Zapíš značku, množstvo, teplotu vody a postup. Druhý rodič potom dostane rovnaké informácie bez ďalšieho dohadovania."
+            ? "Zapíš značku, množstvo a prípravu podľa balenia. Druhý rodič potom dostane rovnaké informácie bez ďalšieho dohadovania."
             : "Zapíš čas, spôsob kŕmenia, približné množstvo alebo trvanie a to, čo si pozorovala. Pri opakovanom vracaní, zlom pití, krvi alebo výraznom zhoršení kontaktuj pediatra.",
           why: "Jedna presná poznámka je pre rodiča aj pediatra užitočnejšia než veľa odhadov.", view: "tracker", action: "Pridať záznam"
         },
@@ -9134,7 +9134,7 @@ Otázky:
       const task = $("familyTaskPreset").value;
       if (!$("familyDetails").value.trim()) $("familyDetails").value = familyTaskDetails[task] || "";
       if (!$("familyMilkAmount").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyMilkAmount").value = "doplň presnú dávku podľa dieťaťa";
-      if (!$("familyWaterTemp").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyWaterTemp").value = "podať v bežnej bezpečnej teplote podľa tvojej rutiny";
+      if (!$("familyWaterTemp").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyWaterTemp").value = "podľa návodu na balení"; // Master 4.0 (Audit Z12): bez teploty (rozhodnutie 3.5.1)
       if (!$("familyAfterCare").value.trim()) $("familyAfterCare").value = /mlieko|fľašu/i.test(task)
         ? "nechať odgrgnúť, chvíľu podržať vo zvislej polohe, zapísať koľko vypilo a či grckalo"
         : "zapísať iba dôležité veci, aby druhý rodič nemusel pátrať";

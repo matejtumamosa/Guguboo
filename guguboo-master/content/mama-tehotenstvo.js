@@ -29,7 +29,7 @@ window.GugubooContent.mamaPregnancy = {
       askPrompt: "Trápi ma pálenie záhy.",
       source: "https://www.nhs.uk/pregnancy/common-symptoms/indigestion-and-heartburn/",
       reviewed: "14. 11. 2023",
-      reviewDue: "14. 11. 2026", // revízia NHS prešla – znovu overiť citát (audit, časť 4)
+      reviewDue: "14. 11. 2026", // Master 4.0 (Audit Z18): stránka znovu prečítaná 27. 11. 2026 – citát sedí; NHS revíziu zatiaľ nevydala
       evidence: "Indigestion and heartburn is common in pregnancy … hormonal changes and the growing baby pressing against your stomach"
     },
     {
@@ -91,13 +91,16 @@ window.GugubooContent.mamaPregnancy = {
       "surové alebo nedovarené kačacie, husacie a prepeličie vajcia",
       "bylinkové čaje so sladkým drievkom"
     ],
-    // Master 2.7 (PL 15. 11., audit #25): ponechané ako informácia „Čo NHS uvádza vynechať / obmedziť“, nie príkaz.
+    // Master 4.0 (Audit Z1, spresnené pravidlo Sama 27. 11.): množstvá ostávajú ako informácia „NHS uvádza…“ so zdrojom
+    // a dátumom, nie ako príkaz; k tomu otázka pre lekára.
+    limitTitle: "Čo NHS uvádza o množstve",
     limit: [
-      "kofeín – najviac 200 mg denne",
-      "tuniak – najviac 4 konzervy alebo 2 steaky týždenne",
-      "tučné ryby (losos, pstruh, makrela, sardinky, sleď) – najviac 2 porcie týždenne"
+      "kofeín – NHS uvádza najviac 200 mg denne",
+      "tuniak – NHS uvádza najviac 4 konzervy alebo 2 steaky týždenne",
+      "tučné ryby (losos, pstruh, makrela, sardinky, sleď) – NHS uvádza najviac 2 porcie týždenne"
     ],
-    alcohol: "Alkohol môže bábätku dlhodobo uškodiť – najbezpečnejšie je nepiť ho vôbec.",
+    askPrompt: "Koľko kávy a rýb môžem v tehotenstve?",
+    alcohol: "Alkohol môže bábätku dlhodobo uškodiť – podľa NHS je najbezpečnejšie nepiť ho vôbec.",
     source: "https://www.nhs.uk/pregnancy/keeping-well/foods-to-avoid/",
     reviewed: "15. 6. 2026",
     evidence: "you should not have more than 200mg of caffeine a day … It's safest to avoid alcohol."
@@ -115,11 +118,13 @@ window.GugubooContent.mamaPregnancy = {
     moveExamples: "Napríklad chôdza, plávanie alebo joga. Mierna aktivita je taká, pri ktorej sa ešte dá rozprávať, ale nie spievať.",
     strengthExamples: "Napríklad joga, nosenie nákupu alebo detí; posilňovňa, ak tam chodíš už teraz.",
     examplesEvidence: "Walking, swimming and yoga … can count towards the 150 minutes a week. … you should be able to talk but not sing. | Try to include 2 sessions of muscle strengthening exercises each week … yoga, carrying shopping and carrying children",
-    goal: "NHS uvádza približne 150 minút miernej aktivity týždenne – pokojne v kratších častiach – a 2-krát týždenne posilňovanie. Ak s pohybom začínaš, NHS uvádza začať od 10 minút denne.",
+    // Master 4.0 (Audit Z2): cieľ „150 minút týždenne / 2-krát posilňovanie / 10 minút denne“ (pole `goal`) ODSTRÁNENÝ –
+    // je to cieľ a norma. Ostávajú len príklady pohybu (informácia so zdrojom) a otázka pre lekára.
+    // Master 4.0 (spresnené pravidlo 27. 11.): bez rozkazov – mäkko „môže…“, „NHS uvádza…“.
     tips: [
-      "Povedz trénerovi alebo inštruktorke, že si tehotná.",
-      "Pi vodu a obleč sa tak, aby ti nebolo horúco.",
-      "Prestaň, keď ti je nepríjemne, príliš teplo alebo zle."
+      "Trénerovi alebo inštruktorke môžeš povedať, že si tehotná.",
+      "Môže pomôcť piť vodu a obliecť sa tak, aby ti nebolo horúco.",
+      "NHS uvádza prestať, keď ti je nepríjemne, príliš teplo alebo zle."
     ],
     avoid: [
       "športy s rizikom pádu alebo úderu do brucha (hokej, rugby, horská cyklistika)",
@@ -132,6 +137,6 @@ window.GugubooContent.mamaPregnancy = {
     askPrompt: "Aký pohyb je pre mňa v tehotenstve vhodný?",
     source: "https://www.nhs.uk/pregnancy/keeping-well/exercise/",
     reviewed: "24. 9. 2026",
-    evidence: "150 minutes (2½ hours) of moderate-intensity activity a week … Stop if you feel uncomfortable, too hot, or unwell."
+    evidence: "Stop if you feel uncomfortable, too hot, or unwell."  // cieľ 150 min ostáva mimo appky (Audit Z2)
   }
 };

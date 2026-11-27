@@ -40,7 +40,7 @@ window.GugubooContent.mamaPostpartum = {
       askPrompt: "Mám otázku k rane po cisárskom reze.",
       source: "https://www.nhs.uk/conditions/caesarean-section/recovery/",
       reviewed: "4. 1. 2023",
-      reviewDue: "4. 1. 2026", // revízia NHS prešla – overiť aktuálne znenie (audit, časť 4)
+      reviewDue: "4. 1. 2026", // Master 4.0 (Audit Z18): stránka znovu prečítaná 27. 11. 2026 – zhoda (several weeks; wound more red, painful and swollen); NHS revíziu zatiaľ nevydala
       evidence: "it usually takes several weeks to recover … a wound that becomes redder, more painful, or swollen"
     },
     {
@@ -118,33 +118,37 @@ window.GugubooContent.mamaPostpartum = {
     source: "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/",
     reviewed: "20. 7. 2026",
     items: [
+      // Master 4.0 (Audit Z3, spresnené pravidlo Sama 27. 11.): postup ostáva ako opis NHS bez rozkazov („Ako to popisuje NHS“),
+      // množstvo ako „NHS uvádza…“ (nie povinnosť). Denné počítadlo (perDay, „Dnes X-krát“, „+ Hotovo“) ODSTRÁNENÉ. ⚕
       {
-        id: "pelvic", title: "Cviky panvového dna", perDay: 3,
+        id: "pelvic", title: "Cviky panvového dna",
         why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku.",
         steps: [
-          "Cvičiť môžeš poležiačky, v sede aj v stoji.",
-          "Stiahni konečník, akoby si zadržiavala plyny.",
-          "Stiahni svaly okolo pošvy a močového mechúra, akoby si zastavovala močenie.",
-          "Dlhé stiahnutie: drž, kým vládzeš, najviac 10 sekúnd, potom uvoľni.",
-          "Krátke stiahnutia: rýchlo stiahni a hneď pusť – opakuj, kým sa svaly neunavia.",
-          "Dýchaj normálne a pritom nevťahuj brucho."
+          "Cvičiť sa dá poležiačky, v sede aj v stoji.",
+          "Stiahnutie konečníka, akoby si zadržiavala plyny.",
+          "Stiahnutie svalov okolo pošvy a močového mechúra, akoby si zastavovala močenie.",
+          "Dlhé stiahnutie: držať, kým vládzeš, najviac 10 sekúnd, potom uvoľniť.",
+          "Krátke stiahnutia: rýchlo stiahnuť a hneď pustiť – opakovať, kým sa svaly neunavia.",
+          "Dýchať normálne a pritom nevťahovať brucho."
         ],
-        dose: "Postupne do 10 opakovaní každého cviku, aspoň 3-krát denne."
+        dose: "NHS uvádza postupne až 10 opakovaní každého cviku, 3-krát denne."
       },
       {
-        id: "tummy", title: "Cvik na brucho", perDay: 1,
+        id: "tummy", title: "Cvik na brucho",
         why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch.",
         steps: [
-          "Ľahni si na bok s mierne pokrčenými kolenami.",
-          "Uvoľni brucho a jemne sa nadýchni.",
-          "S výdychom jemne vtiahni spodnú časť brucha ako korzet.",
-          "Zároveň stiahni panvové dno.",
-          "Drž, kým napočítaš do 10, dýchaj normálne a jemne uvoľni."
+          "Ľahnúť si na bok s mierne pokrčenými kolenami.",
+          "Uvoľniť brucho a jemne sa nadýchnuť.",
+          "S výdychom jemne vtiahnuť spodnú časť brucha ako korzet.",
+          "Zároveň stiahnuť panvové dno.",
+          "Držať, kým napočítaš do 10, dýchať normálne a jemne uvoľniť."
         ],
-        dose: "Opakuj najviac 10-krát."
+        dose: "NHS uvádza najviac 10 opakovaní."
       }
       // Master 2.7 (audit #13): „Kontrola brušných svalov“ (samohodnotenie) odstránená.
     ],
+    howNote: "Na cviky sa môžeš opýtať aj pôrodnej asistentky alebo na kontrole po pôrode.",
+    askPrompt: "Ako mám po pôrode cvičiť panvové dno a brucho?",
     avoid: ["sedy-ľahy, plank a skákanie (spočiatku)", "tlačenie na WC a dvíhanie ťažkého"],
     evidence: "Aim to build up to 10 repeats of each exercise, at least 3 times a day. | Lie on your side with your knees slightly bent … Hold for a count of 10 … Repeat up to 10 times. | Try to avoid exercises such as sit-ups, planks and high-impact exercises to start with."
   },
@@ -173,9 +177,9 @@ window.GugubooContent.mamaPostpartum = {
     reviewed: "25. 4. 2024",
     evidence: "If you bottle feed your baby, or combine bottle feeding with breastfeeding, your first period could start as soon as 5 to 6 weeks after you give birth. … If you fully breastfeed (including at night) without any bottle feeding, your periods may not start again until you start to reduce breastfeeding. | You can get pregnant again just 3 weeks after the birth of your baby, even if you're breastfeeding and your periods have not started again yet. It's important to start using contraception within 21 days of giving birth … | You should not use tampons until you've had your 6-week postnatal check.",
     // Master 2.7 (audit #28): appka nič nevyhodnocuje („> 7 dní“ apod.) – len štandardná veta a otázka pre gynekológa.
-    doctorLine: "Ak ťa niečo znepokojuje alebo si nie si istá, môžeš sa kedykoľvek ozvať svojmu gynekológovi.",
+    doctorLine: "Ak ťa niečo znepokojuje alebo máš pochybnosti, môžeš sa kedykoľvek ozvať svojmu gynekológovi.",
     askPrompt: "Mám otázku k menštruácii po pôrode.",
-    cycleNote: "Bežný cyklus (od začiatku jednej menštruácie po začiatok ďalšej) má okolo 28 dní, môže byť trochu kratší aj dlhší.",
+    cycleNote: "Podľa NHS má cyklus (od začiatku jednej menštruácie po začiatok ďalšej) zvyčajne okolo 28 dní, môže byť trochu kratší aj dlhší.", // Master 4.0 (Audit Z34): mäkko so zdrojom
     doctorSource: "https://www.nhs.uk/conditions/irregular-periods/",
     doctorReviewed: "26. 6. 2026",
     doctorEvidence: "The average gap between periods starting (the menstrual cycle) is around 28 days. It can sometimes be a bit shorter or longer. | See a GP if: … your periods last longer than 7 days … you have bleeding between periods"

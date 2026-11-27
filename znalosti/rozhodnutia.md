@@ -14,6 +14,26 @@ v `guguboo-v2/docs/00-audit-a-plan.md`.
 - **Prvý pohyb: „Cítim už dlhšie“** (F17): vedľa „Cítila som ho“ – rovno k zápisu pohybov, bez dátumu a bez spomienky s dnešným dátumom
   (`state.v5.firstMoveEarlier`).
 
+## 2026-11-27 – Samo (Master 4.0, časť B: spresnené pravidlo „sprievodca, nie lekár“)
+- **Spresnené pravidlo (nahrádza „odstráň, ak sa nedá“ z 26. 11.):**
+  - **Povolené:** obsah z oficiálneho zdroja v mäkkej informatívnej forme („Podľa NHS…“, „NHS uvádza…“, „môže sa stať…“,
+    „zvykne…“, „môže pomôcť…“), vždy so zdrojom a dátumom overenia. Aj množstvá, ak sú podané ako „NHS uvádza najviac 200 mg“.
+  - **Zakázané:** diagnóza a samohodnotenie (vyhodnocovanie zápisov, „ak dieťa nerobí X…“ ako posudok), rozkazy („musíš“,
+    „nesmieš“, „nevyskakuj“, „mala by si“), normy („by sa malo“) a tlak – ciele, počítadlá, dávky ako povinnosť.
+- **Čo sa podľa toho v 4.0 zmenilo** (audit `AUDIT_3.9.2_ZDRAVIE.md`): kofeín a ryby ostávajú ako „NHS uvádza…“ + otázka pre lekára;
+  Cviky bez cieľa 150 min a bez počítadiel (dáta záznamov ostávajú), postup cvikov po pôrode ako opis NHS bez rozkazov;
+  Tvoj týždeň – tipy a vety „Ty“ prepísané na „môže pomôcť…“, vety „by sa malo hýbať“ preč (E3 od 24. t.), 42. t. „urýchliť“ preč;
+  Tvoj mesiac – „Okolo N mesiacov veľa bábätiek…“ + „Každé bábätko je iné“, bez zoznamu „ak zatiaľ nerobí…“ (len veta pre pediatra
+  + otázka), obdobia po 12. mesiaci skryté; bezpečný spánok na jednom mieste (`g2-safety.js`, NHS, ⚕), inde len odkaz;
+  menštruačný kalendár zápisy nevyhodnocuje; fľaša „podľa návodu na balení“ (3.5.1); Zúbky – informatívna veta NHS;
+  Počasie – vety „Podľa NHS / AAP / WHO / The Lullaby Trust…“, bez zdrojov cez TASR; kruh bez pokynov k telu bez zdroja.
+- **155 / 112 a bezpečnostné vety len v `g2-safety.js`:** GuguChat, Zúbky a kruh preberajú E1/E3/E5/E6/E7 doslovne;
+  E6 a E7 majú zdroj a dátum overenia (27. 11. 2026).
+- Kontrola: `test.html`, sada „Sprievodca, nie lekár“ (rozkazy, „mala by si“, „by sa malo“, ciele, počítadlá, „Väčšina … do N“,
+  samohodnotenie, 155/112 mimo `g2-safety.js`).
+- Na rozhodnutie Sama ostáva: Z10 (Dýchaj so mnou), Z12 postupy v úlohách Rodiny, Z15 (zoznam „vynechať“, alkohol), Z32, Z33, Z35.
+  Úradné sumy 2027 (Z28–Z30) bez zmeny – treba overiť po zverejnení.
+
 ## 2026-11-27 – Samo (Master 3.9.2: skratky ostávajú s textom, tri nové ikony)
 - **Skratky na domove ostávajú s textom.** Slepý test (`guguboo-master/prototyp-skratky.html`) ukázal, že bez textu fungujú
   len Kalendár, Zúbky, Aktivity (kocky) a Starostlivosť (zavinuté bábätko); Tvoje telo, Čo je bežné, obe knižky, Otázky pre lekára

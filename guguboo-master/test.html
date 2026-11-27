@@ -54,6 +54,23 @@
   const addDays = (days, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + days); return d; };
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   function assert(cond, msg) { if (!cond) throw new Error(msg); }
+  // Master 4.0 (Audit Z1–Z7, spresnené pravidlo Sama 27. 11. 2026): zakázané sú rozkazy, normy („by sa malo“), ciele,
+  // počítadlá a hodnotenie (samohodnotenie). Zdrojovaná informácia v mäkkej forme („NHS uvádza najviac 200 mg“) je povolená.
+  // health = zdravotný text (vtedy aj „cieľ“). Nález = oprava obsahu alebo vedomé rozhodnutie Sama.
+  const FORBIDDEN = [
+    [/(mala by si|by si mala|mal by si|by si mal)(?![\p{L}])/iu, "„mala by si“"],
+    [/(by sa malo|malo by sa|by malo)(?![\p{L}])/iu, "norma „by sa malo“"],
+    [/(^|[^\p{L}])(musíš|nesmieš|oddychuj|zdriemni si|nevyskakuj|obmedz|obleč|uber mu|zlož|utiahni|nenechávaj|sústreď sa|povzbuď|porozmýšľaj|stiahni|ľahni si|opakuj|prestaň|nepripisuj|skontroluj|dávaj na seba|drž)(?![\p{L}])/iu, "rozkaz"],
+    [/\d+\s*minút (týždenne|denne)/i, "cieľ minút"],
+    [/Väčšina (bábätiek|detí)[^.]{0,40}\bdo \d/i, "norma „Väčšina … do N“"],
+    [/nerobí jeden alebo viac/i, "samohodnotenie míľnikov"],
+    [/Dnes \d+-krát|Tento týždeň \d+ (min|-krát)/i, "počítadlo"]
+  ];
+  function forbidden(label, text, health) {
+    const t = String(text || "");
+    const list = FORBIDDEN.concat(health ? [[/(^|[^\p{L}])cieľ/iu, "cieľ"]] : []);
+    return list.filter(([re]) => re.test(t)).map(([re, why]) => label + ": " + why + " – „" + (t.match(re)[0] || "") + "“");
+  }
   function eq(actual, expected, msg) { if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error((msg ? msg + ": " : "") + "čakal som " + JSON.stringify(expected) + ", je " + JSON.stringify(actual)); }
   class Known extends Error {}
   const known = msg => { throw new Known(msg); };
@@ -336,6 +353,106 @@
       }
     },
     {
+      // Master 4.0 (Audit Z1–Z21): pravidlo Sama 26. 11. 2026 – sprievodca, nie lekár. Zobrazovaný zdravotný obsah nesmie
+      // obsahovať dávku, limit, cieľ, normu „by sa malo“ ani samohodnotenie. Kontroluje sa len to, čo appka ukazuje
+      // (nie citáty v evidence ani vypnuté dáta).
+      name: "Sprievodca, nie lekár (Master 4.0 – zakázané formulácie)",
+      tests: {
+        "Obsah tehotenstva, Tvojho týždňa a Cvikov (dáta, ktoré appka zobrazuje)": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            const C = app.win.GugubooContent, bad = [];
+            const pre = C.mamaPregnancy, post = C.mamaPostpartum;
+            assert((pre.food.limit || []).every(x => /NHS uvádza/.test(x)), "Z1: množstvá len ako „NHS uvádza…“");
+            assert(!("goal" in pre.exercise), "Z2: exercise.goal (150 min) sa vrátil");
+            post.exercises.items.forEach(it => assert(!it.perDay && (!it.dose || /^NHS uvádza/.test(it.dose)), "Z3: počítadlo alebo dávka ako povinnosť pri " + it.id));
+            [pre.food.alcohol, ...pre.food.avoid, pre.exercise.moveExamples, pre.exercise.strengthExamples, ...pre.exercise.tips, ...pre.exercise.avoid, pre.exercise.note,
+              ...post.exercises.items.map(it => it.why), ...post.exercises.items.flatMap(it => [...(it.steps || []), it.dose || ""]), ...(pre.food.limit || []), post.exercises.howNote, ...pre.troubles.flatMap(t => [...(t.common || []), ...(t.info || [])])]
+              .forEach((t, i) => bad.push(...forbidden("mama #" + i, t, true)));
+            for (let w = 4; w <= 42; w++) {
+              const d = app.win.GugubooV2.babySize(w);
+              if (!d) continue;
+              bad.push(...forbidden(w + ". t.", [d.baby, d.you, d.milestone, d.tip].join(" "), true));
+            }
+            eq(bad, [], "zakázané formulácie");
+          } finally { app.remove(); }
+        },
+        "Tvoj mesiac: len do 12. mesiaca, bez noriem „Väčšina … do N“ a bez zoznamu „ak zatiaľ nerobí“": async () => {
+          const app = await bootApp(ringSeed("po"));
+          try {
+            const { doc, win } = app, bad = [];
+            win.GugubooV5.openMonth();
+            await sleep(150);
+            const ids = [...doc.querySelectorAll("#g2MonthBody [data-g2-month]")].filter(b => b.closest(".v2-week-strip")).map(b => b.dataset.g2Month);
+            assert(ids.length >= 5, "obdobia sa nevykreslili");
+            eq(ids.filter(id => Number(id.split("-")[1]) > 12), [], "Z37: obdobia po 12. mesiaci");
+            for (const id of ids) {
+              doc.querySelector("#g2MonthBody .v2-week-strip [data-g2-month='" + id + "']").click();
+              await sleep(60);
+              bad.push(...forbidden(id + " mes.", doc.getElementById("g2MonthBody").textContent, true));
+            }
+            eq(bad, [], "zakázané formulácie");
+          } finally { app.remove(); }
+        },
+        "Mama → Jedlo a pohyb a Tvoje telo: bez limitov a cieľov": async () => {
+          const app = await bootApp(ringSeed("pred"));
+          try {
+            const { doc, win } = app, bad = [];
+            for (const sec of ["food", "body"]) {
+              win.GugubooV5.openFeature("mama");
+              await sleep(150);
+              const btn = doc.querySelector("[data-v2-mama-section='" + sec + "']");
+              assert(btn, "chýba sekcia " + sec);
+              btn.click();
+              await sleep(150);
+              const view = doc.querySelector(".view.active") || doc.body;
+              bad.push(...forbidden("Mama " + sec, view.textContent, true));
+            }
+            eq(bad, [], "zakázané formulácie");
+          } finally { app.remove(); }
+        },
+        "GuguChat: odpovede o jedle, pohybe a vážnych situáciách bez limitov; 155/112 len vo vete z g2-safety.js": async () => {
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(ringSeed(kind));
+            try {
+              const W = app.win, bad = [];
+              const E = Object.values(W.G2Safety.E).map(e => e.text);
+              const qs = kind === "pred"
+                ? ["čo nesmiem jesť", "koľko kávy môžem", "tuniak v tehotenstve", "cvičenie v tehotenstve", "bábätko sa nehýbe", "krvácam", "nedýcha", "mám horúčku", "bezpečný spánok postieľka"]
+                : ["bezpečný spánok postieľka", "bábätko nedýcha", "menštruácia po pôrode", "je mi smutno", "chcem sa zabiť"];
+              for (const q of qs) {
+                const a = W.GugubooV2.answer(q, { dryRun: true });
+                const text = String(a?.text || "");
+                bad.push(...forbidden("GuguChat „" + q + "“", text, true));
+                // Z21: 155 / 112 v texte odpovede len ako súčasť vety E1–E7 (doslovne).
+                const rest = E.reduce((t, e) => t.split(e).join(""), text);
+                if (/\b(155|112)\b/.test(rest)) bad.push("GuguChat „" + q + "“: 155/112 mimo g2-safety.js");
+              }
+              eq(bad, [], "zakázané formulácie (" + kind + ")");
+            } finally { app.remove(); }
+          }
+        },
+        "Zdroje: 155/112 sa nepíšu mimo g2-safety.js (GuguChat, Zúbky, kruh)": async () => {
+          const bad = [];
+          for (const file of ["guguchat.js", "teeth.js", "g2-ring.js"]) {
+            const src = await (await fetch(file + "?t=" + Date.now(), { cache: "no-store" })).text();
+            const hits = src.split("\n").filter(l => !/^\s*(\/\/|\*)/.test(l) && /(?<!label: ")(volaj|zavolaj|zavolať)\s*(<[^>]+>)?\s*(155|112)/i.test(l)); // tlačidlá „Zavolať 155“ (tel:) sú v poriadku
+            if (hits.length) bad.push(file + ": " + hits.length + "×");
+          }
+          // Audit Z14: vety Počasia a oblečenia sú mäkké a zdrojované (bez rozkazov).
+          const wsrc = await (await fetch("g2-weather.js?t=" + Date.now(), { cache: "no-store" })).text();
+          [...wsrc.matchAll(/\{ id: "(\w+)"[^}]*text: "([^"]+)"/g)].forEach(([, id, t]) => bad.push(...forbidden("Počasie " + id, t, false)));
+          eq(bad, [], "Z21 / Z14");
+        },
+        "Bezpečný spánok: jeden odkaz NHS so zdrojom a dátumom (g2-safety.js) ⚕": () => {
+          const S = window.G2Safety;
+          assert(/^https:\/\/www\.nhs\.uk\//.test(S.safeSleep.url) && S.safeSleep.checked, "zdroj a dátum");
+          assert(S.sleepLink().includes(S.safeSleep.checked) && S.sleepLink().includes("nhs.uk"), "odkaz");
+          assert(S.E.E6.source && S.E.E7.reviewed && S.E.E6.checked && S.E.E7.checked, "Z19: E6/E7 so zdrojom a dátumom");
+        }
+      }
+    },
+    {
       name: "Appka v izolovanom rámci – spustenie",
       tests: {
         "Pred pôrodom (deň): domov bez chýb, kľúče len guguboo-m-*": async () => {
@@ -365,7 +482,7 @@
             await sleep(100);
             const box = app.doc.getElementById("v5PeriodContent");
             assert(box && /Kedy sa ozvať lekárovi/.test(box.textContent), "obsah okna chýba");
-            assert(/Na najbližšiu kontrolu/.test(box.textContent), "prehľad pre gynekológa chýba");
+            assert(!/Na najbližšiu kontrolu/.test(box.textContent), "Master 4.0 (Audit Z11): appka zápisy nevyhodnocuje (bez bloku „> 7 dní“)");
             assert(!/undefined/.test(box.textContent), "v texte je „undefined“");
             eq(app.errors, [], "chyby v konzole");
           } finally { app.remove(); }

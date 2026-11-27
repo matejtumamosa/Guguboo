@@ -20,42 +20,43 @@
     A1: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/on-the-go/Pages/Winter-Car-Seat-Safety-Tips.aspx"],
     A2: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Sun-Safety.aspx"],
     A3: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Winter-Safety.aspx"],
-    W1: ["WHO", "https://www.who.int/news-room/q-a-detail/radiation-protecting-against-skin-cancer"],
-    S1: ["ÚVZ SR (cez TASR)", "https://www.teraz.sk/zdravie/uvz-v-lete-treba-vonku-pouzivat-kr/807180-clanok.html"],
-    S2: ["ÚVZ SR (cez TASR)", "https://www.teraz.sk/zdravie/uvz-pocas-horucav-treba-vypit-aspo/726637-clanok.html"]
+    W1: ["WHO", "https://www.who.int/news-room/q-a-detail/radiation-protecting-against-skin-cancer"]
+    // Master 4.0 (Audit Z25): S1, S2 (ÚVZ SR cez TASR – spravodajský článok, nie primárny zdroj) odstránené.
   };
   const CHECKED = "15. 11. 2026";
+  // Master 4.0 (Audit Z14, spresnené pravidlo Sama 27. 11.): rady ostávajú, ale mäkko a s menom zdroja („Podľa NHS…“,
+  // „môže pomôcť…“), nie ako rozkaz. T18 (len zdroj cez TASR) vynechané; S1/S2 pri ostatných vetách odstránené (Z25).
+  // Zdroje a dátum overenia (15. 11. 2026) sú pod zoznamom. ⚕
   // Pravidlá z POCASIE_OBSAH.md (bez riadkov [OVERIŤ]: C5, T9, T17, T19, NO1). age: b = 0–6, m = 6–12, k = 1+
   const RULES = [
-    { id: "V1", age: "bm", when: "always", text: "Obleč bábätko približne o jednu vrstvu viac, než máš na sebe ty.", src: ["N1", "A1"] },
-    { id: "V2", age: "bmk", when: "always", text: "Či nie je bábätku príliš teplo, zistíš dotykom hrudníka alebo zátylku.", src: ["L1"] },
-    { id: "V3", age: "bm", when: "cold", text: "Studené rúčky a nôžky sú bežné, samy o sebe neznamenajú, že je bábätku zima.", src: ["N1"] },
-    { id: "V4", age: "bm", when: "warm", text: "Ak je bábätko spotené alebo má teplé bruško, uber mu vrstvu.", src: ["N1"] },
-    { id: "V5", age: "bmk", when: "cold", mode: "stroller carrier", text: "Keď vojdete dnu alebo do vyhriateho auta či autobusu, čiapku a vrstvu navyše hneď zlož.", src: ["N1"] },
-    { id: "C1", age: "bm", when: "cold", text: "Ak je tebe chladno, bábätku pravdepodobne tiež.", src: ["N1"] },
-    { id: "C2", age: "k", when: "cold", text: "Viac tenkých vrstiev zahreje a udrží v suchu lepšie než jedna hrubá.", src: ["A3"] },
-    { id: "C3", age: "k", when: "cold", text: "Čiapka, rukavice a teplá obuv sa v zime hodia.", src: ["A3"] },
-    { id: "D1", age: "bmk", when: "rain", text: "Mokré oblečenie a rukavice čím skôr vymeň za suché.", src: ["A3", "A1"] },
-    { id: "T1", age: "bm", when: "warm", text: "Keď je teplo, väčšinou stačí jedna vrstva – najlepšie ľahká bavlna.", src: ["N1"] },
-    { id: "T2", age: "bm", when: "warm", mode: "home", text: "V horúčave stačí aj body s krátkym rukávom alebo len plienka.", src: ["L1", "N1"] },
-    { id: "T3", age: "b", when: "sun", mode: "stroller carrier", text: "Bábätko do 6 mesiacov drž mimo priameho slnka.", src: ["N2", "A2", "S1"] },
-    { id: "T4", age: "m", when: "sun", mode: "stroller carrier", text: "Bábätko do 12 mesiacov drž v tieni – tieň však neochráni úplne.", src: ["W1", "S1"] },
-    { id: "T5", age: "bmk", when: "uv", mode: "stroller carrier", text: "Dnes sa oplatí chrániť pred slnkom: tieň, oblečenie a klobúčik.", src: ["W1"] },
-    { id: "T7", age: "bmk", when: "sun", mode: "stroller carrier", text: "Voľné ľahké oblečenie, ktoré zakryje telo, chráni pred slnkom najlepšie.", src: ["N2", "A2", "W1"] },
-    { id: "T8", age: "bmk", when: "sun", mode: "stroller carrier", text: "Keď je slnko najsilnejšie, radšej tieň alebo dnu (NHS: 11–15 h, ÚVZ SR: 10–16 h).", src: ["N2", "S1"] },
-    { id: "T11", age: "bm", when: "warm", mode: "stroller", text: "Kočík neprekrývaj plienkou, dekou ani látkou, ktorá bráni prúdeniu vzduchu – lepší je slnečník alebo priedušná clona.", src: ["N1", "N2", "L1", "S1"] },
-    { id: "T12", age: "bm", when: "sun", mode: "stroller", text: "Nenechávaj bábätko spať na slnku.", src: ["W1"] },
-    { id: "T13", age: "bmk", when: "warm", mode: "car", text: "Bábätko ani dieťa nenechávaj v zaparkovanom aute.", src: ["N2"] },
-    { id: "T14", age: "bm", when: "always", mode: "car", text: "Na dlhšej ceste si urob prestávky, aby si mohla bábätko skontrolovať.", src: ["L1"] },
-    { id: "T15", age: "bmk", when: "warm", mode: "home", text: "Ventilátor nemier priamo na dieťa.", src: ["N2"] },
-    { id: "T16", age: "bm", when: "always", mode: "home", text: "Na spánok je príjemná izba so 16–20 °C.", src: ["N1", "L1"] },
-    { id: "T18", age: "k", when: "warm", text: "Na smäd je pre deti najlepšia čistá pitná voda.", src: ["S2"] },
-    { id: "AU1", age: "bmk", when: "always", mode: "car", text: "Do autosedačky bez hrubej bundy či kombinézy – pod popruhmi len tenké vrstvy.", src: ["A1"] },
-    { id: "AU2", age: "bmk", when: "cold", mode: "car", text: "Bundu alebo deku daj až cez zapnuté popruhy, aby sa dala zložiť, keď sa auto vyhreje.", src: ["A1"] },
-    { id: "AU3", age: "bmk", when: "always", mode: "car", text: "Popruhy utiahni tak, aby sa na nich pri hrudníku nedal štipnúť záhyb.", src: ["A1"] },
-    { id: "AU4", age: "bm", when: "cold", mode: "car", text: "Vajíčko (autosedačku pre bábätko) maj medzi jazdami v teple doma.", src: ["A1"] },
-    { id: "AU6", age: "bm", when: "always", mode: "car", text: "Autosedačka je na cestu – na spánok bábätko po príchode prelož na pevnú rovnú podložku.", src: ["L1"] },
-    { id: "NO2", age: "bm", when: "warm", mode: "carrier", text: "Hrudník alebo zátylok bábätka v nosiči kontroluj častejšie.", src: ["L1"] }
+    { id: "V1", age: "bm", when: "always", text: "Podľa NHS bábätko zvykne potrebovať približne o jednu vrstvu viac, než máš na sebe ty.", src: ["N1", "A1"] },
+    { id: "V2", age: "bmk", when: "always", text: "Či nie je bábätku príliš teplo, sa podľa The Lullaby Trust dá zistiť dotykom hrudníka alebo zátylku.", src: ["L1"] },
+    { id: "V3", age: "bm", when: "cold", text: "Studené rúčky a nôžky sú podľa NHS bežné a samy o sebe neznamenajú, že je bábätku zima.", src: ["N1"] },
+    { id: "V4", age: "bm", when: "warm", text: "Ak je bábätko spotené alebo má teplé bruško, podľa NHS môže pomôcť ubrať vrstvu.", src: ["N1"] },
+    { id: "V5", age: "bmk", when: "cold", mode: "stroller carrier", text: "Keď vojdete dnu alebo do vyhriateho auta či autobusu, podľa NHS sa oplatí čiapku a vrstvu navyše hneď zložiť.", src: ["N1"] },
+    { id: "C1", age: "bm", when: "cold", text: "Podľa NHS: ak je tebe chladno, bábätku pravdepodobne tiež.", src: ["N1"] },
+    { id: "C2", age: "k", when: "cold", text: "Podľa AAP viac tenkých vrstiev zahreje a udrží v suchu lepšie než jedna hrubá.", src: ["A3"] },
+    { id: "C3", age: "k", when: "cold", text: "Podľa AAP sa v zime hodí čiapka, rukavice a teplá obuv.", src: ["A3"] },
+    { id: "D1", age: "bmk", when: "rain", text: "Mokré oblečenie a rukavice je podľa AAP dobré čím skôr vymeniť za suché.", src: ["A3", "A1"] },
+    { id: "T1", age: "bm", when: "warm", text: "Keď je teplo, podľa NHS väčšinou stačí jedna vrstva – ľahká bavlna.", src: ["N1"] },
+    { id: "T2", age: "bm", when: "warm", mode: "home", text: "V horúčave môže podľa The Lullaby Trust a NHS stačiť aj body s krátkym rukávom alebo len plienka.", src: ["L1", "N1"] },
+    { id: "T3", age: "b", when: "sun", mode: "stroller carrier", text: "Podľa NHS majú byť bábätká do 6 mesiacov mimo priameho slnka.", src: ["N2", "A2"] },
+    { id: "T4", age: "m", when: "sun", mode: "stroller carrier", text: "Podľa WHO je pre bábätká do 12 mesiacov dobrý tieň – ten však neochráni úplne.", src: ["W1"] },
+    { id: "T5", age: "bmk", when: "uv", mode: "stroller carrier", text: "UV index je dnes 3 alebo vyšší – WHO vtedy uvádza ochranu pred slnkom: tieň, oblečenie a klobúčik.", src: ["W1"] },
+    { id: "T7", age: "bmk", when: "sun", mode: "stroller carrier", text: "Pred slnkom podľa NHS, AAP a WHO najlepšie chráni voľné ľahké oblečenie, ktoré zakryje telo.", src: ["N2", "A2", "W1"] },
+    { id: "T8", age: "bmk", when: "sun", mode: "stroller carrier", text: "Slnko je podľa NHS najsilnejšie medzi 11. a 15. hodinou – vtedy môže pomôcť tieň alebo pobyt dnu.", src: ["N2"] },
+    { id: "T11", age: "bm", when: "warm", mode: "stroller", text: "Podľa NHS a The Lullaby Trust sa kočík neprekrýva plienkou, dekou ani látkou, ktorá bráni prúdeniu vzduchu – môže pomôcť slnečník alebo priedušná clona.", src: ["N1", "N2", "L1"] },
+    { id: "T12", age: "bm", when: "sun", mode: "stroller", text: "WHO uvádza, že bábätko nemá spať na slnku.", src: ["W1"] },
+    { id: "T13", age: "bmk", when: "warm", mode: "car", text: "Podľa NHS sa bábätko ani dieťa nenecháva v zaparkovanom aute.", src: ["N2"] },
+    { id: "T14", age: "bm", when: "always", mode: "car", text: "Na dlhšej ceste The Lullaby Trust uvádza prestávky, aby sa dalo bábätko skontrolovať.", src: ["L1"] },
+    { id: "T15", age: "bmk", when: "warm", mode: "home", text: "Podľa NHS sa ventilátor nemieri priamo na dieťa.", src: ["N2"] },
+    { id: "T16", age: "bm", when: "always", mode: "home", text: "Podľa NHS a The Lullaby Trust býva na spánok príjemná izba so 16–20 °C.", src: ["N1", "L1"] },
+    { id: "AU1", age: "bmk", when: "always", mode: "car", text: "Podľa AAP sa do autosedačky nedáva hrubá bunda ani kombinéza – pod popruhmi stačia tenké vrstvy.", src: ["A1"] },
+    { id: "AU2", age: "bmk", when: "cold", mode: "car", text: "Bundu alebo deku je podľa AAP lepšie dať až cez zapnuté popruhy, aby sa dala zložiť, keď sa auto vyhreje.", src: ["A1"] },
+    { id: "AU3", age: "bmk", when: "always", mode: "car", text: "Popruhy sú podľa AAP dobre utiahnuté, keď sa na nich pri hrudníku nedá štipnúť záhyb.", src: ["A1"] },
+    { id: "AU4", age: "bm", when: "cold", mode: "car", text: "Podľa AAP môže pomôcť mať vajíčko (autosedačku pre bábätko) medzi jazdami v teple doma.", src: ["A1"] },
+    { id: "AU6", age: "bm", when: "always", mode: "car", text: "Autosedačka je podľa The Lullaby Trust na cestu – na spánok sa bábätko po príchode prekladá na pevnú rovnú podložku.", src: ["L1"] },
+    { id: "NO2", age: "bm", when: "warm", mode: "carrier", text: "Podľa The Lullaby Trust sa v teple oplatí častejšie skontrolovať hrudník alebo zátylok bábätka v nosiči.", src: ["L1"] }
   ];
   // „Čo zobrať“ (bez položiek [OVERIŤ] – krém SPF, voda pre bábätká)
   function packList(age, mode, cond) {
@@ -112,7 +113,7 @@
       "<button class='g2r-link' type='button' data-g2w='geo'>Použiť moju polohu (približne)</button>";
     const info = state.v5.weatherInfoSeen ? "" : "<p class='g2r-small'>Počasie zistíme zo služby Open-Meteo (Švajčiarsko). Pošleme jej len mesto, ktoré zadáš – alebo približnú polohu (asi na 1 km), ak ju povolíš. Nič o tebe ani o bábätku neposielame a polohu si neukladáme.</p>";
     if (!wx) {
-      body.innerHTML = "<p class='g2r-lead'>Zisti počasie a ukážem ti, ako obliecť bábätko a čo zobrať.</p>" + locate + info +
+      body.innerHTML = "<p class='g2r-lead'>Zisti počasie a ukážem ti, čo k nemu uvádzajú zdroje o obliekaní bábätka.</p>" /* Master 4.0 (Audit Z14): mäkko */ + locate + info +
         (busy ? "<p class='g2r-small' role='status'>Zisťujem počasie…</p>" : "") + (error ? "<p class='g2r-small' role='status'>" + esc(error) + "</p>" : "");
       return;
     }
@@ -124,11 +125,11 @@
     body.innerHTML = [
       "<div class='g2w-now'><strong>" + Math.round(wx.temp) + " °C</strong><span>pocitovo " + Math.round(wx.feels) + " °C · " + esc(wx.place) + "<br>" + esc([wx.rain ? "zrážky" : "bez zrážok", "vietor " + Math.round(wx.wind) + " km/h", wx.day ? "UV " + Math.round(wx.uv) : "noc"].join(" · ")) + "</span></div>",
       "<div class='g2r-chips g2r-rq g2w-modes' role='group' aria-label='Ako idete'>" + MODES.map(([k, t]) => "<button class='g2r-pill' type='button' data-g2w='mode' data-mode='" + k + "' aria-pressed='" + String(k === m) + "'>" + t + "</button>").join("") + "</div>",
-      "<section class='g2r-info'><h3>Ako obliecť</h3><ul class='g2w-rules'>" + rules.map(r => "<li>" + esc(r.text) + "<small>Podľa: " + esc(srcLine(r.src)) + "</small></li>").join("") + "</ul></section>",
-      pack.length ? "<section class='g2r-info'><h3>Čo zobrať</h3><ul class='g2w-pack'>" + pack.map((p, i) => "<li><label><input type='checkbox' data-g2w-pack='" + i + "'> " + esc(p) + "</label></li>").join("") + "</ul></section>" : "",
-      "<p class='g2r-small'>Rady sú z verejných zdrojov (" + esc(Array.from(new Set(rules.flatMap(r => r.src).map(id => SRC[id][0]))).join(", ")) + "), overené " + CHECKED + ". Nie sú od lekára – pri otázkach o zdraví bábätka sa obráť na pediatra. " +
-        "Kedy appka ukáže rady na chladno (pocitovo pod " + COLD + " °C) a na teplo (nad " + WARM + " °C), je len orientačné nastavenie appky, nie odporúčanie zo zdroja.</p>",
-      "<details class='g2w-src'><summary>Zdroje</summary><ul>" + Array.from(new Set(rules.flatMap(r => r.src))).map(id => "<li><a href='" + esc(SRC[id][1]) + "' target='_blank' rel='noopener noreferrer'>" + esc(SRC[id][0]) + " ↗</a></li>").join("") + "</ul></details>",
+      rules.length ? "<section class='g2r-info'><h3>Ako obliecť</h3><ul class='g2w-rules'>" + rules.map(r => "<li>" + esc(r.text) + "<small>Podľa: " + esc(srcLine(r.src)) + "</small></li>").join("") + "</ul></section>" : "",
+      pack.length ? "<section class='g2r-info'><h3>Čo sa môže hodiť</h3><ul class='g2w-pack'>" + pack.map((p, i) => "<li><label><input type='checkbox' data-g2w-pack='" + i + "'> " + esc(p) + "</label></li>").join("") + "</ul></section>" : "",
+      rules.length ? "<p class='g2r-small'>Informácie sú z verejných zdrojov (" + esc(Array.from(new Set(rules.flatMap(r => r.src).map(id => SRC[id][0]))).join(", ")) + "), overené " + CHECKED + ". Nie sú od lekára. " + esc(window.G2Safety?.line.ped || "") + " " +
+        "Kedy appka ukáže informácie na chladno (pocitovo pod " + COLD + " °C) a na teplo (nad " + WARM + " °C), je len orientačné nastavenie appky, nie odporúčanie zo zdroja.</p>" : "",
+      !rules.length ? "" : "<details class='g2w-src'><summary>Zdroje</summary><ul>" + Array.from(new Set(rules.flatMap(r => r.src))).map(id => "<li><a href='" + esc(SRC[id][1]) + "' target='_blank' rel='noopener noreferrer'>" + esc(SRC[id][0]) + " ↗</a></li>").join("") + "</ul></details>",
       "<p class='g2r-small'>Údaje o počasí: <a href='https://open-meteo.com/' target='_blank' rel='noopener noreferrer'>Open-Meteo.com</a></p>",
       "<button class='g2r-link' type='button' data-g2w='reset'>Iné mesto alebo poloha</button>"
     ].join("");

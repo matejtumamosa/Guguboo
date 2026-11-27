@@ -217,17 +217,9 @@
   }
 
   function noticesHtml(s) {
-    const c = content();
     const out = [];
-    const long7 = s.runs.slice(-3).filter(r => r.len > 7);
-    const between = betweenBleeding(s.runs).slice(-3);
-    if (c && (long7.length || between.length)) {
-      out.push("<div class='v2-calm-box'><strong>Na najbližšiu kontrolu u gynekológa</strong><ul class='v2-mama-list'>" +
-        long7.map(r => "<li>menštruácia od " + esc(short(r.start)) + " trvala " + esc(dni(r.len)) + "</li>").join("") +
-        between.map(k => "<li>špinenie mimo menštruácie " + esc(short(k)) + "</li>").join("") +
-        // Master 2.8 (Plán F1-0, nález test.html): Master 2.7 zrušil v obsahu doctorIntro/doctor → okno padalo; teraz jednotná veta 2.7.
-        "</ul><p>" + esc(c.doctorLine || "") + "</p></div>");
-    }
+    // Master 4.0 (Audit Z11): appka zápisy nevyhodnocuje – blok „Na najbližšiu kontrolu u gynekológa“ (menštruácia > 7 dní,
+    // špinenie mimo menštruácie) odstránený. Ostáva štandardná veta + „Zapísať ako otázku“ v časti Dobré vedieť.
     const birth = state.profile?.birth;
     const firstAfter = birth ? s.runs.find(r => r.start > birth) : null;
     if (firstAfter) {
@@ -289,8 +281,9 @@
       lines.push(short(r.start) + (r.end !== r.start ? "–" + short(r.end) : "") + " (" + dni(r.len) + ")" + (heavy ? ", silná" : "") + (sym.size ? " · " + [...sym].join(", ") : ""));
     });
     if (s.avgCycle) lines.push("", "Priemerný cyklus: " + dni(s.avgCycle) + (s.cycles.length > 1 && s.min !== s.max ? " (" + s.min + "–" + s.max + ")" : ""));
-    const between = betweenBleeding(s.runs);
-    if (between.length) lines.push("Špinenie mimo menštruácie: " + between.map(short).join(", "));
+    // Master 4.0 (Audit Z11): neutrálny export – všetky zapísané dni špinenia, bez výberu „mimo menštruácie“.
+    const spots = Object.keys(days).filter(k => days[k]?.flow === "spot").sort().slice(-10);
+    if (spots.length) lines.push("Zapísané špinenie: " + spots.map(short).join(", "));
     return lines.join("\n");
   }
 
