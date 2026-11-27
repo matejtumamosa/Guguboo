@@ -346,7 +346,7 @@
       row("camera", expecting ? "Fotka dňa (aj bruška)" : "Fotka dňa", "data-v2-moment-go='photo'"),
       row("pen", "Jedna veta", "data-v2-moment-go='text'"),
       row("sparkle", "Prvé razy", "data-v2-moments-open='firsts'"),
-      row("sound", "Môj hlas pre bábätko", "data-v5-feature='voice'"),
+      row("voice", "Môj hlas pre bábätko", "data-v5-feature='voice'"),
       row("memory", "Naše momenty", "data-v2-moments-open='timeline'", count && !V5.MASTER ? String(count) : "")
     ];
     return "<section class='v2-moment" + (momentMenuOpen ? " is-open" : "") + "'>" +

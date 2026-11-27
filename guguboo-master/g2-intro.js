@@ -12,6 +12,7 @@
   const welcome = document.getElementById("welcome");
   const Fig = window.GugubooBabyFigure;
   if (!V5 || !V5.MASTER || !welcome || !Fig) return;
+  // Master 4.0 (Audit V13): znaky ☾ ✓ ♡ (čipy a voľby obdobia) → linkové ikony z iconPaths (V5.glyph)
   const MARKUP = `
   <div class="top">
     <img src="guguboo-logo-3d-pastel-v2.png" alt="Guguboo">
@@ -26,9 +27,9 @@
       <div class="hero" aria-hidden="true">
         <div class="hero-ring"></div>
         <div class="hero-art" id="g2i-heroArt"></div>
-        <span class="chip c1 float"><i>☾</i>Pokoj</span>
-        <span class="chip c2 float"><i>✓</i>Plán</span>
-        <span class="chip c3 float"><i>♡</i>Spomienky</span>
+        <span class="chip c1 float"><i>${V5.glyph("moon")}</i>Pokoj</span>
+        <span class="chip c2 float"><i>${V5.glyph("check")}</i>Plán</span>
+        <span class="chip c3 float"><i>${V5.glyph("memory")}</i>Spomienky</span>
       </div>
       <div class="head">
         <h1 id="g2i-h-hook">Každý týždeň jeden pokojný krok.</h1>
@@ -44,12 +45,12 @@
       </div>
       <div class="choices" role="radiogroup" aria-labelledby="g2i-h-stage">
         <button class="choice a" role="radio" aria-checked="false" data-choice="pregnant">
-          <span class="ico" aria-hidden="true">☾</span>
+          <span class="ico" aria-hidden="true">${V5.glyph("moon")}</span>
           <span class="txt">Čakám bábätko</span>
           <span class="tick" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
         <button class="choice b" role="radio" aria-checked="false" data-choice="born">
-          <span class="ico" aria-hidden="true">♡</span>
+          <span class="ico" aria-hidden="true">${V5.glyph("memory")}</span>
           <span class="txt">Bábätko už je s nami</span>
           <span class="tick" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
