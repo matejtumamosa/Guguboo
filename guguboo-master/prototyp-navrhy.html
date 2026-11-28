@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp – 8 menších dizajnových návrhov (teraz vs. návrh)</title>
+<!--
+  Prototyp na výber pre Sama (28. 11. 2026, podklad UI / dizajn systém, Master 4.0.3).
+  Statický, bez závislostí; appka naň neodkazuje. „Teraz“ je prekreslené podľa appky (?ukazka=po, 375 px),
+  farby a rozmery odmerané v prehliadači. Ikony = cesty z iconPaths vo v5-mobile.js (Phosphor Regular, MIT,
+  a vlastné linkové ťahom 16). Nové ikony (označené „nová“) sú len návrh v tom istom štýle.
+  Návrhy nemenia texty, nepridávajú zdravotné tvrdenia ani funkcie – len vzhľad.
+-->
+<style>
+  @font-face { font-family: "Montserrat"; font-style: normal; font-weight: 500 800; font-display: swap;
+    src: url("fonts/montserrat-latin-ext.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Montserrat"; font-style: normal; font-weight: 500 800; font-display: swap;
+    src: url("fonts/montserrat-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+  :root {
+    --font: Montserrat, "Segoe UI", system-ui, sans-serif;
+    --ink: #29243a; --muted: #5d5768; --brand: #5f4fb1; --brand-btn: #6a59c0;
+    --n-ink: #f5f2fb; --n-muted: #c9c3d8; --n-brand: #c6bcff;
+    --line: rgba(91, 76, 132, .11);
+    --baby-bg: #eaf4fb; --baby: #2f6a8f;
+    --mama-bg: #fdecf1; --mama: #a24766;
+    --fam-bg: #e5f3ee; --fam: #24715f;
+    --lil-bg: #eee9ff; --lil: #5f4fb1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font: 500 15px/22px var(--font); color: var(--ink); background: #f6f2fb; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1260px; margin: 0 auto; padding: 24px 16px 64px; }
+  .intro h1 { font: 700 22px/28px var(--font); margin: 0 0 6px; }
+  .intro p { margin: 0 0 4px; color: var(--muted); font-size: 14px; line-height: 20px; max-width: 760px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 20px; padding: 0; list-style: none; }
+  .toc a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--brand); font-weight: 700; font-size: 14px; text-decoration: none; }
+  .toc a:focus-visible, button:focus-visible { outline: 3px solid #8171ce; outline-offset: 2px; }
+
+  .nv { background: #fff; border: 1px solid rgba(117, 96, 181, .14); border-radius: 24px; padding: 20px; margin: 0 0 22px; box-shadow: 0 10px 30px rgba(95, 79, 177, .06); }
+  .nv > h2 { font: 700 18px/24px var(--font); margin: 0 0 4px; display: flex; gap: 10px; align-items: baseline; }
+  .nv > h2 .n { color: var(--brand); }
+  .nv > .why { margin: 0 0 16px; color: var(--muted); font-size: 14px; line-height: 20px; }
+  .cmp { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; }
+  .col { min-width: 0; }
+  .col > .lab { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 700 14px/20px var(--font); }
+  .col > .lab b { display: inline-block; padding: 3px 10px; border-radius: 999px; background: #ece9f1; color: var(--muted); }
+  .col.is-new > .lab b { background: var(--lil-bg); color: var(--brand); }
+  .col > .lab span { font-weight: 500; color: var(--muted); }
+  .col > .note { margin: 8px 2px 0; font-size: 14px; line-height: 20px; color: var(--muted); }
+  .rec { margin: 16px 0 0; padding: 12px 14px; border-radius: 16px; background: #f6f2ff; font-size: 14px; line-height: 20px; }
+  .rec strong { color: var(--brand); }
+
+  /* ——— Telefón (výrez obrazovky, 375 px) ——— */
+  .phone { width: 100%; max-width: 375px; border-radius: 28px; overflow: hidden; padding: 14px; background: linear-gradient(180deg, #f8f3ff 0%, #fff5f1 100%); border: 1px solid rgba(117, 96, 181, .14); }
+  .phone.night { background: #0d1422; border-color: #232a3b; color: var(--n-ink); }
+  .stack > * + * { margin-top: 10px; }
+
+  /* ikony */
+  svg.ph { width: 22px; height: 22px; fill: currentColor; display: block; flex: none; }
+  .sq { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; flex: none; }
+  .sq.sm { width: 32px; height: 32px; border-radius: 50%; }
+  .sq.sm svg.ph { width: 18px; height: 18px; }
+  .sq.tile { width: 34px; height: 34px; border-radius: 11px; background: #fff; }
+  .sq.tile svg.ph { width: 19px; height: 19px; }
+  .c-baby { background: var(--baby-bg); color: var(--baby); }
+  .c-mama { background: var(--mama-bg); color: var(--mama); }
+  .c-fam  { background: var(--fam-bg);  color: var(--fam); }
+  .c-lil  { background: var(--lil-bg);  color: var(--lil); }
+  .t-baby { color: var(--baby); } .t-mama { color: var(--mama); } .t-fam { color: var(--fam); } .t-lil { color: var(--lil); }
+
+  /* riadok (hub, Mama, Rodina) */
+  .row { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px; background: #fff; border: 1px solid var(--line); border-radius: 18px; }
+  .row .tx { flex: 1; min-width: 0; }
+  .row strong { display: block; font: 500 15px/22px var(--font); }
+  .row small { display: block; font: 500 14px/20px var(--font); color: var(--muted); }
+  .row .chev { color: var(--muted); width: 18px; height: 18px; }
+  .row .chev svg { width: 18px; height: 18px; }
+  .plus-round { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--lil-bg); color: var(--brand); border: 1px solid rgba(95, 79, 177, .18); flex: none; }
+  .plus-round svg.ph { width: 22px; height: 22px; }
+  .plus-round.baby { background: var(--baby-bg); color: var(--baby); border-color: rgba(47, 106, 143, .2); }
+
+  /* hlavička okna */
+  .hd { display: flex; align-items: center; gap: 8px; min-height: 46px; margin: -2px 0 8px; }
+  .hd .t { flex: 1; min-width: 0; font: 700 18px/24px var(--font); white-space: nowrap; overflow: hidden; }
+  .hd .t small { display: block; font: 500 14px/20px var(--font); color: var(--muted); white-space: normal; }
+  .rb { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 1px solid var(--line); color: var(--brand); flex: none; }
+  .rb svg.ph { width: 20px; height: 20px; }
+  .h1 { font: 700 18px/24px var(--font); margin: 4px 0 2px; }
+  .sub { font: 500 14px/20px var(--font); color: var(--muted); margin: 0 0 10px; }
+  .grp { font: 500 14px/20px var(--font); color: var(--muted); margin: 6px 4px 8px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; border: 0; border-radius: 16px; background: linear-gradient(180deg, #6b5ac4, #5a49ad); color: #fff; font: 700 15px/20px var(--font); }
+  .btn svg.ph { width: 18px; height: 18px; }
+
+  /* skratky domova */
+  .shorts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .short { background: #fff; border: 1px solid var(--line); border-radius: 20px; min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 6px; text-align: center; font: 500 14px/18px var(--font); }
+  .short .sq { width: 32px; height: 32px; border-radius: 50%; }
+  .short .sq svg.ph { width: 18px; height: 18px; }
+
+  /* Všetko – dlaždice */
+  .dh { display: flex; align-items: center; gap: 8px; margin: 4px 2px 8px; font: 700 16px/22px var(--font); }
+  .dh .sq { width: 24px; height: 24px; border-radius: 7px; }
+  .dh .sq svg.ph { width: 15px; height: 15px; }
+  .dh .sq.fill-baby { background: #3f7ea6; color: #fff; } .dh .sq.fill-mama { background: #b45a7a; color: #fff; }
+  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .tl { min-width: 0; hyphens: auto; -webkit-hyphens: auto; display: flex; align-items: center; gap: 8px; min-height: 58px; padding: 8px; border-radius: 16px; font: 500 15px/20px var(--font); }
+  .tl.bg-baby { background: var(--baby-bg); } .tl.bg-mama { background: var(--mama-bg); }
+  .tl.white { background: #fff; border: 1px solid var(--line); }
+
+  /* Čas pre teba (kruh pohody v Mame) */
+  .me { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 12px; }
+  .me .top { display: flex; justify-content: space-between; align-items: center; }
+  .me .parts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .me .p { border-radius: 18px; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 500 15px/20px var(--font); }
+  .me .p svg.ph { width: 20px; height: 20px; }
+  .p1 { background: #fde4ec; } .p2 { background: #ffe8d4; } .p3 { background: #e3eafc; }
+
+  /* ——— 1 Kruh ——— */
+  .ringcard { border-radius: 26px; padding: 16px 10px; display: grid; place-items: center; background: #fff; border: 1px solid var(--line); }
+  .night .ringcard { background: #1b2130; border-color: rgba(111, 80, 130, .08); }
+  .ringcard svg.ring { width: 100%; max-width: 270px; height: auto; display: block; }
+  .ring text { font-family: var(--font); }
+  .night .mini-hd { color: var(--n-ink); }
+  .mini-hd { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font: 700 18px/24px var(--font); }
+  .ndim { font: 500 14px/20px var(--font); color: var(--n-muted); margin: 10px 4px 0; }
+
+  /* ——— 3 Ikony nálady ——— */
+  .cand { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .cand > div { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 10px 6px; text-align: center; font: 500 14px/18px var(--font); color: var(--muted); }
+  .cand .big { width: 56px; height: 56px; border-radius: 18px; margin: 0 auto 6px; display: grid; place-items: center; }
+  .cand .big svg.ph { width: 30px; height: 30px; }
+
+  /* ——— 5 Naše momenty ——— */
+  .mem { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 14px; }
+  .mem .top { display: flex; align-items: center; gap: 12px; }
+  .mem .last { margin-top: 12px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: linear-gradient(135deg, #f6f0ff, #fff1ec); }
+  .mem .last .dot { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--fam); box-shadow: 0 4px 12px rgba(95, 79, 177, .1); flex: none; }
+  .mem .last strong { display: block; font: 500 15px/22px var(--font); }
+  .mem .last small { display: block; font: 500 14px/20px var(--font); color: var(--muted); }
+  .mini-tl { margin: 10px 0 0; padding: 0; list-style: none; }
+  .mini-tl li { display: flex; align-items: center; gap: 10px; padding: 6px 0; position: relative; }
+  .mini-tl li .d { width: 28px; height: 28px; border-radius: 50%; background: var(--fam-bg); color: var(--fam); display: grid; place-items: center; flex: none; z-index: 1; }
+  .mini-tl li .d svg.ph { width: 16px; height: 16px; }
+  .mini-tl li + li::before { content: ""; position: absolute; left: 13px; top: -10px; height: 20px; border-left: 2px solid #d7ece4; }
+  .mini-tl strong { font: 500 15px/20px var(--font); }
+  .mini-tl small { margin-left: auto; font: 500 14px/20px var(--font); color: var(--muted); white-space: nowrap; }
+  .empty-space { height: 170px; border-radius: 18px; border: 1.5px dashed rgba(117, 96, 181, .18); display: grid; place-items: center; color: #9a94a8; font-size: 14px; }
+
+  /* ——— 6 Koniec úvodu ——— */
+  .intro-end { background: linear-gradient(180deg, #fbf8ff, #fff6f3); border-radius: 24px; padding: 18px 10px 16px; text-align: center; }
+  .intro-end .logo { font: 800 20px/24px var(--font); color: #8a7bd6; letter-spacing: -.01em; margin-bottom: 24px; }
+  .intro-end .logo i { font-style: normal; color: #f07f98; }
+  .bigc { position: relative; width: 184px; height: 184px; margin: 0 auto 26px; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 40% 35%, #fff 0%, #f7f1fd 55%, #ebe2fa 100%); border: 1.67px solid #e8e0f8;
+    box-shadow: inset 0 0 0 10px rgba(255, 255, 255, .6), 0 18px 40px rgba(95, 79, 177, .14); }
+  .bigc::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; z-index: -1; background: radial-gradient(circle, rgba(246, 217, 227, .55) 0%, rgba(246, 217, 227, 0) 70%); }
+  .bigc .age { display: flex; flex-direction: column; align-items: center; font: 700 18px/24px var(--font); }
+  .bigc .age span { font: 500 14px/20px var(--font); color: var(--muted); }
+  .bigc .art { width: 140px; height: 140px; }
+  .bigc .art svg { width: 100%; height: 100%; display: block; }
+  .bigc .wk { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: #6a59c0; color: #fff; font: 700 14px/18px var(--font); white-space: nowrap; box-shadow: 0 6px 14px rgba(95, 79, 177, .25); }
+  .intro-end .kick { color: var(--brand); font: 500 15px/22px var(--font); margin: 0 0 6px; }
+  .intro-end .t { font: 700 18px/24px var(--font); margin: 0 0 18px; }
+  .intro-end .rest { height: 40px; margin: 0 16px 16px; border-top: 1px solid #ece6f4; color: #9a94a8; font-size: 14px; padding-top: 10px; }
+
+  /* ——— 7 Prvé razy, časová os ——— */
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ft { background: #f6f2ff; border-radius: 20px; min-height: 95px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; font: 700 15px/20px var(--font); }
+  .ft .emo { font-size: 26px; line-height: 30px; }
+  .ft .sq.sm { width: 36px; height: 36px; background: #fff; color: var(--lil); }
+  .ft .sq.sm svg.ph { width: 20px; height: 20px; }
+  .ft.saved { background: #efe9ff; box-shadow: inset 0 0 0 1.5px rgba(95, 79, 177, .35); }
+  .ft.saved small { font: 500 14px/18px var(--font); color: var(--muted); }
+  .tline { list-style: none; margin: 0; padding: 0; }
+  .tline li { display: flex; gap: 12px; align-items: center; position: relative; padding: 5px 0; }
+  .tline li::before { content: ""; position: absolute; left: 17px; top: 0; bottom: 0; border-left: 2px solid #e6dcf8; }
+  .tline li:first-child::before { top: 50%; } .tline li:last-child::before { bottom: 50%; }
+  .tline .d { width: 36px; height: 36px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: none; z-index: 1; box-shadow: 0 2px 8px rgba(95, 79, 177, .1); font-size: 18px; color: var(--lil); }
+  .tline .d svg.ph { width: 18px; height: 18px; }
+  .tline .d.plain { width: 14px; height: 14px; margin: 0 11px; background: #cfc4ef; box-shadow: none; }
+  .tline .c { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 8px 12px; }
+  .tline .c strong { display: block; font: 500 15px/20px var(--font); }
+  .tline .c small { display: block; font: 500 14px/20px var(--font); color: var(--muted); }
+
+  /* ——— 8 Hlavičky ——— */
+  .emptybox { border: 1.5px dashed rgba(117, 96, 181, .25); border-radius: 18px; min-height: 64px; display: grid; place-items: center; color: var(--muted); font-size: 14px; background: rgba(255, 255, 255, .5); }
+  .formcard { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 12px; }
+  .formcard label { display: block; font: 500 15px/22px var(--font); margin-bottom: 6px; }
+  .formcard .in { border: 1px solid #ddd6ea; border-radius: 14px; min-height: 46px; padding: 11px 12px; color: #8a8496; font: 500 16px/24px var(--font); }
+
+  .tag-new { font: 700 12px/16px var(--font); color: var(--brand); background: var(--lil-bg); border-radius: 999px; padding: 1px 7px; margin-left: 4px; }
+  @media (max-width: 420px) {
+    .page { padding: 16px 10px 48px; }
+    .nv { padding: 14px 10px; border-radius: 20px; }
+    .phone { padding: 12px; border-radius: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="intro">
+    <h1>8 menších dizajnových návrhov – teraz vs. návrh</h1>
+    <p>Na výber pre Sama. Vľavo vždy súčasná appka (Master 4.0.3, po pôrode, šírka 375 px), vpravo návrh – pri niektorých dva varianty.</p>
+    <p>Návrhy menia len vzhľad: žiadny nový text, zdravotné tvrdenie ani funkcia. Ikony označené „nová“ sú návrh v rovnakom štýle (linka, ťah 16).</p>
+    <ul class="toc">
+      <li><a href="#n1">1 Kruh v noci</a></li><li><a href="#n2">2 Farby štvorčekov</a></li><li><a href="#n3">3 Ikona nálady</a></li>
+      <li><a href="#n4">4 Nový záznam</a></li><li><a href="#n5">5 Naše momenty</a></li><li><a href="#n6">6 Koniec úvodu</a></li>
+      <li><a href="#n7">7 Prvé razy a os</a></li><li><a href="#n8">8 Hlavičky okien</a></li>
+    </ul>
+  </header>
+
+  <!-- ===================== 1 ===================== -->
+  <section class="nv" id="n1" aria-labelledby="n1h">
+    <h2 id="n1h"><span class="n">1</span> Kruh na domove v noci</h2>
+    <p class="why">V tmavej izbe pri nočnom kŕmení svietia pastelové diely takmer ako cez deň (len jas 90 %) – oslňujú a pôsobia rušivo.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>noc</span></p>
+        <div class="phone night"><div class="ringcard" data-ring="now"></div></div>
+        <p class="note">Denné pastely, filter jas .9 a sýtosť .92; ikony tmavé s priehľadnosťou .7.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>stlmené pastely</span></p>
+        <div class="phone night"><div class="ringcard" data-ring="a"></div></div>
+        <p class="note">Tie isté farby, len jas .5 a sýtosť .7. Ikony a stav svetlé (#f5f2fb), kontrast textu ≥ 4,5 : 1.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>nočná paleta</span></p>
+        <div class="phone night"><div class="ringcard" data-ring="b"></div></div>
+        <p class="note">Vlastné tmavé tóny tých istých odtieňov (ruža, broskyňa, modrá) ako tokeny pre noc; ikony svetlé .85.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: B</strong> – v tme svieti najmenej, farby dielov ostávajú rozlíšiteľné a dajú sa zapísať ako nočné tokeny (pravidlo „nová farba = token aj pre noc“).</p>
+  </section>
+
+  <!-- ===================== 2 ===================== -->
+  <section class="nv" id="n2" aria-labelledby="n2h">
+    <h2 id="n2h"><span class="n">2</span> Menej farieb štvorčekov pod ikonami</h2>
+    <p class="why">Tá istá funkcia má na rôznych miestach inú farbu (Starostlivosť a Aktivity sú na domove ružové ako Mama, v Bábätku modré) a v Mame sa miešajú ružová, fialová, broskyňová a modrá.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>Domov · Mama · Všetko</span></p>
+        <div class="phone stack">
+          <div class="shorts">
+            <div class="short"><span class="sq c-mama" data-i="swaddle"></span>Starostlivosť</div>
+            <div class="short"><span class="sq c-mama" data-i="blocks"></span>Aktivity</div>
+            <div class="short"><span class="sq c-lil" data-i="book"></span>Zdravotná knižka</div>
+          </div>
+          <div class="row"><span class="sq c-lil" data-i="glassWater"></span><div class="tx"><strong>Pitný režim</strong><small>pridať pohár</small></div><span class="plus-round" data-i="plus"></span></div>
+          <div class="row"><span class="sq c-mama" data-i="leaf"></span><div class="tx"><strong>Telo po pôrode</strong><small>Hojenie, prsia, panvové dno</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="dh"><span class="sq fill-baby" data-i="baby"></span><span class="t-baby">Bábätko</span></div>
+          <div class="tiles">
+            <div class="tl bg-baby"><span class="sq tile t-baby" data-i="clock"></span>Denné záznamy</div>
+            <div class="tl bg-baby"><span class="sq tile t-baby" data-i="swaddle"></span>Starostlivosť</div>
+          </div>
+          <div class="dh"><span class="sq fill-mama" data-i="mama"></span><span class="t-mama">Mama</span></div>
+          <div class="tiles">
+            <div class="tl bg-mama"><span class="sq tile t-mama" data-i="coffee"></span>Čas pre teba</div>
+            <div class="tl bg-mama"><span class="sq tile t-mama" data-i="leaf"></span>Telo po pôrode</div>
+          </div>
+        </div>
+        <p class="note">Spolu 4 farby štvorčekov a 2 spôsoby (farebný štvorček na bielom aj biely štvorček na farebnom).</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>len farba oblasti</span></p>
+        <div class="phone stack">
+          <div class="shorts">
+            <div class="short"><span class="sq c-baby" data-i="swaddle"></span>Starostlivosť</div>
+            <div class="short"><span class="sq c-baby" data-i="blocks"></span>Aktivity</div>
+            <div class="short"><span class="sq c-baby" data-i="book"></span>Zdravotná knižka</div>
+          </div>
+          <div class="row"><span class="sq c-mama" data-i="glassWater"></span><div class="tx"><strong>Pitný režim</strong><small>pridať pohár</small></div><span class="plus-round" data-i="plus"></span></div>
+          <div class="row"><span class="sq c-mama" data-i="leaf"></span><div class="tx"><strong>Telo po pôrode</strong><small>Hojenie, prsia, panvové dno</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="dh"><span class="sq fill-baby" data-i="baby"></span><span class="t-baby">Bábätko</span></div>
+          <div class="tiles">
+            <div class="tl white"><span class="sq tile c-baby" data-i="clock"></span>Denné záznamy</div>
+            <div class="tl white"><span class="sq tile c-baby" data-i="swaddle"></span>Starostlivosť</div>
+          </div>
+          <div class="dh"><span class="sq fill-mama" data-i="mama"></span><span class="t-mama">Mama</span></div>
+          <div class="tiles">
+            <div class="tl white"><span class="sq tile c-mama" data-i="coffee"></span>Čas pre teba</div>
+            <div class="tl white"><span class="sq tile c-mama" data-i="leaf"></span>Telo po pôrode</div>
+          </div>
+        </div>
+        <p class="note">Jedno pravidlo: štvorček má farbu oblasti, kam funkcia patrí – všade rovnako (domov, záložka, Všetko). Dlaždice bez farebného pozadia.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>jedna fialová</span></p>
+        <div class="phone stack">
+          <div class="shorts">
+            <div class="short"><span class="sq c-lil" data-i="swaddle"></span>Starostlivosť</div>
+            <div class="short"><span class="sq c-lil" data-i="blocks"></span>Aktivity</div>
+            <div class="short"><span class="sq c-lil" data-i="book"></span>Zdravotná knižka</div>
+          </div>
+          <div class="row"><span class="sq c-lil" data-i="glassWater"></span><div class="tx"><strong>Pitný režim</strong><small>pridať pohár</small></div><span class="plus-round" data-i="plus"></span></div>
+          <div class="row"><span class="sq c-lil" data-i="leaf"></span><div class="tx"><strong>Telo po pôrode</strong><small>Hojenie, prsia, panvové dno</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="dh"><span class="sq fill-baby" data-i="baby"></span><span class="t-baby">Bábätko</span></div>
+          <div class="tiles">
+            <div class="tl white"><span class="sq tile c-lil" data-i="clock"></span>Denné záznamy</div>
+            <div class="tl white"><span class="sq tile c-lil" data-i="swaddle"></span>Starostlivosť</div>
+          </div>
+          <div class="dh"><span class="sq fill-mama" data-i="mama"></span><span class="t-mama">Mama</span></div>
+          <div class="tiles">
+            <div class="tl white"><span class="sq tile c-lil" data-i="coffee"></span>Čas pre teba</div>
+            <div class="tl white"><span class="sq tile c-lil" data-i="leaf"></span>Telo po pôrode</div>
+          </div>
+        </div>
+        <p class="note">Všetky štvorčeky v značke; farba oblasti len v nadpise skupiny vo Všetko. Najpokojnejšie, ale stráca sa orientácia „kde som“.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – opraví nekonzistenciu (rovnaká funkcia = rovnaká farba) a zachová orientáciu podľa oblastí z lišty; tlačidlá Oddych · Telo · Opora v Čase pre teba ostávajú farebné (identita kruhu Pohody).</p>
+  </section>
+
+  <!-- ===================== 3 ===================== -->
+  <section class="nv" id="n3" aria-labelledby="n3h">
+    <h2 id="n3h"><span class="n">3</span> Pokojnejšia ikona pre „Nálada a podpora“</h2>
+    <p class="why">Záchranné koleso znamená núdzu a topenie – v rozpore s pravidlom „v názvoch a ikonách nekomunikujeme negatíva“.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>záchranné koleso (alert)</span></p>
+        <div class="phone stack">
+          <div class="row"><span class="sq c-mama" data-i="alert"></span><div class="tx"><strong>Nálada a spánok</strong><small>Pocity, únava, opora</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="tiles"><div class="tl bg-mama" style="grid-column: span 2"><span class="sq tile t-mama" data-i="alert"></span>Nálada a podpora</div></div>
+          <div class="cand" style="grid-template-columns: 1fr"><div><span class="big c-mama" data-i="alert"></span>alert</div></div>
+        </div>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Kandidáti</b><span>A · B · C</span></p>
+        <div class="phone stack">
+          <div class="row"><span class="sq c-mama" data-i="moodBubble"></span><div class="tx"><strong>Nálada a spánok</strong><small>Pocity, únava, opora</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-mama" data-i="moodFace"></span><div class="tx"><strong>Nálada a spánok</strong><small>Pocity, únava, opora</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-mama" data-i="moodHug"></span><div class="tx"><strong>Nálada a spánok</strong><small>Pocity, únava, opora</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="cand">
+            <div><span class="big c-mama" data-i="moodBubble"></span>A bublina so srdcom <span class="tag-new">nová</span></div>
+            <div><span class="big c-mama" data-i="moodFace"></span>B pokojná tvár <span class="tag-new">nová</span></div>
+            <div><span class="big c-mama" data-i="moodHug"></span>C objatie <span class="tag-new">nová</span></div>
+          </div>
+        </div>
+        <p class="note">Všetky linkové, ťah 16, zaoblené konce. Zámerne nie ruka so srdcom (pri Starostlivosti pôsobila ako charita) ani podanie rúk (to je Opora).</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A (bublina so srdcom)</strong> – hovorí „povedz, ako sa máš“ a „niekto ťa vypočuje“, bez hodnotenia nálady; B môže pôsobiť ako tlak „buď usmiata“, C je pri 22 px menej čitateľná.</p>
+  </section>
+
+  <!-- ===================== 4 ===================== -->
+  <section class="nv" id="n4" aria-labelledby="n4h">
+    <h2 id="n4h"><span class="n">4</span> „+ Nový záznam“ v Bábätku len raz</h2>
+    <p class="why">Na tej istej obrazovke vedú k zápisu dve položky hneď pod sebou: veľké tlačidlo „+ Nový záznam“ a riadok „Denné záznamy“ (jeho okno má tiež „+“).</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>Bábätko</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="t">Bábätko</span><span class="rb" data-i="search"></span></div>
+          <p class="sub" style="margin:-6px 0 4px">4. mesiac</p>
+          <div class="btn"><span data-i="plus"></span>Nový záznam</div>
+          <div class="row"><span class="sq c-baby" data-i="clock"></span><div class="tx"><strong>Denné záznamy</strong><small>Prehľad dňa</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-baby" data-i="swaddle"></span><div class="tx"><strong>Starostlivosť</strong><small>Plač, teplota, lekár</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-baby" data-i="book"></span><div class="tx"><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></div><span class="chev" data-i="chevronRight"></span></div>
+        </div>
+        <p class="note">Pozn.: v kóde Master 4.0.3 je text „Nový záznam“ na obrazovke raz – duplicita je v tom, že dve položky robia to isté.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>jeden riadok s „+“</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="t">Bábätko</span><span class="rb" data-i="search"></span></div>
+          <p class="sub" style="margin:-6px 0 4px">4. mesiac</p>
+          <div class="row"><span class="sq c-baby" data-i="clock"></span><div class="tx"><strong>Denné záznamy</strong><small>Prehľad dňa</small></div><span class="plus-round baby" data-i="plus" aria-label="Nový záznam"></span></div>
+          <div class="row"><span class="sq c-baby" data-i="swaddle"></span><div class="tx"><strong>Starostlivosť</strong><small>Plač, teplota, lekár</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-baby" data-i="book"></span><div class="tx"><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></div><span class="chev" data-i="chevronRight"></span></div>
+        </div>
+        <p class="note">Rovnaký vzor ako Pitný režim v Mame (existujúci komponent): ťuk na riadok = prehľad, okrúhle „+“ 48 px = Nový záznam (aria-label).</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>len tlačidlo</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="t">Bábätko</span><span class="rb" data-i="search"></span></div>
+          <p class="sub" style="margin:-6px 0 4px">4. mesiac</p>
+          <div class="btn"><span data-i="plus"></span>Nový záznam</div>
+          <div class="row"><span class="sq c-baby" data-i="swaddle"></span><div class="tx"><strong>Starostlivosť</strong><small>Plač, teplota, lekár</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-baby" data-i="book"></span><div class="tx"><strong>Zdravotná knižka</strong><small>Prehliadky, rast, očkovanie</small></div><span class="chev" data-i="chevronRight"></span></div>
+        </div>
+        <p class="note">Riadok Denné záznamy preč; prehľad dňa ostáva v strede kruhu na domove a vo Všetko.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – jedno miesto pre zápis aj prehľad, žiadna funkcia nezmizne a použije sa už existujúci vzor z Mamy; B skrýva prehľad dňa pre tých, čo nepoznajú stred kruhu.</p>
+  </section>
+
+  <!-- ===================== 5 ===================== -->
+  <section class="nv" id="n5" aria-labelledby="n5h">
+    <h2 id="n5h"><span class="n">5</span> Naše momenty – náhľad poslednej spomienky</h2>
+    <p class="why">Rodinné momenty sú srdce Guguboo, no obrazovka je len zoznam štyroch odkazov a pod ním prázdne miesto – spomienka nie je vidieť.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Naše momenty</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1">Malé okamihy, jeden príbeh</p>
+          <div class="row"><span class="sq c-fam" data-i="memory"></span><div class="tx"><strong>Naša časová os</strong><small>6 spomienok</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="camera"></span><div class="tx"><strong>Dnešný malý moment</strong><small>Fotka alebo veta</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="sparkle"></span><div class="tx"><strong>Prvé razy</strong><small>Úsmev, zúbok, prvé kroky</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="grid"></span><div class="tx"><strong>Albumy</strong><small>Čakanie, 100 dní, prvý rok</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="empty-space">prázdne miesto</div>
+        </div>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>posledná spomienka</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Naše momenty</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1">Malé okamihy, jeden príbeh</p>
+          <div class="mem">
+            <div class="top"><span class="sq c-fam" data-i="memory"></span><div class="tx" style="flex:1"><strong style="display:block;font:500 15px/22px var(--font)">Naša časová os</strong><small style="display:block;font:500 14px/20px var(--font);color:var(--muted)">6 spomienok</small></div><span class="chev" data-i="chevronRight" style="color:var(--muted)"></span></div>
+            <div class="last"><span class="dot" data-i="moon"></span><div><strong>3 mesiace spolu</strong><small>25. novembra 2026</small></div></div>
+          </div>
+          <div class="row"><span class="sq c-fam" data-i="camera"></span><div class="tx"><strong>Dnešný malý moment</strong><small>Fotka alebo veta</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="sparkle"></span><div class="tx"><strong>Prvé razy</strong><small>Úsmev, zúbok, prvé kroky</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="grid"></span><div class="tx"><strong>Albumy</strong><small>Čakanie, 100 dní, prvý rok</small></div><span class="chev" data-i="chevronRight"></span></div>
+        </div>
+        <p class="note">Karta Naša časová os ukáže poslednú spomienku (jej názov a dátum, ak má fotku – fotku). Žiadny nový text, len údaj z osi.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>kúsok osi</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Naše momenty</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1">Malé okamihy, jeden príbeh</p>
+          <div class="mem">
+            <div class="top"><span class="sq c-fam" data-i="memory"></span><div class="tx" style="flex:1"><strong style="display:block;font:500 15px/22px var(--font)">Naša časová os</strong><small style="display:block;font:500 14px/20px var(--font);color:var(--muted)">6 spomienok</small></div><span class="chev" data-i="chevronRight" style="color:var(--muted)"></span></div>
+            <ul class="mini-tl">
+              <li><span class="d" data-i="sprout"></span><strong>Začali sme spolu s Guguboo</strong><small>28. 11.</small></li>
+              <li><span class="d" data-i="moon"></span><strong>3 mesiace spolu</strong><small>25. 11.</small></li>
+              <li><span class="d" data-i="moon"></span><strong>2 mesiace spolu</strong><small>25. 10.</small></li>
+            </ul>
+          </div>
+          <div class="row"><span class="sq c-fam" data-i="camera"></span><div class="tx"><strong>Dnešný malý moment</strong><small>Fotka alebo veta</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="sparkle"></span><div class="tx"><strong>Prvé razy</strong><small>Úsmev, zúbok, prvé kroky</small></div><span class="chev" data-i="chevronRight"></span></div>
+          <div class="row"><span class="sq c-fam" data-i="grid"></span><div class="tx"><strong>Albumy</strong><small>Čakanie, 100 dní, prvý rok</small></div><span class="chev" data-i="chevronRight"></span></div>
+        </div>
+        <p class="note">Posledné 3 spomienky ako malá os (ikony podľa návrhu 7A). Živšie, ale dlhšie a viac textu na obrazovke.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – jedna spomienka stačí na „pozri, čo sme spolu zažili“, obrazovka ostane krátka; s fotkou pôsobí najsilnejšie a bez nej stále pokojne.</p>
+  </section>
+
+  <!-- ===================== 6 ===================== -->
+  <section class="nv" id="n6" aria-labelledby="n6h">
+    <h2 id="n6h"><span class="n">6</span> Koniec úvodu po pôrode</h2>
+    <p class="why">Pred pôrodom je v kruhu ilustrácia (ovocie, bábätko), po pôrode len „10 / dní“ v Hlavnom (od 3.9.1) – kruh pôsobí prázdne práve v „aha momente“.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b></p>
+        <div class="intro-end">
+          <div class="logo">gugu<i>boo</i></div>
+          <div class="bigc"><div class="age">10<span>dní</span></div></div>
+          <p class="kick">Ahoj, Lucia.</p>
+          <p class="t">Ema má dnes 10 dní.</p>
+          <div class="rest">zvyšok obrazovky bez zmeny</div>
+          <div class="btn">Otvoriť môj Guguboo</div>
+        </div>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>bábätko v zavinovačke</span></p>
+        <div class="intro-end">
+          <div class="logo">gugu<i>boo</i></div>
+          <div class="bigc"><div class="art" data-art="swaddle"></div><span class="wk">10 dní</span></div>
+          <p class="kick">Ahoj, Lucia.</p>
+          <p class="t">Ema má dnes 10 dní.</p>
+          <div class="rest">zvyšok obrazovky bez zmeny</div>
+          <div class="btn">Otvoriť môj Guguboo</div>
+        </div>
+        <p class="note">Rovnaká paleta a štýl ako ilustrácia plodu (baby-figure.js): mäkké tvary, zatvorené oči, jedno teplé svetlo. Vek v pilulke ako „N. týždeň“ pred pôrodom.</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>mesiac a hviezdy</span></p>
+        <div class="intro-end">
+          <div class="logo">gugu<i>boo</i></div>
+          <div class="bigc"><div class="art" data-art="moon"></div><span class="wk">10 dní</span></div>
+          <p class="kick">Ahoj, Lucia.</p>
+          <p class="t">Ema má dnes 10 dní.</p>
+          <div class="rest">zvyšok obrazovky bez zmeny</div>
+          <div class="btn">Otvoriť môj Guguboo</div>
+        </div>
+        <p class="note">Spiaci mesiac s hviezdičkami – neutrálne, nehovorí nič o veku ani vzhľade bábätka.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – nadväzuje na ilustráciu plodu z tehotenstva (jeden príbeh pred aj po pôrode) a je jasné, o kom je reč; B je pekná, ale pôsobí ako „spánok“, nie „naše bábätko“.</p>
+  </section>
+
+  <!-- ===================== 7 ===================== -->
+  <section class="nv" id="n7" aria-labelledby="n7h">
+    <h2 id="n7h"><span class="n">7</span> Prvé razy a časová os – emoji vs. linkové ikony</h2>
+    <p class="why">Pravidlo „v ovládaní nie emoji“: farebné emoji majú na každom telefóne iný vzhľad (🔄 je modré tlačidlo, 🪑 hnedá stolička) a vybočujú zo štýlu appky.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>emoji</span></p>
+        <div class="phone stack">
+          <p class="grp">Spolu</p>
+          <div class="fgrid">
+            <div class="ft"><span class="emo">🏡</span>Prvý deň doma</div>
+            <div class="ft"><span class="emo">👵</span>Prvýkrát so starými rodičmi</div>
+            <div class="ft"><span class="emo">🌳</span>Prvá prechádzka</div>
+            <div class="ft"><span class="emo">🌙</span>Prvé zaspatie v kočíku</div>
+            <div class="ft"><span class="emo">😊</span>Prvý úsmev</div>
+            <div class="ft"><span class="emo">😄</span>Prvý smiech</div>
+            <div class="ft"><span class="emo">🔄</span>Prvé pretočenie z bruška na chrbát</div>
+            <div class="ft"><span class="emo">🥄</span>Prvý príkrm</div>
+          </div>
+          <p class="grp">Naša časová os</p>
+          <ul class="tline">
+            <li><span class="d">👶</span><div class="c"><strong>Ema je na svete</strong><small>25. augusta 2026</small></div></li>
+            <li><span class="d">💛</span><div class="c"><strong>Prvý týždeň spolu</strong><small>31. augusta 2026</small></div></li>
+            <li><span class="d">🌙</span><div class="c"><strong>1 mesiac spolu</strong><small>25. septembra 2026</small></div></li>
+            <li><span class="d">🌱</span><div class="c"><strong>Začali sme spolu s Guguboo</strong><small>28. novembra 2026</small></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>linkové ikony</span></p>
+        <div class="phone stack">
+          <p class="grp">Spolu</p>
+          <div class="fgrid">
+            <div class="ft"><span class="sq sm" data-i="home"></span>Prvý deň doma</div>
+            <div class="ft"><span class="sq sm" data-i="family"></span>Prvýkrát so starými rodičmi</div>
+            <div class="ft"><span class="sq sm" data-i="babyHub"></span>Prvá prechádzka</div>
+            <div class="ft"><span class="sq sm" data-i="moon"></span>Prvé zaspatie v kočíku</div>
+            <div class="ft"><span class="sq sm" data-i="smile"></span>Prvý úsmev</div>
+            <div class="ft"><span class="sq sm" data-i="laugh"></span>Prvý smiech</div>
+            <div class="ft"><span class="sq sm" data-i="roll"></span>Prvé pretočenie z bruška na chrbát</div>
+            <div class="ft"><span class="sq sm" data-i="bowlFood"></span>Prvý príkrm</div>
+          </div>
+          <p class="grp">Naša časová os</p>
+          <ul class="tline">
+            <li><span class="d" data-i="swaddle"></span><div class="c"><strong>Ema je na svete</strong><small>25. augusta 2026</small></div></li>
+            <li><span class="d" data-i="memory"></span><div class="c"><strong>Prvý týždeň spolu</strong><small>31. augusta 2026</small></div></li>
+            <li><span class="d" data-i="moon"></span><div class="c"><strong>1 mesiac spolu</strong><small>25. septembra 2026</small></div></li>
+            <li><span class="d" data-i="sprout"></span><div class="c"><strong>Začali sme spolu s Guguboo</strong><small>28. novembra 2026</small></div></li>
+          </ul>
+        </div>
+        <p class="note">Z existujúcej sady: home, family, babyHub (kočík), moon, bowlFood, swaddle, memory. Nové v tom istom štýle: úsmev, smiech, pretočenie, klíček (a ďalšie pre zvyšok zoznamu – napr. sedenie, lezenie, postavenie).</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>bez obrázkov</span></p>
+        <div class="phone stack">
+          <p class="grp">Spolu</p>
+          <div class="fgrid">
+            <div class="ft">Prvý deň doma</div>
+            <div class="ft">Prvýkrát so starými rodičmi</div>
+            <div class="ft">Prvá prechádzka</div>
+            <div class="ft">Prvé zaspatie v kočíku</div>
+            <div class="ft">Prvý úsmev</div>
+            <div class="ft">Prvý smiech</div>
+            <div class="ft">Prvé pretočenie z bruška na chrbát</div>
+            <div class="ft">Prvý príkrm</div>
+          </div>
+          <p class="grp">Naša časová os</p>
+          <ul class="tline">
+            <li><span class="d plain"></span><div class="c"><strong>Ema je na svete</strong><small>25. augusta 2026</small></div></li>
+            <li><span class="d plain"></span><div class="c"><strong>Prvý týždeň spolu</strong><small>31. augusta 2026</small></div></li>
+            <li><span class="d plain"></span><div class="c"><strong>1 mesiac spolu</strong><small>25. septembra 2026</small></div></li>
+            <li><span class="d plain"></span><div class="c"><strong>Začali sme spolu s Guguboo</strong><small>28. novembra 2026</small></div></li>
+          </ul>
+        </div>
+        <p class="note">Len text; na osi jemné bodky. Najmenej práce, no stratí sa hravosť.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – zachová emóciu a hravosť momentov, ale v štýle appky; pozor na pravidlo „rovnaká vec = rovnaká ikona“ (napr. kočík = babyHub, mesiac = moon) – nové ikony len tam, kde v sade nič nie je.</p>
+  </section>
+
+  <!-- ===================== 8 ===================== -->
+  <section class="nv" id="n8" aria-labelledby="n8h">
+    <h2 id="n8h"><span class="n">8</span> Hlavičky okien – jeden nadpis</h2>
+    <p class="why">Mnohé okná majú dva rovnako veľké nadpisy pod sebou (Nákup + Spoločný zoznam, Naše momenty + Prvé razy, Mama + Nálada a spánok, Plán + Teraz) – oko nevie, ktorý platí.</p>
+    <div class="cmp">
+      <div class="col">
+        <p class="lab"><b>Teraz</b><span>dva nadpisy</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Nákup</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1">Spoločný zoznam</p>
+          <div class="emptybox">Pridaj prvú vec.</div>
+          <div class="formcard"><label>Čo treba kúpiť</label><div class="in">napr. plienky</div></div>
+        </div>
+        <div class="phone stack" style="margin-top:12px">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Naše momenty</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1">Prvé razy</p>
+          <p class="sub">Druhým ťuknutím zrušíš.</p>
+          <div class="fgrid"><div class="ft"><span class="emo">🏡</span>Prvý deň doma</div><div class="ft"><span class="emo">👵</span>Prvýkrát so starými rodičmi</div></div>
+        </div>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh A</b><span>jeden nadpis</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Nákup</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="sub" style="margin:-8px 0 0">Spoločný zoznam</p>
+          <div class="emptybox">Pridaj prvú vec.</div>
+          <div class="formcard"><label>Čo treba kúpiť</label><div class="in">napr. plienky</div></div>
+        </div>
+        <div class="phone stack" style="margin-top:12px">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t">Prvé razy</span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="sub" style="margin:-8px 0 0">Druhým ťuknutím zrušíš.</p>
+          <div class="fgrid"><div class="ft"><span class="emo">🏡</span>Prvý deň doma</div><div class="ft"><span class="emo">👵</span>Prvýkrát so starými rodičmi</div></div>
+        </div>
+        <p class="note">Hlavička = názov toho, čo je otvorené (presne ako v appke), vždy jeden riadok; bývalý druhý nadpis klesne na Drobné. Späť vedie o krok („Naše momenty“).</p>
+      </div>
+      <div class="col is-new">
+        <p class="lab"><b>Návrh B</b><span>hlavička len s tlačidlami</span></p>
+        <div class="phone stack">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t"></span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1" style="margin-top:-4px">Nákup</p>
+          <p class="sub">Spoločný zoznam</p>
+          <div class="emptybox">Pridaj prvú vec.</div>
+          <div class="formcard"><label>Čo treba kúpiť</label><div class="in">napr. plienky</div></div>
+        </div>
+        <div class="phone stack" style="margin-top:12px">
+          <div class="hd"><span class="rb" data-i="chevronLeft"></span><span class="t"></span><span class="rb" data-i="search"></span><span class="rb" data-i="close"></span></div>
+          <p class="h1" style="margin-top:-4px">Prvé razy</p>
+          <p class="sub">Druhým ťuknutím zrušíš.</p>
+          <div class="fgrid"><div class="ft"><span class="emo">🏡</span>Prvý deň doma</div><div class="ft"><span class="emo">👵</span>Prvýkrát so starými rodičmi</div></div>
+        </div>
+        <p class="note">Nadpis je len v obsahu (pod tlačidlami). Viac miesta pre dlhší názov, ale pri posúvaní nadpis zmizne.</p>
+      </div>
+    </div>
+    <p class="rec"><strong>Odporúčanie: A</strong> – jeden nadpis na okno, vždy viditeľný a na jednom riadku; zladí okná so záložkami (Bábätko, Mama, Rodina) a ušetrí riadok výšky.</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // Cesty z iconPaths vo v5-mobile.js (Master 4.0.3) – Phosphor Regular (MIT) a vlastné linkové ikony ťahom 16.
+  var S = "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'>";
+  var I = {
+    clock: "<path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'/>",
+    search: "<path d='M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z'/>",
+    home: "<path d='M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H48V120l80-80,80,80Z'/>",
+    moon: "<path d='M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z'/>",
+    calendar: "<path d='M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z'/>",
+    memory: "<path d='M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z'/>",
+    family: "<path d='M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z'/>",
+    sparkle: "<path d='M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z'/>",
+    baby: "<path d='M92,140a12,12,0,1,1,12-12A12,12,0,0,1,92,140Zm72-24a12,12,0,1,0,12,12A12,12,0,0,0,164,116Zm-12.27,45.23a45,45,0,0,1-47.46,0,8,8,0,0,0-8.54,13.54,61,61,0,0,0,64.54,0,8,8,0,0,0-8.54-13.54ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88.11,88.11,0,0,0-84.09-87.91C120.32,56.38,120,71.88,120,72a8,8,0,0,0,16,0,8,8,0,0,1,16,0,24,24,0,0,1-48,0c0-.73.13-14.3,8.46-30.63A88,88,0,1,0,216,128Z'/>",
+    book: "<path d='M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64ZM160,88h40a8,8,0,0,1,0,16H160a8,8,0,0,1,0-16Zm48,40a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,128Zm0,32a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,160Z'/>",
+    alert: "<path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm39.1,131.79a47.84,47.84,0,0,0,0-55.58l28.5-28.49a87.83,87.83,0,0,1,0,112.56ZM96,128a32,32,0,1,1,32,32A32,32,0,0,1,96,128Zm88.28-67.6L155.79,88.9a47.84,47.84,0,0,0-55.58,0L71.72,60.4a87.83,87.83,0,0,1,112.56,0ZM60.4,71.72l28.5,28.49a47.84,47.84,0,0,0,0,55.58L60.4,184.28a87.83,87.83,0,0,1,0-112.56ZM71.72,195.6l28.49-28.5a47.84,47.84,0,0,0,55.58,0l28.49,28.5a87.83,87.83,0,0,1-112.56,0Z'/>",
+    plus: "<path d='M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z'/>",
+    camera: "<path d='M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z'/>",
+    grid: "<path d='M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z'/>",
+    mama: "<path d='M245.83,121.63a15.53,15.53,0,0,0-9.52-7.33,73.51,73.51,0,0,0-22.17-2.22c4-19.85,1-35.55-2.06-44.86a16.15,16.15,0,0,0-18.79-10.88,85.53,85.53,0,0,0-28.55,12.12,94.58,94.58,0,0,0-27.11-33.25,16.05,16.05,0,0,0-19.26,0A94.48,94.48,0,0,0,91.26,68.46,85.53,85.53,0,0,0,62.71,56.34,16.15,16.15,0,0,0,43.92,67.22c-3,9.31-6,25-2.06,44.86a73.51,73.51,0,0,0-22.17,2.22,15.53,15.53,0,0,0-9.52,7.33,16,16,0,0,0-1.6,12.27c3.39,12.57,13.8,36.48,45.33,55.32S113.13,208,128.05,208s42.67,0,74-18.78c31.53-18.84,41.94-42.75,45.33-55.32A16,16,0,0,0,245.83,121.63ZM59.14,72.14a.2.2,0,0,1,.23-.15A70.43,70.43,0,0,1,85.18,83.66,118.65,118.65,0,0,0,80,119.17c0,18.74,3.77,34,9.11,46.28A123.59,123.59,0,0,1,69.57,140C51.55,108.62,55.3,84,59.14,72.14Zm3,103.35C35.47,159.57,26.82,140.05,24,129.7a59.82,59.82,0,0,1,22.5-1.17,129.08,129.08,0,0,0,9.15,19.41,142.28,142.28,0,0,0,34,39.56A114.92,114.92,0,0,1,62.1,175.49ZM128,190.4c-9.33-6.94-32-28.23-32-71.23C96,76.7,118.38,55.24,128,48c9.62,7.26,32,28.72,32,71.19C160,162.17,137.33,183.46,128,190.4ZM170.82,83.66A70.43,70.43,0,0,1,196.63,72a.2.2,0,0,1,.23.15C200.7,84,204.45,108.62,186.43,140a123.32,123.32,0,0,1-19.54,25.48c5.34-12.26,9.11-27.54,9.11-46.28A118.65,118.65,0,0,0,170.82,83.66ZM232,129.72c-2.77,10.25-11.4,29.81-38.09,45.77a114.92,114.92,0,0,1-27.55,12,142.28,142.28,0,0,0,34-39.56,129.08,129.08,0,0,0,9.15-19.41A59.69,59.69,0,0,1,232,129.71Z'/>",
+    babyHub: "<path d='M160,32h-8a16,16,0,0,0-16,16v56H55.2A40.07,40.07,0,0,0,16,72a8,8,0,0,0,0,16,24,24,0,0,1,24,24,80.09,80.09,0,0,0,80,80h40a80,80,0,0,0,0-160Zm63.48,72H166.81l41.86-33.49A63.73,63.73,0,0,1,223.48,104ZM160,48a63.59,63.59,0,0,1,36.69,11.61L152,95.35V48Zm0,128H120a64.09,64.09,0,0,1-63.5-56h167A64.09,64.09,0,0,1,160,176Zm-56,48a16,16,0,1,1-16-16A16,16,0,0,1,104,224Zm104,0a16,16,0,1,1-16-16A16,16,0,0,1,208,224Z'/>",
+    check: "<path d='M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z'/>",
+    bowlFood: "<path d='M224,104h-8.37a88,88,0,0,0-175.26,0H32a8,8,0,0,0-8,8,104.35,104.35,0,0,0,56,92.28V208a16,16,0,0,0,16,16h64a16,16,0,0,0,16-16v-3.72A104.35,104.35,0,0,0,232,112,8,8,0,0,0,224,104Zm-24.46,0H148.12a71.84,71.84,0,0,1,41.27-29.57A71.45,71.45,0,0,1,199.54,104ZM173.48,56.23q2.75,2.25,5.27,4.75a87.92,87.92,0,0,0-49.15,43H100.1A72.26,72.26,0,0,1,168,56C169.83,56,171.66,56.09,173.48,56.23ZM128,40a71.87,71.87,0,0,1,19,2.57A88.36,88.36,0,0,0,83.33,104H56.46A72.08,72.08,0,0,1,128,40Zm36.66,152A8,8,0,0,0,160,199.3V208H96v-8.7A8,8,0,0,0,91.34,192a88.29,88.29,0,0,1-51-72H215.63A88.29,88.29,0,0,1,164.66,192Z'/>",
+    coffee: "<path d='M80,56V24a8,8,0,0,1,16,0V56a8,8,0,0,1-16,0Zm40,8a8,8,0,0,0,8-8V24a8,8,0,0,0-16,0V56A8,8,0,0,0,120,64Zm32,0a8,8,0,0,0,8-8V24a8,8,0,0,0-16,0V56A8,8,0,0,0,152,64Zm96,56v8a40,40,0,0,1-37.51,39.91,96.59,96.59,0,0,1-27,40.09H208a8,8,0,0,1,0,16H32a8,8,0,0,1,0-16H56.54A96.3,96.3,0,0,1,24,136V88a8,8,0,0,1,8-8H208A40,40,0,0,1,248,120ZM200,96H40v40a80.27,80.27,0,0,0,45.12,72h69.76A80.27,80.27,0,0,0,200,136Zm32,24a24,24,0,0,0-16-22.62V136a95.78,95.78,0,0,1-1.2,15A24,24,0,0,0,232,128Z'/>",
+    leaf: "<path d='M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.09,87.09,0,0,0-12.76,49c.57,15.92,5.21,32,13.79,47.85l-19.51,19.5a8,8,0,0,0,11.32,11.32l19.5-19.51C81,210.73,97.09,215.37,113,215.94q1.67.06,3.33.06A86.93,86.93,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07ZM153.75,189.5c-22.75,13.78-49.68,14-76.71.77l88.63-88.62a8,8,0,0,0-11.32-11.32L65.73,179c-13.19-27-13-54,.77-76.71,22.09-36.47,74.6-56.44,141.31-54.06C210.2,114.89,190.22,167.41,153.75,189.5Z'/>",
+    glassWater: S + "<path d='M64,40H192L172,208A16,16,0,0,1,156,224H100A16,16,0,0,1,84,208Z'/><path d='M76,104C100,92 116,116 140,104S172,96 180,104'/></g>",
+    swaddle: S + "<path d='M62,84C62,22 194,22 194,84V160C194,206 164,236 128,236C92,236 62,206 62,160Z'/><circle cx='128' cy='86' r='34'/><path d='M64,140C112,146 160,172 184,212'/></g>",
+    blocks: S + "<path d='M50,136H104A16,16 0 0 1 120,152V206A16,16 0 0 1 104,222H50A16,16 0 0 1 34,206V152A16,16 0 0 1 50,136ZM152,136H206A16,16 0 0 1 222,152V206A16,16 0 0 1 206,222H152A16,16 0 0 1 136,206V152A16,16 0 0 1 152,136ZM101,34H155A16,16 0 0 1 171,50V104A16,16 0 0 1 155,120H101A16,16 0 0 1 85,104V50A16,16 0 0 1 101,34Z'/></g>",
+    chevronRight: "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M96,48L176,128L96,208'/>",
+    chevronLeft: "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M160,48L80,128L160,208'/>",
+    close: "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' d='M60,60L196,196M196,60L60,196'/>",
+    // ——— NOVÉ (návrh, linkové, ťah 16) ———
+    // 3A: bublina so srdcom – „povedz, ako sa máš“
+    moodBubble: S + "<path d='M60,44H196A28,28,0,0,1,224,72V156A28,28,0,0,1,196,184H120L72,220V184H60A28,28,0,0,1,32,156V72A28,28,0,0,1,60,44Z'/><path d='M128,150C102,134 90,122 92,106C94,92 112,86 128,102C144,86 162,92 164,106C166,122 154,134 128,150Z'/></g>",
+    // 3B: pokojná tvár – zatvorené oči, jemný úsmev
+    moodFace: S + "<circle cx='128' cy='128' r='96'/><path d='M82,110Q98,124 114,110M142,110Q158,124 174,110'/><path d='M96,156Q128,180 160,156'/></g>",
+    // 3C: objatie – dve ruky okolo srdca
+    moodHug: S + "<path d='M128,170C98,150 86,136 88,118C90,102 110,96 128,114C146,96 166,102 168,118C170,136 158,150 128,170Z'/><path d='M40,92C32,168 76,220 128,222C180,220 224,168 216,92'/><path d='M40,92C46,80 62,80 68,94M216,92C210,80 194,80 188,94'/></g>",
+    // 7A: úsmev, smiech, pretočenie, klíček
+    smile: S + "<circle cx='128' cy='128' r='96'/><path d='M92,156Q128,188 164,156'/></g><circle cx='96' cy='108' r='12' fill='currentColor'/><circle cx='160' cy='108' r='12' fill='currentColor'/>",
+    laugh: S + "<circle cx='128' cy='128' r='96'/><path d='M84,146H172A44,44,0,0,1,84,146Z'/><path d='M84,108Q96,94 108,108M148,108Q160,94 172,108'/></g>",
+    roll: S + "<path d='M212,128A84,84,0,1,1,187,68'/><path d='M192,32V72H152'/></g><circle cx='128' cy='128' r='22' fill='currentColor' opacity='.9'/>",
+    sprout: S + "<path d='M128,224V132'/><path d='M128,140C128,100 100,80 56,82C56,122 84,140 128,140Z'/><path d='M128,124C128,84 156,64 204,66C204,106 172,124 128,124Z'/></g>"
+  };
+  function svg(name) {
+    return "<svg class='ph' viewBox='0 0 256 256' aria-hidden='true' focusable='false'>" + (I[name] || "") + "</svg>";
+  }
+  document.querySelectorAll("[data-i]").forEach(function (el) { el.insertAdjacentHTML("afterbegin", svg(el.getAttribute("data-i"))); });
+
+  // ——— 1: kruh rýchlych záznamov (cesty a farby zo živej appky, viewBox 420) ———
+  var SEG = [
+    { d: "M 210.0 10.0 A 200 200 0 0 1 383.2 310.0 C 354.4 360.0 257.4 304.0 286.2 254.0 A 88 88 0 0 0 210.0 122.0 C 267.7 122.0 267.7 10.0 210.0 10.0 Z",
+      g: ["210.0", "10.0", "383.2", "310.0"], day: ["#f9d5df", "#f3bdcd", "#eca5ba", "#df91aa"], nb: ["#6b4560", "#5d3c54", "#523549", "#472e40"], ic: "#6a2240",
+      icon: ["M76,56a28,28,0,1,0,56,0a28,28,0,1,0,-56,0ZM92,56a12,12,0,1,1,24,0a12,12,0,1,1,-24,0Z", "M56,224V144A48,48,0,0,1,104,96A8,8,0,0,1,104,112A32,32,0,0,0,72,144V224A8,8,0,0,1,56,224Z", "M100.04,178A60,60,0,0,0,208.38,168.52A8,8,0,0,0,193.35,163.05A44,44,0,0,1,113.89,170A8,8,0,0,0,100.04,178Z", "M132,160a24,24,0,1,0,48,0a24,24,0,1,0,-48,0ZM146,160a10,10,0,1,1,20,0a10,10,0,1,1,-20,0Z"],
+      tr: "translate(320.7 137.4) scale(0.2249)", sub: { x: 350.5, y: 207.7, t: "pred 2 h" } },
+    { d: "M 383.2 310.0 A 200 200 0 0 1 36.8 310.0 C 7.9 260.0 104.9 204.0 133.8 254.0 A 88 88 0 0 0 286.2 254.0 C 257.4 304.0 354.4 360.0 383.2 310.0 Z",
+      g: ["383.2", "310.0", "36.8", "310.0"], day: ["#fde0c4", "#f8c79b", "#f1ac74", "#e6955a"], nb: ["#6b543c", "#5f4a35", "#54412f", "#493929"], ic: "#5a2f0c",
+      icon: ["M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"],
+      extra: "<path fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M160,48H200L160,96H200'/>",
+      tr: "translate(142.2 324.8) scale(0.1854)" },
+    { d: "M 36.8 310.0 A 200 200 0 0 1 210.0 10.0 C 267.7 10.0 267.7 122.0 210.0 122.0 A 88 88 0 0 0 133.8 254.0 C 104.9 204.0 7.9 260.0 36.8 310.0 Z",
+      g: ["36.8", "310.0", "210.0", "10.0"], day: ["#d6e0fa", "#b5c5f2", "#93a8e6", "#768fd8"], nb: ["#3a4870", "#34416a", "#2f3a5f", "#2a3454"], ic: "#1c2a66",
+      extra: "<g fill='none' stroke='currentColor' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'><path d='M44,72H212V112C212,164 180,196 152,200H104C76,196 44,164 44,112Z'/><path d='M44,100H212'/><path d='M44,82H28V118H44M212,82H228V118H212'/><path d='M104,200C104,170 92,150 72,140M152,200C152,170 164,150 184,140'/></g>",
+      tr: "translate(90.3 80.5) scale(0.1731)" }
+  ];
+  var uid = 0;
+  function ring(mode) {
+    var id = "r" + (++uid), defs = "", body = "";
+    SEG.forEach(function (s, i) {
+      var stops = mode === "b" ? s.nb : s.day;
+      defs += "<linearGradient id='" + id + i + "' gradientUnits='userSpaceOnUse' x1='" + s.g[0] + "' y1='" + s.g[1] + "' x2='" + s.g[2] + "' y2='" + s.g[3] + "'>" +
+        [0, .3, .72, 1].map(function (o, k) { return "<stop offset='" + o + "' stop-color='" + stops[k] + "'/>"; }).join("") + "</linearGradient>";
+      var filt = mode === "now" ? " style='filter:brightness(.9) saturate(.92)'" : mode === "a" ? " style='filter:brightness(.5) saturate(.7)'" : "";
+      var icCol = mode === "now" ? s.ic : "#f5f2fb";
+      var icOp = mode === "now" ? .7 : mode === "a" ? .82 : .85;
+      body += "<path d='" + s.d + "' fill='url(#" + id + i + ")' stroke='url(#" + id + i + ")'" + filt + "/>" +
+        "<g fill='currentColor' style='color:" + icCol + ";opacity:" + icOp + "' transform='" + s.tr + "'>" + (s.icon || []).map(function (p) { return "<path d='" + p + "'/>"; }).join("") + (s.extra || "") + "</g>";
+      if (s.sub) body += "<text x='" + s.sub.x + "' y='" + s.sub.y + "' dy='.35em' text-anchor='middle' font-size='23' font-weight='500' fill='" + (mode === "now" ? s.ic : "#ece7f6") + "'" + (mode === "now" ? " opacity='.7'" : "") + ">" + s.sub.t + "</text>";
+    });
+    var coreFill = "#1b2130";
+    body += "<circle cx='210' cy='210' r='84' fill='" + coreFill + "' style='filter:drop-shadow(0 2px 10px rgba(0,0,0,.3))'/>" +
+      "<text x='210' y='190' text-anchor='middle' font-size='24' font-weight='500' fill='#c9c3d8'>Spí</text>" +
+      "<text x='210' y='238' text-anchor='middle' font-size='40' font-weight='800' fill='#f5f2fb'>47:01</text>";
+    return "<svg class='ring' viewBox='0 0 420 420' role='img' aria-label='Rýchle záznamy: Kŕmenie, Spánok, Plienky'><defs>" + defs + "</defs>" + body + "</svg>";
+  }
+  document.querySelectorAll("[data-ring]").forEach(function (el) { el.innerHTML = ring(el.getAttribute("data-ring")); });
+
+  // ——— 6: ilustrácie v štýle baby-figure.js (paleta plodu: pokožka #fff0e8→#f3bfb2, linka #dc9d90, oči #9a5f63) ———
+  var ART = {
+    swaddle: "<svg viewBox='0 0 200 200' role='img' aria-label='Ilustrácia bábätka v zavinovačke'>" +
+      "<defs><radialGradient id='sk' cx='.38' cy='.32' r='.75'><stop offset='0' stop-color='#fff0e8'/><stop offset='.6' stop-color='#fad3c7'/><stop offset='1' stop-color='#f3bfb2'/></radialGradient>" +
+      "<linearGradient id='bl' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#f1ebff'/><stop offset='1' stop-color='#dcd0f6'/></linearGradient>" +
+      "<radialGradient id='sac' cx='.42' cy='.36' r='.7'><stop offset='0' stop-color='#fffaf6'/><stop offset='.65' stop-color='#fbeef3'/><stop offset='1' stop-color='#eee6fb'/></radialGradient></defs>" +
+      "<circle cx='100' cy='100' r='90' fill='url(#sac)' stroke='#e6dcf8' stroke-width='2'/>" +
+      "<circle cx='100' cy='100' r='80' fill='none' stroke='#fff' stroke-opacity='.6' stroke-width='6'/>" +
+      "<circle cx='58' cy='54' r='5' fill='#fff' opacity='.7'/><circle cx='148' cy='146' r='3.5' fill='#fff' opacity='.6'/>" +
+      "<g class='breath'>" +
+      // zavinovačka (kapucňa + telo)
+      "<path d='M64 92C64 50 136 50 136 92V136C136 166 120 182 100 182C80 182 64 166 64 136Z' fill='url(#bl)' stroke='#b9a6e6' stroke-width='1.6'/>" +
+      // tvár
+      "<circle cx='100' cy='94' r='25' fill='url(#sk)' stroke='#dc9d90' stroke-width='1.5'/>" +
+      // okraj kapucne
+      "<path d='M72 84C78 62 122 62 128 84' fill='none' stroke='#b9a6e6' stroke-width='1.6' stroke-linecap='round'/>" +
+      // zatvorené oči, líčka, úsmev
+      "<path d='M88 95q4 3.4 8 0M104 95q4 3.4 8 0' fill='none' stroke='#9a5f63' stroke-width='1.8' stroke-linecap='round'/>" +
+      "<circle cx='86' cy='104' r='4' fill='#f29a9f' opacity='.4'/><circle cx='114' cy='104' r='4' fill='#f29a9f' opacity='.4'/>" +
+      "<path d='M96 108q4 3 8 0' fill='none' stroke='#dc9d90' stroke-width='1.5' stroke-linecap='round'/>" +
+      // záhyb zavinovačky
+      "<path d='M66 128C90 132 112 146 126 168' fill='none' stroke='#b9a6e6' stroke-width='1.6' stroke-linecap='round'/>" +
+      "<path d='M134 126C120 128 108 134 100 142' fill='none' stroke='#cbbcf0' stroke-width='1.4' stroke-linecap='round'/>" +
+      "</g></svg>",
+    moon: "<svg viewBox='0 0 200 200' role='img' aria-label='Ilustrácia mesiaca a hviezd'>" +
+      "<defs><radialGradient id='sac2' cx='.42' cy='.36' r='.7'><stop offset='0' stop-color='#fffaf6'/><stop offset='.65' stop-color='#fbeef3'/><stop offset='1' stop-color='#eee6fb'/></radialGradient>" +
+      "<linearGradient id='mn' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#fff4dc'/><stop offset='1' stop-color='#f6c89f'/></linearGradient></defs>" +
+      "<circle cx='100' cy='100' r='90' fill='url(#sac2)' stroke='#e6dcf8' stroke-width='2'/>" +
+      "<circle cx='100' cy='100' r='80' fill='none' stroke='#fff' stroke-opacity='.6' stroke-width='6'/>" +
+      "<path d='M118 52A52 52 0 1 0 150 130A44 44 0 1 1 118 52Z' fill='url(#mn)' stroke='#e3a877' stroke-width='1.6' stroke-linejoin='round'/>" +
+      "<path d='M86 112q4 3.4 8 0' fill='none' stroke='#9a5f63' stroke-width='1.8' stroke-linecap='round'/>" +
+      "<circle cx='84' cy='122' r='4' fill='#f29a9f' opacity='.4'/>" +
+      "<g fill='#c7b4ee' stroke='#8e74c9' stroke-width='1.2' stroke-linejoin='round'>" +
+      "<path d='M140 62l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z'/><path d='M154 98l2 4.5 4.5 2-4.5 2-2 4.5-2-4.5-4.5-2 4.5-2Z'/><path d='M64 66l2 4.5 4.5 2-4.5 2-2 4.5-2-4.5-4.5-2 4.5-2Z'/></g>" +
+      "</svg>"
+  };
+  document.querySelectorAll("[data-art]").forEach(function (el) { el.innerHTML = ART[el.getAttribute("data-art")]; });
+})();
+</script>
+</body>
+</html>
