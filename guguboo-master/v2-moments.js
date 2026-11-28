@@ -126,7 +126,7 @@
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Naša časová os</h1><p>Zapisujú sa samy.</p></header>",
       group("post", "Spolu", expecting ? "" : "Prvé spoločné chvíle sa objavia tu."),
       group("pre", "Čakanie na teba", "Pribudnú napríklad zo sona alebo z prvých pohybov."),
-      "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
+      "<button class='v5-check-categories-button' type='button' data-v5-moments-home>" + window.GugubooV5.icon("back") + " Naše momenty</button>" /* Master 4.0.2: jednotný odkaz späť */
     ].join("");
   }
 
@@ -208,7 +208,7 @@
       expecting ? block("pre", "Čakanie na teba") + block("post", "Po narodení") : block("post", "Spolu") + block("pre", "Z čakania"),
       "<details class='v5-book-note'><summary>Prečo sa appka pýta?</summary><p>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (z času, keď sa to u mnohých detí zvykne objaviť), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p></details>",
       // Master 4.0.1 (Kontrola OBSAH N14): bez formulácie „zvládne väčšina detí“ (norma).
-      "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
+      "<button class='v5-check-categories-button' type='button' data-v5-moments-home>" + window.GugubooV5.icon("back") + " Naše momenty</button>" /* Master 4.0.2: jednotný odkaz späť */
     ].join("");
   }
 

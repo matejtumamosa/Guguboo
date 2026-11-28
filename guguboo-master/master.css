@@ -1158,12 +1158,9 @@ body.v5-active.night .v5-check-add button { background: #c6bcff; color: #1f1a2e;
 :is(html, #g2n#g2n) body .v5-audio-dock-inner button { font: var(--t-link) !important; min-height: 40px; padding: 8px 12px; letter-spacing: 0 !important; text-transform: none !important; }
 :is(html, #g2n#g2n) body .v5-audio-controls label { font: var(--t-small) !important; color: rgba(255,255,255,.82) !important; text-transform: none !important; letter-spacing: 0 !important; }
 :is(html, #g2n#g2n) body .v5-audio-controls select { font-size: 16px !important; }
-body:has(#home.view.active) #v5AudioDock .v5-audio-controls { display: none !important; }
-body:has(#home.view.active) #v5AudioDock { padding: 6px 10px !important; }
-body:has(#home.view.active) .v5-audio-dock-inner { grid-template-columns: 28px minmax(0, 1fr) auto !important; }
-body:has(#home.view.active) .v5-audio-dock-inner [data-v5-feature='sleep'] { display: none !important; }
-body.v5-audio-active:has(#home.view.active) #home.view.active { padding-bottom: 66px !important; }
-body.v5-audio-active:has(#home.view.active) .g2-ring-card { min-height: 0 !important; } /* kruh sa smie zmenšiť, aby sa domov zmestil nad prehrávač */
+/* Master 4.0.2 (kontrola snímok): na domove je ovládanie zvuku v riadku „Dnes“ (v5-mobile.js) – plávajúci prehrávač sa tam neukazuje, kruh sa nezmenší. */
+body:has(#home.view.active) #v5AudioDock { display: none !important; }
+body.v5-audio-active:has(#home.view.active) .main { padding-bottom: 0 !important; }
 /* Bábätko → Spánok a zvuky (N8): panel „Práve hrá“ – názov Bežné, stav Drobné (predtým 16/700 a 13,3 px). */
 :is(html, #g2n#g2n) body .v5-sounds-now > strong { font: var(--t-text) !important; color: var(--t-ink) !important; }
 :is(html, #g2n#g2n) body .v5-sounds-now > small { font: var(--t-small) !important; color: var(--t-muted) !important; }
@@ -1217,3 +1214,15 @@ body.v5-audio-active:has(#home.view.active) .g2-ring-card { min-height: 0 !impor
 :is(html, #g2n#g2n) body [data-v5-night] { min-width: 44px !important; min-height: 44px !important; }
 /* Master 4.0.1 (Kontrola V17): počet pohárov v Mame = Hlavné ako v okne kruhu (nie je to bežiaci čas). */
 :is(html, #g2n#g2n#g2n#g2n) body.v5-active .v2-water-panel .g2q-big b { font: var(--t-main) !important; font-variant-numeric: tabular-nums; }
+/* Master 4.0.2 (kontrola snímok, ako 3.9 QA N3): nadpis okna s fokusom bez rámika; rámik na tlačidlách a odkazoch len pri ovládaní
+   klávesnicou (:focus-visible) – po ťuknutí ani po otvorení okna sa neukáže. */
+:is(h1, h2, h3, strong)[tabindex="-1"]:focus { outline: none !important; }
+body.v5-active :is(button, a, [role="button"], summary):focus:not(:focus-visible) { outline: none !important; }
+/* Master 4.0.2 (kontrola snímok): Kontakty na pomoc – 155 / 112 navrchu, plné ako v GuguChate, vedľa seba, 48 px. */
+.g2-urgent-calls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 12px; }
+.g2-urgent-calls .v2-chat-action { display: flex; align-items: center; justify-content: center; min-height: 48px; text-decoration: none; border-radius: 16px; }
+/* Master 4.0.2 (kontrola snímok): odkaz späť dole („‹ Všetky zoznamy“, „‹ Mama“, „‹ Naše momenty“…) jednotne – Odkaz vo farbe značky
+   bez pozadia a rámika, deň aj noc (v noci bol tmavý obdĺžnik s bielym textom). */
+:is(html, #g2n#g2n#g2n) body.v5-active .v5-check-categories-button { background: transparent !important; border: 0 !important; box-shadow: none !important; color: var(--t-brand) !important; font: var(--t-link) !important; padding-inline: 0 !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active .v5-check-categories-button svg { color: currentColor !important; }
+.v5-org-next-card h3, .v2-org-row strong { text-wrap: pretty; } /* Master 4.0.2 */

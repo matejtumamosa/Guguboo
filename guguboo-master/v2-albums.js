@@ -59,7 +59,7 @@
     return [
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Albumy</h1><p>Skladajú sa samy zo spomienok.</p></header>", // Master 4.0 (Audit T70)
       "<div class='v2-album-list'>", rows, "</div>",
-      "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
+      "<button class='v5-check-categories-button' type='button' data-v5-moments-home>" + window.GugubooV5.icon("back") + " Naše momenty</button>" /* Master 4.0.2: jednotný odkaz späť */
     ].join("");
   }
 

@@ -101,3 +101,9 @@ body.night .activities-visual { background:linear-gradient(145deg,#403750,#49343
 .act2 .act2-soon-item summary::-webkit-details-marker { display:none; }
 .act2 .act2-soon-item summary strong { flex:1; font-size:.92rem; }
 .act2 .act2-soon-item .act2-steps { margin-top:8px; font-size:.88rem; }
+/* Master 4.0.2 (kontrola snímok): „Pre rodiča“ – namiesto systémového ▼ ikona chevron (otvorené = otočená nadol). */
+.act2 .act2-parent summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.act2 .act2-parent summary::-webkit-details-marker { display: none; }
+.act2 .act2-parent .act2-chev { display: inline-flex; color: var(--act-muted); transition: transform .2s; }
+.act2 .act2-parent[open] .act2-chev { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { .act2 .act2-parent .act2-chev { transition: none; } }

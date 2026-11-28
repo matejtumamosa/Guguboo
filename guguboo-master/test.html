@@ -486,7 +486,9 @@
               if (root.querySelector("[data-observation-id], .act2-obs select")) bad.push(birth + " dní: stavové voľby");
               if (/Už to robí|Zatiaľ neviem/.test(root.textContent)) bad.push(birth + " dní: text stavu");
               const parent = root.querySelector(".act2-parent");
-              if (parent && !(parent.querySelector("a.v2-source[href*='cdc.gov']") && /Každé bábätko je iné/.test(parent.textContent))) bad.push(birth + " dní: bez zdroja CDC alebo vety o tempe");
+              // Master 4.0.2: jeden zdroj CDC s jedným dátumom pod celou stránkou (nie druhý odkaz v „Pre rodiča“)
+              const cdc = [...root.querySelectorAll("a.v2-source")].filter(a => /cdc\.gov/.test(a.href));
+              if (parent && !(cdc.length === 1 && !parent.querySelector("a.v2-source") && /Každé bábätko je iné/.test(parent.textContent))) bad.push(birth + " dní: zdroj CDC nie je práve raz alebo chýba veta o tempe");
               if (parent) bad.push(...forbidden("Aktivity " + birth, parent.textContent, true));
             } finally { app.remove(); }
           }
@@ -1661,7 +1663,10 @@
             assert(/Nezábudka/.test(moodText) && moodText.includes(E.E6.text) && moodText.includes(E.E1.text), "z Nálady chýba pomoc pre mamu (Nezábudka, E6, E1)");
             V5.openUrgentModal(); await sleep(200);
             const babyText = doc.getElementById("v5OMenuBody").textContent;
-            assert(/pediatr/.test(babyText) && babyText.includes(E.E5.text) && babyText.includes(E.E1.text), "po pôrode chýba pediater, E5 alebo E1");
+            assert(/pediatr/.test(babyText) && babyText.includes(E.E5.text), "po pôrode chýba pediater alebo E5");
+            // Master 4.0.2: 155 najviac dvakrát (tlačidlo + jedna veta), tiesňové tlačidlá navrchu
+            assert((babyText.match(/155/g) || []).length <= 2, "155 viac ako dvakrát");
+            assert(doc.querySelector("#v5OMenuBody > .g2-urgent-calls:first-child a[href='tel:155']"), "155 nie je navrchu");
             eq(po.errors, [], "po: chyby v konzole");
           } finally { po.remove(); }
           const pred = await bootApp(seed("pred"), { settle: 300 });

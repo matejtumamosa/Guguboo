@@ -3,6 +3,14 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-28 – Product Lead (Master 4.0.2: dorovnanie po kontrole snímok)
+- **Zvuk na domove:** keď hrá biely šum / uspávanka, ovládanie je v riadku „Dnes stačí jedno“ („Hrá · Biely šum · Vypnúť“), plávajúci
+  prehrávač sa na domove neukazuje – kruh sa kvôli nemu nezmenší (375 × 667 ~188 px). Hlasitosť a časovač sú v okne Spánok a zvuky.
+- **Fokus po otvorení okna** vždy na nadpis (bez rámika), rámik na tlačidlách len pri klávesnici (`:focus-visible`) – systémovo v `g2-windows.js`.
+- **Kontakty na pomoc:** „Zavolať 155“ a „Zavolať 112“ navrchu, plné ako v GuguChate; pod nimi jedna veta (155 najviac dvakrát).
+- Jeden odkaz späť dole (odkaz vo farbe značky, bez pozadia) – aj v Albumoch a Našich momentoch („‹ Naše momenty“ namiesto tlačidla „Späť“).
+- Aktivity: jeden zdroj CDC s jedným dátumom pod stránkou; „Pre rodiča“ s ikonou chevron. Plán: „Hotovo 0 z 5“; názvy úloh bez osamoteného slova.
+
 ## 2026-11-28 – Samo (Master 4.0.1: opravy po kontrolnom audite 4.0)
 - **Núdzová veta E0 (nová, `g2-safety.js`) ⚕ na potvrdenie pediatrom / záchranárom:** „Ak niekto nedýcha alebo ťažko dýcha, dusí sa,
   modrie, je v bezvedomí, má kŕče, silno krváca alebo sa vážne zranil, volaj hneď 155 (záchranná služba) alebo 112.“ Zdroj slovensko.sk

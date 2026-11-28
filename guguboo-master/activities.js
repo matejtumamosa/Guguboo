@@ -131,10 +131,11 @@
     const items = (p?.development || []).filter(d => d && d.sk && /^cdc-/.test(d.source || "") && (d.evidence || []).length);
     if (!items.length) return "";
     const src = (bm.meta?.sources || bm.sources || []).find(s => s.id === items[0].source) || {};
-    return `<details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
+    // Master 4.0.2 (kontrola snímok): bez vlastného odkazu na zdroj – jeden zdroj CDC s jedným dátumom je pod celou stránkou Aktivít.
+    void src;
+    return `<details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť <span class="act2-chev" aria-hidden="true">${V5()?.glyph?.("chevronRight") || ""}</span></summary>
         <p>Čo sa okolo tohto veku u mnohých bábätiek môže diať. Každé bábätko je iné a má vlastné tempo.</p>
         <ul class="act2-parent-list">${items.map(d => `<li>${escapeHtml(d.sk)}</li>`).join("")}</ul>
-        ${src.url ? `<a class="v2-source" href="${escapeHtml(src.url)}" target="_blank" rel="noopener noreferrer">Zdroj: CDC · overené ${dateLabel(bm.meta?.last_checked)} ↗</a>` : ""}
       </details>`;
   }
 
@@ -176,7 +177,7 @@
         <p>Voliteľné poznámky na rozhovor s pediatrom. Nie je to test – každé dieťa má svoje tempo.</p>
         ${observations.map(item => `<label class="act2-obs"><span>${escapeHtml(item.text)}</span><select data-observation-id="${item.id}" aria-label="Stav: ${escapeHtml(item.text)}">${option(item, "", "—")}${option(item, "noticed", "Už to robí") /* Master 4.0 (Audit T25) */}${option(item, "unknown", "Zatiaľ neviem")}${option(item, "ask", "Opýtať sa pediatra")}</select></label>`).join("")}
       </details>` : parentInfoHtml(period)}
-      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)}${usesNhs ? " a NHS" : ""} · overené ${dateLabel(data.checkedAt)} ↗</a>
+      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)}${usesNhs ? " a NHS" : ""} · overené ${dateLabel(parentInfoHtml(period) ? [data.checkedAt, window.GugubooContent?.babyMonths?.meta?.last_checked].filter(Boolean).sort().pop() : data.checkedAt) /* Master 4.0.2: jeden zdroj a jeden (najnovší) dátum aj pre „Pre rodiča“ */} ↗</a>
       <div class="sr-only" data-activities-live aria-live="polite"></div>
     </div>`;
   }

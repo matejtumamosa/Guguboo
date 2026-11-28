@@ -287,7 +287,7 @@
       "<header class='v2-birth-head'><span class='v2-birth-heart' aria-hidden='true'>✦</span><h2 id='v2FeedbackTitle'>Ako sa ti páči Guguboo?</h2><p>Tri krátke otázky nám pomôžu spraviť ho lepším.</p></header>",
       "<form class='v5-form-card v2-birth-form' id='v2FeedbackForm'>",
       "<fieldset><legend>Pomohlo ti dnes Guguboo?</legend><div class='v2-feedback-options'>", option("helped", "yes", "Áno"), option("helped", "bit", "Trochu"), option("helped", "no", "Nie"), "</div></fieldset>",
-      "<fieldset><legend>Potrebuješ popri Guguboo ešte inú appku?</legend><div class='v2-feedback-options'>", option("second_app", "no", "Nie"), option("second_app", "maybe", "Možno"), option("second_app", "yes", "Áno"), "</div></fieldset>",
+      "<fieldset><legend>Potrebuješ popri Guguboo ešte inú appku?</legend><div class='v2-feedback-options'>", option("second_app", "yes", "Áno"), option("second_app", "maybe", "Možno"), option("second_app", "no", "Nie"), "</div></fieldset>", // Master 4.0.2: rovnaké poradie odpovedí ako v 1. otázke
       "<label>Čo ti chýbalo alebo ťa potešilo? – nepovinné<textarea id='v2FeedbackText' rows='3' placeholder='Napíš pár slov…'></textarea></label>",
       "<button class='v5-primary' type='submit'>Stiahnuť spätnú väzbu</button>",
       "</form>",

@@ -15,6 +15,8 @@
   const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"
   })[character]);
+  // Master 4.0.2 (kontrola snímok): bez osamoteného krátkeho slova na konci zalomeného názvu – nezalomiteľná medzera pred ním.
+  const noOrphan = html => String(html).replace(/ ([^ ]{1,7})$/, " $1");
   // Master 2.9 (Plán F1): fotky a nahrávky môžu byť v IndexedDB (odkaz media:<id>, g2-media.js) – src pre <img> a zvuk.
   const mediaImgSrc = value => (window.G2Media ? window.G2Media.srcAttr(value) : "src='" + escapeHtml(value) + "'");
   const mediaAudioSrc = value => (window.G2Media ? window.G2Media.cached(value) : value || "");
@@ -1586,7 +1588,7 @@
     core.classList.remove(...G2Q_TIGHT, "is-bare");
     if (time) time.style.removeProperty("font-size");
     const fits = () => {
-      const c = core.getBoundingClientRect(), R = c.width / 2 - 3, cx = c.left + c.width / 2, cy = c.top + c.height / 2;
+      const c = core.getBoundingClientRect(), R = c.width / 2 - 6 /* Master 4.0.2: rezerva 6 px (písmo v okne prehliadača sa líši od headless o ~1 px) */, cx = c.left + c.width / 2, cy = c.top + c.height / 2;
       if (R <= 0) return true;
       return [...core.children].every(k => {
         const r = k.getBoundingClientRect();
@@ -1627,7 +1629,7 @@
     document.querySelectorAll("#home.view.active [data-g2q-since]").forEach(el => {
       const text = g2qClock(g2qSince(el.dataset.g2qSince)), longer = text.length !== el.textContent.length;
       el.textContent = text;
-      if (longer) g2qFitCore(); // Master 4.0 (Audit V4): „59:59“ → „1:00:00“ – čas sa znova prispôsobí stredu
+      if (longer || text.endsWith(":00")) g2qFitCore(); // Master 4.0.2: aj každú minútu; Master 4.0 (Audit V4): „59:59“ → „1:00:00“ – čas sa znova prispôsobí stredu
     });
   }, 1000);
 
@@ -2660,7 +2662,10 @@
         askHtml,
         heroHtml + shortsHtml,
         renderAdaptiveOHome(true),
-        night ? soundsRow : termHtml || todayHtml,
+        // Master 4.0.2 (kontrola snímok, F21): keď hrá zvuk, je jeho ovládanie v riadku „Dnes“ (rovnaká výška) – kruh sa nezmenší
+        // a plávajúci prehrávač sa na domove neukazuje. Celé ovládanie (hlasitosť, časovač) je v okne Spánok a zvuky.
+        state.v5.audio?.active ? "<section class='g2-today g2-today-row g2-today-audio'><button class='g2-today-main' type='button' data-v5-feature='sounds'><small>Hrá</small><strong>" + escapeHtml(state.v5.audio.title || "Zvuk") + "</strong></button><button class='g2-today-later' type='button' data-v5-action='stop-audio'>Vypnúť</button></section>"
+          : night ? soundsRow : termHtml || todayHtml,
         night ? "" : "<div class='g2-home-moment'>" + (window.GugubooMoments?.homeCardHtml?.() || "") + "</div>"
       ].join("");
       requestAnimationFrame(g2FitHome); setTimeout(g2FitHome, 60); // poistka, keď prehliadač neodošle snímku (karta v pozadí)
@@ -3040,7 +3045,7 @@
     const section = organizationSections().find(item => item.id === sectionId) || organizationSections()[0];
     const progress = organizationProgress(section);
     byId("v5OMenuTitle").textContent = section.label;
-    byId("v5OMenuSubtitle").textContent = progress.done + " z " + progress.total + " hotové";
+    byId("v5OMenuSubtitle").textContent = "Hotovo " + progress.done + " z " + progress.total; // Master 4.0.2 (kontrola snímok)
     byId("v5OMenuBack").hidden = false;
     byId("v5OMenuBody").innerHTML = "<div class='v5-org-progress'><span style='--progress:" + progress.percentage + "%'></span></div><div class='v5-org-task-list'>" +
       section.tasks.map(task => {
@@ -3123,7 +3128,7 @@
     state.v5.adaptiveO.modalSource = "organization";
     persist();
     byId("v5OMenuTitle").textContent = section.label;
-    byId("v5OMenuSubtitle").textContent = progress.done + " z " + progress.total + " hotové";
+    byId("v5OMenuSubtitle").textContent = "Hotovo " + progress.done + " z " + progress.total; // Master 4.0.2 (kontrola snímok)
     byId("v5OMenuBack").hidden = false;
     byId("v5OMenu")?.classList.add("v2-o-sheet");
     // Všetky otvorené úlohy sú vidieť (Samuel 17. 10.: „vidím iba jednu, nedá sa vybrať“). Rozbalená je
@@ -3134,12 +3139,12 @@
     byId("v5OMenuBody").innerHTML = nextTask ? [
       "<div class='v5-org-progress'><span style='--progress:", progress.percentage, "%'></span></div>",
       openTasks.map(task => task[0] === focusTask[0] ? [
-        "<div class='v5-org-next-card'><small>", task === nextTask ? "Ďalšia úloha" : "Vybraná úloha", "</small><span class='v5-icon'>", icon(task[2]), "</span><h3>", escapeHtml(task[1]), "</h3>",
+        "<div class='v5-org-next-card'><small>", task === nextTask ? "Ďalšia úloha" : "Vybraná úloha", "</small><span class='v5-icon'>", icon(task[2]), "</span><h3>", noOrphan(escapeHtml(task[1])), "</h3>",
         organizationTaskWhy(task) ? "<p class='v5-org-next-why'>" + escapeHtml(organizationTaskWhy(task)) + "</p>" : "",
         organizationTaskAdminLinks(task),
         organizationTaskButtons(task),
         "</div>"
-      ].join("") : "<button type='button' class='v2-org-row' data-v2-org-focus='" + escapeHtml(task[0]) + "'><span class='v5-icon'>" + icon(task[2]) + "</span><strong>" + escapeHtml(task[1]) + "</strong><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>").join(""),
+      ].join("") : "<button type='button' class='v2-org-row' data-v2-org-focus='" + escapeHtml(task[0]) + "'><span class='v5-icon'>" + icon(task[2]) + "</span><strong>" + noOrphan(escapeHtml(task[1])) + "</strong><b aria-hidden='true'>" + glyph("chevronRight") + "</b></button>").join(""),
       completed.length ? "<details class='v5-org-completed'><summary>Hotové · " + completed.length + "</summary>" + completed.map(task => "<div><span>✓</span>" + escapeHtml(task[1]) + "</div>").join("") + "</details>" : ""
     ].join("") : "<div class='v5-o-modal-confirm' data-v5-org-done><span>✓</span><h3>Táto časť je hotová</h3><p>Ďalšie oblasti sú v Pláne.</p><button class='v5-primary' type='button' data-v5-o-back>Späť na Plán</button><button class='v5-secondary' type='button' data-v5-org-list>Zobraziť položky</button></div>";
   }
@@ -4257,10 +4262,12 @@
     const expecting = state.profile.status === "expecting";
     const forMama = from === "mama";
     const box = forMama ? (expecting ? S?.line.mid : S?.line.post) || "" : expecting ? (S?.line.mid || "") : "Ak ťa niečo znepokojuje, môžeš zavolať svojmu pediatrovi. Mimo ordinačných hodín pomôže pohotovosť.";
-    const ids = forMama ? (expecting ? ["E6"] : ["E6", "E1"]) : expecting ? ["E7"] : ["E5", "E1"];
+    // Master 4.0.2 (kontrola snímok): 155 najviac dvakrát (tlačidlo + jedna veta) – po pôrode inde len E5; E1 pre mamu je v okne z Nálady.
+    const ids = forMama ? (expecting ? ["E6"] : ["E6", "E1"]) : expecting ? ["E7"] : ["E5"];
     const safety = ids.map(id => S?.E[id]?.text || "").filter(Boolean).map(t => "<p class='v5-care-disclaimer'>" + escapeHtml(t) + "</p>").join("");
     const nezabudka = forMama ? "<a class='v5-secondary' href='tel:0800800566'>Linka Nezábudka</a>" : "";
-    showCareModal("Kontakty na pomoc", "", "<div class='v5-info-box'>" + escapeHtml(box) + "</div><div class='v2-help-contacts'><button type='button' class='v5-secondary' data-v5-feature='contacts'>Moje kontakty</button>" + nezabudka + "<a class='v5-secondary' href='tel:155'>Záchranka 155</a><a class='v5-secondary' href='tel:112'>Tiesňová linka 112</a></div>" + safety);
+    // Master 4.0.2 (kontrola snímok): tiesňové 155 / 112 navrchu, plné ako v GuguChate; pod nimi stručne veta a kontakty.
+    showCareModal("Kontakty na pomoc", "", "<div class='g2-urgent-calls'><a class='v2-chat-action v2-chat-action-urgent' href='tel:155'>Zavolať 155</a><a class='v2-chat-action v2-chat-action-urgent' href='tel:112'>Zavolať 112</a></div>" + safety + "<div class='v5-info-box'>" + escapeHtml(box) + "</div><div class='v2-help-contacts'><button type='button' class='v5-secondary' data-v5-feature='contacts'>Moje kontakty</button>" + nezabudka + "</div>");
   }
 
   function openDoctorVisitModal() {
@@ -5002,7 +5009,7 @@
         "<div class='v5-first-moments-grid'>" + firstOptions.map(item => {
           const saved = state.v5.firstMoments.find(entry => entry.key === item[0]);
           return "<button type='button' class='" + (saved ? "is-saved" : "") + "' data-v5-first-moment='" + item[0] + "' data-v5-first-label='" + escapeHtml(item[1]) + "'><span class='v5-icon'>" + icon(item[2]) + "</span><strong>" + escapeHtml(item[1]) + "</strong><small>" + (saved ? new Date(saved.date).toLocaleDateString("sk-SK") : "Zachytiť dnes") + "</small></button>";
-        }).join("") + "</div><button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>";
+        }).join("") + "</div><button class='v5-check-categories-button' type='button' data-v5-moments-home>" + icon("back") + " Naše momenty</button>"; // Master 4.0.2: jednotný odkaz späť
       return;
     }
     const days = new Set(allMoments.map(item => item.date || todayKey(item.created))).size;
@@ -5011,7 +5018,7 @@
       "<div class='v5-story-output-grid'><section><span>100</span><div><strong>Prvých 100 dní spolu</strong><small>" + days + " dní · " + photos + " fotografií · " + state.v5.firstMoments.length + " prvých razov</small></div></section>" +
       "<section><span>1</span><div><strong>Prvý rok spolu</strong><small>Príbeh bude priebežne rásť z rovnakých momentov.</small></div></section></div>" +
       "<div class='v5-info-box'>Výstup si pred uložením alebo tlačou skontroluješ. Chýbajúci deň nevadí.</div>" +
-      "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>";
+      "<button class='v5-check-categories-button' type='button' data-v5-moments-home>" + icon("back") + " Naše momenty</button>" /* Master 4.0.2: jednotný odkaz späť */;
   }
 
   const zodiac = [
@@ -5161,7 +5168,7 @@
     ["doctor", "Na kontrolu so sebou", "Otázky, správy a ďalší postup", [ // Master 4.0.1 (Kontrola N12): názvy zoznamov sa líšia (predtým „Návšteva lekára“ vs „Pred návštevou lekára“)
       ["v5-doctor-card", "Preukaz poistenca"],
       ["v5-doctor-questions", "Otázky, ktoré sa chcem opýtať"],
-      ["v5-doctor-measurements", "Posledné merania dieťaťa"],
+      ["v5-doctor-measurements", "Posledné merania bábätka"],
       ["v5-doctor-reports", "Správy a výsledky"]
     ]],
     ["illness", "Zápisy pre lekára", "Údaje, ktoré pomôžu pri konzultácii", [
@@ -5916,6 +5923,8 @@
     if (!target) return;
     if (currentView() === "v5Sounds") renderSounds(); // Master 4.0 (Audit F3): stav „hrá“ a ovládanie aj v okne
     const audio = state.v5.audio || {};
+    // Master 4.0.2: na domove je ovládanie zvuku v riadku „Dnes“ – prekresliť, len keď sa stav zmenil.
+    if (currentView() === "home" && Boolean(document.querySelector("#home .g2-today-audio")) !== Boolean(audio.active)) renderHome();
     if (!audio.active) {
       target.classList.remove("active");
       document.body.classList.remove("v5-audio-active");

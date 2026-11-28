@@ -106,7 +106,14 @@
     return attrs.length ? attrs.map(attr => "[" + attr.name + (attr.value ? "='" + CSS.escape(attr.value) + "'" : "") + "]").join("") : el.id ? "#" + CSS.escape(el.id) : "";
   }
   function focusInto(el) {
-    if (!el || el.contains(document.activeElement)) return;
+    // Master 4.0.2: fokus, ktorý appka pri otvorení dala tlačidlu okna (späť, ×), sa presunie na nadpis; pole alebo nadpis ostáva.
+    if (!el || (el.contains(document.activeElement) && document.activeElement.matches("input, textarea, select, h1, h2, h3, [tabindex='-1'], [data-g2-autofocus]"))) return;
+    // Master 4.0.2 (kontrola snímok): po otvorení okna fokus vždy na nadpis (bez rámika), nie na × / späť – platí pre všetky okná
+    // (Kontakty na pomoc, Plán → Vybaviť, Spätná väzba…). Nadpis = aria-labelledby dialógu, inak prvý viditeľný h1/h2/h3.
+    const dialog = el.matches("[role='dialog']") ? el : el.querySelector("[role='dialog']");
+    const labelled = dialog?.getAttribute("aria-labelledby") ? byId(dialog.getAttribute("aria-labelledby")) : null;
+    const heading = [labelled, ...el.querySelectorAll("h1, h2, h3")].find(h => h && visible(h));
+    if (heading && !el.querySelector("[data-g2-autofocus]")) { if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1"); heading.focus({ preventScroll: true }); return; }
     const target = el.querySelector("[data-g2-autofocus], h2[tabindex='-1'], .v5-universal-window-head strong[tabindex='-1']") ||
       Array.from(el.querySelectorAll("button, [href], input, select, textarea")).find(visible);
     target?.focus?.({ preventScroll: true });

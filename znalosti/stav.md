@@ -2,9 +2,13 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 28. 11. 2026 (Claude – Master 4.0.1, opravy po kontrolnom audite 4.0)_
+_Naposledy aktualizované: 28. 11. 2026 (Claude – Master 4.0.2, dorovnanie po kontrole snímok)_
 
 ## Verzia
+
+- **Master 4.0.2 – dorovnanie po kontrole snímok:** zvuk na domove v riadku „Dnes“ (kruh sa nezmenší), fokus po otvorení okna na nadpis,
+  Kontakty na pomoc s 155 / 112 navrchu, jednotný odkaz späť, Aktivity jeden zdroj, spätná väzba rovnaké poradie odpovedí, „Hotovo 0 z 5“,
+  bežiaci čas v strede kruhu s rezervou 6 px (aj v okne prehliadača, nielen headless).
 
 - **Master 4.0.1 – opravy po kontrolnom audite 4.0** (`AUDIT_4.0_KONTROLA_APP.md`, `AUDIT_4.0_KONTROLA_OBSAH.md`, lokálne):
   GuguChat – núdza (nová veta E0 v `g2-safety.js`, ⚕), sebapoškodenie = E6, E7 len pôrodné príznaky s naliehavosťou NHS, krvácanie
