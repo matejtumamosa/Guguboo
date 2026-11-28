@@ -3,6 +3,11 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-28 – Samo (bez odborného potvrdzovania)
+- **Odborné potvrdenie (lekár, pôrodná asistentka) nerobíme a nebudeme** – Guguboo nie je lekárska appka. Značky ⚕ „na potvrdenie
+  garantom“ už neplatia. Dôsledok: v appke smie byť len ľahký informatívny obsah, ktorý doslovne zodpovedá oficiálnemu zdroju
+  (so zdrojom a dátumom overenia); čo by potrebovalo odborné posúdenie, do appky nepatrí. Nahrádza „garant ⚕“ z 16. 11. a 2.7.
+
 ## 2026-11-28 – Product Lead (Master 4.0.3)
 - **Bežiaci čas v strede kruhu:** slovo („Spí“, „Kontrakcia“…) má prednosť pred veľkosťou času – najprv sa skryje ikona, čas sa zmenší
   až na 15 px, až potom zmizne slovo; v najmenšom strede čas bez sekúnd v tvare „1 h 47“ (celý čas je v okne merania).
