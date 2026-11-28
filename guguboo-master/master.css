@@ -1226,3 +1226,19 @@ body.v5-active :is(button, a, [role="button"], summary):focus:not(:focus-visible
 :is(html, #g2n#g2n#g2n) body.v5-active .v5-check-categories-button { background: transparent !important; border: 0 !important; box-shadow: none !important; color: var(--t-brand) !important; font: var(--t-link) !important; padding-inline: 0 !important; }
 :is(html, #g2n#g2n#g2n) body.v5-active .v5-check-categories-button svg { color: currentColor !important; }
 .v5-org-next-card h3, .v2-org-row strong { text-wrap: pretty; } /* Master 4.0.2 */
+/* Master 4.0.3: × 44 × 44 aj s rámikom (box-sizing) – v okne prehliadača bolo menej ako 44 px. */
+:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], [data-v5-close-record], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) { box-sizing: border-box !important; flex: 0 0 44px; }
+/* Master 4.0.3 (kontrola S3): Praktické zoznamy v noci – okraje políčok, poľa „Vlastná položka“, tlačidla „+“ a prázdny pruh postupu
+   s kontrastom ≥ 3 : 1 k pozadiu (#9a92b8 na #1b2130 ≈ 6 : 1); cez deň bez zmeny. */
+:is(html, #g2n#g2n#g2n) body.v5-active.night .v5-check-toggle { border-color: #9a92b8 !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active.night .v5-check-add :is(input, button) { border: 1px solid #9a92b8 !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active.night .v5-check-add button { color: #f5f2fb !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active.night .v5-check-progress { background: #7a7398 !important; } /* ≈ 3,6 : 1 */
+/* Master 4.0.3 (kontrola S2): tiesňové tlačidlá v Kontaktoch na pomoc aspoň 48 px vysoké. */
+:is(html, #g2n#g2n#g2n) body.v5-active .g2-urgent-calls .v2-chat-action { min-height: 48px !important; height: auto !important; padding-block: 12px !important; box-sizing: border-box !important; }
+/* Master 4.0.3: riadok „Hrá · Biely šum“ – malá ikona zvuku pred „Hrá“; ťuk kdekoľvek mimo „Vypnúť“ otvorí Spánok a zvuky. */
+#home .g2-today-audio .g2-today-main { flex: 1 1 auto; align-self: stretch; text-align: left; }
+#home .g2-today-audio .g2-today-main small svg.ph { width: 14px !important; height: 14px !important; vertical-align: -2px; margin-right: 2px; }
+/* Master 4.0.3 (kontrola S1): v tesnom strede kruhu čas s tesným riadkovaním, aby sa nad neho zmestilo slovo („Spí“) v Drobnom. */
+:is(html, #g2n#g2n#g2n) body.v5-active .g2q-core.is-tighter .g2q-time { line-height: 1.05 !important; }
+:is(html, #g2n#g2n#g2n) body.v5-active .g2q-core.is-tighter .g2q-cl { line-height: 16px !important; }

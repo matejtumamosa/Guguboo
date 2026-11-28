@@ -2,9 +2,14 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 28. 11. 2026 (Claude – Master 4.0.2, dorovnanie po kontrole snímok)_
+_Naposledy aktualizované: 28. 11. 2026 (Claude – Master 4.0.3)_
 
 ## Verzia
+
+- **Master 4.0.3:** bežiaci čas v strede kruhu sa prispôsobí aj po neskoršom načítaní písma a v malom strede (~59 px) – poradie: bez ikony,
+  menší čas (slovo „Spí“ ostáva), bez slova, len čas, napokon „1 h 47“ bez sekúnd; × 44 px aj s rámikom (test meria rozloženie, nie
+  animáciu); 155 / 112 48 px; Praktické zoznamy v noci s viditeľnými okrajmi; riadok zvuku s ikonou. Overené: Plán po pôrode má úlohy
+  po pôrode (Doma, Doklady, Rodina) – chyba S4 sa nepotvrdila.
 
 - **Master 4.0.2 – dorovnanie po kontrole snímok:** zvuk na domove v riadku „Dnes“ (kruh sa nezmenší), fokus po otvorení okna na nadpis,
   Kontakty na pomoc s 155 / 112 navrchu, jednotný odkaz späť, Aktivity jeden zdroj, spätná väzba rovnaké poradie odpovedí, „Hotovo 0 z 5“,

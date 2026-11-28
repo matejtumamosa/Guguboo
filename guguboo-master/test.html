@@ -1844,8 +1844,10 @@
               await sleep(200); await open(); await sleep(450);
               const x = [...doc.querySelectorAll("button")].filter(b => isVisible(b) && /^(Zavrieť|Zavrieť prehliadku|Zrušiť a vrátiť sa domov)$/.test(b.getAttribute("aria-label") || "")).pop();
               assert(x, name + ": chýba ×");
-              const r = x.getBoundingClientRect(), cs = win.getComputedStyle(x);
-              assert(r.width >= 44 && r.height >= 44, name + ": × má len " + Math.round(r.width) + " × " + Math.round(r.height) + " px");
+              // Master 4.0.3: rozmer v rozložení (offsetWidth/Height), nie po transformácii – v okne prehliadača animácia otvárania
+              // (scale) ešte nemusí dobehnúť a getBoundingClientRect dá napr. 43,6 px; tolerancia 0,5 px na zaokrúhlenie.
+              const cs = win.getComputedStyle(x), r = { width: Math.max(x.offsetWidth, parseFloat(cs.width) || 0), height: Math.max(x.offsetHeight, parseFloat(cs.height) || 0) };
+              assert(r.width >= 43.5 && r.height >= 43.5, name + ": × má len " + r.width + " × " + r.height + " px");
               seen.push(cs.color + " / " + cs.backgroundColor);
             }
             eq([...new Set(seen)].length, 1, "× má rôzne farby: " + JSON.stringify([...new Set(seen)]));

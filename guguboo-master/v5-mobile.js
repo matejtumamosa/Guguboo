@@ -1577,36 +1577,44 @@
     g2qFitCore();
   }
   // Master 4.0 (Audit V4/F18): bežiaci čas v strede kruhu nesmie pretekať cez diely (375 × 667, 320 × 568, aj 390 × 844).
-  // Od zlúčenia s F8 (C) v strede nie je pilulka ukončenia – ťuk otvorí okno merania. Postupne: 1) bez ikony nad časom,
-  // 2) bez slova („Spí“), 3) menší čas (najmenej 15 px), 4) len čas. Meria sa každý roh prvku voči kruhu stredu.
-  // (Pravidlá .g2q-stop / .is-tight v master.css ostali z časti A bez použitia.)
+  // Master 4.0.3 (test v okne prehliadača, kontrola S1): poradie je 1) bez ikony, 2) menší čas do 15 px (slovo „Spí“ ostáva, Drobné),
+  // 3) bez slova, 4) menší čas do 15 px, 5) len čas, 6) ak sa ani tak nezmestí (stred ~59 px, napr. s posuvníkom), čas bez sekúnd
+  // v tvare „1 h 47“ (celý čas je v aria-label okna). Prepočíta sa po načítaní písma (document.fonts), pri zmene veľkosti a vždy,
+  // keď živý čas prestane vychádzať – nezávisí od rýchlosti načítania písma.
   const G2Q_TIGHT = ["is-tighter", "is-tightest"];
+  function g2qCoreFits(core) {
+    const c = core.getBoundingClientRect(), R = c.width / 2 - 6 /* rezerva 6 px */, cx = c.left + c.width / 2, cy = c.top + c.height / 2;
+    if (R <= 0) return true;
+    return [...core.children].every(k => {
+      const r = k.getBoundingClientRect();
+      if (!r.width || getComputedStyle(k).display === "none") return true;
+      const br = Math.min(parseFloat(getComputedStyle(k).borderTopLeftRadius) || 0, r.height / 2, r.width / 2) * .3;
+      return [[r.left + br, r.top + br], [r.right - br, r.top + br], [r.left + br, r.bottom - br], [r.right - br, r.bottom - br]]
+        .every(([x, y]) => Math.hypot(x - cx, y - cy) <= R);
+    });
+  }
   function g2qFitCore() {
     const core = document.querySelector("#home.view.active .g2q-core.is-running");
     if (!core) return;
     const time = core.querySelector(".g2q-time");
-    core.classList.remove(...G2Q_TIGHT, "is-bare");
-    if (time) time.style.removeProperty("font-size");
-    const fits = () => {
-      const c = core.getBoundingClientRect(), R = c.width / 2 - 6 /* Master 4.0.2: rezerva 6 px (písmo v okne prehliadača sa líši od headless o ~1 px) */, cx = c.left + c.width / 2, cy = c.top + c.height / 2;
-      if (R <= 0) return true;
-      return [...core.children].every(k => {
-        const r = k.getBoundingClientRect();
-        if (!r.width || getComputedStyle(k).display === "none") return true;
-        const br = Math.min(parseFloat(getComputedStyle(k).borderTopLeftRadius) || 0, r.height / 2, r.width / 2) * .3;
-        return [[r.left + br, r.top + br], [r.right - br, r.top + br], [r.left + br, r.bottom - br], [r.right - br, r.bottom - br]]
-          .every(([x, y]) => Math.hypot(x - cx, y - cy) <= R);
-      });
-    };
-    for (const level of G2Q_TIGHT) { if (fits()) return; core.classList.add(level); }
-    const shrink = () => { for (let size = 23; time && size >= 15 && !fits(); size--) time.style.setProperty("font-size", size + "px", "important"); };
-    shrink();
-    // 4) najmenší stred (320 × 568, čas „1:47:05“): len čas – celý stred otvorí okno merania (aria-label „Spí – otvoriť meranie“)
-    if (!fits()) { core.classList.add("is-bare"); if (time) time.style.removeProperty("font-size"); shrink(); }
+    core.classList.remove(...G2Q_TIGHT, "is-bare", "is-short");
+    if (time) { time.style.removeProperty("font-size"); time.textContent = g2qClock(g2qSince(time.dataset.g2qSince)); }
+    const fits = () => g2qCoreFits(core);
+    const shrink = min => { for (let size = 23; time && size >= min && !fits(); size--) time.style.setProperty("font-size", size + "px", "important"); };
+    if (fits()) return;
+    core.classList.add("is-tighter"); if (fits()) return;
+    shrink(15); if (fits()) return; // slovo „Spí“ má prednosť pred veľkosťou času (kontrola S1)
+    core.classList.add("is-tightest"); if (time) time.style.removeProperty("font-size"); if (fits()) return;
+    shrink(15); if (fits()) return;
+    core.classList.add("is-bare"); if (time) time.style.removeProperty("font-size"); shrink(15); if (fits()) return;
+    core.classList.add("is-short"); if (time) { time.style.removeProperty("font-size"); time.textContent = g2qClockShort(g2qSince(time.dataset.g2qSince)); } shrink(15);
   }
+  // Čas bez sekúnd pre najmenší stred: „1 h 47“ (pod hodinu ostáva „47:16“ – je kratší).
+  const g2qClockShort = ms => { const m = Math.floor(Math.max(0, ms) / 60000); return m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : g2qClock(ms); };
   const g2qFitSoon = () => { requestAnimationFrame(g2qFitRing); setTimeout(g2qFitRing, 80); };
   window.addEventListener("resize", () => setTimeout(g2qFitRing, 120));
   if (document.fonts?.ready) document.fonts.ready.then(() => g2qFitRing()); // rozmery textu až s načítaným Montserratom
+  document.fonts?.addEventListener?.("loadingdone", () => g2qFitRing()); // Master 4.0.3: aj písmo načítané neskôr
   function g2qCenter() {
     const run = g2qRunning();
     if (run) {
@@ -1627,9 +1635,12 @@
   // Živý čas v strede kruhu (raz za sekundu, len keď je domov na obrazovke).
   setInterval(() => {
     document.querySelectorAll("#home.view.active [data-g2q-since]").forEach(el => {
-      const text = g2qClock(g2qSince(el.dataset.g2qSince)), longer = text.length !== el.textContent.length;
+      // Master 4.0.3: v najmenšom strede čas bez sekúnd; po každej zmene textu kontrola, či sa ešte zmestí (napr. neskôr načítané písmo).
+      const core = el.closest(".g2q-core"), short = core?.classList.contains("is-short");
+      const text = (short ? g2qClockShort : g2qClock)(g2qSince(el.dataset.g2qSince)), longer = text.length !== el.textContent.length;
+      if (text === el.textContent) return;
       el.textContent = text;
-      if (longer || text.endsWith(":00")) g2qFitCore(); // Master 4.0.2: aj každú minútu; Master 4.0 (Audit V4): „59:59“ → „1:00:00“ – čas sa znova prispôsobí stredu
+      if (longer || (core && !g2qCoreFits(core))) g2qFitCore(); // Master 4.0 (Audit V4): „59:59“ → „1:00:00“ – čas sa znova prispôsobí stredu
     });
   }, 1000);
 
@@ -2664,7 +2675,7 @@
         renderAdaptiveOHome(true),
         // Master 4.0.2 (kontrola snímok, F21): keď hrá zvuk, je jeho ovládanie v riadku „Dnes“ (rovnaká výška) – kruh sa nezmenší
         // a plávajúci prehrávač sa na domove neukazuje. Celé ovládanie (hlasitosť, časovač) je v okne Spánok a zvuky.
-        state.v5.audio?.active ? "<section class='g2-today g2-today-row g2-today-audio'><button class='g2-today-main' type='button' data-v5-feature='sounds'><small>Hrá</small><strong>" + escapeHtml(state.v5.audio.title || "Zvuk") + "</strong></button><button class='g2-today-later' type='button' data-v5-action='stop-audio'>Vypnúť</button></section>"
+        state.v5.audio?.active ? "<section class='g2-today g2-today-row g2-today-audio'><button class='g2-today-main' type='button' data-v5-feature='sounds'><small>" + icon("sound") + " Hrá</small><strong>" + escapeHtml(state.v5.audio.title || "Zvuk") + "</strong></button><button class='g2-today-later' type='button' data-v5-action='stop-audio'>Vypnúť</button></section>"
           : night ? soundsRow : termHtml || todayHtml,
         night ? "" : "<div class='g2-home-moment'>" + (window.GugubooMoments?.homeCardHtml?.() || "") + "</div>"
       ].join("");

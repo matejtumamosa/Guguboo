@@ -3,6 +3,10 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-28 – Product Lead (Master 4.0.3)
+- **Bežiaci čas v strede kruhu:** slovo („Spí“, „Kontrakcia“…) má prednosť pred veľkosťou času – najprv sa skryje ikona, čas sa zmenší
+  až na 15 px, až potom zmizne slovo; v najmenšom strede čas bez sekúnd v tvare „1 h 47“ (celý čas je v okne merania).
+
 ## 2026-11-28 – Product Lead (Master 4.0.2: dorovnanie po kontrole snímok)
 - **Zvuk na domove:** keď hrá biely šum / uspávanka, ovládanie je v riadku „Dnes stačí jedno“ („Hrá · Biely šum · Vypnúť“), plávajúci
   prehrávač sa na domove neukazuje – kruh sa kvôli nemu nezmenší (375 × 667 ~188 px). Hlasitosť a časovač sú v okne Spánok a zvuky.
