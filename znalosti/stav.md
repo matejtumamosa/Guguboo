@@ -2,10 +2,19 @@
 
 Krátky prehľad pre ďalší chat. **Na konci každej práce ho aktualizuj** (verzia, čo je hotové, čo ďalej).
 
-_Naposledy aktualizované: 27. 11. 2026 (Claude – Master 4.0, upratanie po úplnom audite 3.9.2)_
+_Naposledy aktualizované: 28. 11. 2026 (Claude – Master 4.0.1, opravy po kontrolnom audite 4.0)_
 
 ## Verzia
 
+- **Master 4.0.1 – opravy po kontrolnom audite 4.0** (`AUDIT_4.0_KONTROLA_APP.md`, `AUDIT_4.0_KONTROLA_OBSAH.md`, lokálne):
+  GuguChat – núdza (nová veta E0 v `g2-safety.js`, ⚕), sebapoškodenie = E6, E7 len pôrodné príznaky s naliehavosťou NHS, krvácanie
+  po pôrode = E1, preeklampsia = E2 + testy formulácií v `test.html`; Kontakty na pomoc podľa toho, odkiaľ sa otvorili; Aktivity
+  „Pre rodiča“ bez stavov (CDC informatívne); prehrávač zvuku na domove (neprekrýva kruh ani „Dnes stačí jedno“), hláška
+  „Uložené · Vrátiť“ v okne kruhu hore, Plán – oblasť a Offline karta podľa 3 úrovní, späť o krok (Plán → Vybaviť → Oznámenie,
+  Všetko → Záloha / Čas pre teba, Esc v Starostlivosti), Pitný režim v Mame ako v kruhu, ikony v noci, jedno číslo spánku,
+  jedna podoba zdroja „Zdroj: NHS · overené …“, drobné texty. **Ostáva (na rozhodnutie Sama):** V11 dva Hlavné nadpisy, V29 hlavička
+  na 2 riadky, F29 iný typ okna Úradov, V12 zvyšok typografie starších okien, F40 „Cítila som ho“, Z10, Z12, Z15, Z31–Z33, Z35,
+  N19, N20, N22, N24, sumy 2027, ⚕ vety (E0–E7, bezpečný spánok, cviky po pôrode) na potvrdenie odborníkom.
 - **Master 4.0 – upratanie po úplnom audite 3.9.2** (audity `AUDIT_3.9.2_*` v `guguboo-v2/docs/ux-master/`, lokálne), zlúčené
   z troch častí: **A** noc a vizuál (kontrast v noci aj cez deň, štítky na fialovej, bežiaci čas sa zmestí do stredu kruhu
   aj na 320 px, jedna ikona pre jednu vec, ikony namiesto znakov ▶ ■ − ＋ ✓, × 44 px); **B** zdravotný obsah podľa spresneného

@@ -1066,6 +1066,8 @@
     if (["v5Mama", "v5Period", "privateSpace"].includes(view) || ["mama", "period", "privateSpace"].includes(key)) return "mama";
     if (view === "v5FamilyHub") return "family";
     if (view === "v5BabyHub" || view === "v5Flow") return "baby";
+    // Master 4.0.1 (Kontrola V26): Taška do pôrodnice / Príprava na pôrod (pred pôrodom) patrí do Bábätka, Praktické zoznamy do Rodiny.
+    if (view === "v5Checklists") return state.profile.status === "expecting" ? "baby" : "family";
     const all = [...prenatalDrawerGroups, ...postpartumDrawerGroups];
     if (all.some(([title, keys]) => title === "Rodina" && keys.includes(key)) || ["v5First100", "v5Utility", "v5Profiles"].includes(view)) return "family";
     if (all.some(([title, keys]) => title === "Bábätko" && keys.includes(key)) || ["teeth", "v5Care"].includes(view)) return "baby";
@@ -1708,6 +1710,8 @@
     }
     g2qUndo = snap || null;
     el.innerHTML = "<span>" + escapeHtml(text) + "</span>" + (snap ? "<button type='button' data-g2q='undo'>Vrátiť</button>" : "");
+    // Master 4.0.1 (Kontrola F32): pri otvorenom okne kruhu je hláška hore, aby nezakryla vetu E3 ani tlačidlá dole.
+    el.classList.toggle("is-top", !!byId("g2QuickOverlay")?.classList.contains("open"));
     el.classList.add("on");
     clearTimeout(g2qToastTimer);
     g2qToastTimer = setTimeout(() => { el.classList.remove("on"); g2qUndo = null; }, snap ? 6000 : 3000);
@@ -2134,7 +2138,10 @@
     if (action === "firstmove-save") {
       (state.v5.firstMoments ||= []).push({ key: "firstmove", label: "Prvý pohyb bábätka", date: new Date().toISOString() });
       (state.v5.babyMoves ||= []).push({ id: createId(), time: new Date().toISOString(), note: "" });
-      return g2qDone("Prvý pohyb je v Našich momentoch", snap);
+      g2qDone("Prvý pohyb je v Našich momentoch", snap);
+      // Master 4.0.1 (Kontrola F52): diel sa po uložení zmení z „firstmove“ na „move“ – fokus naň, nie na <body>.
+      setTimeout(() => { const a = document.activeElement; if (!a || a === document.body) document.querySelector("#home.view.active .g2q-seg[data-seg='move']")?.focus?.({ preventScroll: true }); }, 200);
+      return;
     }
     // Master 4.0 (Audit F17, Samo 27. 11.): kto cíti pohyby už dlhšie, ide rovno k zápisu – bez spomienky a bez dnešného dátumu.
     if (action === "firstmove-earlier") {
@@ -3012,10 +3019,11 @@
     return [
       "<section class='v2-water-panel' aria-label='Pitný režim'>",
       // Master 4.0 (Audit V13): „− ＋“ ako linkové ikony (predtým znaky 18/700 v modrej)
-      "<div class='v2-water-count'><button type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">", glyph("minus"), "</button>",
       // Master 3.8 (Samo, C&S kolo 3, S3): bez cieľa – len počet pohárov dnes (a 7 dní v okne kruhu).
-      "<strong>", water.count, "<small>", water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov", " dnes · ", escapeHtml(waterLiters(water.count)), "</small></strong>",
-      "<button type='button' data-v5-water-add aria-label='Pridať pohár'>" + glyph("plus") + "</button></div>",
+      // Master 4.0.1 (Kontrola V17): ten istý vzhľad ako okno Pitného režimu v kruhu – číslo, „pohárov dnes“, −1 / +1 a 7 dní.
+      "<div class='g2q-big'><b>", water.count, "</b><span>", water.count === 1 ? "pohár" : water.count > 1 && water.count < 5 ? "poháre" : "pohárov", " dnes · ", escapeHtml(waterLiters(water.count)), "</span></div>",
+      "<div class='g2q-pm'><button class='g2q-pm-btn' type='button' data-v5-water-remove aria-label='Odobrať pohár'", water.count ? "" : " disabled", ">−1</button><button class='g2q-pm-btn is-main' type='button' data-v5-water-add aria-label='Pridať pohár'>+1</button></div>",
+      "<p class='g2r-small'>Posledných 7 dní</p>", g2qBars(g2qPastDays(7).map(d => { const k = calendarDayKey(d); return [G2Q_WD[d.getDay()], k === todayKey() ? water.count : Number((state.v5.waterLog || {})[k] || 0)]; }), "Poháre za posledných 7 dní"),
       "<div class='v2-water-settings'><label>Pohár<select data-v5-water-glass>",
       [200, 250, 300, 330, 500].map(n => "<option value='" + n + "'" + (n === water.glassMl ? " selected" : "") + ">" + n + " ml</option>").join(""),
       "</select></label></div>",
@@ -3242,7 +3250,12 @@
       (ready ? "Spánok, kŕmenie, spomienky aj tvoja pohoda" : "Pripravený bude o " + escapeHtml(summaryTime()) + " · pozrieť priebežne") + "</span></div><span class='v5-row-arrow'>" + glyph("chevronRight") + "</span></button>";
   }
 
-  function openOrganizationMenu(sectionId) {
+  // Master 4.0.1 (Kontrola F9): posledná otvorená oblasť Plánu – späť z obrazovky otvorenej z nej (napr. Oznámenie) ju znova otvorí.
+  let lastOrgSection = "", orgFromPlan = false;
+  function reopenOrganizationMenu() { if (lastOrgSection) openOrganizationMenu(lastOrgSection, true); }
+  function openOrganizationMenu(sectionId, reopened) {
+    lastOrgSection = sectionId;
+    if (!reopened) orgFromPlan = Boolean(byId("g2PlanOverlay")?.classList.contains("open"));
     closeDrawer();
     closeQuickRecord();
     renderOrganizationMenu(sectionId);
@@ -5145,13 +5158,13 @@
       ["v5-health-emergency", "Pohotovosť a tiesňové čísla"],
       ["v5-health-notes", "Alergie a dôležité poznámky"]
     ]],
-    ["doctor", "Návšteva lekára", "Otázky, správy a ďalší postup", [
+    ["doctor", "Na kontrolu so sebou", "Otázky, správy a ďalší postup", [ // Master 4.0.1 (Kontrola N12): názvy zoznamov sa líšia (predtým „Návšteva lekára“ vs „Pred návštevou lekára“)
       ["v5-doctor-card", "Preukaz poistenca"],
       ["v5-doctor-questions", "Otázky, ktoré sa chcem opýtať"],
       ["v5-doctor-measurements", "Posledné merania dieťaťa"],
       ["v5-doctor-reports", "Správy a výsledky"]
     ]],
-    ["illness", "Pred návštevou lekára", "Údaje, ktoré pomôžu pri konzultácii", [
+    ["illness", "Zápisy pre lekára", "Údaje, ktoré pomôžu pri konzultácii", [
       ["v5-illness-temperature", "Zaznamenaná teplota"],
       ["v5-illness-feeding", "Kŕmenie a tekutiny"],
       ["v5-illness-diapers", "Mokré a špinavé plienky"],
@@ -5225,7 +5238,7 @@
     const visual = checklistVisuals[selected[0]] || ["checklist", "Zoznam"];
     target.innerHTML = [
       "<section class='v5-checklist-shell v5-checklist-detail'>",
-      "<header class='v5-checklist-detail-head is-", selected[0], "'><span class='v5-icon'>", icon(visual[0]), "</span><div><small>", escapeHtml(visual[1]), "</small><h1>", escapeHtml(selected[1]), "</h1></div><strong>", done, "/", items.length, "</strong><span class='v5-check-progress'><i style='--progress:", percentage, "%'></i></span></header>",
+      "<header class='v5-checklist-detail-head is-", selected[0], "'><span class='v5-icon'>", icon(visual[0]), "</span><div><h1>", escapeHtml(selected[1]), "</h1></div><strong>", done, " z ", items.length, "</strong>" /* Master 4.0.1 (Kontrola N12): bez štítku, ktorý opakoval oblasť; „0 z 4“ ako v zozname */, "<span class='v5-check-progress'><i style='--progress:", percentage, "%'></i></span></header>",
       selected[2] ? "<p class='v2-check-lead'>" + escapeHtml(selected[2]) + "</p>" : "",
       "<div class='v5-check-items'>",
       rows.map(item => {
@@ -5485,7 +5498,7 @@
       return;
     }
     if (section === "water") {
-      target.innerHTML = [flowHead("Mama", "Pitný režim", "Ťukni na ＋ po každom pohári.", 0, 1), waterSettingsHtml(), back].join("");
+      target.innerHTML = [flowHead("Mama", "Pitný režim", "Ťukni na +1 po každom pohári.", 0, 1) /* Master 4.0.1 (Kontrola F43, V17): ako tlačidlo */, waterSettingsHtml(), back].join("");
       return;
     }
     // Domov okienka Mama
@@ -6568,6 +6581,7 @@
       }
       if (state.v5.adaptiveO.modalSource === "organization") {
         closeAdaptiveOMenu();
+        if (MASTER && orgFromPlan && !byId("g2PlanOverlay")?.classList.contains("open")) openPlan(); // Master 4.0.1 (Kontrola F9): oblasť otvorená z Plánu → späť = Plán
         renderHome();
         return;
       }
@@ -7444,7 +7458,7 @@
   }, 1000);
   // V2: verejné rozhranie pre Journey Engine a GuguChat (guguchat.js), aby nemuseli poznať vnútro v5.
   window.GugubooV5 = {
-    openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal,
+    openFeature, routeTo, openHome, openDrawer, openAdaptiveOMenu, openQuickRecord, openChecklistCategory, openUrgentModal, reopenOrganizationMenu,
     // Master 1.8: spoločný systém okien (g2-windows.js)
     closeDrawer, closeQuickRecord, closeAdaptiveOMenu, cancelAdaptiveOMenu, openPlan, closePlan, openMonth, closeMonth, universalWindowBack, windowCloseAll, currentView,
     // Master 2.7: jeden zoznam otázok pre lekára + okno „Zapísať ako otázku…“ (GuguChat, aktivity, kruh, momenty).

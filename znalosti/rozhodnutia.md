@@ -3,6 +3,24 @@
 Najnovšie hore. Formát: dátum – kto – čo a prečo. Staršie rozhodnutia Samuela (28. 9. 2026) sú
 v `guguboo-v2/docs/00-audit-a-plan.md`.
 
+## 2026-11-28 – Samo (Master 4.0.1: opravy po kontrolnom audite 4.0)
+- **Núdzová veta E0 (nová, `g2-safety.js`) ⚕ na potvrdenie pediatrom / záchranárom:** „Ak niekto nedýcha alebo ťažko dýcha, dusí sa,
+  modrie, je v bezvedomí, má kŕče, silno krváca alebo sa vážne zranil, volaj hneď 155 (záchranná služba) alebo 112.“ Zdroj slovensko.sk
+  (životná situácia o národných linkách, zmena 17. 2. 2021), overené 27. 11. 2026. GuguChat ju pri akútnom ohrození (bábätko, mama,
+  ktokoľvek) dáva ako prvú, vo všetkých obdobiach; rozpoznáva bežné formulácie s aj bez diakritiky („ťažko/zle dýcha“, „modré pery“,
+  „je celé modré“, „nedá sa zobudiť“, „dusí sa“, kŕče, vážny úraz…). Prečo: audit našiel, že „bábätko ťažko dýcha“ dostalo
+  „nemám overenú odpoveď“.
+- **Bezpečnostné vety podľa situácie:** sebapoškodenie (aj „mám myšlienky, že si ublížim“) = E6 (112 + Nezábudka); E7 len pôrodné príznaky
+  (plodová voda, krvácanie v tehotenstve, kontrakcie) a doplnená o spúšťače a naliehavosť NHS („nečakaj do rána, aj v noci“, overené
+  27. 11. 2026) ⚕; silné krvácanie a iné príznaky po pôrode = E1; mžitky, rozmazané videnie, silná bolesť hlavy v tehotenstve = E2.
+  Kontakty na pomoc otvorené z Nálady sú o mame (E6, Nezábudka, po pôrode E1), inde po pôrode pediater + E5 + E1.
+- **Aktivity „Pre rodiča“ (OBSAH N4, Samo 28. 11.):** bez označovania stavu („Už to robí / Zatiaľ neviem / Opýtať sa pediatra“ – bolo to
+  samohodnotenie; kód vypnutý, nie zmazaný). Namiesto toho informatívny zoznam overených viet CDC z Tvojho mesiaca („Okolo N mesiacov
+  veľa bábätiek…“) + „Každé bábätko je iné…“, Zdroj: CDC · overené 13. 11. 2026; po 12. mesiaci sa časť nezobrazí (nie je overená veta).
+- Drobné: Dýchaj so mnou bez tipu 40. týždňa (Z10 ostáva na Samovi); Tvoj mesiac po 12. mesiaci bez „teraz“ a s vetou „Obsah je zatiaľ
+  do 1. roka“; zoznamy „Na kontrolu so sebou“ a „Zápisy pre lekára“ (predtým dva podobné názvy); veta „Telefón ani reproduktor
+  nedávaj k hlave dieťaťa“ a „Svoje meno začne poznávať okolo 9. mesiaca“ (bez zdroja, norma/pokyn) preč.
+
 ## 2026-11-27 – Samo (Master 4.0: zmeny funkcie po úplnom audite 3.9.2)
 - **Profil → Rodina bez oprávnení a upozornení** (audit F7): appka nemá účty ani zdieľanie, nikto iný ju nevidí – voľby
   „Oprávnenie“ a „Upozornenia“ sú vypnuté (kód ostáva, podmienka `MASTER`), kým neprídu účty.

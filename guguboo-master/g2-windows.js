@@ -30,7 +30,9 @@
   const LAYERS = [
     { id: "v5DrawerOverlay", kind: "sheet", back: () => V5.closeDrawer(), close: () => V5.closeDrawer(), reopen: () => V5.openDrawer() },
     { id: "v5QuickRecordOverlay", kind: "sheet", back: () => V5.closeQuickRecord(), close: () => V5.closeQuickRecord(), reopen: () => V5.openQuickRecord() },
-    { id: "v5OOverlay", kind: "sheet", back: oBack, close: () => V5.closeAdaptiveOMenu() },
+    // Master 4.0.1 (Kontrola F9): Esc ide o krok (Starostlivosť → Plač, teplota a iné → Teplota → Esc = späť), × zavrie;
+    // oblasť Plánu (Vybaviť…) sa dá znova otvoriť, keď sa späť vracia z obrazovky, ktorú otvorila (Oznámenie).
+    { id: "v5OOverlay", kind: "sheet", escBack: true, back: oBack, close: () => V5.closeAdaptiveOMenu(), reopen: () => V5.reopenOrganizationMenu?.(), canReopen: rc => rc.org },
     { id: "g2PlanOverlay", kind: "full", back: () => V5.closePlan(), close: () => V5.closePlan(), reopen: () => V5.openPlan() },
     { id: "g2MonthOverlay", kind: "full", back: () => V5.closeMonth(), close: () => V5.closeMonth(), reopen: () => V5.openMonth() },
     { id: "v2AdminOverlay", kind: "full", back: () => window.GugubooAdmin?.stepBack?.(), close: () => window.GugubooAdmin?.close?.() },
@@ -131,16 +133,21 @@
     const rc = recentlyClosed;
     recentlyClosed = null;
     if (!rc || rc.id === exceptId || now() - rc.at > 400 || backRecently()) return "";
-    return layerById[rc.id]?.reopen ? rc.id : "";
+    const layer = layerById[rc.id];
+    return layer?.reopen && (!layer.canReopen || layer.canReopen(rc)) ? rc.id : ""; // Master 4.0.1 (Kontrola F9)
   }
   function reopenLayer(id) {
     if (!id || isOpen(byId(id))) return;
     setTimeout(() => { if (!stack().length && !confirmOpen()) layerById[id]?.reopen?.(); }, 0);
   }
 
+  // Master 4.0.1 (Kontrola F9): okno, ktoré sa otvorí ešte PRED zatvorením predošlého (Všetko → Záloha a appka), si ho tiež
+  // zapamätá ako návrat – systémové späť potom vráti Všetko, nie Domov.
+  let lastOpened = null; // { id, at }
   function onOpen(layer, el) {
     const opener = lastActivator && !el.contains(lastActivator) ? lastActivator : document.activeElement;
     opened.set(layer.id, { order: ++order, opener, sig: signature(opener), returnTo: takeReturn(layer.id) });
+    lastOpened = { id: layer.id, at: now() };
     layout();
     // Fokus do okna (s opakovaním, kým okno nedobehne animáciou a nie je viditeľné).
     let tries = 0;
@@ -156,7 +163,12 @@
     const entry = opened.get(layer.id);
     opened.delete(layer.id);
     layout();
-    recentlyClosed = { id: layer.id, at: now() };
+    recentlyClosed = { id: layer.id, at: now(), org: layer.id === "v5OOverlay" && Boolean(byId("v5OMenuBody")?.querySelector(".v5-org-next-card, [data-v5-org-done]")) };
+    const later = lastOpened && lastOpened.id !== layer.id && now() - lastOpened.at < 400 ? opened.get(lastOpened.id) : null;
+    if (later && !later.returnTo && !backRecently() && isOpen(byId(lastOpened.id))) {
+      const closedLayer = layerById[layer.id];
+      if (closedLayer?.reopen && (!closedLayer.canReopen || closedLayer.canReopen(recentlyClosed))) { later.returnTo = layer.id; recentlyClosed = null; }
+    }
     if (entry?.returnTo && backRecently()) { recentlyClosed = null; reopenLayer(entry.returnTo); return; }
     const lost = focusLost() || el.contains(document.activeElement);
     if (lost) setTimeout(() => {
@@ -278,7 +290,7 @@
   }, true);
 
   // Master 4.0 (Audit F9): šípka späť v hlavičke obrazovky alebo okna = krok späť (aj do okna, z ktorého prišla).
-  const BACK_ARROWS = "[data-v5-window-back], [data-g2-plan-close], [data-g2-month-close], [data-v5-o-back], [data-v2-admin-back], [data-v2-admin-step-back]";
+  const BACK_ARROWS = "[data-v5-window-back], [data-g2-plan-close], [data-g2-month-close], [data-v5-o-back], [data-v2-admin-back], [data-v2-admin-step-back], [data-g2-ring-back]"; // 4.0.1 (Kontrola F9): aj šípka Času pre teba
   // Lišta prepína oblasti – nie je to krok späť a nič sa znova neotvára.
   let barAt = -1e9;
   document.addEventListener("click", event => {
@@ -396,7 +408,9 @@
       const opener = lastActivator;
       const fromBar = now() - barAt < 700;
       const topFull = fullOpen.length && layerById[fullOpen[fullOpen.length - 1].id].reopen ? fullOpen[fullOpen.length - 1].id : "";
-      const returnLayer = fromBar ? (recentlyClosed = null, "") : topFull ? (recentlyClosed = null, topFull) : takeReturn("");
+      // Master 4.0.1 (Kontrola F9): najprv okno zatvorené tesne pred otvorením obrazovky (Plán → Vybaviť → Oznámenie = Vybaviť), potom celostránkové.
+      const justClosed = fromBar ? (recentlyClosed = null, "") : takeReturn("");
+      const returnLayer = fromBar ? "" : justClosed || topFull;
       viewEntries[to] = { from, opener, sig: signature(opener), returnLayer };
       const viewEl = byId(to);
       if (viewEl && !viewEl.contains(document.activeElement)) {

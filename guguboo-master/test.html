@@ -1656,7 +1656,12 @@
             assert(btn && btn.matches("[data-v5-urgent]"), "„Kontakty na pomoc“ v Nálade a spánku neotvára kontakty");
             btn.click(); await sleep(250);
             eq(doc.getElementById("v5OMenuTitle").textContent, "Kontakty na pomoc", "okno kontaktov");
-            assert(/pediatr/.test(doc.getElementById("v5OMenuBody").textContent), "po pôrode chýba pediater");
+            // Master 4.0.1 (Kontrola APP N5, OBSAH N11): z Nálady je okno o mame (Nezábudka, E6, E1); inde po pôrode pediater + E5 + E1.
+            const moodText = doc.getElementById("v5OMenuBody").textContent, E = po.win.G2Safety.E;
+            assert(/Nezábudka/.test(moodText) && moodText.includes(E.E6.text) && moodText.includes(E.E1.text), "z Nálady chýba pomoc pre mamu (Nezábudka, E6, E1)");
+            V5.openUrgentModal(); await sleep(200);
+            const babyText = doc.getElementById("v5OMenuBody").textContent;
+            assert(/pediatr/.test(babyText) && babyText.includes(E.E5.text) && babyText.includes(E.E1.text), "po pôrode chýba pediater, E5 alebo E1");
             eq(po.errors, [], "po: chyby v konzole");
           } finally { po.remove(); }
           const pred = await bootApp(seed("pred"), { settle: 300 });

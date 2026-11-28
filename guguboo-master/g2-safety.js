@@ -2,7 +2,7 @@
  * GUGUBOO MASTER 2.7 – „Informujeme, neradíme“ (Samo 15. 11. 2026): jednotné vety na JEDNOM mieste.
  *
  * - Štandardné vety „kedy sa ozvať“ (UX Writer, docs/master/INFORMUJEME_TEXTY.md).
- * - Výnimky E1–E7 pre vážne situácie (Content & Safety, docs/master/INFORMUJEME_AUDIT.md, časť 1).
+ * - Výnimky E0–E7 pre vážne situácie (E0 = akútne ohrozenie života, Master 4.0.1) (Content & Safety, docs/master/INFORMUJEME_AUDIT.md, časť 1).
  *   155 / 112 sa v appke píšu LEN tu, aby sa nikde nelíšili (Master 4.0, Audit Z21: aj GuguChat, Zúbky a kruh len odkazujú).
  * ⚕ Položky E1–E5 pred testom s ľuďmi potvrdí pôrodná asistentka / pediater (audit, časť 5).
  * Žiadne postupy, lieky ani dávky – len to, čo uvádza zdroj, a jedna pokojná veta.

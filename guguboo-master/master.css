@@ -1105,12 +1105,13 @@ body.v5-active.night .v5-check-add button { background: #c6bcff; color: #1f1a2e;
 /* ===== Master 4.0 (Audit V10, V16): × v každom okne jednej podoby – biely kruh 44 × 44, ikona 22 px vo farbe značky
    (ako v oknách záložiek); predtým tmavé v oknách kruhu, menšie v starých oknách a 36 × 36 bez kruhu v prehliadke.
    Rovnakou farbou aj šípka späť a lupa v hlavičkách okien kruhu, Plánu a Úradov. ===== */
-:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) {
+/* Master 4.0.1 (Kontrola APP N7): aj × v okne „Čo chceš zaznamenať?“ (Bábätko → Nový záznam). */
+:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], [data-v5-close-record], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) {
   place-items: center; width: 44px !important; height: 44px !important; /* display sa nemení – záložky × skrývajú (Master 2.3) */ min-width: 44px !important; min-height: 44px !important;
   padding: 0 !important; border-radius: 50% !important; color: var(--t-brand, #5f4fb1) !important;
   background: var(--v5-surface) !important; border: 1px solid var(--v5-line) !important; box-shadow: 0 4px 12px rgba(58, 44, 83, .08) !important;
 }
-:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) svg {
+:is(html, #g2n#g2n) body.v5-active :is(.g2-win-x, [data-g2q='close'], [data-g2b='close'], [data-g2-ring-close], [data-g2w='close'], [data-g2-askq-close], [data-v5-close-o], [data-v5-close-record], .v2-birth-close, .v2-tour-close, .v5-universal-cancel) svg {
   width: 22px !important; height: 22px !important;
 }
 :is(html, #g2n#g2n) body.v5-active :is(.g2-window-head, .g2-ring-sheet-head) .v5-icon-button { color: var(--t-brand, #5f4fb1) !important; }
@@ -1149,3 +1150,70 @@ body.v5-active.night .v5-check-add button { background: #c6bcff; color: #1f1a2e;
 .act2 .act2-fav svg.ph { width: 22px !important; height: 22px !important; }
 .act2 .act2-fav[aria-pressed="true"] svg.ph [opacity] { opacity: .85; }
 :is(html, #g2n#g2n) body.v5-active :is(.v2-water-count button, .v2-mama-water > [data-v5-water-add]) { color: var(--t-brand) !important; display: inline-grid; place-items: center; }
+
+/* ——— Master 4.0.1 (Kontrola F21, N8): prehrávač zvuku podľa 3 úrovní textu; na domove len jeden riadok a domov mu uvoľní miesto,
+   takže neprekrýva kruh ani „Dnes stačí jedno“ (kruh sa zmenší, domov sa neposúva). Hlasitosť a časovač sú v okne Spánok a zvuky. */
+:is(html, #g2n#g2n) body .v5-audio-dock-inner strong { font: var(--t-text) !important; color: #fff !important; letter-spacing: 0 !important; }
+:is(html, #g2n#g2n) body .v5-audio-dock-inner span { font: var(--t-small) !important; color: rgba(255,255,255,.82) !important; margin-top: 0 !important; }
+:is(html, #g2n#g2n) body .v5-audio-dock-inner button { font: var(--t-link) !important; min-height: 40px; padding: 8px 12px; letter-spacing: 0 !important; text-transform: none !important; }
+:is(html, #g2n#g2n) body .v5-audio-controls label { font: var(--t-small) !important; color: rgba(255,255,255,.82) !important; text-transform: none !important; letter-spacing: 0 !important; }
+:is(html, #g2n#g2n) body .v5-audio-controls select { font-size: 16px !important; }
+body:has(#home.view.active) #v5AudioDock .v5-audio-controls { display: none !important; }
+body:has(#home.view.active) #v5AudioDock { padding: 6px 10px !important; }
+body:has(#home.view.active) .v5-audio-dock-inner { grid-template-columns: 28px minmax(0, 1fr) auto !important; }
+body:has(#home.view.active) .v5-audio-dock-inner [data-v5-feature='sleep'] { display: none !important; }
+body.v5-audio-active:has(#home.view.active) #home.view.active { padding-bottom: 66px !important; }
+body.v5-audio-active:has(#home.view.active) .g2-ring-card { min-height: 0 !important; } /* kruh sa smie zmenšiť, aby sa domov zmestil nad prehrávač */
+/* Bábätko → Spánok a zvuky (N8): panel „Práve hrá“ – názov Bežné, stav Drobné (predtým 16/700 a 13,3 px). */
+:is(html, #g2n#g2n) body .v5-sounds-now > strong { font: var(--t-text) !important; color: var(--t-ink) !important; }
+:is(html, #g2n#g2n) body .v5-sounds-now > small { font: var(--t-small) !important; color: var(--t-muted) !important; }
+/* Master 4.0.1 (Kontrola F32): hláška „Uložené · Vrátiť“ v jednom riadku (širšia) a pri otvorenom okne kruhu hore – nezakryje E3. */
+.g2q-toast { width: min(calc(100% - 32px), 440px); justify-content: space-between; box-sizing: border-box; }
+.g2q-toast.is-top { top: calc(12px + env(safe-area-inset-top)); bottom: auto; transform: translate(-50%, -20px); }
+.g2q-toast.is-top.on { transform: translate(-50%, 0); }
+:is(html, #g2n#g2n) body .g2q-toast > span { font: var(--t-text) !important; color: #fff !important; }
+/* Master 4.0.1 (Kontrola F30): Plán → oblasť (Vybaviť, Domov, Pôrodnica…) podľa 3 úrovní – „Ďalšia úloha“ Drobné bez kapitálok
+   (bola 9/800 kapitálky hnedá, kontrast 4,1 : 1), názov úlohy Hlavné (bol 22 px – väčší ako hlavička), dôvod a riadky Bežné/Drobné. */
+:is(html, #g2n#g2n) body .v5-org-next-card > small { font: var(--t-small) !important; color: var(--t-muted) !important; text-transform: none !important; letter-spacing: 0 !important; }
+:is(html, #g2n#g2n) body .v5-org-next-card h3 { font: var(--t-main) !important; color: var(--t-ink) !important; }
+:is(html, #g2n#g2n) body .v5-org-next-why { font: var(--t-small) !important; color: var(--t-muted) !important; }
+:is(html, #g2n#g2n) body .v2-org-row strong { font: var(--t-text) !important; color: var(--t-ink) !important; }
+:is(html, #g2n#g2n) body .v5-org-completed summary, :is(html, #g2n#g2n) body .v5-org-completed div { font: var(--t-text) !important; }
+:is(html, #g2n#g2n) body #v5OMenuSubtitle { font: var(--t-small) !important; color: var(--t-muted) !important; }
+/* Master 4.0.1 (Kontrola F30): Cestovanie → Offline karta – štítky bez kapitálok (Drobné), hodnoty Bežné. */
+:is(html, #g2n#g2n) body #v5TravelContent :is(.v5-eyebrow, .v5-status span) { font: var(--t-small) !important; color: var(--t-muted) !important; text-transform: none !important; letter-spacing: 0 !important; }
+:is(html, #g2n#g2n) body #v5TravelContent .v5-status strong { font: var(--t-text) !important; color: var(--t-ink) !important; }
+/* Master 4.0.1 (Kontrola APP N3): ikony v noci s kontrastom ≥ 3 : 1 k pozadiu (cez deň bez zmeny). */
+:is(html, #g2n#g2n) body.v5-active.night #activities .act2-today-head .act2-icon { background: rgba(198, 188, 255, .16) !important; color: #c6bcff !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-album-cover { background: rgba(198, 188, 255, .16) !important; color: #c6bcff !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v5-checklist-detail-head .v5-icon { background: rgba(198, 188, 255, .16) !important; color: #c6bcff !important; }
+:is(html, #g2n#g2n) body.v5-active.night .v2-mama-water > [data-v5-water-add] { color: #fff !important; }
+:is(html, #g2n#g2n) body.v5-active.night .g2q-toggle i { color: #c6bcff !important; }
+/* Master 4.0.1 (Kontrola APP N9): Dať spätnú väzbu podľa 3 úrovní – nadpis Hlavné (bol 26 px), úvod a poznámka Drobné, otázky Bežné. */
+:is(html, #g2n#g2n) body #v2FeedbackOverlay .v2-birth-head h2 { font: var(--t-main) !important; color: var(--t-ink) !important; }
+:is(html, #g2n#g2n) body #v2FeedbackOverlay :is(.v2-birth-head p, .v2-birth-note) { font: var(--t-small) !important; color: var(--t-muted) !important; }
+:is(html, #g2n#g2n) body #v2FeedbackOverlay :is(legend, label, .v2-feedback-option span) { font: var(--t-text) !important; color: var(--t-ink) !important; text-transform: none !important; letter-spacing: 0 !important; }
+:is(html, #g2n#g2n) body #v2FeedbackOverlay textarea { font: var(--t-input, 500 16px/24px Montserrat, sans-serif) !important; }
+/* Master 4.0.1 (Kontrola F53): zdroj vždy na vlastnom riadku pod tlačidlom „Zapísať ako otázku…“ (nelomí sa vedľa neho). */
+:is(html, #g2n#g2n) body :is(.g2-askq + .v2-source, .v2-mama-trouble > .v2-source) { display: block !important; margin-top: 8px !important; }
+/* Master 4.0.1 (Kontrola F47): Tvoj týždeň bez 5 px vodorovného presahu (pás týždňov má záporný okraj väčší ako odsadenie okna). */
+#v5BabySize .v5-flow { overflow-x: clip; }
+/* Master 4.0.1 (Kontrola F42): väčšia dotyková plocha úchytu „Všetko v appke“ – celé horné odsadenie lišty (18 px) + 12 px nad ňou
+   (spolu 120 × 30 px); nezasahuje do položiek lišty ani do karty „Dnes stačí jedno“ (medzi nimi je medzera). Vzhľad bez zmeny. */
+.g2-bar-handle { height: 18px !important; max-height: 18px !important; }
+.g2-bar-handle::after { content: "" !important; position: absolute; left: 0; right: 0; top: -12px; bottom: 0; }
+/* Master 4.0.1 (Kontrola V23): „Dnes stačí jedno“ – zaoblenie ako karta bábätka/týždňa (20 px) a vnútorný okraj aspoň 8 px. */
+:is(html, #g2n#g2n) body #home.view.active .g2-today.g2-today-row { border-radius: 20px !important; padding: 8px 8px 8px 14px !important; }
+/* Master 4.0.1 (Kontrola V18): v záložkách Bábätko, Mama, Rodina začína nadpis na rovnakej čiare ako karty (predtým 31 vs 22 px). */
+:is(html, #g2n#g2n) body :is(#v5BabyHub, #v5Mama, #v5FamilyHub).view.active > .v5-universal-window-head { padding-left: 11px !important; }
+:is(html, #g2n#g2n) body :is(#v5BabyHub, #v5Mama, #v5FamilyHub) .g2-hub-sub { padding-left: 0 !important; margin-left: 0 !important; }
+/* Master 4.0.1 (Kontrola V15): na šírke ≤ 380 px sú skratky na domove Drobné celé – 14/500 aj farbou (jediná sivá), nie tmavé. */
+@media (max-width: 380px) {
+  :is(html, #g2gl#g2gl#g2gl) body.v5-active:has(#home.view.active) .g2-shorts .g2-short strong { color: var(--t-muted) !important; }
+}
+/* Master 4.0.1 (Kontrola V14): −1 / +1 sú tlačidlá – text tlačidla = Odkaz 15/700 (bolo 18/700 ako číslo). */
+:is(html, #g2n#g2n#g2n) body.v5-active .g2q-pm-btn { font: var(--t-link) !important; }
+/* Master 4.0.1 (Kontrola V16): tlačidlo Nočný režim v hlavičke 44 × 44 ako ostatné (bolo 42 × 44). */
+:is(html, #g2n#g2n) body [data-v5-night] { min-width: 44px !important; min-height: 44px !important; }
+/* Master 4.0.1 (Kontrola V17): počet pohárov v Mame = Hlavné ako v okne kruhu (nie je to bežiaci čas). */
+:is(html, #g2n#g2n#g2n#g2n) body.v5-active .v2-water-panel .g2q-big b { font: var(--t-main) !important; font-variant-numeric: tabular-nums; }
