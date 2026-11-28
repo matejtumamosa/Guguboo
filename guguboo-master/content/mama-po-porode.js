@@ -98,7 +98,7 @@ window.GugubooContent.mamaPostpartum = {
   // Audit #22 + rozhodnutie PL 15. 11.: baby blues (bežné) + jedna veta „kedy sa ozvať“ + kontakty na pomoc + otázka.
   mood: {
     blues: "V prvom týždni po pôrode je bežné cítiť sa smutne, plačlivo alebo úzkostne. Hovorí sa tomu baby blues a zvyčajne to prejde do 2 týždňov.",
-    help: "Ak smútok, úzkosť alebo pocit, že to nezvládaš, trvá dlhšie ako 2 týždne alebo sa ťa niečo z toho veľmi dotýka, porozprávaj sa s lekárom – dá sa to liečiť a nie si v tom sama.",
+    help: "Ak smútok, úzkosť alebo pocit, že to nezvládaš, trvá dlhšie ako 2 týždne alebo sa ťa niečo z toho veľmi dotýka, môže pomôcť porozprávať sa s lekárom – podľa NHS sa to dá liečiť a nie si v tom sama.", // Master 4.0.1 (Kontrola OBSAH N25): bez rozkazu, so zdrojom (NHS PND)
     askPrompt: "Chcem sa porozprávať o tom, ako sa po pôrode cítim.",
     sleep: [
       "NHS uvádza, že pomáha oddychovať, keď spí bábätko.",
@@ -113,8 +113,10 @@ window.GugubooContent.mamaPostpartum = {
   },
   // Cviky na zotavenie po pôrode – NHS „Your post-pregnancy body“ (stránka z 20. 7. 2026). Overené 10. 11. 2026.
   // Masážny valec ani loptička na stránke nie sú – preto ich neuvádzame.
+  // Master 4.0.1 (Kontrola OBSAH N5, N24): stránka znovu prečítaná 27. 11. 2026 (z 20. 7. 2026) – frekvencia presne „at least 3 times
+  // a day“, „why“ a kroky s citátom v evidence. ⚕ Potvrdí fyzioterapeut alebo pôrodná asistentka.
   exercises: {
-    checked: "10. 11. 2026",
+    checked: "27. 11. 2026",
     source: "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/",
     reviewed: "20. 7. 2026",
     items: [
@@ -122,7 +124,8 @@ window.GugubooContent.mamaPostpartum = {
       // množstvo ako „NHS uvádza…“ (nie povinnosť). Denné počítadlo (perDay, „Dnes X-krát“, „+ Hotovo“) ODSTRÁNENÉ. ⚕
       {
         id: "pelvic", title: "Cviky panvového dna",
-        why: "Pomáhajú pri úniku moču a pocite ťažoby v podbrušku.",
+        why: "Posilňujú svaly okolo močového mechúra, pošvy a konečníka – podľa NHS môžu pomôcť aj pri úniku moču.",
+        evidence: "Pelvic floor muscle exercises strengthen the muscles around your bladder, vagina and bottom. … help with leaking urine | squeeze and lift the muscles around your bottom, as if holding in wind … around the vagina and urethra | Hold long squeezes for up to 10 seconds … quick squeezes until the muscles tire | Keep breathing normally and don't pull in your stomach | Aim to build up to 10 repeats of each exercise, at least 3 times a day.",
         steps: [
           "Cvičiť sa dá poležiačky, v sede aj v stoji.",
           "Stiahnutie konečníka, akoby si zadržiavala plyny.",
@@ -131,11 +134,12 @@ window.GugubooContent.mamaPostpartum = {
           "Krátke stiahnutia: rýchlo stiahnuť a hneď pustiť – opakovať, kým sa svaly neunavia.",
           "Dýchať normálne a pritom nevťahovať brucho."
         ],
-        dose: "NHS uvádza postupne až 10 opakovaní každého cviku, 3-krát denne."
+        dose: "NHS uvádza postupne až 10 opakovaní každého cviku, aspoň 3-krát denne."
       },
       {
         id: "tummy", title: "Cvik na brucho",
-        why: "Posilňuje brušné svaly; spolu s panvovým dnom pomáha aj pri rozostúpených svaloch.",
+        why: "Podľa NHS môže pomôcť spevniť brušné svaly; spolu s cvikmi panvového dna môže zmenšiť medzeru pri rozostúpených svaloch.",
+        evidence: "This exercise can help you tone your stomach muscles. | deep stomach and pelvic floor exercises can help reduce the gap | Lie on your side with your knees slightly bent … gently drawing in your lower stomach … squeeze your pelvic floor | Hold for a count of 10, breathing normally, then gently release. | Repeat up to 10 times.",
         steps: [
           "Ľahnúť si na bok s mierne pokrčenými kolenami.",
           "Uvoľniť brucho a jemne sa nadýchnuť.",

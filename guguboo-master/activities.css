@@ -90,6 +90,9 @@ body.night .activities-visual { background:linear-gradient(145deg,#403750,#49343
 .act2 .act2-parent p { color:var(--act-muted); font-size:.85rem; }
 .act2 .act2-obs { display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--act-line); font-size:.88rem; }
 @media(max-width:420px) { .act2 .act2-obs { grid-template-columns:1fr; } }
+/* Master 4.0.1 (Kontrola OBSAH N4): informatívny zoznam bez stavov – Bežné/Drobné ako ostatné okná. */
+.act2 .act2-parent-list { margin:6px 0 8px; padding-left:18px; font-size:15px; line-height:22px; font-weight:500; }
+.act2 .act2-parent-list li { margin:4px 0; }
 .act2 .act2-soon { padding:14px; background:linear-gradient(135deg,#f6f0ff,#fff1ec); border:1px solid var(--act-line); border-radius:20px; }
 .act2 .act2-soon h3 { margin:0 0 4px; font-size:1rem; color:var(--act-ink); }
 .act2 .act2-soon > p { margin:0 0 8px; color:var(--act-muted); font-size:.85rem; }

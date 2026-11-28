@@ -2,6 +2,8 @@
 /* Master 4.0 (Audit Z4, Z5, Z16, Z17; spresnené pravidlo Sama 27. 11.): rozkazy a normy („oddychuj“, „nevyskakuj“, „by si mala“)
  * prepísané mäkko („môže pomôcť…“, „zvykne…“, „môžeš…“) – citát v evidence ostáva. Vety „by sa malo hýbať“ preč, Tvoj týždeň ukazuje
  * E3 z g2-safety.js. Tip 23. t. (pohyby) a 42. t. („urýchliť“) prázdny, 39. t. bez pokynu volať (E7 je v g2-safety.js). */
+/* Master 4.0.1 (Kontrola OBSAH N7, N8): gramatika (oddychovať, z nich vyrastie, mať pri sebe dokumentáciu, niečo malé na zahryznutie)
+ * a normy „Byť aktívna je dôležité“ / „Je dôležité rozprávať sa“ → „môže pomôcť“. Zmysel citátu sa nezmenil – dátum overenia ostáva. */
 window.GugubooContent = window.GugubooContent || {};
 window.GugubooContent.pregnancyWeeks = {
     "meta":  {
@@ -186,7 +188,7 @@ window.GugubooContent.pregnancyWeeks = {
                                         }
                                     ],
                             "tip":  {
-                                        "sk":  "Môže pomôcť mať pri posteli nachystaný malý snack.",
+                                        "sk":  "Môže pomôcť mať pri posteli nachystané niečo malé na zahryznutie.",
                                         "evidence":  [
                                                          "It might help to keep a snack by your bed."
                                                      ]
@@ -339,7 +341,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                          ]
                                         },
                                         {
-                                            "sk":  "Niektoré ženy opisujú toto obdobie ako emocionálnu horskú dráhu – môže pomôcť veľa oddychu a prijať ponúknutú pomoc.",
+                                            "sk":  "Niektoré ženy opisujú toto obdobie ako emocionálnu horskú dráhu – môže pomôcť veľa oddychovať a prijať ponúknutú pomoc.",
                                             "evidence":  [
                                                              "Some women describe this time as being like an",
                                                              "so get lots of rest and accept any offers of help."
@@ -1214,7 +1216,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Byť aktívna je dôležité, no telo sa neustále mení – môžeš byť k sebe trpezlivá.",
+                                             "sk":  "Pohyb môže pomôcť, no telo sa neustále mení – môžeš byť k sebe trpezlivá.",
                                              "evidence":  [
                                                               "It\u0027s important to stay active but your body\u0027s changing all the time, so be patient with yourself."
                                                           ]
@@ -1367,7 +1369,7 @@ window.GugubooContent.pregnancyWeeks = {
                                                           ]
                                          },
                                          {
-                                             "sk":  "Tehotenstvo vyvoláva všetky možné emócie. Je dôležité rozprávať sa s priateľmi, rodinou, pôrodnou asistentkou či lekárom.",
+                                             "sk":  "Tehotenstvo vyvoláva všetky možné emócie. Môže pomôcť porozprávať sa s priateľmi, rodinou, pôrodnou asistentkou či lekárom.",
                                              "evidence":  [
                                                               "Being pregnant stirs up all kinds of emotions.",
                                                               "talk to friends, family, your midwife or doctor"
@@ -1428,7 +1430,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Môže byť dobré zadovážiť pár kúskov oblečenia pre bábätko. Veľa ich netreba, lebo ich rýchlo vyrastie.",
+                                         "sk":  "Môže byť dobré zadovážiť pár kúskov oblečenia pre bábätko. Veľa ich netreba, lebo z nich rýchlo vyrastie.",
                                          "evidence":  [
                                                           "It\u0027s time to get a few baby clothes if you need them. You won\u0027t need loads because your baby will grow out of things very fast."
                                                       ]
@@ -1813,7 +1815,7 @@ window.GugubooContent.pregnancyWeeks = {
                                          }
                                      ],
                              "tip":  {
-                                         "sk":  "Je v poriadku ísť sa prejsť na čerstvý vzduch – pre istotu môže byť so sebou dokumentácia.",
+                                         "sk":  "Je v poriadku ísť sa prejsť na čerstvý vzduch – pre istotu sa hodí mať pri sebe dokumentáciu.",
                                          "evidence":  [
                                                           "It\u0027s fine to go for a walk outside to get some fresh air, but take your notes with you just in case."
                                                       ]

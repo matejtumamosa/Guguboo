@@ -24,6 +24,8 @@
     return module?.meta?.verification_status === "evidence-verified" ? module : null;
   };
   const allItems = () => countryModule()?.items || [];
+  // Master 4.0.1 (Kontrola Z38): najnovší dátum overenia (meta aj položky – sumy 2027 overené neskôr) pre hlavičku Úradov a GuguChat.
+  const latestChecked = () => [countryModule()?.meta?.last_checked, ...allItems().flatMap(item => [item.last_checked, item.amount_checked])].filter(Boolean).map(d => String(d).slice(0, 10)).sort().pop() || "";
   const formatDate = iso => iso ? new Date(String(iso).slice(0, 10) + "T12:00:00").toLocaleDateString("sk-SK", { day: "numeric", month: "numeric", year: "numeric" }) : "";
   const trusted = item => ["verified", "partial"].includes(item.verification_status);
 
@@ -204,7 +206,7 @@
     const automatic = forStage.filter(isAutomatic);
     return [
       "<header class='v2-admin-head'><small>Úrady a doklady · ", esc(module.meta?.country || ""), "</small><h2 id='v2AdminTitle'>Čo sa ťa týka</h2>",
-      "<p>Z oficiálnych stránok úradov · overené ", esc(formatDate(module.meta?.last_checked)), "</p></header>", // Master 4.0 (Audit T36)
+      "<p>Z oficiálnych stránok úradov · overené ", esc(formatDate(latestChecked())), "</p></header>", // Master 4.0 (Audit T36); 4.0.1 (Kontrola Z38): najnovší dátum
       group("Na vybavenie", toDo, ""),
       group("Toto sa vybaví samo", automatic, ""),
       group("Neskôr", later, ""),
@@ -281,5 +283,5 @@
     if (event.key === "Escape" && byId("v2AdminOverlay")?.classList.contains("open")) close();
   });
 
-  window.GugubooAdmin = { open, openOverview, close, stepBack, relevant, registerJourney, isAutomatic, items: allItems, module: countryModule };
+  window.GugubooAdmin = { open, openOverview, close, stepBack, relevant, registerJourney, isAutomatic, items: allItems, module: countryModule, latestChecked };
 })();

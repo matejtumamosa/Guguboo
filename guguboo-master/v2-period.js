@@ -233,17 +233,17 @@
     const c = content();
     if (!c) return "";
     const bullets = items => "<ul class='v2-mama-list'>" + items.map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>";
-    const src = (url, reviewed) => "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · stránka z " + esc(reviewed) + ", overené " + esc(c.checked) + " ↗</a>";
+    const src = (url, reviewed) => "<a class='v2-source' href='" + esc(url) + "' target='_blank' rel='noopener noreferrer'>Zdroj: NHS · overené " + esc(c.checked) + " ↗</a>"; // Master 4.0.1 (Kontrola T36): jedna podoba zdroja
     // Master 3.0 (IKONY_NAVRH.md): linkové ikony namiesto emoji 🌙 💞 🩹 🩺 🗓️
     const box = (ic, title, body) => "<details class='v2-mama-trouble'><summary><span class='v5-icon' aria-hidden='true'>" + V5.icon(ic) + "</span><strong>" + esc(title) + "</strong><b aria-hidden='true'>" + window.GugubooV5.glyph("chevronRight") + "</b></summary>" + body + "</details>";
     return [
       "<h3 class='v2-per-info-title'>Dobré vedieť</h3><div class='v2-mama-troubles'>",
-      box("calendarDots", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed)),
+      box("calendarDots", c.returnTitle, bullets(c.returnItems) + src(c.source, c.reviewed) + (c.cycleNote ? "<p>" + esc(c.cycleNote) + "</p>" + src(c.doctorSource, c.doctorReviewed) : "")), // Master 4.0.1 (Kontrola Z34): dĺžka cyklu je informácia, nie dôvod ozvať sa lekárovi
       box("baby", c.pregnancyTitle, bullets(c.pregnancyItems) + "<p class='v2-mama-muted'>Kalendár neukazuje plodné dni a nie je antikoncepcia.</p>" + src(c.source, c.reviewed)),
       box("dropHalf", c.padsTitle, bullets(c.padsItems) + src(c.source, c.reviewed)),
       // Master 2.8 (Plán F1-0, nález test.html): obsah 2.7 už nemá doctorIntro/doctor (Menštruačný kalendár padal pri otvorení).
       // Podľa „informujeme, neradíme“: čo je bežné + jedna veta, kedy sa ozvať + Zapísať ako otázku pre lekára.
-      box("stethoscope", "Kedy sa ozvať lekárovi", "<p>" + esc(c.cycleNote) + "</p><div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
+      box("stethoscope", "Kedy sa ozvať lekárovi", "<div class='v2-calm-box'><p>" + esc(c.doctorLine || "") + "</p>" + (window.G2Safety?.askButton?.("me", c.askPrompt || "") || "") + "</div>" + src(c.doctorSource, c.doctorReviewed)),
       "</div>"
     ].join("");
   }

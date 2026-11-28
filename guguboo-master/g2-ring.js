@@ -159,7 +159,6 @@
   const tr = (src, id) => (src.troubles || []).find(t => t.id === id) || { tips: [] };
   // Master 4.0 (Audit Z8): postup bezpečného spánku z Tvojho mesiaca (safeSleep) odstránený – len odkaz NHS z g2-safety.js.
   const safeSleepLink = () => window.G2Safety?.sleepLink ? "<p class='g2r-src'>" + window.G2Safety.sleepLink() + "</p>" : "";
-  const breathText = () => text(C().pregnancyWeeks?.weeks?.[40]?.tip) || "";
 
   // ——— Prosby (UX Architekt) ———
   function requests() {
@@ -225,10 +224,10 @@
     if (a === "next") return nextStep?.();
     if (a === "close") return close();
     if (a === "breath") {
-      const tip = breathText();
+      // Master 4.0.1 (Kontrola OBSAH N6): tip 40. týždňa („Pri pôrode… trénovať sa to dá už teraz“) nesedel po pôrode ani v noci
+      // a mal zdroj bez dátumu – do rozhodnutia o Z10 len animácia a veta „Jednoduchá pomôcka…“ (bez pokynu ako dýchať).
       return push("Dýchaj so mnou", () => "<div class='g2r-breath'><div class='g2r-bubble' id='g2rBub' aria-hidden='true'></div></div><p class='g2r-cue' id='g2rCue' aria-live='polite'>Začneme?</p>" +
-        "<p class='g2r-small' style='text-align:center'>" + esc(tip || "Dýchaj pokojne nosom a pomaly vydychuj ústami.") + "</p>" +
-        "<button class='g2r-btn' type='button' data-g2r='breath-go'>Začať · 1 minúta</button>" + (tip ? source("https://www.nhs.uk/pregnancy/week-by-week/", "") : "") +
+        "<button class='g2r-btn' type='button' data-g2r='breath-go'>Začať · 1 minúta</button>" +
         "<p class='g2r-small'>Jednoduchá pomôcka na upokojenie, nie lekársky postup.</p>", { noContent: true });
     }
     if (a === "breath-go") {
@@ -280,7 +279,8 @@
     if (a === "hard") {
       return push("Nálada a podpora", () => { // Master 3.0 (Samo): bez negatívneho názvu
         const mood = MPP().mood;
-        return "<div class='g2r-info'><p style='margin:0'>Porozprávať sa môžeš kedykoľvek. Linka dôvery Nezábudka je nonstop a bezplatná.</p><p style='margin:10px 0 0'><a class='g2r-btn g2r-call' href='tel:0800800566'>Zavolať 0800 800 566</a></p></div>" +
+        return "<div class='g2r-info'><p style='margin:0'>Porozprávať sa môžeš kedykoľvek.</p><p style='margin:10px 0 0'><a class='g2r-btn g2r-call' href='tel:0800800566'>Zavolať 0800 800 566</a></p></div>" +
+        // Master 4.0.1 (Kontrola OBSAH N10): veta o Nezábudke len raz – v E6 pod tlačidlom.
           (phase() === "born" && mood ? "<div class='g2r-info'><h3>Po pôrode</h3><p style='margin:0'>" + esc(mood.blues) + "</p><p class='g2r-small' style='margin-top:8px'>" + esc(mood.help) + "</p>" + source(mood.source, mood.reviewed) + "</div>" : "") +
           (window.G2Safety?.html("E6") || ""); // Master 4.0 (Audit Z21): 112 len cez E6 z g2-safety.js
       }, { noContent: phase() !== "born" });

@@ -9,7 +9,7 @@
  */
 (function initG2Safety() {
   "use strict";
-  const NHS = "NHS (Spojené kráľovstvo)";
+  const NHS = "NHS"; // Master 4.0.1 (Kontrola T36, N16): jedna podoba zdroja „Zdroj: NHS · overené D. M. RRRR ↗“
   const CHECKED = "15. 11. 2026";
   const line = {
     ped: "Ak ťa niečo znepokojuje alebo máš pochybnosti, môžeš sa kedykoľvek ozvať pediatrovi.",
@@ -18,6 +18,14 @@
     post: "Ak ťa niečo znepokojuje alebo máš pochybnosti, môžeš sa kedykoľvek ozvať pôrodnej asistentke alebo lekárovi."
   };
   const E = {
+    // Master 4.0.1 (Kontrola APP N1, OBSAH N1): E0 = akútne ohrozenie života (bábätko, mama aj ktokoľvek iný) – GuguChat ju dáva PRVÚ.
+    // Zdroj: slovensko.sk, životná situácia „Služby poskytované prostredníctvom národných liniek“ (dátum poslednej zmeny 17. 2. 2021,
+    // overené 27. 11. 2026): 155 pri „náhlom ohrození života, zdravia, vážnom úraze“ – „poruchy vedomia až bezvedomie“, „problémy
+    // s dýchaním, dusenie“, „kŕčové stavy“, „masívne krvácanie“; 112 = „európske číslo tiesňového volania“. ⚕ Potvrdí pediater / záchranár.
+    E0: {
+      text: "Ak niekto nedýcha alebo ťažko dýcha, dusí sa, modrie, je v bezvedomí, má kŕče, silno krváca alebo sa vážne zranil, volaj hneď 155 (záchranná služba) alebo 112.",
+      source: "https://www.slovensko.sk/sk/zivotne-situacie/zivotna-situacia/_sluzby-poskytovane-prostrednic/", sourceName: "slovensko.sk", reviewed: "17. 2. 2021", checked: "27. 11. 2026"
+    },
     E1: {
       text: "Ak máš bolesť, opuch alebo začervenanie lýtka, bolesť na hrudi či sa ti ťažko dýcha, náhle veľmi silné krvácanie s pocitom na odpadnutie, horúčku s bolestivým bruchom alebo bolesť hlavy so zmenou videnia, ozvi sa hneď pôrodnej asistentke alebo lekárovi. Ak ti je naozaj zle, volaj 155.",
       source: "https://www.nhs.uk/pregnancy/labour-and-birth/your-body/", sourceName: NHS, reviewed: "25. 4. 2024"
@@ -49,7 +57,10 @@
     E6: { text: "Ak ti alebo bábätku hrozí nebezpečenstvo, volaj 112. Linka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.", source: "https://www.justice.gov.sk/sluzby/pomoc-obetiam/dolezite-kontakty/", sourceName: "Ministerstvo spravodlivosti SR", reviewed: "", checked: "27. 11. 2026" },
     // E7: NHS „Signs that labour has begun“ (stránka z 9. 11. 2023, revízia NHS bola 9. 11. 2026 – overiť znovu): „Call urgently if: your
     // waters break · you have vaginal bleeding · your baby is moving less than usual…“ ⚕
-    E7: { text: "Zavolaj do svojej pôrodnice alebo svojmu lekárovi, poradia ti, čo ďalej. Ak sa cítiš naozaj zle, zavolaj 155.", source: "https://www.nhs.uk/pregnancy/labour-and-birth/signs-of-labour/signs-that-labour-has-begun/", sourceName: NHS, reviewed: "9. 11. 2023", checked: "27. 11. 2026" }
+    // Master 4.0.1 (Kontrola OBSAH N3): E7 so spúšťačom a naliehavosťou podľa NHS („Call your midwife or maternity unit urgently if…“,
+    // „Do not wait until the next day – call immediately, even if it's the middle of the night.“, overené 27. 11. 2026). Len pôrodné
+    // príznaky; silné krvácanie po pôrode = E1, preeklampsia = E2, menej pohybov = E3. ⚕ Potvrdí pôrodná asistentka.
+    E7: { text: "Ak ti odteká plodová voda, krvácaš, máš pred 37. týždňom pocit, že začína pôrod, alebo kontrakcia trvá dlhšie ako 2 minúty či ich máš 6 a viac za 10 minút, zavolaj hneď do pôrodnice alebo pôrodnej asistentke – nečakaj do rána, aj v noci. Ak sa cítiš naozaj zle, volaj 155.", source: "https://www.nhs.uk/pregnancy/labour-and-birth/signs-of-labour/signs-that-labour-has-begun/", sourceName: NHS, reviewed: "9. 11. 2023", checked: "27. 11. 2026" }
   };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   // Pokojný box výnimky (bez červenej). withSource = odkaz na zdroj pod vetou.

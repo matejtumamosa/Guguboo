@@ -50,7 +50,7 @@ window.GugubooContent.babyMonths = {
       ],
       everyday: [
         { sk: "Túlenie a držanie v náručí môže bábätko upokojiť – pomáha mu cítiť sa v bezpečí.", evidence: ["Holding and cuddling your baby may help comfort them.", "Comforting your baby helps them feel safe and supported."], source: "pbb-1m" },
-        { sk: "Pri hre na brušku je dobré byť stále pri ňom. O spánku pozri odkaz „Bezpečný spánok“ nižšie.", /* Master 4.0 (Audit Z8): bezpečný spánok len na jednom mieste (g2-safety.js) */ evidence: ["Always stay with your baby during tummy time and always place your baby on their back for sleep."], source: "pbb-1m" }
+        { sk: "Pri hre na brušku je dobré byť stále pri ňom.", /* Master 4.0.1 (Kontrola N12): bez meta-vety, odkaz Bezpečný spánok sa zobrazí sám; Master 4.0 (Audit Z8): bezpečný spánok len na jednom mieste (g2-safety.js) */ evidence: ["Always stay with your baby during tummy time and always place your baby on their back for sleep."], source: "pbb-1m" }
       ],
       play: { sk: "Rozprávaj sa s ním, čítaj a spievaj mu – rado počúva tvoj hlas.", evidence: ["Talk, read and sing to your baby. They enjoy hearing your voice."], source: "pbb-1m", activities_period: "0-2" },
       talk_to_doctor: { sk: "Ak sa mu nedarí dobre jesť, nereaguje na hlasné zvuky alebo ťa znepokojuje jeho plač či spánok, pokojne sa porozprávaj s detským lekárom alebo detskou sestrou.", evidence: ["Talk to your doctor or maternal child health nurse if your baby:", "isn’t feeding well", "doesn’t react to loud sounds", "has crying or sleeping patterns that worry you"], source: "pbb-1m" }

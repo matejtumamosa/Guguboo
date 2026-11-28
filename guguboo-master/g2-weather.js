@@ -14,9 +14,9 @@
   const COLD = 10, WARM = 24; // produktové hranice (Samo 15. 11.), nie rada zo zdroja
 
   const SRC = {
-    N1: ["NHS (Spojené kráľovstvo)", "https://www.nhs.uk/start-for-life/baby/baby-basics/caring-for-your-baby/how-to-dress-a-newborn"],
-    N2: ["NHS (Spojené kráľovstvo)", "https://www.nhs.uk/conditions/baby/first-aid-and-safety/safety/safety-in-the-sun/"],
-    L1: ["The Lullaby Trust (Spojené kráľovstvo)", "https://lullabytrust.org.uk/safer-sleep-advice/baby-summer-safety"],
+    N1: ["NHS", "https://www.nhs.uk/start-for-life/baby/baby-basics/caring-for-your-baby/how-to-dress-a-newborn"],
+    N2: ["NHS", "https://www.nhs.uk/conditions/baby/first-aid-and-safety/safety/safety-in-the-sun/"],
+    L1: ["The Lullaby Trust", "https://lullabytrust.org.uk/safer-sleep-advice/baby-summer-safety"],
     A1: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/on-the-go/Pages/Winter-Car-Seat-Safety-Tips.aspx"],
     A2: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Sun-Safety.aspx"],
     A3: ["AAP (USA)", "https://www.healthychildren.org/English/safety-prevention/at-play/Pages/Winter-Safety.aspx"],

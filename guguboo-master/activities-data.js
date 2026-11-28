@@ -70,7 +70,7 @@
     make("2-4", "Kuk-kuk", "vztah", ["Zakry si oči rukami, odkry ich a povedz „kuk-kuk“.", "Sleduj, či sa usmieva."], "Play games, such as peek-a-boo."),
     make("2-4", "Čo má rado", "vztah", ["Všímaj si, ako reaguje na rôzne veci – zistíš, čo má rado a čo nie."], "Pay close attention to how your baby reacts to different things."),
     make("2-4", "Opakuj jeho zvuky", "rec", ["Zopakuj jeho zvuky a skús, ako dlho si odpovedáte."], "Copy your baby's sounds and see how long your baby \"talks\" back and forth with you."),
-    make("2-4", "Volaj ho menom", "rec", ["Oslovuj ho menom, napríklad „Šteklí to, Ema?“", "Svoje meno začne poznávať okolo 9. mesiaca."], "Call your baby by his name to help him learn it. He will start to recognize it around 9 months."),
+    make("2-4", "Volaj ho menom", "rec", ["Oslovuj ho menom, napríklad „Šteklí to, Ema?“"] /* Master 4.0.1 (Kontrola N11): vek ako norma bez zdroja preč */, "Call your baby by his name to help him learn it. He will start to recognize it around 9 months."),
     make("2-4", "Hra na zemi", "pohyb", ["Každý deň sa s ním hraj na zemi alebo na hracej deke."], "Playing on the floor or play mat with your baby every day helps him to move, learn, and explore."),
     make("2-4", "Tichá chvíľka", "rec", ["Dopraj si s ním pokojnú chvíľu – „čítaj“ mu alebo spievaj."], "Have quiet play times when you \"read\" or sing to your baby."),
 

@@ -62,7 +62,7 @@ window.GugubooContent.mamaPregnancy = {
       common: ["Únava, aj veľká, je v tehotenstve bežná, najmä v prvých 12 týždňoch."],
       // Informácia (nie rada pri príznaku) – audit #19e, #33.
       info: ["NHS uvádza, že najbezpečnejšie je zaspávať na boku – ľavom alebo pravom."],
-      askText: "Ak sa cítiš smutne alebo beznádejne, porozprávaj sa s lekárom alebo pôrodnou asistentkou.",
+      askText: "Ak sa cítiš smutne alebo beznádejne, môže pomôcť porozprávať sa s lekárom alebo pôrodnou asistentkou.", // Master 4.0.1 (Kontrola OBSAH N25): bez rozkazu
       askPrompt: "Som veľmi unavená a zle spím.",
       source: "https://www.nhs.uk/pregnancy/common-symptoms/tiredness/",
       reviewed: "11. 3. 2024",
@@ -95,9 +95,9 @@ window.GugubooContent.mamaPregnancy = {
     // a dátumom, nie ako príkaz; k tomu otázka pre lekára.
     limitTitle: "Čo NHS uvádza o množstve",
     limit: [
-      "kofeín – NHS uvádza najviac 200 mg denne",
-      "tuniak – NHS uvádza najviac 4 konzervy alebo 2 steaky týždenne",
-      "tučné ryby (losos, pstruh, makrela, sardinky, sleď) – NHS uvádza najviac 2 porcie týždenne"
+      "kofeín – najviac 200 mg denne" /* Master 4.0.1 (Kontrola N9): zdroj nesie nadpis „Čo NHS uvádza o množstve“ */,
+      "tuniak – najviac 4 konzervy alebo 2 steaky týždenne",
+      "tučné ryby (losos, pstruh, makrela, sardinky, sleď) – najviac 2 porcie týždenne"
     ],
     askPrompt: "Koľko kávy a rýb môžem v tehotenstve?",
     alcohol: "Alkohol môže bábätku dlhodobo uškodiť – podľa NHS je najbezpečnejšie nepiť ho vôbec.",
@@ -124,7 +124,7 @@ window.GugubooContent.mamaPregnancy = {
     tips: [
       "Trénerovi alebo inštruktorke môžeš povedať, že si tehotná.",
       "Môže pomôcť piť vodu a obliecť sa tak, aby ti nebolo horúco.",
-      "NHS uvádza prestať, keď ti je nepríjemne, príliš teplo alebo zle."
+      "Prestať, keď je nepríjemne, príliš teplo alebo zle." /* Master 4.0.1 (Kontrola N9): nadpis „Čo uvádza NHS“ */
     ],
     avoid: [
       "športy s rizikom pádu alebo úderu do brucha (hokej, rugby, horská cyklistika)",

@@ -483,7 +483,7 @@
     if (!sleep) return null;
     return {
       level: "content",
-      text: "Bezpečný spánok\n\n" + (sleep.text || "") + " Viac uvádza stránka NHS (odkaz nižšie). Zoznam vecí na spánok nájdeš v Domove pre bábätko (Spánok).\n\n" + SAFE().line.ped + "\n\n(Zdroj: NHS (Spojené kráľovstvo), stránka z " + sleep.reviewed + ", overené " + sleep.checked + ".)",
+      text: "Bezpečný spánok\n\n" + (sleep.text || "") + " Viac uvádza stránka NHS (odkaz nižšie). Zoznam vecí na spánok nájdeš v Domove pre bábätko (Spánok).\n\n" + SAFE().line.ped + "\n\n(Zdroj: NHS · overené " + sleep.checked + ".)",
       actions: [{ label: "Domov pre bábätko", kind: "checklist", value: "home" }, askAction("baby", "Mám otázku k bezpečnému spánku."), ...sourceAction(sleep.url)]
     };
   }
@@ -525,7 +525,7 @@
     if (pregnant && pre) {
       if (has(t, ["co nesmiem jest", "co mozem jest", "co nejest", "jedl", "syr", "ryb", "tuniak", "pecen", "kav", "kofein", "alkohol", "vino", "pivo"])) {
         const f = pre.food;
-        return { level: "content", text: "Jedlo v tehotenstve\n\nČo NHS v tehotenstve uvádza vynechať:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + (f.limit ? "\n\n" + (f.limitTitle || "Čo NHS uvádza o množstve") + ":\n" + f.limit.map(x => "• " + x).join("\n") : "") /* Master 4.0 (Audit Z1): množstvá ako „NHS uvádza…“ */ + "\n\n" + f.alcohol + "\n\nViac nájdeš v časti Jedlo a pohyb.\n\n(Zdroj: NHS (stránka z " + f.reviewed + ") · overené " + pre.checked + ")", actions: [askAction("me", f.askPrompt || "Mám otázku k jedlu v tehotenstve."), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
+        return { level: "content", text: "Jedlo v tehotenstve\n\nČo NHS v tehotenstve uvádza vynechať:\n" + f.avoid.slice(0, 6).map(x => "• " + x).join("\n") + (f.limit ? "\n\n" + (f.limitTitle || "Čo NHS uvádza o množstve") + ":\n" + f.limit.map(x => "• " + x).join("\n") : "") /* Master 4.0 (Audit Z1): množstvá ako „NHS uvádza…“ */ + "\n\n" + f.alcohol + "\n\nViac nájdeš v časti Jedlo a pohyb.\n\n(Zdroj: NHS · overené " + pre.checked + ")", actions: [askAction("me", f.askPrompt || "Mám otázku k jedlu v tehotenstve."), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(f.source)] };
       }
       if (has(t, ["vitamin", "kyselin", "folic", "doplnk", "jod"])) {
         const v = pre.vitamins;
@@ -533,7 +533,7 @@
       }
       if (has(t, ["cvic", "sport", "behat", "plavat", "joga", "fitko", "posilnov"])) {
         const e = pre.exercise;
-        return { level: "content", text: "Pohyb v tehotenstve\n\n" + e.moveExamples /* Master 4.0 (Audit Z2): bez cieľa 150 min */ + "\n\nČo uvádza NHS:\n" + e.tips.map(x => "• " + x).join("\n") + "\n\nČo NHS neodporúča:\n" + e.avoid.map(x => "• " + x).join("\n") + "\n\n" + e.note + "\n\n(Zdroj: NHS (stránka z " + e.reviewed + ") · overené " + pre.checked + ")", actions: [askAction("me", e.askPrompt), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(e.source)] };
+        return { level: "content", text: "Pohyb v tehotenstve\n\n" + e.moveExamples /* Master 4.0 (Audit Z2): bez cieľa 150 min */ + "\n\nČo uvádza NHS:\n" + e.tips.map(x => "• " + x).join("\n") + "\n\nČo NHS neodporúča:\n" + e.avoid.map(x => "• " + x).join("\n") + "\n\n" + e.note + "\n\n(Zdroj: NHS · overené " + pre.checked + ")", actions: [askAction("me", e.askPrompt), { label: "Jedlo a pohyb", kind: "go", value: "mama|[data-v2-mama-section='food']" }, ...sourceAction(e.source)] };
       }
     }
     if (withBaby && post) {
@@ -547,12 +547,12 @@
         const pregnancy = has(t, ["antikoncep", "otehotn"]);
         const items = tampon ? p.padsItems : pregnancy ? p.pregnancyItems : p.returnItems.concat(p.pregnancyItems.slice(0, 1));
         const prompt = tampon ? p.padsAsk : pregnancy ? p.pregnancyAsk : p.askPrompt;
-        return { level: "content", text: (tampon ? p.padsTitle : pregnancy ? p.pregnancyTitle : "Menštruácia po pôrode") + "\n\n" + items.map(x => "• " + x).join("\n") + "\n\n" + p.doctorLine + "\n\n(Zdroj: NHS (stránka z " + p.reviewed + ") · overené " + p.checked + ")", actions: [askAction("me", prompt), { label: "Menštruačný kalendár", kind: "feature", value: "period" }, ...sourceAction(p.source)] };
+        return { level: "content", text: (tampon ? p.padsTitle : pregnancy ? p.pregnancyTitle : "Menštruácia po pôrode") + "\n\n" + items.map(x => "• " + x).join("\n") + "\n\n" + p.doctorLine + "\n\n(Zdroj: NHS · overené " + p.checked + ")", actions: [askAction("me", prompt), { label: "Menštruačný kalendár", kind: "feature", value: "period" }, ...sourceAction(p.source)] };
       }
       if (has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) {
         // PL 15. 11.: baby blues + jedna veta „kedy sa ozvať“ + kontakty na pomoc + otázka (bez zoznamu prejavov).
         const m = post.mood;
-        return { level: "support", text: m.blues + "\n\n" + m.help + "\n\nLinka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.\n\n(Zdroj: NHS (stránka z " + m.reviewed + ") · overené " + post.checked + ")", actions: [askAction("me", m.askPrompt), { label: "Nálada a spánok", kind: "go", value: "mama|[data-v2-mama-section='mood']" }, { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }] };
+        return { level: "support", text: m.blues + "\n\n" + m.help + "\n\nLinka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.\n\n(Zdroj: NHS · overené " + post.checked + ")", actions: [askAction("me", m.askPrompt), { label: "Nálada a spánok", kind: "go", value: "mama|[data-v2-mama-section='mood']" }, { label: "Kontakty na pomoc", kind: "urgentinfo", value: "mama" }] };
       }
     }
     if (withBaby && kid && has(t, ["kolko prehliadok", "preventivn", "prehliadky u pediatr", "kedy k pediatr", "kedy ist k pediatr", "prehliadk"])) {
@@ -580,11 +580,12 @@
     //    dostalo len pôrodnícku odpoveď). Žiadna improvizácia, len pokojná pomoc a overené kontakty.
     // Krízové vety v rôznych tvaroch a poradí slov (nezávislé QA-02): „chcem sa zabiť“, „chcem si ublížiť“, „chcem zmiznúť navždy“.
     const harmWord = /(zabit|zabijem|ublizit|ublizim|umriet|umrela|umrel|zomriet|zomrela|zmiznut navzdy|zmiznem navzdy|skoncit to|skoncit so zivotom)/.test(t);
-    const intentWord = /(chcem|chcela by som|idem|mam chut|uvazujem|myslim na|radsej by som|najradsej by som|kiezby som)/.test(t);
-    // „nechcem (už / ďalej / viac) žiť“, „nemá zmysel žiť“, „nemám pre čo žiť“ (QA-28) – aj s vloženými slovami.
-    const noLife = /(nechcem|nemam chut|nema zmysel|nemam preco|nemam pre co)( (uz|dalej|viac|vobec|ani))* (zit|zijem)/.test(t);
+    // Master 4.0.1 (Kontrola APP N2): aj „mám myšlienky, že si ublížim“, „napadá mi…“, „bojím sa, že…“, „mám nutkanie…“.
+    const intentWord = /(chcem|chcela by som|chcel by som|idem|mam chut|uvazujem|myslim na|radsej by som|najradsej by som|kiezby som|myslienk|napada mi|rozmyslam|bojim sa,? ze|mam strach,? ze|nutkanie)/.test(t);
+    // „nechcem (už / ďalej / viac) žiť“, „nemá zmysel žiť“, „nemám pre čo žiť“ (QA-28) – aj s vloženými slovami; 4.0.1 aj „nechce sa mi žiť“.
+    const noLife = /(nechcem|nemam chut|nema zmysel|nemam preco|nemam pre co|nechce sa mi)( (uz|dalej|viac|vobec|ani))* (zit|zijem)/.test(t);
     const crisis = noLife || (harmWord && intentWord && !/nechcem (sa |si )?(zabit|umriet|zomriet|ublizit)/.test(t));
-    if (crisis || has(t, ["ublizit si", "ublizim si", "nechcem zit", "nechcem tu byt", "zabit sa", "zabijem sa", "samovrazd", "chcem umriet", "chcem zomriet", "skoncit so zivotom", "ublizit babatku", "ublizit dietatu", "ublizim babatku", "ublizim dietatu"])) {
+    if (crisis || has(t, ["ublizit si", "ublizim si", "si ublizim", "si nieco urobim", "si nieco spravim", "sebaposkod", "rezem sa", "porezem sa", "predavkuj", "predavkovat", "nechcem zit", "nechcem byt nazive", "nechcem tu byt", "zabit sa", "zabijem sa", "zabila by som sa", "zabil by som sa", "samovrazd", "chcem umriet", "chcem zomriet", "skoncit so zivotom", "ublizit babatku", "ublizit dietatu", "ublizim babatku", "ublizim dietatu"])) {
       return { level: "urgent", text: "Ďakujem, že to píšeš. Nie si v tom bez opory a zaslúžiš si pomoc hneď teraz.\n\n" /* Master 4.0 (Audit T21): bez rodu – píše aj partner */ + (SAFE().E.E6?.text || "") /* Master 4.0 (Audit Z21): 112 len cez E6 z g2-safety.js */ + "\n\nPovedz to aj niekomu blízkemu, kto môže byť pri tebe.", actions: [{ label: "Volať 112", kind: "tel", value: "112" }, { label: "Linka Nezábudka", kind: "tel", value: "0800800566" }] };
     }
     // Strata tehotenstva alebo bábätka: len pokojná ľudská odpoveď, bez rád a bez ďalšieho obsahu (texty schváli psychológ).
@@ -592,21 +593,36 @@
       return { level: "support", text: "Je mi to veľmi ľúto. Nemusíš teraz nič riešiť ani nikomu nič vysvetľovať.\n\nAk chceš, povedz to niekomu blízkemu. O tom, čo ďalej, sa môžeš porozprávať so svojím lekárom alebo pôrodnou asistentkou. Ak sa potrebuješ s niekým porozprávať hneď, Linka dôvery Nezábudka je nonstop a bezplatne: 0800 800 566.", actions: [{ label: "Linka Nezábudka", kind: "tel", value: "0800800566" }] };
     }
     // 1. Bezpečnosť má vždy prednosť.
-    // „Kŕč“ je núdza pri bábätku (záchvat), nie kŕč v nohe mamy – ten má pokojnú odpoveď z NHS nižšie.
-    const legCramp = has(t, ["krc"]) && has(t, ["noh", "lytk", "chodid", "lytk"]);
-    if (has(t, ["nedycha", "bezvedom", "nereaguje", "modrie", "modra ", "dusi sa", "opuch jazyka", "opuch pier", "vazny uraz"]) || (has(t, ["krc"]) && !legCramp)) {
-      return { level: "urgent", text: "Pri tomto je najlepšie hneď sa spojiť s odborníkom.\n\n" + ((pregnant ? SAFE().E.E1?.text : SAFE().E.E5?.text) || "") /* Master 4.0 (Audit Z21): 155 len cez E1/E5 z g2-safety.js */, actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
+    // Master 4.0.1 (Kontrola APP N1, OBSAH N1): akútne ohrozenie života (bábätko, mama, ktokoľvek) = E0 ako PRVÁ veta, vo všetkých
+    // obdobiach. Rozpoznáva bežné formulácie s aj bez diakritiky (norm() diakritiku odstráni): „ťažko / zle (sa mu) dýcha“, „nemôže
+    // dýchať“, „lapá po dychu“, „modré pery“, „je celé modré“, „zmodrel“, „bezvedomie“, „nedá sa zobudiť“, „dusí sa“, „kŕče“, „záchvat“,
+    // „vážny úraz“, opuch jazyka / pier. „Kŕč“ v nohe (mama) a v bruchu (tehotenstvo) sem nepatrí – majú pokojnú odpoveď nižšie.
+    const legCramp = has(t, ["krc"]) && has(t, ["noh", "lytk", "chodid", "stehn"]);
+    const bellyCramp = has(t, ["krc"]) && has(t, ["bruch", "podbrus", "maternic", "menstru"]);
+    const breathing = /(nedycha|nedychal|prestal dychat|prestala dychat|prestalo dychat|(tazko|zle|tazsie|horsie|ledva|slabo|divne|tazkosti s|problem s|problemy s|nemoze|nevie|neda sa|nejde)( sa)?( (mu|jej|mi))? (dycha|dychat|dychanim|dychanie|nadychnut)|(dycha|dychat|dychanie) (tazko|zle|ledva|prerusovane)|lapa po dych|lape po dych|lapam po dych|dusi sa|dusim sa|dusenie|dusil sa|dusila sa|zadusi|zaskocil|zabehlo (mu|jej|mi))/.test(t);
+    const blue = /(modrie|zmodr|modre pery|modra pery|modru pery|cele modre|cely modry|cela modra|je modre|je modra|je modry|modra pokozk|modru pokozk|siv[aeu] pokozk|sive pery|sinav)/.test(t);
+    const unconscious = /(bezvedom|nereaguje|nereagoval|stratil vedomie|stratila vedomie|stratilo vedomie|odpadol|odpadla|odpadlo|omdlel|neda sa (pre|zo)budit|nejde (ho |ju )?(pre|zo)budit|nemozem (ho |ju )?(pre|zo)budit)/.test(t);
+    const seizure = (has(t, ["krc"]) && !legCramp && !bellyCramp) || has(t, ["zachvat", "epilept", "trasie sa cele", "zmieta sa"]);
+    const injury = has(t, ["vazny uraz", "vazne sa zranil", "vazne zranen", "vazne sa porani", "opuch jazyka", "opuch pier", "opuchol jazyk", "opuchli pery", "opuchnuty jazyk"]);
+    if (breathing || blue || unconscious || seizure || injury) {
+      return { level: "urgent", text: SAFE().E.E0?.text || "" /* Master 4.0.1 (Kontrola N1): E0 z g2-safety.js, 155/112 len tam */, actions: [{ label: "Zavolať 155", kind: "tel", value: "155" }, { label: "Zavolať 112", kind: "tel", value: "112" }] };
     }
     // Po pôrode je krvácanie niekoľko týždňov bežné – poplach len pri silnom/náhlom krvácaní (NHS).
     // Od 37. týždňa: „mám kontrakcie / začalo to“ bez varovných príznakov → pokojne, podľa pokynov pôrodnice (QA-21).
     if (pregnant && (ctx.pregnancy_week || 0) >= 37 && has(t, ["kontrakci", "zacalo to", "zacina porod", "porod zacal", "stahy"]) && !has(t, ["krvac", "plodova", "voda", "nehybe", "menej hybe", "malo sa hybe", "silna bolest", "mzitk", "rozmazane", "horuck"])) {
-      return { level: "support", text: "Pokojne. Postupuj podľa pokynov svojej pôrodnice – kedy prísť a koho volať ti povedali pri kontrole.\n\n" + (SAFE().E.E7?.text || "") /* Master 4.0 (Audit Z21): bezpečnostná veta len z g2-safety.js (E7) */, actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
+      // Master 4.0.1 (Kontrola OBSAH N23): bez predpokladu „ti povedali“ a bez rozkazu.
+      return { level: "support", text: "Ak ti pôrodnica dala pokyny, kedy prísť, platia tie.\n\n" + (SAFE().E.E7?.text || "") /* Master 4.0 (Audit Z21): bezpečnostná veta len z g2-safety.js (E7) */, actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Taška do pôrodnice", kind: "checklist", value: "hospital" }] };
     }
     const normalBleeding = withBaby && has(t, ["krvac"]) && !has(t, ["siln", "velmi", "vela krv", "nahle", "zrazenin", "odpadn", "omdl", "zavrat", "toci", "slabo mi", "busi"]);
-    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "odtiekla mi voda", "odteka mi voda", "praskla mi voda", "plodovy vak", "voda mi odtiekla", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "rozmazane", "mzitk", "hviezdicky pred ocami", "silna bolest hlavy", "kontrakci"])) {
-      // Master 4.0 (Audit Z5, Z21): pohyby bábätka = E3, ostatné (krvácanie, plodová voda, kontrakcie…) = E7 – doslovne z g2-safety.js.
+    const preeclampsia = ["rozmazane", "mzitk", "zablesk", "hviezdicky pred ocami", "silna bolest hlavy", "silno ma boli hlava", "velmi ma boli hlava", "opuch tvare", "opuchla tvar", "nahly opuch", "bolest pod rebrami"];
+    if (!normalBleeding && has(t, ["krvac", "plodova voda", "odtiekla voda", "odtieka voda", "odtiekla mi voda", "odteka mi voda", "praskla mi voda", "plodovy vak", "voda mi odtiekla", "nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat", "silna bolest", "kontrakci", ...preeclampsia])) {
+      // Master 4.0 (Audit Z5, Z21): pohyby bábätka = E3 – doslovne z g2-safety.js.
+      // Master 4.0.1 (Kontrola OBSAH N2): E7 len na pôrodné príznaky v tehotenstve (plodová voda, krvácanie, kontrakcie);
+      // príznaky preeklampsie v tehotenstve = E2; po pôrode (silné krvácanie, bolesť, videnie) = E1; iná silná bolesť v tehotenstve = E1.
       const fewerMoves = pregnant && has(t, ["nehybe", "menej hybe", "malo sa hybe", "malo hybe", "slabo sa hybe", "necitim pohyb", "prestal sa hybat", "prestala sa hybat"]);
-      return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – to nemusíš posudzovať.\n\n" + ((fewerMoves ? SAFE().E.E3?.text : SAFE().E.E7?.text) || ""), actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
+      const labour = has(t, ["krvac", "plodov", "odtiekla voda", "odtieka voda", "odteka mi voda", "praskla mi voda", "voda mi odtiekla", "kontrakci"]);
+      const id = fewerMoves ? "E3" : !pregnant ? "E1" : has(t, preeclampsia) ? "E2" : labour ? "E7" : "E1";
+      return { level: "urgent", text: "Pri tomto je najlepšie ozvať sa hneď odborníkovi – to nemusíš posudzovať.\n\n" + (SAFE().E[id]?.text || ""), actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, { label: "Zavolať 155", kind: "tel", value: "155" }] };
     }
     // Po pôrode dá náladu konkrétnejšie (baby blues, NHS) obsahová odpoveď nižšie.
     if (!(withBaby && has(t, ["baby blues", "popor", "depres", "smutn", "placem", "uzkost", "nezvladam"])) && has(t, ["smutn", "nezvladam", "depres", "uzkost", "panik", "som unaven", "vycerpan", "placem", "do placu", "chce sa mi plakat", "je mi tazko", "potrebujem pomoc", "som na dne", "nema to zmysel", "nevladzem", "uz nevladzem"])) {
@@ -625,7 +641,7 @@
     if (withBaby && ctx.baby_age_days !== null && ctx.baby_age_days < 91 && has(t, ["horuck", "teplot", "horuca", "horuci", "horuce", "38", "39", "40"])) {
       return { level: "urgent", text: (SAFE().E.E4?.text || "") + "\n\n" + safeSourceLine(), actions: [{ label: "Dôležité kontakty", kind: "feature", value: "contacts" }, askAction("baby", question), { label: "Kontakty na pomoc", kind: "urgentinfo", value: "" }] };
     }
-    if (has(t, ["vyrazk", "vyrazil", "flak", "horuck", "teplot", "kasl", "kasel", "nadch", "hnack", "zvraca", "vraca ", "alergi", "zihlav", "kolik", "neje", "nechce jest", "zltacz", "zlte", "pupok", "zapal", "bolest", "boli ho", "boli ju", "boli ma", "svrbi", "nespi", "stale place", "vela place"])) {
+    if (has(t, ["krc" /* Master 4.0.1: kŕč v bruchu (nie núdza E0) */, "vyrazk", "vyrazil", "flak", "horuck", "teplot", "kasl", "kasel", "nadch", "hnack", "zvraca", "vraca ", "alergi", "zihlav", "kolik", "neje", "nechce jest", "zltacz", "zlte", "pupok", "zapal", "bolest", "boli ho", "boli ju", "boli ma", "svrbi", "nespi", "stale place", "vela place"])) {
       return {
         level: "support",
         text: "Toto ti posúdiť neviem – to patrí lekárovi. Môžem ti to zapísať ako otázku pre " + (withBaby ? "pediatra" : "lekára") + ", aby to bolo na kontrole po ruke.\n\n" +
@@ -661,7 +677,8 @@
     if (has(t, ["100 dni", "sto dni", "100dni"])) {
       if (ctx.baby_age_days === null) return { text: "100 dní spolu začneme počítať od narodenia bábätka. V ten deň sa ti ozvem ❤️", actions: [] };
       const left = 100 - ctx.baby_age_days;
-      return { text: left > 0 ? "Ste spolu " + ctx.baby_age_days + " dní. 100 dní spolu budete mať o " + left + " dní – v ten deň ti pripravím kartičku." : left === 0 ? "Dnes ste spolu 100 dní ❤️" : "100 dní spolu ste oslávili pred " + (-left) + " dňami ❤️", actions: [{ label: "Naše momenty", kind: "feature", value: "memories" }] };
+      const dni = n => n + " " + (n === 1 ? "deň" : n >= 2 && n <= 4 ? "dni" : "dní"); // Master 4.0.1 (Kontrola N17): skloňovanie
+      return { text: left > 0 ? "Ste spolu " + dni(ctx.baby_age_days) + ". 100 dní spolu budete mať o " + dni(left) + " – v ten deň ti pripravím kartičku." : left === 0 ? "Dnes ste spolu 100 dní ❤️" : "100 dní spolu ste oslávili pred " + (-left) + (left === -1 ? " dňom" : " dňami") + " ❤️", actions: [{ label: "Naše momenty", kind: "feature", value: "memories" }] };
     }
     if (has(t, ["narodil", "narodila", "porodila", "je na svete", "uz je tu"])) {
       if (withBaby) return { text: "Bábätko už v Guguboo máš ❤️ Ak chceš opraviť dátum alebo miery, nájdeš ich v profile.", actions: [{ label: "Otvoriť profil", kind: "feature", value: "profiles" }] };
@@ -691,7 +708,7 @@
         const best = Math.max(0, ...pool.map(score));
         const matched = best ? pool.filter(item => score(item) === best) : [];
         const list = (matched.length ? matched : adminItems).slice(0, 5);
-        const checked = window.GugubooAdmin.module()?.meta?.last_checked;
+        const checked = window.GugubooAdmin.latestChecked?.() || window.GugubooAdmin.module()?.meta?.last_checked; // Master 4.0.1 (Kontrola Z38): najnovší dátum
         return {
           level: "admin",
           text: (matched.length ? "Tu je, čo k tomu viem z oficiálnych zdrojov:" : "Pre tvoju situáciu (" + J.stageLabel(ctx) + ") sa ťa môžu týkať tieto veci:") +
@@ -729,7 +746,7 @@
   // ——— GuguChat: UI ———
   function chips(ctx) {
     if (ctx.life_stage === "pregnancy") return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Čo vybaviť pred pôrodom?", "Ako rastie bábätko?", "Úrady a doklady"];
-    if (ctx.life_stage === "setup") return ["Ako začať?", "Úrady a príspevky"];
+    if (ctx.life_stage === "setup") return ["Ako začať?", "Úrady a doklady"]; // Master 4.0.1 (Kontrola T60): jeden názov
     return ["Čo ma teraz čaká?", "Kde čo nájdem?", "Zapísať kŕmenie", "Kedy k pediatrovi?", "Úrady a doklady"];
   }
 
@@ -864,7 +881,7 @@
       const item = J.item(value);
       if (kind === "open") return openItem(item);
       if (kind === "feature") return V5.openFeature(value);
-      if (kind === "urgentinfo") return V5.openUrgentModal?.();
+      if (kind === "urgentinfo") return V5.openUrgentModal?.(value); // Master 4.0.1 (Kontrola N5): "mama" = okno o mame
       if (kind === "checklist") return V5.openChecklistCategory?.(value || "home");
       if (kind === "shop") {
         // Pridá položky témy výbavy do spoločného Nákupu (bez duplicít).
@@ -941,7 +958,7 @@
     if (event.target.closest("[data-v2-feedback]")) return openFeedback();
     if (event.target.closest("[data-v2-feedback-close]") || event.target.id === "v2FeedbackOverlay") return closeFeedback();
     if (event.target.closest("[data-v2-reset]")) {
-      if (!window.confirm("Začať odznova? Všetky údaje v tejto beta verzii sa vymažú.")) return;
+      if (!window.confirm("Začať odznova? Všetky údaje v tomto telefóne sa vymažú.")) /* Master 4.0.1 (Kontrola N14): Master ukladá natrvalo, nie beta */ return;
       try { sessionStorage.clear(); } catch (_) { /* nič */ }
       window.location.reload();
     }

@@ -206,7 +206,8 @@
     return [
       "<header class='v5-flow-head'><span class='v5-eyebrow'>Naše momenty</span><h1>Prvé razy</h1><p>Druhým ťuknutím zrušíš.</p></header>",
       expecting ? block("pre", "Čakanie na teba") + block("post", "Po narodení") : block("post", "Spolu") + block("pre", "Z čakania"),
-      "<details class='v5-book-note'><summary>Prečo sa appka pýta?</summary><p>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (míľniky, ktoré do daného veku zvládne väčšina detí), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p></details>",
+      "<details class='v5-book-note'><summary>Prečo sa appka pýta?</summary><p>Kedy sa appka sama opýta „Stalo sa už?“, vychádza z CDC (z času, keď sa to u mnohých detí zvykne objaviť), WHO (lezenie) a NHS (príkrm). Slúži len na načasovanie otázky – nikdy na hodnotenie. Každé dieťa má vlastné tempo.</p></details>",
+      // Master 4.0.1 (Kontrola OBSAH N14): bez formulácie „zvládne väčšina detí“ (norma).
       "<button class='v5-secondary' type='button' data-v5-moments-home>Späť</button>"
     ].join("");
   }

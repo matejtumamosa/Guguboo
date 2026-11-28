@@ -119,6 +119,25 @@
     </section>`;
   }
 
+  // Master 4.0.1 (Kontrola OBSAH N4, Samo schválil 28. 11. 2026): „Pre rodiča“ bez označovania stavu („Už to robí / Zatiaľ neviem /
+  // Opýtať sa pediatra“) – bolo to samohodnotenie podľa veku. Pôvodný kód je vypnutý (OBS_STATUS), uložené voľby sa nemažú.
+  // Namiesto neho informatívny zoznam z overených viet CDC v Tvojom mesiaci (content/baby-months.js – každá veta má citát
+  // v evidence) + „Každé bábätko je iné…“, so zdrojom a dátumom overenia. Obdobia bez overenej vety CDC (po 12. mesiaci) sa vynechajú.
+  const OBS_STATUS = false;
+  const PARENT_MONTHS = { "0-2": "1-2", "2-4": "3-4", "4-6": "4-6", "6-9": "6-9", "9-12": "9-12" };
+  function parentInfoHtml(period) {
+    const bm = window.GugubooContent?.babyMonths;
+    const p = (bm?.periods || []).find(x => x.id === PARENT_MONTHS[period?.id]);
+    const items = (p?.development || []).filter(d => d && d.sk && /^cdc-/.test(d.source || "") && (d.evidence || []).length);
+    if (!items.length) return "";
+    const src = (bm.meta?.sources || bm.sources || []).find(s => s.id === items[0].source) || {};
+    return `<details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
+        <p>Čo sa okolo tohto veku u mnohých bábätiek môže diať. Každé bábätko je iné a má vlastné tempo.</p>
+        <ul class="act2-parent-list">${items.map(d => `<li>${escapeHtml(d.sk)}</li>`).join("")}</ul>
+        ${src.url ? `<a class="v2-source" href="${escapeHtml(src.url)}" target="_blank" rel="noopener noreferrer">Zdroj: CDC · overené ${dateLabel(bm.meta?.last_checked)} ↗</a>` : ""}
+      </details>`;
+  }
+
   function render() {
     if (!isPostpartum()) {
       if (view.classList.contains("active") && typeof switchView === "function") switchView("home");
@@ -153,11 +172,11 @@
       <div class="act2-chips" role="group" aria-label="Oblasť">${chips}</div>
       <div class="act2-list">${shown.map(item => activityRow(item, activity?.id)).join("")}</div>
       ${soonHtml(period, age.days)}
-      <details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
+      ${OBS_STATUS ? `<details class="act2-parent"><summary>Pre rodiča – čo si môžeš všimnúť</summary>
         <p>Voliteľné poznámky na rozhovor s pediatrom. Nie je to test – každé dieťa má svoje tempo.</p>
         ${observations.map(item => `<label class="act2-obs"><span>${escapeHtml(item.text)}</span><select data-observation-id="${item.id}" aria-label="Stav: ${escapeHtml(item.text)}">${option(item, "", "—")}${option(item, "noticed", "Už to robí") /* Master 4.0 (Audit T25) */}${option(item, "unknown", "Zatiaľ neviem")}${option(item, "ask", "Opýtať sa pediatra")}</select></label>`).join("")}
-      </details>
-      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)} (stránka z ${dateLabel(data.reviewedAt)})${usesNhs ? " a NHS" : ""} · overené ${dateLabel(data.checkedAt)} ↗</a>
+      </details>` : parentInfoHtml(period)}
+      <a class="v2-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Zdroj: ${escapeHtml(data.source)}${usesNhs ? " a NHS" : ""} · overené ${dateLabel(data.checkedAt)} ↗</a>
       <div class="sr-only" data-activities-live aria-live="polite"></div>
     </div>`;
   }

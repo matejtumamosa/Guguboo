@@ -363,7 +363,8 @@
           try {
             const C = app.win.GugubooContent, bad = [];
             const pre = C.mamaPregnancy, post = C.mamaPostpartum;
-            assert((pre.food.limit || []).every(x => /NHS uvádza/.test(x)), "Z1: množstvá len ako „NHS uvádza…“");
+            // Master 4.0.1 (Kontrola N9): zdroj nesie nadpis „Čo NHS uvádza o množstve“, položky už bez opakovania „NHS uvádza“.
+            assert(/NHS uvádza/.test(pre.food.limitTitle || "") && (pre.food.limit || []).every(x => /najviac/.test(x)), "Z1: množstvá len pod nadpisom „Čo NHS uvádza o množstve“");
             assert(!("goal" in pre.exercise), "Z2: exercise.goal (150 min) sa vrátil");
             post.exercises.items.forEach(it => assert(!it.perDay && (!it.dose || /^NHS uvádza/.test(it.dose)), "Z3: počítadlo alebo dávka ako povinnosť pri " + it.id));
             [pre.food.alcohol, ...pre.food.avoid, pre.exercise.moveExamples, pre.exercise.strengthExamples, ...pre.exercise.tips, ...pre.exercise.avoid, pre.exercise.note,
@@ -431,6 +432,65 @@
               eq(bad, [], "zakázané formulácie (" + kind + ")");
             } finally { app.remove(); }
           }
+        },
+        // Master 4.0.1 (Kontrola APP N1, N2; OBSAH N1, N2, N3): bežné formulácie núdze s aj bez diakritiky → správna veta z g2-safety.js.
+        "GuguChat: núdza → E0 (155/112), sebapoškodenie → E6, pôrod → E7, krvácanie po pôrode → E1, preeklampsia → E2 ⚕": async () => {
+          const cases = {
+            pred: [
+              ["E0", ["nedýcha", "manžel nedýcha", "niekto je v bezvedomí", "dusí sa", "dusi sa", "ťažko sa mi dýcha", "tazko sa mi dycha", "staršie dieťa má kŕče", "vážny úraz", "má modré pery"]],
+              ["E6", ["mám myšlienky, že si ublížim", "mam myslienky ze si ublizim", "nechcem žiť", "nechcem uz zit", "chcem sa zabiť", "napadá mi, že si ublížim", "bojím sa, že ublížim bábätku"]],
+              ["E7", ["odtiekla mi plodová voda", "krvácam", "mám kontrakcie každých 5 minút"]],
+              ["E2", ["mám rozmazané videnie", "mám mžitky pred očami", "silná bolesť hlavy"]],
+              ["E3", ["bábätko sa menej hýbe"]]
+            ],
+            po: [
+              ["E0", ["bábätko ťažko dýcha", "zle sa mu dýcha", "zle sa jej dycha", "má modré pery", "bábätko je celé modré", "babatko je cele modre", "nedýcha", "nedycha", "je v bezvedomí", "nereaguje", "dusí sa", "má kŕče", "ma krce", "zmodrelo", "lapá po dychu", "nemôže dýchať", "nedá sa zobudiť", "vážny úraz"]],
+              ["E6", ["mám myšlienky, že si ublížim", "mam myslienky ze si ublizim", "nechcem žiť", "nechce sa mi žiť", "chcem si ublížiť", "bojím sa, že ublížim bábätku"]],
+              ["E1", ["silno krvácam", "veľmi silné krvácanie po pôrode", "mám rozmazané videnie"]]
+            ]
+          };
+          const bad = [];
+          for (const kind of ["pred", "po"]) {
+            const app = await bootApp(ringSeed(kind));
+            try {
+              const W = app.win, E = W.G2Safety.E;
+              assert(E.E0 && /155/.test(E.E0.text) && /112/.test(E.E0.text) && E.E0.source && E.E0.checked, "E0 v g2-safety.js so zdrojom a dátumom");
+              assert(/aj v noci/.test(E.E7.text) && /plodov/.test(E.E7.text), "E7 so spúšťačom a naliehavosťou (NHS)");
+              for (const [id, qs] of cases[kind]) for (const q of qs) {
+                const a = W.GugubooV2.answer(q, { dryRun: true });
+                const text = String(a?.text || "");
+                if (a?.level !== "urgent" || !text.includes(E[id].text)) bad.push(kind + " „" + q + "“ → čakal som " + id + ", je: " + text.slice(0, 70));
+                if (id === "E0" && !text.startsWith(E.E0.text)) bad.push(kind + " „" + q + "“: E0 nie je prvá");
+                if (id !== "E7" && text.includes(E.E7.text)) bad.push(kind + " „" + q + "“: E7 mimo pôrodných príznakov");
+              }
+              // Bez falošného poplachu: kŕč v nohe, bežné otázky o dýchaní.
+              for (const q of ["kŕč v nohe", "ako dýcha novorodenec"]) {
+                const a = W.GugubooV2.answer(q, { dryRun: true });
+                if (String(a?.text || "").includes(E.E0.text)) bad.push(kind + " „" + q + "“: zbytočne E0");
+              }
+            } finally { app.remove(); }
+          }
+          eq(bad, [], "núdzové odpovede GuguChatu");
+        },
+        // Master 4.0.1 (Kontrola OBSAH N4, Samo 28. 11. 2026): Aktivity „Pre rodiča“ bez stavu míľnikov (samohodnotenie).
+        "Aktivity: „Pre rodiča“ bez stavových volieb (Už to robí / Zatiaľ neviem), zoznam CDC so zdrojom": async () => {
+          const bad = [];
+          for (const birth of [-20, -60, -100, -150, -230, -320]) {
+            const app = await bootApp(ringSeed("po", { birth }));
+            try {
+              const { doc, win } = app;
+              win.GugubooV5.openFeature("activities");
+              await sleep(250);
+              const root = doc.querySelector(".act2");
+              if (!root) { bad.push(birth + " dní: Aktivity sa nevykreslili"); continue; }
+              if (root.querySelector("[data-observation-id], .act2-obs select")) bad.push(birth + " dní: stavové voľby");
+              if (/Už to robí|Zatiaľ neviem/.test(root.textContent)) bad.push(birth + " dní: text stavu");
+              const parent = root.querySelector(".act2-parent");
+              if (parent && !(parent.querySelector("a.v2-source[href*='cdc.gov']") && /Každé bábätko je iné/.test(parent.textContent))) bad.push(birth + " dní: bez zdroja CDC alebo vety o tempe");
+              if (parent) bad.push(...forbidden("Aktivity " + birth, parent.textContent, true));
+            } finally { app.remove(); }
+          }
+          eq(bad, [], "Aktivity – Pre rodiča");
         },
         "Zdroje: 155/112 sa nepíšu mimo g2-safety.js (GuguChat, Zúbky, kruh)": async () => {
           const bad = [];

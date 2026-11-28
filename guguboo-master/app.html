@@ -5065,7 +5065,7 @@
                 </label>
               </div>
               <label>Po úlohe
-                <textarea id="familyAfterCare" placeholder="napr. nechať odgrgnúť, držať 10 min vo zvislej polohe, zapísať koľko vypilo a či grckalo"></textarea>
+                <textarea id="familyAfterCare" placeholder="napr. odgrgnúť, zapísať, koľko vypilo"></textarea>
               </label>
               <div class="actions">
                 <button class="secondary" id="fillCareRecipe" type="button">Doplniť návod</button>
@@ -9084,7 +9084,7 @@ Otázky:
       "Prevziať kúpanie": "Pripraviť uterák, čistú plienku, pyžamo a kozmetiku. Skontrolovať teplotu vody, kúpať pokojne a po kúpaní zapísať, či bola pokožka v poriadku.",
       "Ísť na prechádzku": "Zobrať kočík, náhradnú plienku, obrúsky, deku podľa počasia a telefón. Po návrate zapísať, kedy dieťa zaspalo alebo sa zobudilo.",
       "Pripraviť fľašu": "Použiť presné mlieko, ktoré je uložené v nákupných produktoch. Vodu aj prášok pripraviť presne podľa návodu na balení, vždy čerstvo na jedno kŕmenie. Mlieko neohrievať v mikrovlnke. Pred podaním skontrolovať teplotu kvapkou na vnútornú stranu zápästia: má byť teplé, nie horúce. Zvyšok po kŕmení vyliať a dieťa nechať odgrgnúť.", // Master 3.5.1 (pôvodne 2.6.1): bez konkrétnej teploty, podľa návodu na balení (NHS 111 Wales, overené 16. 11. 2026)
-      "Dať večerné mlieko": "Pripraviť presnú dávku mlieka, podať ho v bežnej večernej rutine, potom nechať odgrgnúť a zapísať, koľko dieťa vypilo.",
+      "Dať večerné mlieko": "Pripraviť mlieko podľa toho, ako ste zvyknutí, podať ho v bežnej večernej rutine, potom nechať odgrgnúť a zapísať, koľko dieťa vypilo.",
       "Prebrať uspávanie": "Prevziať večerný blok: stlmiť svetlo, pripraviť plienku/pyžamo, podľa potreby mlieko, krátky rituál, zvuk alebo nosenie. Zapísať, kedy dieťa zaspalo.",
       "Kúpiť plienky / drogériu": "Otvoriť nákupný zoznam a kúpiť presnú značku, veľkosť, typ alebo alternatívu uvedenú v zozname. Nekupovať inú receptúru mlieka bez dohody.",
       "Nechať druhého rodiča spať": "Prevziať najbližší blok: upokojenie, prebalenie, fľaša alebo kočíkovanie. Zapisovať iba dôležité veci, nech druhý rodič nemusí po zobudení pátrať.",
@@ -9133,7 +9133,7 @@ Otázky:
     $("fillCareRecipe").addEventListener("click", () => {
       const task = $("familyTaskPreset").value;
       if (!$("familyDetails").value.trim()) $("familyDetails").value = familyTaskDetails[task] || "";
-      if (!$("familyMilkAmount").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyMilkAmount").value = "doplň presnú dávku podľa dieťaťa";
+      // Master 4.0.1 (Kontrola OBSAH N21): pole množstva ostáva prázdne (žiadna predvyplnená „dávka“).
       if (!$("familyWaterTemp").value.trim() && /mlieko|fľašu|uspávanie/i.test(task)) $("familyWaterTemp").value = "podľa návodu na balení"; // Master 4.0 (Audit Z12): bez teploty (rozhodnutie 3.5.1)
       if (!$("familyAfterCare").value.trim()) $("familyAfterCare").value = /mlieko|fľašu/i.test(task)
         ? "nechať odgrgnúť, chvíľu podržať vo zvislej polohe, zapísať koľko vypilo a či grckalo"
